@@ -86,6 +86,16 @@ Lo que conviene saber:
 La ventana del servidor dice por qué y lo vuelve a intentar sola cuatro
 veces. Lo más habitual:
 
+- **«Tu DNS bloquea los túneles de Cloudflare»** (en la ventana sale
+  `getaddrinfow: The requested name is valid, but no data…` o
+  `no such host`): el DNS de tu conexión no deja buscar `trycloudflare.com`.
+  Lo hacen los filtros de «navegación segura» del operador o del router, la
+  protección web de algunos antivirus y bloqueadores como AdGuard o NextDNS,
+  porque esos túneles también se usan para estafas. Arreglo: cambia el DNS
+  del ordenador a `1.1.1.1` y `1.0.0.1` (Configuración → Red e Internet →
+  Wi-Fi → Propiedades de hardware → Asignación de servidor DNS → Editar →
+  Manual), ejecuta `ipconfig /flushdns` y vuelve a abrir Mesa. Mesa lo
+  detecta sola comparando tu DNS con uno público y lo explica en la ventana.
 - **«No se llega a Cloudflare»**: el antivirus o el cortafuegos de Windows
   bloquea `cloudflared` (permítelo cuando pregunte, o añádelo a las
   excepciones), o estás en una red que lo prohíbe (trabajo, universidad,

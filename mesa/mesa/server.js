@@ -22,6 +22,7 @@ import { randomBytes } from "node:crypto";
 import { gzipSync } from "node:zlib";
 import { networkInterfaces } from "node:os";
 import { spawn } from "node:child_process";
+import { promises as dns } from "node:dns";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -374,7 +375,7 @@ function openTunnel(attempt = 1) {
        Mesa escucha en IPv4, y el túnel daría error 502 aunque abriera. */
     child = spawn(bin, ["tunnel", "--no-autoupdate", "--url", `http://127.0.0.1:${PORT}`], { stdio: ["ignore", "pipe", "pipe"] });
   } catch { return tunnelMissing(); }
-  child.on("error", err => { if (err.code === "ENOENT") tunnelMissing(); else tunnelFailed([err.message], attempt); });
+  child.on("error", err => { if (err.code === "ENOENT") tunnelMissing(); else tunnelFailed([err.message], attempt).catch(() => {}); });
   const seek = chunk => {
     const text = String(chunk);
     for (const line of text.split(/\r?\n/)) if (line.trim()) { log.push(line.trim()); if (log.length > 40) log.shift(); }
@@ -400,35 +401,79 @@ function openTunnel(attempt = 1) {
     if (had) {
       console.log("  El túnel de internet se ha cerrado" + (code ? ` (código ${code})` : "") + ". Reintentando…");
       setTimeout(() => openTunnel(1), 3000);
-    } else if (code !== null) tunnelFailed(log, attempt);
+    } else if (code !== null) tunnelFailed(log, attempt).catch(() => {});
   });
   process.on("exit", () => { try { child.kill(); } catch {} });
 }
 
 /* No se abrió: se dice por qué, con lo que haya contado cloudflared, y se
    reintenta solo cuando tiene pinta de ser pasajero. */
-function tunnelFailed(log, attempt) {
+/* ¿Es el DNS? Se pregunta por el mismo nombre al DNS de este ordenador (el
+   del router o del operador, o el que imponga el antivirus) y a dos públicos.
+   Si el de casa no lo da y los públicos sí, alguien lo está filtrando. */
+const TUNNEL_HOST = "api.trycloudflare.com";
+async function dnsCheck() {
+  const local = await dns.lookup(TUNNEL_HOST, { family: 4 }).then(() => true, () => false);
+  if (local) return "ok";
+  const pub = new dns.Resolver({ timeout: 3000, tries: 1 });
+  pub.setServers(["1.1.1.1", "8.8.8.8"]);
+  const outside = await pub.resolve4(TUNNEL_HOST).then(list => list.length > 0, () => false);
+  return outside ? "filtered" : "offline";
+}
+
+const DNS_HELP = `
+  Tu conexión no deja buscar ${TUNNEL_HOST}: el DNS de este ordenador
+  (el del router o del operador) no da su dirección, y los DNS públicos sí.
+  Es un filtro de seguridad que bloquea los túneles de Cloudflare: la
+  «navegación segura» del operador o del router, la protección web del
+  antivirus o un bloqueador como AdGuard o NextDNS.
+
+  Arreglo (Windows 11): Configuración → Red e Internet → Wi-Fi (o Ethernet)
+  → Propiedades de hardware → Asignación de servidor DNS → Editar →
+  Manual → IPv4: DNS preferido 1.1.1.1 y alternativo 1.0.0.1 → Guardar.
+  Luego, en una ventana: ipconfig /flushdns  y vuelve a abrir Mesa.
+  (Windows 10: Panel de control → Centro de redes → Cambiar configuración
+  del adaptador → tu wifi → Propiedades → Protocolo IPv4 → Usar estas
+  direcciones DNS.)
+
+  Si así tampoco va, es el antivirus o el router: desactiva su protección
+  web o «navegación segura» mientras jugáis, o prueba compartiendo datos
+  desde el móvil para confirmarlo.
+`;
+
+/* No se abrió: se dice por qué, con lo que haya contado cloudflared, y se
+   reintenta solo cuando tiene pinta de ser pasajero. */
+async function tunnelFailed(log, attempt) {
   const text = log.join("\n");
   const errors = log.filter(l => /\b(ERR|error|failed)\b/i.test(l)).slice(-4);
-  let why;
+  let why, help = "", retry = attempt < 4;
   if (/429|too many requests/i.test(text)) why = "Cloudflare limita cuántos túneles rápidos se piden seguidos. Suele bastar con esperar un minuto.";
   else if (/config|ingress|credentials/i.test(text)) why = "cloudflared ha encontrado un archivo de configuración propio (carpeta .cloudflared de tu usuario) que no deja abrir el túnel rápido. Renómbralo o bórralo y vuelve a probar.";
-  else if (/no such host|lookup|dial tcp|i\/o timeout|timeout|connection refused|connectex|network is unreachable|tls|certificate|x509/i.test(text)) why = "No se llega a Cloudflare desde este ordenador. Suele ser el antivirus o el cortafuegos bloqueando cloudflared, una red que lo prohíbe (trabajo, universidad, residencia) o falta de conexión.";
+  else if (/lookup|no such host|getaddrinfo|name resolution/i.test(text)) {
+    const verdict = await dnsCheck();
+    if (verdict === "filtered") {
+      why = "Tu DNS (el del router, el operador o el antivirus) bloquea los túneles de Cloudflare. Cambia el DNS a 1.1.1.1: la ventana del servidor explica cómo.";
+      help = attempt === 1 ? DNS_HELP : "";
+      retry = false;          // no se arregla solo: hace falta cambiar el DNS
+    } else if (verdict === "offline") {
+      why = "Este ordenador no consigue resolver nombres de internet: comprueba la conexión.";
+    } else {
+      why = "Este ordenador sí encuentra a Cloudflare, pero a cloudflared se lo impiden: suele ser el antivirus filtrando ese programa. Añade cloudflared a sus excepciones (o desactiva su protección web mientras jugáis).";
+    }
+  }
+  else if (/dial tcp|i\/o timeout|timeout|connection refused|connectex|network is unreachable|tls|certificate|x509/i.test(text)) why = "No se llega a Cloudflare desde este ordenador. Suele ser el antivirus o el cortafuegos bloqueando cloudflared, una red que lo prohíbe (trabajo, universidad, residencia) o falta de conexión.";
   else why = "cloudflared se ha cerrado sin dar una dirección.";
-  const retry = attempt < 4;
   tunnel = { state: retry ? "opening" : "failed", error: why };
   console.log(`
   No se ha podido abrir el túnel de internet (intento ${attempt} de 4).
   ${why}
-${errors.length ? "\n  Lo que dice cloudflared:\n" + errors.map(l => "    " + l.slice(0, 160)).join("\n") + "\n" : ""}`);
+${errors.length ? "\n  Lo que dice cloudflared:\n" + errors.map(l => "    " + l.slice(0, 280)).join("\n") + "\n" : ""}${help}`);
   if (retry) {
     const wait = [0, 5, 20, 60][attempt];
     console.log(`  Se vuelve a intentar en ${wait} segundos. Mesa sigue funcionando en tu wifi.\n`);
     setTimeout(() => openTunnel(attempt + 1), wait * 1000);
   } else {
-    console.log(`  Ya no se reintenta. Para ver el error completo, en otra ventana:
-    cloudflared tunnel --url http://127.0.0.1:${PORT}
-  Mesa sigue funcionando en tu wifi.
+    console.log(`  Mesa sigue funcionando en tu wifi. Cuando lo arregles, vuelve a abrir «Jugar por internet».
 `);
   }
 }
