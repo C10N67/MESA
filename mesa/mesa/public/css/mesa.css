@@ -1213,3 +1213,30 @@ body.screen { background: #05060a; overflow: hidden; }
 /* Dentro de una ventana, un botón largo se parte en dos líneas antes que
    pisar al de al lado */
 .modal-body .btn { white-space: normal; line-height: 1.25; text-align: center; min-width: 0; }
+
+/* Mesa abierta o cerrada */
+.lock-row {
+  display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 10px 12px; margin-bottom: 6px;
+  border-radius: var(--r-md); border: 1px solid var(--edge); background: var(--stone-2); color: var(--vellum);
+}
+.lock-row:hover { border-color: #3b4459; }
+.lock-row.on { border-color: #4a3c22; background: #1d1810; }
+.switch { flex: none; width: 40px; height: 22px; border-radius: 999px; background: #2b3242; position: relative; transition: background .2s; }
+.switch i { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--vellum); transition: transform .2s var(--ease-out, ease); }
+.lock-row.on .switch { background: var(--gold); }
+.lock-row.on .switch i { transform: translateX(18px); background: #22190a; }
+.icon-btn.danger:hover { color: #f0b6b7; background: #2a1416; }
+.presence.locked { border-color: #4a3c22; color: var(--gold-soft); }
+
+/* Cómo entran: por internet y por wifi */
+.join-block { padding: 12px; border: 1px solid var(--edge); border-radius: var(--r-md); background: var(--stone-2); margin-bottom: 10px; }
+.join-h { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font: 600 13px/1.2 var(--sans); color: var(--gold-soft); }
+.join-block .addr-row { margin-left: 0; }
+.join-block .prose.small { margin: 6px 0 0; }
+
+/* Avisos en la entrada */
+.notice {
+  display: flex; align-items: flex-start; gap: 8px; margin: -6px 0 14px; padding: 10px 12px; border-radius: 10px;
+  border: 1px solid #4a3c22; background: #1d1810; color: var(--gold-soft); font-size: 13px; line-height: 1.4;
+}
+.notice .ico { flex: none; margin-top: 1px; }

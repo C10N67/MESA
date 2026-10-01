@@ -97,7 +97,10 @@ function renderPresence(list = store.presence) {
   const host = $("#presence");
   if (!host) return;
   const others = list.filter(p => p.role !== "dm");
-  host.innerHTML = `<span class="dot ${store.online ? "" : "off"}"></span>${icon("wifi", 16)}<span class="lbl">${others.length} en la mesa</span><span class="count">${others.length}</span>`;
+  const locked = doc() && session().locked;
+  host.classList.toggle("locked", !!locked);
+  host.innerHTML = `<span class="dot ${store.online ? "" : "off"}"></span>${icon(locked ? "lock" : "wifi", 16)}<span class="lbl">${others.length} en la mesa</span><span class="count">${others.length}</span>`;
+  host.title = locked ? "Mesa cerrada: no entra nadie nuevo" : "Quién está conectado";
 }
 
 /* Quién está conectado y con qué personaje. Desde aquí se libera uno. */
@@ -110,10 +113,19 @@ function openPresence() {
       <span class="person-ico">${icon(ROLE_ICON[p.role] || "user", 18)}</span>
       <span class="person-id"><b>${esc(p.name)}</b><small>${p.role === "dm" ? "Dirige la partida" : p.role === "screen" ? "Pantalla de la mesa" : c ? "Lleva a " + esc(c.name) : "Sin personaje"}</small></span>
       ${c ? `<button class="btn sm" data-release="${c.id}" title="Liberar personaje">${withIcon("unlink", "Liberar")}</button>` : ""}
+      ${p.id !== store.session.id ? `<button class="icon-btn danger" data-kick="${p.id}" data-name="${esc(p.name)}" title="Expulsar" aria-label="Expulsar">${icon("ban", 17)}</button>` : ""}
     </div>`;
   };
+  const locked = !!session().locked;
   const offline = pcs().filter(c => c.claimedBy && !list.some(p => p.charId === c.id));
   const body = el(`<div class="people">
+    <button class="lock-row ${locked ? "on" : ""}" data-lock>
+      <span class="menu-ico">${icon(locked ? "lock" : "unlock", 20)}</span>
+      <span class="menu-text"><b>${locked ? "Mesa cerrada" : "Mesa abierta"}</b><small>${locked
+        ? "No entra nadie nuevo. Quien ya está dentro sigue jugando."
+        : "Cualquiera con la dirección puede entrar como jugador."}</small></span>
+      <span class="switch" aria-hidden="true"><i></i></span>
+    </button>
     ${list.map(row).join("") || `<p class="prose">Nadie conectado.</p>`}
     ${offline.length ? `<h4 class="people-sub">Desconectados</h4>${offline.map(c => `<div class="person off">
       <span class="person-ico">${icon("user", 18)}</span>
@@ -123,6 +135,17 @@ function openPresence() {
   </div>`);
   const m = modal({ title: "En la mesa", body, actions: [{ label: "Cerrar" }] });
   on(body, "click", "[data-release]", (e, b) => { releaseChar(byId(b.dataset.release)); m.close(); });
+  on(body, "click", "[data-lock]", () => {
+    patchSession({ locked: !locked });
+    toast(locked ? "Mesa abierta: se puede entrar" : "Mesa cerrada: no entra nadie nuevo", "good");
+    m.close();
+  });
+  on(body, "click", "[data-kick]", async (e, b) => {
+    m.close();
+    if (!await confirmBox(`¿Expulsar a ${b.dataset.name}? Su aparato vuelve a la entrada.${session().locked ? "" : " Cierra la mesa si no quieres que vuelva a entrar."}`, { okLabel: "Expulsar" })) return;
+    op("client.kick", { id: b.dataset.kick });
+    toast(`${b.dataset.name} ha salido de la mesa`, "good");
+  });
 }
 
 async function releaseChar(c) {
@@ -162,7 +185,11 @@ function noticeStep() {
 function render() {
   if (!doc()) return;
   const campaign = $("#campaign");
-  if (campaign && document.activeElement !== campaign) campaign.value = session().title;
+  if (campaign && document.activeElement !== campaign) {
+    const t = session().title;
+    campaign.value = t === "Campaña sin nombre" ? "" : t;
+    campaign.placeholder = "Campaña sin nombre";
+  }
 
   $("#combatBtn").innerHTML = withIcon("swords", session().combat.on ? "Terminar combate" : "Iniciar combate");
   $("#combatBtn").classList.toggle("on", session().combat.on);
@@ -1436,23 +1463,25 @@ function openMenu() {
    de la red, que es la que sirve, con un botón para copiarla. */
 async function showJoinInfo() {
   const local = /^(localhost|127\.|\[::1\])/.test(location.hostname);
+  const info = await lobby().catch(() => ({}));
   let addrs = [location.origin];
-  if (local) {
-    const info = await lobby().catch(() => ({}));
-    if (info.addresses && info.addresses.length) addrs = info.addresses;
-  }
+  if (local && info.addresses && info.addresses.length) addrs = info.addresses;
+  const web = info.publicUrl || (!local && location.protocol === "https:" ? location.origin : "");
+  const addr = a => `<div class="addr-row"><code class="addr" data-keep>${esc(a)}</code>
+      <button class="btn sm" data-copy="${esc(a)}" title="Copiar">${withIcon("copy", "Copiar", 16)}</button></div>`;
   const body = el(`<div class="join-info">
-    <ol class="steps">
-      <li><span class="step-n">1</span><span>Conectad los móviles a la <b>misma wifi</b> que este ordenador.</span></li>
-      <li><span class="step-n">2</span><span>Abrid esta dirección en el navegador:</span></li>
-    </ol>
-    ${addrs.map(a => `<div class="addr-row"><code class="addr" data-keep>${esc(a)}</code>
-      <button class="btn sm" data-copy="${esc(a)}" title="Copiar">${withIcon("copy", "Copiar", 16)}</button></div>`).join("")}
-    ${addrs.length > 1 ? `<p class="prose small">Hay varias redes en este ordenador: la buena suele empezar por 192.168.</p>` : ""}
-    <ol class="steps" start="3">
-      <li><span class="step-n">3</span><span>Eligen <b>Jugador</b>, escriben su nombre y se quedan con su personaje.</span></li>
-    </ol>
-    <p class="prose small">${icon("info", 14)} Desde fuera de casa, mira «Jugar sin estar en la misma casa» en el README.</p>
+    ${web ? `<div class="join-block">
+      <h4 class="join-h">${icon("globe", 16)}<span>Desde cualquier sitio</span></h4>
+      ${addr(web)}
+      <p class="prose small">Sirve desde casa de cada uno, con datos o con cualquier wifi, y se puede instalar como aplicación. Cualquiera con la dirección puede entrar: pásala solo a tu grupo, y cierra la mesa cuando estéis todos.</p>
+    </div>` : ""}
+    <div class="join-block">
+      <h4 class="join-h">${icon("wifi", 16)}<span>${web ? "En la misma wifi" : "En la misma wifi que este ordenador"}</span></h4>
+      ${addrs.map(addr).join("")}
+      ${addrs.length > 1 ? `<p class="prose small">Hay varias redes en este ordenador: la buena suele empezar por 192.168.</p>` : ""}
+    </div>
+    <p class="prose small">${icon("user", 14)}<span>En la entrada eligen <b>Jugador</b>, escriben su nombre y se quedan con su personaje.</span></p>
+    ${web ? "" : `<p class="prose small">${icon("globe", 14)}<span>Para jugar cada uno desde su casa, arranca Mesa con «Jugar por internet». Lo explica el README.</span></p>`}
   </div>`);
   on(body, "click", "[data-copy]", async (e, b) => {
     try { await navigator.clipboard.writeText(b.dataset.copy); toast("Dirección copiada", "good"); }

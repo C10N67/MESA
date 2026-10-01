@@ -66,6 +66,7 @@ async function gate(wanted) {
         <p>Para jugar con los móviles de tus jugadores hace falta el servidor: <a href="https://github.com/aleexnager/DnD/archive/refs/heads/main.zip" rel="noopener">descargar Mesa</a> y abrir <i>Abrir Mesa</i>.</p>
       </div>` : ""}
 
+      ${info.locked ? `<div class="notice">${icon("lock", 16)}<span>La mesa está cerrada: solo entra el DM. Pídele que la abra.</span></div>` : ""}
       <div class="roles" role="radiogroup" aria-label="Cómo entras">
         <button data-role="dm" aria-pressed="false">${icon("crown", 22)}<b>DM</b><small>llevas la partida</small></button>
         <button data-role="player" aria-pressed="true">${icon("user", 22)}<b>Jugador</b><small>llevas un personaje</small></button>
@@ -88,6 +89,11 @@ async function gate(wanted) {
     </div>`;
 
   $("#gateLang").appendChild(langPicker());
+  /* Por qué se ha vuelto a la entrada, si no ha sido por gusto */
+  try {
+    const why = sessionStorage.getItem("mesa.notice");
+    if (why) { sessionStorage.removeItem("mesa.notice"); setTimeout(() => fail(why), 0); }
+  } catch {}
   if (info.offline && !DEMO) toast("No se encuentra el servidor de la partida. ¿Está abierta la ventana de Mesa?", "bad");
   paintInstall();
 

@@ -2,7 +2,12 @@
    Node 18+, sin dependencias. Sirve la aplicación, guarda el estado en disco
    y mantiene al día a todos los dispositivos conectados.
 
-   node server.js [--port 8080] [--pin 1234] [--data ./data] [--cert cert.pem --key key.pem]
+   node server.js [--port 8080] [--pin 123456] [--data ./data] [--cert cert.pem --key key.pem] [--internet]
+
+   Con --internet (o MESA_INTERNET=1) abre además un túnel de Cloudflare: una
+   dirección https pública que sirve desde cualquier sitio, sin VPN y sin
+   tocar el router. Necesita el programa «cloudflared» instalado o junto a
+   este archivo.
 
    Con --cert y --key (o MESA_CERT y MESA_KEY) sirve por HTTPS, que es lo que
    necesitan los móviles para instalar Mesa como aplicación.
@@ -16,6 +21,7 @@ import { existsSync, createReadStream, statSync, readFileSync } from "node:fs";
 import { randomBytes } from "node:crypto";
 import { gzipSync } from "node:zlib";
 import { networkInterfaces } from "node:os";
+import { spawn } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -37,11 +43,16 @@ const IMAGES = path.join(DATA, "images");
 const STATE_FILE = path.join(DATA, "mesa.json");
 const CERT = process.env.MESA_CERT || arg("cert", "");
 const KEY = process.env.MESA_KEY || arg("key", "");
+const INTERNET = argv.includes("--internet") || process.env.MESA_INTERNET === "1";
 
 /* ---------- Estado ----------
    Las reglas viven en public/js/engine.js; aquí solo hay red y disco. */
 const rid = n => randomBytes(n).toString("hex");
-const engine = createEngine({ rid, absorbImages: d => absorbLegacyImages(d), onPresence: () => broadcastPresence() });
+const engine = createEngine({
+  rid, absorbImages: d => absorbLegacyImages(d), onPresence: () => broadcastPresence(),
+  /* Al expulsar a alguien se le corta el flujo: su aparato vuelve a la entrada */
+  onKick: client => { if (client.res) { try { client.res.end(); } catch {} client.res = null; } }
+});
 const clients = engine.clients;   // testigo -> { id, name, role, charId, res }
 
 const MAX_BODY = 24 * 1024 * 1024;   // 24 MB: cabe un plano grande
@@ -56,7 +67,7 @@ async function boot() {
     engine.loadClients(saved.clients);
     engine.purge();
   } catch { /* partida nueva */ }
-  if (!engine.pin) engine.pin = process.env.MESA_PIN || arg("pin", "") || String(randomBytes(2).readUInt16BE() % 9000 + 1000);
+  if (!engine.pin) engine.pin = process.env.MESA_PIN || arg("pin", "") || String(randomBytes(4).readUInt32BE() % 900000 + 100000);
   await persist();
 }
 
@@ -180,13 +191,21 @@ function serveStatic(req, res, file) {
   createReadStream(file).pipe(res);
 }
 
+/* Quién llama, para contar intentos fallidos. Detrás del túnel todo llega
+   desde este mismo ordenador, así que se usa la cabecera que pone Cloudflare. */
+const pinFails = new Map();
+function clientKey(req) {
+  const h = req.headers;
+  return String(h["cf-connecting-ip"] || String(h["x-forwarded-for"] || "").split(",")[0] || req.socket.remoteAddress || "?").trim();
+}
+
 const handler = async (req, res) => {
   const url = new URL(req.url, "http://" + (req.headers.host || "localhost"));
   const p = url.pathname;
 
   try {
     /* Con las direcciones de red del DM: «localhost» no le sirve a nadie más */
-    if (p === "/api/hello") return json(res, 200, { ...engine.hello(), addresses: lanAddresses() });
+    if (p === "/api/hello") return json(res, 200, { ...engine.hello(), addresses: lanAddresses(), publicUrl });
 
     if (p === "/api/ping") {
       const ok = clients.has(url.searchParams.get("token") || "");
@@ -195,8 +214,23 @@ const handler = async (req, res) => {
 
     if (p === "/api/join" && req.method === "POST") {
       const body = JSON.parse((await readBody(req, 8192)).toString() || "{}");
+      /* Con la mesa abierta a internet, el código del DM no se puede probar
+         a fuerza de intentos: cinco fallos y hay que esperar diez minutos. */
+      const who = clientKey(req);
+      const tries = pinFails.get(who);
+      if (body.role === "dm" && tries && tries.n >= 5 && Date.now() - tries.since < 10 * 60 * 1000) {
+        return json(res, 429, { error: "Demasiados intentos con el código del DM. Espera unos minutos." });
+      }
       const out = engine.join(body);
-      if (out.error) return json(res, out.status || 403, { error: out.error });
+      if (out.error) {
+        if (out.status === 403 && body.role === "dm") {
+          const t = tries && Date.now() - tries.since < 10 * 60 * 1000 ? tries : { n: 0, since: Date.now() };
+          t.n++;
+          pinFails.set(who, t);
+        }
+        return json(res, out.status || 403, { error: out.error });
+      }
+      if (body.role === "dm") pinFails.delete(who);
       out.client.res = null;
       scheduleSave();
       return json(res, 200, { token: out.token, id: out.client.id, role: out.client.role, charId: out.client.charId });
@@ -302,6 +336,54 @@ const lanIP = () => {
   return "localhost";
 };
 
+/* ---------- Jugar por internet ----------
+   Un túnel de Cloudflare («quick tunnel»): gratis, sin cuenta, sin abrir
+   puertos en el router y con HTTPS, que además permite instalar Mesa como
+   aplicación en los móviles. La dirección cambia cada vez que se arranca. */
+let publicUrl = "";
+function findCloudflared() {
+  const local = path.join(HERE, process.platform === "win32" ? "cloudflared.exe" : "cloudflared");
+  return existsSync(local) ? local : "cloudflared";
+}
+function openTunnel() {
+  const bin = findCloudflared();
+  let child;
+  try {
+    child = spawn(bin, ["tunnel", "--no-autoupdate", "--url", `http://localhost:${PORT}`], { stdio: ["ignore", "pipe", "pipe"] });
+  } catch { return tunnelMissing(); }
+  child.on("error", () => tunnelMissing());
+  const seek = chunk => {
+    const m = String(chunk).match(/https:\/\/[a-z0-9-]+\.trycloudflare\.com/i);
+    if (m && !publicUrl) {
+      publicUrl = m[0];
+      console.log(`
+  ─────────────────────────────────────────────────────────
+  Por internet   ${publicUrl}
+  Cualquiera con esta dirección puede entrar como jugador:
+  pásala solo a tu grupo. Cambia cada vez que abres Mesa.
+  ─────────────────────────────────────────────────────────
+`);
+    }
+  };
+  child.stdout.on("data", seek);
+  child.stderr.on("data", seek);
+  child.on("exit", code => {
+    if (publicUrl) console.log("  El túnel de internet se ha cerrado" + (code ? ` (código ${code})` : "") + ".");
+    publicUrl = "";
+  });
+  process.on("exit", () => { try { child.kill(); } catch {} });
+}
+function tunnelMissing() {
+  console.log(`
+  Para jugar por internet falta «cloudflared» (gratis, de Cloudflare):
+    Windows   winget install --id Cloudflare.cloudflared
+    Mac       brew install cloudflared
+    Linux     https://github.com/cloudflare/cloudflared/releases
+  O descárgalo y déjalo en esta misma carpeta. Mientras, Mesa sigue
+  funcionando en tu wifi con la dirección de arriba.
+`);
+}
+
 await boot();
 setInterval(() => engine.purge(), 3600 * 1000).unref();
 server.listen(PORT, "0.0.0.0", () => {
@@ -317,6 +399,7 @@ server.listen(PORT, "0.0.0.0", () => {
   Los datos se guardan en ${DATA}
   Para parar: Ctrl+C
 `);
+  if (INTERNET) openTunnel();
 });
 
 /* Al cerrar (Ctrl+C, o el sistema parando el proceso) se guarda lo último */

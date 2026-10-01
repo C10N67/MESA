@@ -151,7 +151,10 @@ export async function connect() {
       setTimeout(async () => {
         // Si el servidor se reinició, el testigo ya no vale y hay que volver a entrar
         const alive = await t.ping(store.session.token);
-        if (alive === false) { forgetSession(); location.reload(); return; }
+        if (alive === false) {
+          try { sessionStorage.setItem("mesa.notice", "Tu sesión ha terminado: el DM te ha sacado de la mesa o la partida ha empezado de cero."); } catch {}
+          forgetSession(); location.reload(); return;
+        }
         connect();
       }, Math.min(4000, 400 * retry));
     }

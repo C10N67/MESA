@@ -29,12 +29,15 @@ pestañas, cada pestaña lleva la suya.
 2. Doble clic en `Abrir Mesa (Windows).bat` o en `Abrir Mesa (Mac y Linux).command`.
    Desde una terminal es `npm start`.
 
+Para jugar cada uno desde su casa, en vez de esos dos archivos usa los de
+**Jugar por internet** (más abajo).
+
 La ventana que se abre te dice tres cosas:
 
 ```
 Tú (DM)        http://localhost:8080
 Tus jugadores  http://192.168.1.34:8080
-Código del DM  4821
+Código del DM  482193
 ```
 
 Tú entras por la primera dirección y eliges «DM» con ese código. Tus jugadores
@@ -43,19 +46,44 @@ La tele o el proyector entran por la misma dirección y eligen «Pantalla».
 
 Esa ventana tiene que quedarse abierta mientras jugáis: es el servidor.
 
-### Jugar sin estar en la misma casa
+### ¿Hace falta estar en la misma wifi?
 
-Mesa habla HTTP normal, así que sirve cualquier túnel. Con
-[Tailscale](https://tailscale.com) instalado en tu ordenador y en el de tus
-jugadores, la dirección de tu máquina en la red privada funciona tal cual. Otra
-opción de un solo comando, mientras dure la sesión:
+Depende de cómo arranques Mesa. En todos los casos el DM es el servidor: la
+partida se guarda en su ordenador y los demás se conectan a él.
 
-```bash
-npx localtunnel --port 8080     # o: cloudflared tunnel --url http://localhost:8080
-```
+| Cómo se arranca | Quién puede entrar | Qué necesitan los jugadores |
+|---|---|---|
+| **Abrir Mesa** | Solo quien esté en **la misma wifi** que el DM | El navegador del móvil, nada más |
+| **Jugar por internet** | **Cualquiera con la dirección**, desde cualquier sitio: su casa, datos del móvil, otra wifi | El navegador del móvil, nada más. **Sin VPN** y sin tocar el router |
+| Con Tailscale (opcional) | Solo quien esté en vuestra red privada de Tailscale | Instalar Tailscale (es una VPN) |
 
-Reparte esa URL y el código del DM solo a tu grupo: quien tenga la dirección
-puede entrar como jugador.
+**Jugar por internet** es un doble clic en `Jugar por internet (Windows).bat`
+o `Jugar por internet (Mac y Linux).command`. La primera vez instala un
+programa gratuito de Cloudflare (`cloudflared`) que abre un túnel: una
+dirección `https://…trycloudflare.com` que la ventana del servidor enseña y
+que también sale en **⋯ → Cómo entran mis jugadores**, con botón de copiar.
+Por esa dirección los móviles pueden además **instalar Mesa como
+aplicación**, porque es HTTPS. Desde una terminal es
+`node server.js --internet`.
+
+Lo que conviene saber:
+
+- **La dirección cambia cada vez** que arrancas Mesa por internet: se pasa
+  por el grupo al empezar la sesión. Una app instalada con la dirección de
+  otro día no encontrará la partida; basta con abrir la nueva.
+- **Quien tenga la dirección puede entrar como jugador.** Por eso:
+  - pásala solo a tu grupo;
+  - cuando estéis todos, **cierra la mesa** (pulsando el contador de
+    conectados, arriba): nadie nuevo entra y los de dentro siguen jugando;
+  - desde ahí mismo puedes **expulsar** a alguien;
+  - el código del DM tiene seis cifras y, tras cinco intentos fallidos, ese
+    aparato espera diez minutos. Nadie puede hacerse DM probando códigos.
+- El ordenador del DM tiene que seguir encendido y con la ventana abierta
+  mientras jugáis, igual que en casa.
+
+Con [Tailscale](https://tailscale.com) instalado en todos los aparatos, la
+dirección de la máquina del DM en esa red funciona tal cual y no cambia
+nunca; a cambio, cada jugador tiene que instalarlo.
 
 ## Instalar como aplicación
 
@@ -70,7 +98,10 @@ derecho o pulsación larga en el icono).
 - **En Android**: menú ⋮ → *Instalar aplicación*.
 - **En iPhone y iPad** (Safari): *Compartir* → *Añadir a pantalla de inicio*.
 
-**Lo que hay que saber:** los navegadores solo dejan instalar una aplicación
+**Jugando por internet ya está resuelto:** la dirección del túnel es HTTPS y
+cualquiera puede instalar Mesa desde ella.
+
+**En casa, por la wifi:** los navegadores solo dejan instalar una aplicación
 desde `localhost` o por **HTTPS**. Desde el ordenador donde corre Mesa funciona
 tal cual; en los móviles, con `http://192.168.x.x` se puede jugar igual de
 bien, pero no instalar. Tres formas de tener HTTPS, de menos a más trabajo:
@@ -572,9 +603,14 @@ data/                  la partida y las imágenes (se crea al arrancar)
   los susurros de otro.
 - Las tiradas de ataque y el reparto de puntos de vida se resuelven en el
   servidor. Nadie puede decidir desde su navegador que ha impactado.
-- Pensado para jugar con amigos en una red de confianza. No hay cuentas y, sin
-  `--cert`, tampoco cifrado: si lo expones a internet, usa un túnel privado
-  (que ya pone HTTPS) y no repartas la URL.
+- El código del DM tiene seis cifras y, tras cinco intentos fallidos, ese
+  aparato espera diez minutos antes de poder probar otro.
+- El DM puede **cerrar la mesa** (no entra nadie nuevo) y **expulsar** a
+  cualquiera desde el contador de conectados.
+- Pensado para jugar con amigos. No hay cuentas: quien tenga la dirección
+  puede entrar como jugador mientras la mesa esté abierta. Por internet, el
+  túnel de «Jugar por internet» cifra la conexión (HTTPS); en casa, por la
+  wifi, va sin cifrar salvo que arranques con `--cert`.
 
 ## Lo que aún no hace
 

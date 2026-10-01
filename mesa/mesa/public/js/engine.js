@@ -18,7 +18,7 @@ import { critDamage } from "./attacks-core.js";
 
 export const ROLES = ["dm", "player", "screen"];
 
-export function createEngine({ rid, absorbImages = async d => d, onPresence = () => {} } = {}) {
+export function createEngine({ rid, absorbImages = async d => d, onPresence = () => {}, onKick = () => {} } = {}) {
   let doc = emptyDoc();
   let pin = "";
   let rev = 0;
@@ -385,6 +385,19 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         onPresence();
         break;
       }
+      /* El DM echa a alguien: su sesión deja de valer y su aparato vuelve a
+         la entrada. Con la mesa cerrada, ya no puede volver a entrar. */
+      case "client.kick": {
+        if (!dm) return "Solo el DM";
+        for (const [t, cl] of clients) {
+          if (cl.id !== op.id) continue;
+          if (cl === client) return "No puedes expulsarte a ti mismo";
+          clients.delete(t);
+          onKick(cl);
+        }
+        onPresence();
+        break;
+      }
       /* El DM suelta un personaje: quien lo llevara vuelve a elegir */
       case "char.release": {
         if (!dm) return "Solo el DM";
@@ -680,6 +693,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
   function hello() {
     return {
       title: doc.session.title,
+      locked: !!doc.session.locked,
       players: doc.chars.filter(c => c.kind === "pc").map(c => {
         const h = holder(c.id);
         const busy = h && active(h);
@@ -698,6 +712,9 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
     if (checkPin && role === "dm" && String(body.pin || "").trim() !== pin) return { error: "El código del DM no coincide", status: 403 };
     const name = String(body.name || "").replace(/\s+/g, " ").trim().slice(0, 24)
       || (role === "dm" ? "DM" : role === "screen" ? "Pantalla" : "Invitado");
+    /* Mesa cerrada: no entra nadie nuevo salvo el DM (con su código). Quien
+       ya estaba dentro sigue, porque conserva su sesión. */
+    if (doc.session.locked && role !== "dm") return { error: "La mesa está cerrada: pide al DM que la abra para entrar.", status: 403 };
     if (role !== "screen") {
       const clash = [...clients.values()].find(cl => active(cl) && cl.role !== "screen" && sameName(cl.name, name)
         && !(role === "dm" && cl.role === "dm"));
