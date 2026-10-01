@@ -1469,7 +1469,17 @@ async function showJoinInfo() {
   const web = info.publicUrl || (!local && location.protocol === "https:" ? location.origin : "");
   const addr = a => `<div class="addr-row"><code class="addr" data-keep>${esc(a)}</code>
       <button class="btn sm" data-copy="${esc(a)}" title="Copiar">${withIcon("copy", "Copiar", 16)}</button></div>`;
+  const t = info.tunnel || {};
+  const tunnelNote = !web && t.state === "opening"
+    ? `<div class="join-block"><h4 class="join-h">${icon("globe", 16)}<span>Desde cualquier sitio</span></h4>
+        <p class="prose small"><span>Abriendo la dirección de internet… Vuelve a abrir esta ventana en unos segundos.</span></p></div>`
+    : !web && t.state === "failed"
+      ? `<div class="join-block warn"><h4 class="join-h">${icon("globe", 16)}<span>No se ha podido abrir la dirección de internet</span></h4>
+          <p class="prose small"><span>${esc(t.error || "")}</span></p>
+          <p class="prose small"><span>La ventana del servidor cuenta el detalle. Mientras, se puede jugar en la misma wifi.</span></p></div>`
+      : "";
   const body = el(`<div class="join-info">
+    ${tunnelNote}
     ${web ? `<div class="join-block">
       <h4 class="join-h">${icon("globe", 16)}<span>Desde cualquier sitio</span></h4>
       ${addr(web)}
@@ -1481,7 +1491,7 @@ async function showJoinInfo() {
       ${addrs.length > 1 ? `<p class="prose small">Hay varias redes en este ordenador: la buena suele empezar por 192.168.</p>` : ""}
     </div>
     <p class="prose small">${icon("user", 14)}<span>En la entrada eligen <b>Jugador</b>, escriben su nombre y se quedan con su personaje.</span></p>
-    ${web ? "" : `<p class="prose small">${icon("globe", 14)}<span>Para jugar cada uno desde su casa, arranca Mesa con «Jugar por internet». Lo explica el README.</span></p>`}
+    ${web || t.state === "opening" || t.state === "failed" ? "" : `<p class="prose small">${icon("globe", 14)}<span>Para jugar cada uno desde su casa, arranca Mesa con «Jugar por internet». Lo explica el README.</span></p>`}
   </div>`);
   on(body, "click", "[data-copy]", async (e, b) => {
     try { await navigator.clipboard.writeText(b.dataset.copy); toast("Dirección copiada", "good"); }

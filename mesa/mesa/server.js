@@ -205,7 +205,7 @@ const handler = async (req, res) => {
 
   try {
     /* Con las direcciones de red del DM: «localhost» no le sirve a nadie más */
-    if (p === "/api/hello") return json(res, 200, { ...engine.hello(), addresses: lanAddresses(), publicUrl });
+    if (p === "/api/hello") return json(res, 200, { ...engine.hello(), addresses: lanAddresses(), publicUrl, tunnel });
 
     if (p === "/api/ping") {
       const ok = clients.has(url.searchParams.get("token") || "");
@@ -322,19 +322,30 @@ const server = secure
   : createServer(handler);
 
 /* ---------- Arranque ---------- */
-function lanAddresses() {
+/* Las direcciones de este ordenador en la red de casa. Se descartan las que
+   no sirven a nadie: 169.254.x.x es un adaptador sin conexión (Windows se la
+   pone sola) y las de máquinas virtuales. Primero va la típica del router. */
+function lanIPs() {
   const out = [];
-  for (const list of Object.values(networkInterfaces())) {
-    for (const net of list || []) if (net.family === "IPv4" && !net.internal) out.push(`${secure ? "https" : "http"}://${net.address}:${PORT}`);
+  for (const [name, list] of Object.entries(networkInterfaces())) {
+    for (const net of list || []) {
+      if (net.family !== "IPv4" && net.family !== 4) continue;
+      if (net.internal || net.address.startsWith("169.254.")) continue;
+      const virtual = /vmware|virtualbox|vbox|hyper-v|vethernet|wsl|docker|loopback|tailscale|zerotier|hamachi/i.test(name)
+        || net.address.startsWith("192.168.56.");
+      const rank = virtual ? 9 : net.address.startsWith("192.168.") ? 0 : net.address.startsWith("10.") ? 1
+        : /^172\.(1[6-9]|2\d|3[01])\./.test(net.address) ? 2 : 5;
+      out.push({ ip: net.address, rank });
+    }
   }
-  return out;
+  out.sort((x, y) => x.rank - y.rank);
+  const real = out.filter(x => x.rank < 9);
+  return (real.length ? real : out).map(x => x.ip);
 }
-const lanIP = () => {
-  for (const list of Object.values(networkInterfaces())) {
-    for (const net of list || []) if (net.family === "IPv4" && !net.internal) return net.address;
-  }
-  return "localhost";
-};
+function lanAddresses() {
+  return lanIPs().map(ip => `${secure ? "https" : "http"}://${ip}:${PORT}`);
+}
+const lanIP = () => lanIPs()[0] || "";
 
 /* ---------- Jugar por internet ----------
    Un túnel de Cloudflare («quick tunnel»): gratis, sin cuenta, sin abrir
@@ -345,22 +356,38 @@ function findCloudflared() {
   const local = path.join(HERE, process.platform === "win32" ? "cloudflared.exe" : "cloudflared");
   return existsSync(local) ? local : "cloudflared";
 }
-function openTunnel() {
+/* Estado del túnel, que también ve el DM en «Cómo entran mis jugadores» */
+let tunnel = { state: INTERNET ? "opening" : "off", error: "" };
+
+/* La dirección de un túnel rápido es «palabras-sueltas.trycloudflare.com».
+   «api.trycloudflare.com» NO lo es: es a quien se le pide el túnel, y sale
+   en los mensajes de error. */
+const QUICK_URL = /https:\/\/(?!api\.)[a-z0-9]+(?:-[a-z0-9]+)+\.trycloudflare\.com/i;
+
+function openTunnel(attempt = 1) {
   const bin = findCloudflared();
+  const log = [];
   let child;
+  tunnel = { state: "opening", error: "" };
   try {
-    child = spawn(bin, ["tunnel", "--no-autoupdate", "--url", `http://localhost:${PORT}`], { stdio: ["ignore", "pipe", "pipe"] });
+    /* 127.0.0.1 y no «localhost»: en Windows «localhost» puede ir por IPv6 y
+       Mesa escucha en IPv4, y el túnel daría error 502 aunque abriera. */
+    child = spawn(bin, ["tunnel", "--no-autoupdate", "--url", `http://127.0.0.1:${PORT}`], { stdio: ["ignore", "pipe", "pipe"] });
   } catch { return tunnelMissing(); }
-  child.on("error", () => tunnelMissing());
+  child.on("error", err => { if (err.code === "ENOENT") tunnelMissing(); else tunnelFailed([err.message], attempt); });
   const seek = chunk => {
-    const m = String(chunk).match(/https:\/\/[a-z0-9-]+\.trycloudflare\.com/i);
+    const text = String(chunk);
+    for (const line of text.split(/\r?\n/)) if (line.trim()) { log.push(line.trim()); if (log.length > 40) log.shift(); }
+    const m = text.match(QUICK_URL);
     if (m && !publicUrl) {
       publicUrl = m[0];
+      tunnel = { state: "open", error: "" };
       console.log(`
   ─────────────────────────────────────────────────────────
   Por internet   ${publicUrl}
   Cualquiera con esta dirección puede entrar como jugador:
   pásala solo a tu grupo. Cambia cada vez que abres Mesa.
+  (Puede tardar unos segundos en responder la primera vez.)
   ─────────────────────────────────────────────────────────
 `);
     }
@@ -368,12 +395,45 @@ function openTunnel() {
   child.stdout.on("data", seek);
   child.stderr.on("data", seek);
   child.on("exit", code => {
-    if (publicUrl) console.log("  El túnel de internet se ha cerrado" + (code ? ` (código ${code})` : "") + ".");
+    const had = publicUrl;
     publicUrl = "";
+    if (had) {
+      console.log("  El túnel de internet se ha cerrado" + (code ? ` (código ${code})` : "") + ". Reintentando…");
+      setTimeout(() => openTunnel(1), 3000);
+    } else if (code !== null) tunnelFailed(log, attempt);
   });
   process.on("exit", () => { try { child.kill(); } catch {} });
 }
+
+/* No se abrió: se dice por qué, con lo que haya contado cloudflared, y se
+   reintenta solo cuando tiene pinta de ser pasajero. */
+function tunnelFailed(log, attempt) {
+  const text = log.join("\n");
+  const errors = log.filter(l => /\b(ERR|error|failed)\b/i.test(l)).slice(-4);
+  let why;
+  if (/429|too many requests/i.test(text)) why = "Cloudflare limita cuántos túneles rápidos se piden seguidos. Suele bastar con esperar un minuto.";
+  else if (/config|ingress|credentials/i.test(text)) why = "cloudflared ha encontrado un archivo de configuración propio (carpeta .cloudflared de tu usuario) que no deja abrir el túnel rápido. Renómbralo o bórralo y vuelve a probar.";
+  else if (/no such host|lookup|dial tcp|i\/o timeout|timeout|connection refused|connectex|network is unreachable|tls|certificate|x509/i.test(text)) why = "No se llega a Cloudflare desde este ordenador. Suele ser el antivirus o el cortafuegos bloqueando cloudflared, una red que lo prohíbe (trabajo, universidad, residencia) o falta de conexión.";
+  else why = "cloudflared se ha cerrado sin dar una dirección.";
+  const retry = attempt < 4;
+  tunnel = { state: retry ? "opening" : "failed", error: why };
+  console.log(`
+  No se ha podido abrir el túnel de internet (intento ${attempt} de 4).
+  ${why}
+${errors.length ? "\n  Lo que dice cloudflared:\n" + errors.map(l => "    " + l.slice(0, 160)).join("\n") + "\n" : ""}`);
+  if (retry) {
+    const wait = [0, 5, 20, 60][attempt];
+    console.log(`  Se vuelve a intentar en ${wait} segundos. Mesa sigue funcionando en tu wifi.\n`);
+    setTimeout(() => openTunnel(attempt + 1), wait * 1000);
+  } else {
+    console.log(`  Ya no se reintenta. Para ver el error completo, en otra ventana:
+    cloudflared tunnel --url http://127.0.0.1:${PORT}
+  Mesa sigue funcionando en tu wifi.
+`);
+  }
+}
 function tunnelMissing() {
+  tunnel = { state: "failed", error: "Falta el programa cloudflared en este ordenador." };
   console.log(`
   Para jugar por internet falta «cloudflared» (gratis, de Cloudflare):
     Windows   winget install --id Cloudflare.cloudflared
@@ -393,7 +453,7 @@ server.listen(PORT, "0.0.0.0", () => {
   Mesa está en marcha${secure ? " (HTTPS)" : ""}.
 
   Tú (DM)        ${scheme}://localhost:${PORT}
-  Tus jugadores  ${scheme}://${ip}:${PORT}
+  Tus jugadores  ${ip ? `${scheme}://${ip}:${PORT}` : "(este ordenador no está conectado a ninguna red)"}
   Código del DM  ${engine.pin}
 
   Los datos se guardan en ${DATA}
