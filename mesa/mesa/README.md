@@ -8,18 +8,36 @@ mapa y los turnos.
 No necesita instalar nada más que Node.js, no tiene dependencias y funciona sin
 internet: basta con que todos estéis en el mismo wifi.
 
+## Probarla sin instalar nada
+
+En **<https://aleexnager.github.io/DnD/>** está la versión de prueba: la misma
+aplicación, pero con la partida corriendo dentro de tu navegador, sin
+servidor. Trae una partida de ejemplo (cuatro personajes y unos goblins al
+otro lado de una puerta) y se guarda en ese navegador.
+
+Entra como **DM** (no pide código) y abre la **Pantalla** en otra pestaña o
+ventana: las dos juegan la misma partida, así que puedes proyectar esa
+pestaña igual que harías en casa. También se puede abrir un **Jugador** en
+una tercera pestaña para ver lo que vería su móvil. Lo que **no** puede es
+recibir a tus jugadores desde sus teléfonos: para eso hace falta el servidor,
+que es lo de abajo. En Chrome para Android, que no comparte la partida entre
+pestañas, cada pestaña lleva la suya.
+
 ## Arrancarla
 
 1. Instala **Node.js** una vez, desde <https://nodejs.org> (opción LTS).
 2. Doble clic en `Abrir Mesa (Windows).bat` o en `Abrir Mesa (Mac y Linux).command`.
    Desde una terminal es `npm start`.
 
+Para jugar cada uno desde su casa, en vez de esos dos archivos usa los de
+**Jugar por internet** (más abajo).
+
 La ventana que se abre te dice tres cosas:
 
 ```
 Tú (DM)        http://localhost:8080
 Tus jugadores  http://192.168.1.34:8080
-Código del DM  4821
+Código del DM  482193
 ```
 
 Tú entras por la primera dirección y eliges «DM» con ese código. Tus jugadores
@@ -28,19 +46,112 @@ La tele o el proyector entran por la misma dirección y eligen «Pantalla».
 
 Esa ventana tiene que quedarse abierta mientras jugáis: es el servidor.
 
-### Jugar sin estar en la misma casa
+### ¿Hace falta estar en la misma wifi?
 
-Mesa habla HTTP normal, así que sirve cualquier túnel. Con
-[Tailscale](https://tailscale.com) instalado en tu ordenador y en el de tus
-jugadores, la dirección de tu máquina en la red privada funciona tal cual. Otra
-opción de un solo comando, mientras dure la sesión:
+Depende de cómo arranques Mesa. En todos los casos el DM es el servidor: la
+partida se guarda en su ordenador y los demás se conectan a él.
 
-```bash
-npx localtunnel --port 8080     # o: cloudflared tunnel --url http://localhost:8080
-```
+| Cómo se arranca | Quién puede entrar | Qué necesitan los jugadores |
+|---|---|---|
+| **Abrir Mesa** | Solo quien esté en **la misma wifi** que el DM | El navegador del móvil, nada más |
+| **Jugar por internet** | **Cualquiera con la dirección**, desde cualquier sitio: su casa, datos del móvil, otra wifi | El navegador del móvil, nada más. **Sin VPN** y sin tocar el router |
+| Con Tailscale (opcional) | Solo quien esté en vuestra red privada de Tailscale | Instalar Tailscale (es una VPN) |
 
-Reparte esa URL y el código del DM solo a tu grupo: quien tenga la dirección
-puede entrar como jugador.
+**Jugar por internet** es un doble clic en `Jugar por internet (Windows).bat`
+o `Jugar por internet (Mac y Linux).command`. La primera vez instala un
+programa gratuito de Cloudflare (`cloudflared`) que abre un túnel: una
+dirección `https://…trycloudflare.com` que la ventana del servidor enseña y
+que también sale en **⋯ → Cómo entran mis jugadores**, con botón de copiar.
+Por esa dirección los móviles pueden además **instalar Mesa como
+aplicación**, porque es HTTPS. Desde una terminal es
+`node server.js --internet`.
+
+Lo que conviene saber:
+
+- **La dirección cambia cada vez** que arrancas Mesa por internet: se pasa
+  por el grupo al empezar la sesión. Una app instalada con la dirección de
+  otro día no encontrará la partida; basta con abrir la nueva.
+- **Quien tenga la dirección puede entrar como jugador.** Por eso:
+  - pásala solo a tu grupo;
+  - cuando estéis todos, **cierra la mesa** (pulsando el contador de
+    conectados, arriba): nadie nuevo entra y los de dentro siguen jugando;
+  - desde ahí mismo puedes **expulsar** a alguien;
+  - el código del DM tiene seis cifras y, tras cinco intentos fallidos, ese
+    aparato espera diez minutos. Nadie puede hacerse DM probando códigos.
+- El ordenador del DM tiene que seguir encendido y con la ventana abierta
+  mientras jugáis, igual que en casa.
+
+Con [Tailscale](https://tailscale.com) instalado en todos los aparatos, la
+dirección de la máquina del DM en esa red funciona tal cual y no cambia
+nunca; a cambio, cada jugador tiene que instalarlo.
+
+## Instalar como aplicación
+
+Mesa es una **aplicación web instalable** (PWA): se abre en su propia ventana,
+sin barra del navegador, con su icono en el escritorio o en la pantalla de
+inicio, y con accesos directos a **DM**, **Jugador** y **Pantalla** (clic
+derecho o pulsación larga en el icono).
+
+- **En el ordenador del DM** (Chrome o Edge), entrando por
+  `http://localhost:8080`: icono de instalar en la barra de direcciones, o el
+  botón **Instalar Mesa como aplicación** de la pantalla de entrada.
+- **En Android**: menú ⋮ → *Instalar aplicación*.
+- **En iPhone y iPad** (Safari): *Compartir* → *Añadir a pantalla de inicio*.
+
+**Jugando por internet ya está resuelto:** la dirección del túnel es HTTPS y
+cualquiera puede instalar Mesa desde ella.
+
+**En casa, por la wifi:** los navegadores solo dejan instalar una aplicación
+desde `localhost` o por **HTTPS**. Desde el ordenador donde corre Mesa funciona
+tal cual; en los móviles, con `http://192.168.x.x` se puede jugar igual de
+bien, pero no instalar. Tres formas de tener HTTPS, de menos a más trabajo:
+
+1. **Tailscale** (recomendado si ya lo usáis, con HTTPS activado en su consola): `tailscale serve --bg 8080`
+   publica Mesa en `https://tu-maquina.tu-red.ts.net` con certificado válido,
+   solo para tu red privada.
+2. **Un túnel** de un comando: `cloudflared tunnel --url http://localhost:8080`
+   da una dirección `https://…trycloudflare.com` mientras dure la sesión.
+3. **Certificado propio** con [mkcert](https://github.com/FiloSottile/mkcert):
+
+   ```bash
+   mkcert -install
+   mkcert 192.168.1.34 localhost        # la IP que te da la ventana de Mesa
+   node server.js --cert 192.168.1.34+1.pem --key 192.168.1.34+1-key.pem
+   ```
+
+   Cada móvil tiene que confiar en la autoridad de mkcert una vez (el archivo
+   `rootCA.pem` que indica `mkcert -CAROOT`). También vale con las variables
+   `MESA_CERT` y `MESA_KEY`.
+
+Instalada o no, la partida vive en el servidor: la aplicación guarda solo el
+código y las imágenes (planos y retratos no se vuelven a descargar), nunca el
+estado. Si el servidor no está en marcha, la entrada lo dice en vez de quedarse
+en blanco.
+
+## Jugadores, personajes y sesiones
+
+- **Cada personaje lo lleva una sola persona.** En la entrada, los que ya
+  lleva alguien conectado salen apagados y con su nombre; no se pueden elegir.
+  Desde dentro tampoco se le puede quitar el personaje a nadie.
+- **No puede haber dos personas conectadas con el mismo nombre** (da igual
+  mayúsculas o minúsculas): el nombre es lo que se lee en el registro y en la
+  charla. Si pasa, se dice junto al botón de entrar.
+- **Bloquear el móvil no te echa.** La sesión se queda guardada aunque se
+  corte la conexión; al volver, sigues en tu ficha sin pasar por la entrada.
+  Y como se guarda en disco, **reiniciar el servidor tampoco echa a nadie**.
+- **Cambiar de móvil.** Si tu sesión está desconectada (el móvil viejo sin
+  batería), entras desde otro aparato con tu personaje y el viejo lo pierde.
+  Si sigue conectado, sal allí primero o pide al DM que lo libere.
+- **El DM manda.** En cada tarjeta se ve quién lleva el personaje, con un
+  punto verde si está conectado. Con el botón de **liberar** (en la tarjeta o
+  en el contador de conectados de arriba) el personaje queda libre y quien lo
+  llevara vuelve a elegir, con un aviso de por qué.
+- Los susurros se reconocen por la sesión y el personaje, no por el nombre:
+  alguien que entra otro día con tu mismo nombre no lee lo que susurraste.
+
+En **⋯ → Cómo entran mis jugadores** sale la dirección de la red del
+ordenador del DM (la de `localhost` no le sirve a nadie más), con un botón
+para copiarla.
 
 ## Idioma
 
@@ -370,13 +481,55 @@ hueco y, cuando alguien llega al borde del plano, **lo que se mueve es él dentr
 del encuadre**, en vez de quedarse el mapa a un lado con una franja negra al
 otro.
 
-Fuera de combate no hay nada encima del mapa: solo el plano, y debajo la party
-centrada. En combate la pantalla se parte: **los tuyos a la izquierda, los
-enemigos a la derecha** y en el centro, en grande, **quien tiene el turno**: retrato, vida,
-clase de armadura, los pies de movimiento que le quedan, si ha gastado ya la
-acción, la adicional o la reacción, los estados que sufre y en qué está
-concentrado. Los que no están en la pelea se apagan, y la tira de iniciativa se
-desplaza sola para que el turno actual quede siempre centrado.
+Fuera de combate no hay nada encima del mapa: solo el plano y, debajo, la
+party **en segundo plano**: una franja fina con cara, nombre, vida y estados.
+En combate **el mapa sigue mandando**: se queda en el centro con todo
+el alto libre, **la party pegada al borde izquierdo y los enemigos pegados al
+borde derecho**, en espejo y con cartas compactas (cara, nombre, vida y
+estados). Si todavía no hay enemigos a la vista, su columna se la queda el
+mapa. **Quien tiene el turno** va en una franja arriba: retrato, vida, clase de
+armadura, los pies de movimiento que le quedan, si ha gastado ya la acción, la
+adicional o la reacción, los estados que sufre, en qué está concentrado y quién
+va después. Debajo, la tira de iniciativa. Los que no están en la pelea se
+apagan. Al empezar y al acabar el combate, las cartas viajan de la franja de
+abajo a la columna de la izquierda (y vuelven) en vez de saltar.
+
+Con la mazmorra llena de fichas, las columnas no necesitan que nadie las
+desplace desde el sofá: primero se compactan y, si aun así no caben, los
+enemigos se **agrupan por tipo** («Goblin ×12, 9 en pie») con un punto de
+color por cada uno según cómo está. En una pantalla estrecha o en vertical
+todo se apila con el mapa primero.
+
+### Proyectar la tele
+
+La pantalla es una ventana más del navegador del DM. En **⋯ → Pantalla de la
+party**:
+
+- **Abrir en una ventana aparte**: sale sin barras y se arrastra al segundo
+  monitor o al proyector. Doble clic dentro y queda a pantalla completa.
+- **Abrir en el otro monitor** (Chrome y Edge): la coloca directamente en la
+  otra pantalla conectada por cable. La primera vez el navegador pide permiso.
+- **Abrir en otra pestaña**: para enviarla al **Chromecast** desde el menú del
+  navegador (*Enviar…* → *Enviar pestaña*).
+
+La pantalla entra sola, sin pasar por el menú de entrada. Aunque esa pestaña
+no sea la que tienes delante, el mapa se mantiene al día: si el navegador no
+le da fotogramas, las fichas se colocan en su sitio en vez de quedarse a
+medio deslizar.
+
+### Movimiento
+
+Las animaciones son pocas y con intención: solo se mueve lo que acaba de
+cambiar. Las fichas **se deslizan** de casilla a casilla (y la cámara que sigue
+a un personaje lo acompaña sin saltos); al empezar un turno, un **aro dorado**
+se abre una vez desde la ficha de quien actúa; un golpe deja un **halo rojo** y
+una cura uno verde, en el mapa y en su carta, y las barras de vida bajan
+deslizándose. Las ventanas, el bestiario y las pestañas entran con un fundido
+corto. Nada se anima en bucle, así que la tele no gasta de más, y quien tenga
+activado «reducir movimiento» en su sistema no ve ninguna animación.
+
+Una criatura que sale de la niebla aparece sin deslizarse: si lo hiciera,
+enseñaría por dónde ha venido.
 
 ## Dónde viven los datos
 
@@ -411,13 +564,20 @@ En la pantalla de la party, doble clic entra y sale de pantalla completa.
 ## Estructura
 
 ```
-server.js              servidor: estático, estado, filtrado por rol y guardado
+server.js              servidor: red, disco y reparto a cada aparato
 public/
   index.html           el documento; la interfaz la monta el JavaScript
+  manifest.webmanifest lo que hace falta para instalarla como aplicación
+  sw.js                trabajador de fondo: guarda el código y las imágenes
+  icons/               iconos de la aplicación (normal, «maskable» y Apple)
   css/mesa.css         estilos
   js/
     main.js            entrada a la partida y reparto de vistas
     net.js             conexión, reconexión y envío de operaciones
+    engine.js          las reglas de la partida (lo usan el servidor y la versión de prueba)
+    local.js           versión de prueba: habla con la partida que corre en el navegador
+    local-host.js      versión de prueba: el «servidor» dentro del navegador
+    local-worker.js    versión de prueba: lo comparte entre pestañas
     schema.js          forma de los datos y migración (lo usan servidor y navegador)
     los.js             muros, luz, visión, distancias y plantillas (compartido)
     attacks.js         leer y lanzar ataques
@@ -443,8 +603,14 @@ data/                  la partida y las imágenes (se crea al arrancar)
   los susurros de otro.
 - Las tiradas de ataque y el reparto de puntos de vida se resuelven en el
   servidor. Nadie puede decidir desde su navegador que ha impactado.
-- Pensado para jugar con amigos en una red de confianza. No hay cuentas ni
-  cifrado: si lo expones a internet, usa un túnel privado y no repartas la URL.
+- El código del DM tiene seis cifras y, tras cinco intentos fallidos, ese
+  aparato espera diez minutos antes de poder probar otro.
+- El DM puede **cerrar la mesa** (no entra nadie nuevo) y **expulsar** a
+  cualquiera desde el contador de conectados.
+- Pensado para jugar con amigos. No hay cuentas: quien tenga la dirección
+  puede entrar como jugador mientras la mesa esté abierta. Por internet, el
+  túnel de «Jugar por internet» cifra la conexión (HTTPS); en casa, por la
+  wifi, va sin cifrar salvo que arranques con `--cert`.
 
 ## Lo que aún no hace
 

@@ -400,9 +400,108 @@ const EN = {
 
   /* La mesa */
   "La mesa": "Table", "enemigos": "enemies",
-  "trivial": "trivial", "fácil": "easy", "media": "medium", "difícil": "hard", "mortal": "deadly"
+  "trivial": "trivial", "fácil": "easy", "media": "medium", "difícil": "hard", "mortal": "deadly",
 
+  /* Instalar como aplicación */
+  "Instalar Mesa como aplicación": "Install Mesa as an app",
+  "Mesa ya está instalada": "Mesa is installed",
+  "No se encuentra el servidor de la partida. ¿Está abierta la ventana de Mesa?":
+    "Can't reach the game server. Is the Mesa window still open?",
+  "Para tenerla como aplicación: botón": "To keep it as an app: tap",
+  "Compartir": "Share", "Añadir a pantalla de inicio": "Add to Home Screen",
+  "Para instalar Mesa como aplicación en este aparato hace falta entrar por HTTPS. Mira «Instalar como aplicación» en el README.":
+    "Installing Mesa as an app on this device needs HTTPS. See “Install as an app” in the README.",
+  "Mesa necesita JavaScript para funcionar.": "Mesa needs JavaScript to run.",
+
+  /* Versión de prueba */
+  "Versión de prueba": "Demo version",
+  "En la versión de prueba no hace falta código.": "The demo version needs no code.",
+  "Todo corre en este navegador, sin servidor. Entra como": "Everything runs in this browser, no server. Join as",
+  "aquí y abre la": "here and open the", "en otra pestaña o ventana: las dos juegan la misma partida y puedes proyectar esa pestaña.":
+    "in another tab or window: both play the same game and you can cast that tab.",
+  "En este navegador cada pestaña lleva su propia partida.": "In this browser each tab keeps its own game.",
+  "Para jugar con los móviles de tus jugadores hace falta el servidor:": "To play with your players' phones you need the server:",
+  "descargar Mesa": "download Mesa", "y abrir": "and run", "Abrir Mesa": "Abrir Mesa",
+
+  /* La tele */
+  "Abrir en una ventana aparte": "Open in a separate window", "Abrir en el otro monitor": "Open on the other monitor",
+  "Abrir en otra pestaña": "Open in another tab",
+  "Para la tele: arrastra esa ventana al monitor o al proyector, o compártela con Chromecast desde el menú del navegador (Enviar… → Enviar pestaña). Doble clic dentro la pone a pantalla completa.":
+    "For the TV: drag that window to the monitor or projector, or cast it with Chromecast from the browser menu (Cast… → Cast tab). Double-click inside for full screen.",
+  "Cómo de heridos están los enemigos": "How hurt the enemies are",
+  "Solo se ve un monitor conectado: se abre en una ventana aparte": "Only one monitor detected: opening a separate window",
+  "El navegador no ha dado permiso para ver los otros monitores": "The browser didn't allow access to the other monitors",
+  "El navegador ha bloqueado la ventana emergente: permítela para este sitio": "The browser blocked the pop-up: allow it for this site",
+  "en pie": "standing", "Secreto": "Secret", "En secreto: nadie más lo ve": "Secret: nobody else sees it",
+  "Curar": "Heal", "Daño": "Damage", "Liberar": "Release", "Liberar personaje": "Release character",
+  "Elige tu personaje": "Choose your character", "Crear mi personaje": "Create my character",
+  "Quédate con uno de los que hay en la mesa o hazte el tuyo.": "Take one of the characters at the table or make your own.",
+  "Quién está conectado": "Who is connected", "En la mesa": "At the table", "Desconectados": "Offline",
+  "Pantalla de la mesa": "Table screen", "Sin personaje": "No character", "Nadie conectado.": "Nobody connected.",
+  "Salir de la partida": "Leave the game", "Turno anterior": "Previous turn", "Añadir al combate": "Add to combat",
+  "Abrir la tele o el proyector y elegir qué enseña": "Open the TV or projector and choose what it shows",
+  "La dirección y el código para unirse": "The address and code to join",
+  "Enseñar una imagen": "Show an image", "Un mapa del tesoro, una carta, un retrato": "A treasure map, a letter, a portrait",
+  "Pedir una tirada": "Ask for a roll", "A quién, qué y con qué dificultad": "Who, what and how hard",
+  "Partida": "Game", "Guardar copia": "Save a copy", "Descarga un archivo con toda la partida": "Downloads a file with the whole game",
+  "Sustituye la partida por la de un archivo": "Replaces the game with one from a file",
+  "Solo cambia en este aparato": "Only changes on this device", "Vuelves a la pantalla de entrada": "Back to the entry screen",
+  "Una hora. Cada personaje decide cuántos dados de golpe gasta desde su ficha.": "One hour. Each character decides how many hit dice to spend from their sheet.",
+  "Ocho horas. Vida, espacios de conjuro y recursos al máximo; baja un nivel de agotamiento.": "Eight hours. Hit points, spell slots and resources to full; one level of exhaustion less.",
+  "Tu personaje": "Your character", "ocupado": "taken", "Escribe tu nombre para entrar.": "Type your name to join.",
+  "Cómo entras": "How you join", "Expulsar": "Kick out", "Mesa cerrada": "Table closed", "Mesa abierta": "Table open",
+  "No entra nadie nuevo. Quien ya está dentro sigue jugando.": "Nobody new can join. Whoever is in keeps playing.",
+  "Cualquiera con la dirección puede entrar como jugador.": "Anyone with the address can join as a player.",
+  "Mesa abierta: se puede entrar": "Table open: people can join", "Mesa cerrada: no entra nadie nuevo": "Table closed: nobody new can join",
+  "Desde cualquier sitio": "From anywhere", "En la misma wifi": "On the same wifi", "En la misma wifi que este ordenador": "On the same wifi as this computer",
+  "Sirve desde casa de cada uno, con datos o con cualquier wifi, y se puede instalar como aplicación. Cualquiera con la dirección puede entrar: pásala solo a tu grupo, y cierra la mesa cuando estéis todos.":
+    "Works from everyone's home, on mobile data or any wifi, and can be installed as an app. Anyone with the address can join: share it only with your group, and close the table once you're all in.",
+  "En la entrada eligen": "At the entrance they choose",
+  "Para jugar cada uno desde su casa, arranca Mesa con «Jugar por internet». Lo explica el README.": "To play from different homes, start Mesa with “Play over the internet”. The README explains it.",
+  "La mesa está cerrada: solo entra el DM. Pídele que la abra.": "The table is closed: only the DM can join. Ask them to open it.",
+  "La mesa está cerrada: pide al DM que la abra para entrar.": "The table is closed: ask the DM to open it so you can join.",
+  "Tu sesión ha terminado: el DM te ha sacado de la mesa o la partida ha empezado de cero.": "Your session ended: the DM removed you from the table or the game restarted.",
+  "Demasiados intentos con el código del DM. Espera unos minutos.": "Too many attempts with the DM code. Wait a few minutes.",
+  "No puedes expulsarte a ti mismo": "You can't kick yourself out", "Mesa cerrada: no entra nadie nuevo ": "Table closed", "Crear criatura": "Create creature", "Dirige la partida": "Runs the game", "FUE": "STR", "DES": "DEX", "SAB": "WIS", "CAR": "CHA", "Copiar": "Copy", "Dirección copiada": "Address copied",
+  "No se pudo copiar: selecciónala y cópiala a mano": "Couldn't copy: select it and copy it by hand",
+  "Conectad los móviles a la": "Connect the phones to the", "misma wifi": "same wifi", "que este ordenador.": "as this computer.",
+  "Abrid esta dirección en el navegador:": "Open this address in the browser:",
+  "Hay varias redes en este ordenador: la buena suele empezar por 192.168.": "This computer has several networks: the right one usually starts with 192.168.",
+  "Eligen": "They choose", ", escriben su nombre y se quedan con su personaje.": ", type their name and take their character.",
+  "Desde fuera de casa, mira «Jugar sin estar en la misma casa» en el README.": "From outside home, see “Playing from different places” in the README.", "Conectado": "Connected", "Desconectado": "Disconnected", "Cantidad": "Amount", "Enviar": "Send", "Clase de armadura": "Armor class", "Velocidad (pies)": "Speed (feet)", "tirar": "roll",
+
+  /* Cómo de herido parece un enemigo (lo escribe el servidor) */
+  "Ileso": "Unhurt", "Con algún rasguño": "Scratched", "Herido": "Wounded", "Malherido": "Badly wounded",
+  "Al borde de caer": "About to fall", "Fuera de combate": "Out of the fight",
+
+  /* Clases y especies del manual: suelen escribirse tal cual en la ficha */
+  "Bárbaro": "Barbarian", "Bárbara": "Barbarian", "Bardo": "Bard", "Barda": "Bard",
+  "Clérigo": "Cleric", "Clériga": "Cleric", "Druida": "Druid", "Guerrero": "Fighter", "Guerrera": "Fighter",
+  "Monje": "Monk", "Monja": "Monk", "Paladín": "Paladin", "Paladina": "Paladin",
+  "Explorador": "Ranger", "Exploradora": "Ranger", "Pícaro": "Rogue", "Pícara": "Rogue",
+  "Hechicero": "Sorcerer", "Hechicera": "Sorcerer", "Brujo": "Warlock", "Bruja": "Warlock",
+  "Mago": "Wizard", "Maga": "Wizard", "Artífice": "Artificer",
+  "Humano": "Human", "Humana": "Human", "Elfo": "Elf", "Elfa": "Elf", "Enano": "Dwarf", "Enana": "Dwarf",
+  "Mediano": "Halfling", "Mediana": "Halfling", "Gnomo": "Gnome", "Gnoma": "Gnome",
+  "Semielfo": "Half-elf", "Semielfa": "Half-elf", "Semiorco": "Half-orc", "Semiorca": "Half-orc",
+  "Dracónido": "Dragonborn", "Dracónida": "Dragonborn", "Tiflin": "Tiefling", "Tiefling": "Tiefling"
 };
+
+/* Tamaños y tipos de criatura, para «Humanoide pequeño» y compañía */
+const SIZES = { diminuto: "Tiny", pequeño: "Small", mediano: "Medium", grande: "Large", enorme: "Huge", gargantuesco: "Gargantuan" };
+const TYPES = {
+  humanoide: "humanoid", bestia: "beast", "no muerto": "undead", monstruosidad: "monstrosity", gigante: "giant",
+  dragón: "dragon", aberración: "aberration", celestial: "celestial", constructo: "construct", elemental: "elemental",
+  feérico: "fey", infernal: "fiend", demonio: "fiend", diablo: "fiend", planta: "plant", cieno: "ooze", criatura: "creature"
+};
+function creature(text) {
+  const t = text.trim().toLowerCase();
+  let m = t.match(/^(.+?) (diminuto|pequeño|mediano|grande|enorme|gargantuesco)(.*)$/);
+  if (m && TYPES[m[1]]) return `${SIZES[m[2]]} ${TYPES[m[1]]}${m[3]}`;
+  m = t.match(/^(diminuto|pequeño|mediano|grande|enorme|gargantuesco) (.+?)$/);
+  if (m && TYPES[m[2]]) return `${SIZES[m[1]]} ${TYPES[m[2]]}`;
+  return null;
+}
 
 /* Traduce una palabra suelta si está en el diccionario, y si no la deja igual.
    Lo usan los patrones para las partes que sí se pueden traducir. */
@@ -415,6 +514,29 @@ const PATTERNS = [
   [/^Ronda (\d+) · turno de$/i, "Round $1 · turn of"],
   [/^después: (.+)$/, "next: $1"],
   [/^nivel (\d+)$/i, "level $1"],
+  /* «Pícara Elfa nivel 3»: clase y especie sueltas y el nivel al final */
+  [/^(.+?) nivel (\d+)$/i, (m, who, n) => `${who.split(" ").map(w => word(w)).join(" ")} level ${n}`],
+  [/^Turno de ([^·]+)$/, "$1's turn"],
+  [/^después ([^·]+)$/, "next $1"],
+  [/^Concentrado en ([^·]+)$/, "Concentrating on $1"],
+  [/^le habéis hecho (\d+) de daño$/, "you've dealt $1 damage"],
+  [/^Lo que le queda a (.+) en este turno$/, "What $1 has left this turn"],
+  [/^(.+) no tiene ningún ataque apuntado\. Añádelo en su ficha\.$/, "$1 has no attacks listed. Add one on their sheet."],
+  [/^Ronda (\d+) · le toca a$/i, "Round $1 · up now"],
+  [/^(\d+) en pie$/, "$1 standing"],
+  [/^¿Expulsar a (.+)\? Su aparato vuelve a la entrada\.( Cierra la mesa si no quieres que vuelva a entrar\.)?$/,
+    (m, who, tail) => `Kick ${who} out? Their device goes back to the entrance.${tail ? " Close the table if you don't want them back." : ""}`],
+  [/^(.+) ha salido de la mesa$/, "$1 has left the table"],
+  [/^Le toca a$/, "Up now:"],
+  [/^Lleva a (.+)$/, "Plays $1"], [/^Llevaba a (.+)$/, "Played $1"],
+  [/^Ya no llevas a (.+)\. Elige personaje para seguir\.$/, "You no longer play $1. Choose a character to continue."],
+  [/^¿Liberar a (.+)\? Quien lo lleve volverá a elegir personaje\.$/, "Release $1? Whoever plays them will choose again."],
+  [/^(.+) queda libre$/, "$1 is free"],
+  [/^(.+) ya lo lleva (.+) en otro aparato\. Si eres tú, sal allí primero o pide al DM que lo libere\.$/,
+    "$2 is already playing $1 on another device. If that's you, leave there first or ask the DM to release it."],
+  [/^Ya hay alguien conectado como «(.+)»\. Elige otro nombre\.$/, "Someone is already connected as “$1”. Choose another name."],
+  [/^Dado de golpe \((\d+)\)$/, "Hit die ($1)"],
+  [/^(.+) \(pantalla\)$/, (m, who) => `${word(who)} (screen)`],
   [/^VD (.+) · (\d+) PX$/, "CR $1 · $2 XP"],
   [/^CA (\d+)$/, "AC $1"],
   [/^(\d+) pies · (\d+) casillas?$/, "$1 feet · $2 squares"],
@@ -486,16 +608,40 @@ let observer = null;
 function translate(text) {
   const raw = text.trim();
   if (!raw) return null;
-  if (EN[raw]) return text.replace(raw, EN[raw]);
-  /* Los párrafos de las plantillas llegan partidos en varias líneas con su
-     sangría: se comparan como una sola línea para no tener que repetir cada
-     frase con sus espacios exactos. */
-  const flat = raw.replace(/\s+/g, " ");
-  if (EN[flat]) return text.replace(raw, EN[flat]);
-  for (const [re, out] of PATTERNS) {
-    if (re.test(raw)) return text.replace(raw, raw.replace(re, out));
+  const whole = translateOne(raw);
+  if (whole !== null) return text.replace(raw, whole);
+  /* Una lista en varias líneas (quién está conectado): línea a línea */
+  if (raw.includes("\n")) {
+    const lines = raw.split("\n").map(l => translate(l) ?? l);
+    const out = lines.join("\n");
+    return out === raw ? null : text.replace(raw, out);
+  }
+  /* Las líneas compuestas con «·» (clase · especie · nivel, herida · daño
+     hecho, ronda · quién va después) se traducen trozo a trozo. */
+  if (raw.includes(" · ")) {
+    let changed = false;
+    const parts = raw.split(" · ").map(part => {
+      const out = translateOne(part);
+      if (out === null) return part;
+      changed = true;
+      return out;
+    });
+    if (changed) return text.replace(raw, parts.join(" · "));
   }
   return null;
+}
+
+/* Los párrafos de las plantillas llegan partidos en varias líneas con su
+   sangría: se comparan como una sola línea para no tener que repetir cada
+   frase con sus espacios exactos. */
+function translateOne(raw) {
+  if (EN[raw]) return EN[raw];
+  const flat = raw.replace(/\s+/g, " ");
+  if (EN[flat]) return EN[flat];
+  for (const [re, out] of PATTERNS) {
+    if (re.test(raw)) return raw.replace(re, out);
+  }
+  return creature(raw);
 }
 
 /* Un pequeño selector de idioma, igual en todas las vistas. */
@@ -541,6 +687,13 @@ export function startI18n() {
   observer = new MutationObserver(records => {
     if (working || lang === "es") return;
     for (const r of records) {
+      /* Un título o un texto de ayuda que se cambia después de pintar */
+      if (r.type === "attributes") {
+        const v = r.target.getAttribute(r.attributeName);
+        const out = v && translate(v);
+        if (out !== null && out !== undefined && out !== v) { working = true; r.target.setAttribute(r.attributeName, out); working = false; }
+        continue;
+      }
       if (r.type === "characterData") { const out = translate(r.target.nodeValue); if (out !== null) { working = true; r.target.nodeValue = out; working = false; } }
       for (const node of r.addedNodes) {
         if (node.nodeType === 3) { const out = translate(node.nodeValue); if (out !== null) { working = true; node.nodeValue = out; working = false; } }
@@ -548,7 +701,7 @@ export function startI18n() {
       }
     }
   });
-  observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+  observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ATTRS });
   sweep(document.body);
 }
 

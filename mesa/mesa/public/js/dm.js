@@ -1,18 +1,19 @@
 /* Vista del DM: todo a la vista y todo editable. */
 
-import { $, el, on, esc, lines, sign, pct, hpTone, initials, imgURL, toast, modal, confirmBox, shrinkImage, clamp } from "./util.js";
+import { $, el, on, esc, lines, sign, pct, hpTone, hpBar, tweenBars, initials, imgURL, toast, modal, confirmBox, shrinkImage, clamp } from "./util.js";
 import { CONDITIONS, conditionName, ABILITIES, SKILLS, PIN_KINDS, modOf, normalizeChar, normalizeBeast, normalizeMap, normalizePin, normalizePortal, uid, encounterDifficulty } from "./schema.js";
 import { openAttacks, attacksOf } from "./attacks.js";
 import { feetChars } from "./los.js";
-import { store, onState, onPresence, onStatus, op, patchChar, patchSession, patchMap, uploadImage, leave } from "./net.js";
+import { store, onState, onPresence, onStatus, op, patchChar, patchSession, patchMap, uploadImage, leave, lobby } from "./net.js";
 import { dicePanel, renderLog, throwDice, tellTable, currentMode, isSecret } from "./dice-panel.js";
 import { openCharEditor, openConditions } from "./char-editor.js";
 import { MapView } from "./map.js";
 import { langPicker } from "./i18n.js";
-import { icon } from "./icons.js";
+import { icon, withIcon } from "./icons.js";
 import { rollHitPoints } from "./dice.js";
 
 let tab = "mesa";
+let shownTab = null;
 let openCards = new Set();
 let mapView = null;
 let mapTool = "token";
@@ -40,17 +41,19 @@ export function mountDM(root) {
           <input class="campaign" id="campaign" aria-label="Nombre de la campaña">
         </div>
         <nav class="tabs" role="tablist">
-          <button role="tab" data-tab="mesa" aria-selected="true">La mesa</button>
-          <button role="tab" data-tab="mapa" aria-selected="false">Mapa</button>
+          <button role="tab" data-tab="mesa" aria-selected="true">${withIcon("users", "La mesa")}</button>
+          <button role="tab" data-tab="mapa" aria-selected="false">${withIcon("map", "Mapa")}</button>
         </nav>
         <span class="spacer"></span>
-        <div class="who" id="presence"></div>
-        <button class="btn sm" id="bestiaryBtn">Bestiario</button>
-        <button class="btn sm" id="combatBtn">Iniciar combate</button>
-        <button class="btn sm" id="restBtn">Descansar</button>
-        <button class="icon-btn" id="undoBtn" title="Deshacer el último cambio">${icon("undo")}</button>
-        <button class="icon-btn" id="moreBtn" aria-label="Más opciones" title="Más opciones">${icon("more")}</button>
-        <button class="btn primary sm" id="addBtn">Añadir personaje</button>
+        <button class="presence" id="presence" type="button" title="Quién está conectado"></button>
+        <div class="top-actions">
+          <button class="btn sm" id="bestiaryBtn" title="Bestiario">${withIcon("book", "Bestiario")}</button>
+          <button class="btn sm" id="combatBtn" title="Combate">${withIcon("swords", "Iniciar combate")}</button>
+          <button class="btn sm" id="restBtn" title="Descansar">${withIcon("moon", "Descansar")}</button>
+          <button class="icon-btn" id="undoBtn" title="Deshacer el último cambio" aria-label="Deshacer el último cambio">${icon("undo")}</button>
+          <button class="icon-btn" id="moreBtn" aria-label="Más opciones" title="Más opciones">${icon("more")}</button>
+          <button class="btn primary sm" id="addBtn" title="Añadir personaje">${withIcon("userPlus", "Añadir personaje")}</button>
+        </div>
       </header>
       <div class="rail hidden" id="rail"></div>
       <div class="showing hidden" id="showing"></div>
@@ -79,9 +82,10 @@ export function mountDM(root) {
   $("#restBtn", root).addEventListener("click", openRest);
   $("#undoBtn", root).addEventListener("click", () => { op("undo"); toast("Deshecho"); });
   $("#moreBtn", root).addEventListener("click", openMenu);
+  $("#presence", root).addEventListener("click", openPresence);
 
   onStatus(ok => $("#offline", root).classList.toggle("hidden", ok));
-  onPresence(renderPresence);
+  onPresence(list => { renderPresence(list); if (tab === "mesa" && doc()) renderTable(); });
   onState(render);
   bindTable(root);
   bindKeys();
@@ -93,9 +97,62 @@ function renderPresence(list = store.presence) {
   const host = $("#presence");
   if (!host) return;
   const others = list.filter(p => p.role !== "dm");
-  host.innerHTML = `<span class="dot ${store.online ? "" : "off"}"></span>
-    <span class="pill">${others.length} en la mesa</span>`;
-  host.title = others.map(p => p.name + (p.role === "screen" ? " (pantalla)" : "")).join("\n") || "Nadie más conectado";
+  const locked = doc() && session().locked;
+  host.classList.toggle("locked", !!locked);
+  host.innerHTML = `<span class="dot ${store.online ? "" : "off"}"></span>${icon(locked ? "lock" : "wifi", 16)}<span class="lbl">${others.length} en la mesa</span><span class="count">${others.length}</span>`;
+  host.title = locked ? "Mesa cerrada: no entra nadie nuevo" : "Quién está conectado";
+}
+
+/* Quién está conectado y con qué personaje. Desde aquí se libera uno. */
+const ROLE_ICON = { dm: "crown", player: "user", screen: "tv" };
+function openPresence() {
+  const list = store.presence;
+  const row = p => {
+    const c = p.charId ? byId(p.charId) : null;
+    return `<div class="person">
+      <span class="person-ico">${icon(ROLE_ICON[p.role] || "user", 18)}</span>
+      <span class="person-id"><b>${esc(p.name)}</b><small>${p.role === "dm" ? "Dirige la partida" : p.role === "screen" ? "Pantalla de la mesa" : c ? "Lleva a " + esc(c.name) : "Sin personaje"}</small></span>
+      ${c ? `<button class="btn sm" data-release="${c.id}" title="Liberar personaje">${withIcon("unlink", "Liberar")}</button>` : ""}
+      ${p.id !== store.session.id ? `<button class="icon-btn danger" data-kick="${p.id}" data-name="${esc(p.name)}" title="Expulsar" aria-label="Expulsar">${icon("ban", 17)}</button>` : ""}
+    </div>`;
+  };
+  const locked = !!session().locked;
+  const offline = pcs().filter(c => c.claimedBy && !list.some(p => p.charId === c.id));
+  const body = el(`<div class="people">
+    <button class="lock-row ${locked ? "on" : ""}" data-lock>
+      <span class="menu-ico">${icon(locked ? "lock" : "unlock", 20)}</span>
+      <span class="menu-text"><b>${locked ? "Mesa cerrada" : "Mesa abierta"}</b><small>${locked
+        ? "No entra nadie nuevo. Quien ya está dentro sigue jugando."
+        : "Cualquiera con la dirección puede entrar como jugador."}</small></span>
+      <span class="switch" aria-hidden="true"><i></i></span>
+    </button>
+    ${list.map(row).join("") || `<p class="prose">Nadie conectado.</p>`}
+    ${offline.length ? `<h4 class="people-sub">Desconectados</h4>${offline.map(c => `<div class="person off">
+      <span class="person-ico">${icon("user", 18)}</span>
+      <span class="person-id"><b>${esc(c.claimedBy)}</b><small>Llevaba a ${esc(c.name)}</small></span>
+      <button class="btn sm" data-release="${c.id}" title="Liberar personaje">${withIcon("unlink", "Liberar")}</button>
+    </div>`).join("")}` : ""}
+  </div>`);
+  const m = modal({ title: "En la mesa", body, actions: [{ label: "Cerrar" }] });
+  on(body, "click", "[data-release]", (e, b) => { releaseChar(byId(b.dataset.release)); m.close(); });
+  on(body, "click", "[data-lock]", () => {
+    patchSession({ locked: !locked });
+    toast(locked ? "Mesa abierta: se puede entrar" : "Mesa cerrada: no entra nadie nuevo", "good");
+    m.close();
+  });
+  on(body, "click", "[data-kick]", async (e, b) => {
+    m.close();
+    if (!await confirmBox(`¿Expulsar a ${b.dataset.name}? Su aparato vuelve a la entrada.${session().locked ? "" : " Cierra la mesa si no quieres que vuelva a entrar."}`, { okLabel: "Expulsar" })) return;
+    op("client.kick", { id: b.dataset.kick });
+    toast(`${b.dataset.name} ha salido de la mesa`, "good");
+  });
+}
+
+async function releaseChar(c) {
+  if (!c) return;
+  if (!await confirmBox(`¿Liberar a ${c.name}? Quien lo lleve volverá a elegir personaje.`, { danger: false, okLabel: "Liberar" })) return;
+  op("char.release", { id: c.id });
+  toast(`${c.name} queda libre`, "good");
 }
 
 /* Alguien ha pisado una casilla con nota: se enseña una vez, aquí y ahora. */
@@ -128,9 +185,14 @@ function noticeStep() {
 function render() {
   if (!doc()) return;
   const campaign = $("#campaign");
-  if (campaign && document.activeElement !== campaign) campaign.value = session().title;
+  if (campaign && document.activeElement !== campaign) {
+    const t = session().title;
+    campaign.value = t === "Campaña sin nombre" ? "" : t;
+    campaign.placeholder = "Campaña sin nombre";
+  }
 
-  $("#combatBtn").textContent = session().combat.on ? "Terminar combate" : "Iniciar combate";
+  $("#combatBtn").innerHTML = withIcon("swords", session().combat.on ? "Terminar combate" : "Iniciar combate");
+  $("#combatBtn").classList.toggle("on", session().combat.on);
   $("#tableView").classList.toggle("hidden", tab !== "mesa");
   $("#mapPane").classList.toggle("hidden", tab !== "mapa");
 
@@ -146,7 +208,13 @@ function render() {
   }
 
   renderRail();
-  if (tab === "mesa") renderTable(); else renderMap();
+  const switched = tab !== shownTab;
+  if (tab === "mesa") { renderTable(); tweenBars($("#tableView"), "dm:", switched); } else renderMap();
+  if (switched) {
+    shownTab = tab;
+    const pane = $(tab === "mesa" ? "#tableView" : "#mapPane");
+    pane.classList.remove("view-in"); void pane.offsetWidth; pane.classList.add("view-in");
+  }
   renderLog($("#log"));
   renderPresence();
   if (drawerOpen) renderBestiary();
@@ -163,33 +231,39 @@ function renderRail() {
   const left = now ? Math.max(0, (now.speed || 30) - (used.move || 0)) : 0;
 
   rail.innerHTML = `
-    <div class="round"><b class="tnum">${c.round}</b><span>ronda</span></div>
-    <div class="strip">
-      ${order.map((x, i) => `
-        <span class="turn-slot">
-          <button class="turn ${i === c.index ? "now" : ""} ${x.hp <= 0 ? "down" : ""}"
-                  data-goto="${i}" data-turn-id="${x.id}" draggable="true">
-            <span class="pip" style="background:${esc(x.color)}">${x.initiative}</span>
-            <b>${esc(x.name)}</b>
-            <small>${x.kind === "pc" ? "CA " + x.ac : x.hp <= 0 ? "fuera" : x.hp + "/" + x.maxHp}${
-              (x.conditions || []).length ? " · " + esc(x.conditions.map(conditionName).join(", ")) : ""}</small>
-          </button>
-          <button class="turn-drop" data-drop-turn="${x.id}" title="Sacar del combate" aria-label="Sacar del combate">${icon("close", 12)}</button>
-        </span>`).join("")}
+    <div class="rail-main">
+      <div class="round"><b class="tnum">${c.round}</b><span>ronda</span></div>
+      <div class="strip">
+        ${order.map((x, i) => `
+          <span class="turn-slot">
+            <button class="turn ${i === c.index ? "now" : ""} ${x.hp <= 0 ? "down" : ""}"
+                    data-goto="${i}" data-turn-id="${x.id}" draggable="true">
+              <span class="pip" style="background:${esc(x.color)}">${x.initiative}</span>
+              <b>${esc(x.name)}</b>
+              <small>${x.kind === "pc" ? "CA " + x.ac : x.hp <= 0 ? "fuera" : x.hp + "/" + x.maxHp}${
+                (x.conditions || []).length ? " · " + esc(x.conditions.map(conditionName).join(", ")) : ""}</small>
+            </button>
+            <button class="turn-drop" data-drop-turn="${x.id}" title="Sacar del combate" aria-label="Sacar del combate">${icon("close", 12)}</button>
+          </span>`).join("")}
+      </div>
+      <div class="rail-nav">
+        <button class="icon-btn" data-act="prevTurn" title="Turno anterior" aria-label="Turno anterior">${icon("prev")}</button>
+        <button class="btn sm primary" data-act="nextTurn" title="Siguiente turno">${withIcon("skip", "Siguiente turno")}</button>
+      </div>
     </div>
-    ${now ? `<div class="turn-tools" title="Lo que le queda a ${esc(now.name)} en este turno">
-      <button class="chip ${used.action ? "spent" : ""}" data-use="action">Acción</button>
-      <button class="chip ${used.bonus ? "spent" : ""}" data-use="bonus">Adicional</button>
-      <button class="chip ${used.reaction ? "spent" : ""}" data-use="reaction">Reacción</button>
-      <span class="chip ${left ? "" : "spent"}">${left} de ${now.speed} pies</span>
-      <button class="chip" data-act="attackNow">Atacar</button>
-      <button class="chip" data-act="delay">Retrasar</button>
-    </div>` : ""}
-    <div class="row" style="flex:none;gap:6px">
-      <button class="btn sm" data-act="rollInit">Tirar iniciativa</button>
-      <button class="btn sm" data-act="addToOrder">Añadir…</button>
-      <button class="btn sm" data-act="prevTurn">Anterior</button>
-      <button class="btn sm primary" data-act="nextTurn">Siguiente turno</button>
+    <div class="rail-sub">
+      ${now ? `<span class="rail-who">Le toca a <b>${esc(now.name)}</b></span>
+      <div class="turn-tools" title="Lo que le queda a ${esc(now.name)} en este turno">
+        <button class="chip ${used.action ? "spent" : ""}" data-use="action">Acción</button>
+        <button class="chip ${used.bonus ? "spent" : ""}" data-use="bonus">Adicional</button>
+        <button class="chip ${used.reaction ? "spent" : ""}" data-use="reaction">Reacción</button>
+        <span class="chip ${left ? "" : "spent"}">${icon("boot", 14)}<span>${left} de ${now.speed} pies</span></span>
+        <button class="chip" data-act="attackNow">${icon("sword", 14)}<span>Atacar</span></button>
+        <button class="chip" data-act="delay">${icon("hourglass", 14)}<span>Retrasar</span></button>
+      </div>` : ""}
+      <span class="spacer"></span>
+      <button class="chip" data-act="rollInit">${icon("dice", 14)}<span>Tirar iniciativa</span></button>
+      <button class="chip" data-act="addToOrder">${icon("plus", 14)}<span>Añadir al combate</span></button>
     </div>`;
 
   /* Reordenar la iniciativa arrastrando */
@@ -237,6 +311,12 @@ function renderTable() {
       <div class="grid">${monsters.map(cardHTML).join("")}</div>` : ""}`;
 }
 
+/* Quién lleva este personaje y si está conectado ahora mismo */
+function holderPill(c) {
+  const live = store.presence.find(p => p.charId === c.id && p.role === "player");
+  return `<span class="pill holder ${live ? "on" : "off"}" title="${live ? "Conectado" : "Desconectado"}">${icon("user", 12)}${esc(live ? live.name : c.claimedBy)}</span>`;
+}
+
 function cardHTML(c) {
   const p = pct(c);
   const open = openCards.has(c.id);
@@ -246,18 +326,19 @@ function cardHTML(c) {
     : `<div class="avatar" style="--tone:${esc(c.color)}">${initials(c.name)}</div>`;
 
   return `
-  <article class="card ${c.hp <= 0 ? "down" : ""}" data-id="${c.id}" style="--tone:${esc(c.color)}">
+  <article class="card ${c.hp <= 0 ? "down" : ""}" data-id="${c.id}" data-flash style="--tone:${esc(c.color)}">
     <div class="head">
       ${avatar}
       <div class="id">
         <b>${esc(c.name)}</b>
         <small>${monster
           ? esc([c.sizeType, c.cr ? "VD " + c.cr : ""].filter(Boolean).join(" · "))
-          : esc([c.className, c.race, "nivel " + c.level, c.claimedBy ? "· " + c.claimedBy : ""].filter(Boolean).join(" "))}</small>
+          : esc([c.className, c.race, "nivel " + c.level].filter(Boolean).join(" "))}</small>
       </div>
       <div class="acts">
         ${monster ? `<button class="icon-btn" data-act="hide" title="${c.hidden ? "Oculto para la party" : "Visible para la party"}">${icon(c.hidden ? "eyeOff" : "eye")}</button>
           <button class="icon-btn" data-act="clone" title="Duplicar">${icon("copy")}</button>` : ""}
+        ${!monster && c.claimedBy ? `<button class="icon-btn" data-act="release" title="Liberar personaje">${icon("unlink")}</button>` : ""}
         <button class="icon-btn" data-act="edit" title="Editar ficha">${icon("pencil")}</button>
         <button class="icon-btn" data-act="remove" title="Quitar de la mesa">${icon("close")}</button>
         <button class="icon-btn" data-act="fold" title="Ver más" aria-expanded="${open}">${icon(open ? "up" : "down")}</button>
@@ -271,17 +352,17 @@ function cardHTML(c) {
         <span class="spacer"></span>
         <span class="pill">CA <b>${c.ac}</b></span>
       </div>
-      <div class="bar"><i class="${hpTone(p)}" style="width:${p}%"></i></div>
+      ${hpBar(c.id, p)}
     </div>
 
     <div class="dealer">
-      <button class="btn sm" data-act="damage" title="Restar vida">−</button>
-      <input class="tnum" data-amount type="number" min="0" placeholder="0" inputmode="numeric">
-      <button class="btn sm" data-act="heal" title="Curar">+</button>
-      <button class="btn sm" data-act="temp" title="Vida temporal">Temp</button>
-      <button class="btn sm" data-act="conditions" title="Estados">Estados</button>
-      <button class="btn sm" data-act="attack" title="Tirar un ataque">Atacar</button>
-      <button class="btn sm ${targetId === c.id ? "primary" : ""}" data-act="target" title="Apuntar con los ataques">${icon("target")}</button>
+      <button class="btn sm hurt" data-act="damage" title="Restar vida" aria-label="Restar vida">${icon("minus")}</button>
+      <input class="tnum" data-amount type="number" min="0" placeholder="0" inputmode="numeric" aria-label="Cantidad">
+      <button class="btn sm heal" data-act="heal" title="Curar" aria-label="Curar">${icon("plus")}</button>
+      <button class="btn sm" data-act="temp" title="Vida temporal">${withIcon("shieldPlus", "Temp", 16)}</button>
+      <button class="btn sm" data-act="conditions" title="Estados">${withIcon("sparkle", "Estados", 16)}</button>
+      <button class="btn sm" data-act="attack" title="Tirar un ataque">${withIcon("sword", "Atacar", 16)}</button>
+      <button class="btn sm ${targetId === c.id ? "primary" : ""}" data-act="target" title="Apuntar con los ataques" aria-label="Apuntar con los ataques">${icon("target")}</button>
     </div>
 
     <div class="meta">
@@ -289,8 +370,9 @@ function cardHTML(c) {
       <span class="pill">Velocidad <b>${c.speed}</b></span>
       ${c.concentration ? `<span class="pill conc" data-act="concSave" data-dc="10" title="Tirar la salvación de concentración">Concentrado en ${esc(c.concentration)} · tirar</span>` : ""}
       ${c.exhaustion ? `<span class="pill cond">Agotamiento ${c.exhaustion}</span>` : ""}
-      ${c.conditions.map(id => `<span class="pill cond" title="${esc((CONDITIONS.find(x => x.id === id) || {}).hint || "")}" data-act="dropCond" data-cond="${id}">${esc(conditionName(id))}${(c.condMeta || {})[id] ? " " + c.condMeta[id] + "r" : ""} ✕</span>`).join("")}
-      ${c.inspiration ? '<span class="pill tag">Inspiración</span>' : ""}
+      ${c.conditions.map(id => `<span class="pill cond" title="${esc((CONDITIONS.find(x => x.id === id) || {}).hint || "")}" data-act="dropCond" data-cond="${id}">${esc(conditionName(id))}${(c.condMeta || {})[id] ? " " + c.condMeta[id] + "r" : ""}${icon("close", 11)}</span>`).join("")}
+      ${c.inspiration ? `<span class="pill tag">${icon("star", 12)}Inspiración</span>` : ""}
+      ${!monster && c.claimedBy ? holderPill(c) : ""}
       ${c.mx !== null ? '<span class="pill tag">En el mapa</span>' : ""}
     </div>
 
@@ -327,7 +409,7 @@ function detailHTML(c) {
     ${!monster ? `<div class="deaths">
       <span class="set ok">Éxitos ${[0, 1, 2].map(i => `<button data-act="death" data-kind="ok" data-n="${i + 1}" class="${c.deathOk > i ? "on" : ""}"></button>`).join("")}</span>
       <span class="set bad">Fallos ${[0, 1, 2].map(i => `<button data-act="death" data-kind="fail" data-n="${i + 1}" class="${c.deathFail > i ? "on" : ""}"></button>`).join("")}</span>
-      <button class="btn sm" data-act="deathRoll">Tirar salvación de muerte</button>
+      <button class="btn sm" data-act="deathRoll">${withIcon("skull", "Tirar salvación de muerte", 16)}</button>
     </div>` : ""}
     ${block("Sentidos", c.senses)}${block("Idiomas", c.languages)}${block("Resistencias", c.resistances)}
     ${block("Rasgos", c.traits)}${block("Acciones", c.actions)}
@@ -356,6 +438,7 @@ function bindTable(root) {
         return render();
       case "edit": return c.kind === "monster" ? openMonsterInstance(c) : openCharEditor(c, {});
       case "remove": return removeChar(c);
+      case "release": return releaseChar(c);
       case "clone": return cloneMonster(c);
       case "hide": return patchChar(c.id, { hidden: !c.hidden });
       case "damage": return dealDamage(c, amount(), card);
@@ -691,10 +774,15 @@ function step(dir) {
 
 /* ---------- Descansos ---------- */
 function openRest() {
-  const body = el(`<div class="row" style="flex-direction:column">
-    <button class="btn" data-rest="short">Descanso corto</button>
-    <button class="btn" data-rest="long">Descanso largo</button>
-    <p class="prose" style="font-size:12px">En el corto cada uno decide cuántos dados de golpe gasta; en el largo se recupera todo.</p>
+  const body = el(`<div class="choice-list">
+    <button class="choice" data-rest="short">
+      <span class="choice-ico">${icon("fire", 26)}</span>
+      <span class="choice-text"><b>Descanso corto</b><small>Una hora. Cada personaje decide cuántos dados de golpe gasta desde su ficha.</small></span>
+    </button>
+    <button class="choice" data-rest="long">
+      <span class="choice-ico">${icon("moon", 26)}</span>
+      <span class="choice-text"><b>Descanso largo</b><small>Ocho horas. Vida, espacios de conjuro y recursos al máximo; baja un nivel de agotamiento.</small></span>
+    </button>
   </div>`);
   const m = modal({ title: "Descansar", body, actions: [{ label: "Cerrar" }] });
   on(body, "click", "[data-rest]", (e, b) => { m.close(); b.dataset.rest === "long" ? longRest() : shortRest(); });
@@ -771,15 +859,17 @@ function toggleDrawer(force) {
   node = el(`
     <aside class="drawer" id="drawer">
       <header>
-        <h2>Bestiario</h2>
+        <h2>${icon("book", 20)}<span>Bestiario</span></h2>
         <span class="spacer"></span>
-        <button class="btn sm" data-beast="new">Crear</button>
-        <button class="icon-btn" data-beast="close">${icon("close")}</button>
+        <button class="btn sm" data-beast="new" title="Crear criatura">${withIcon("plus", "Crear", 16)}</button>
+        <button class="icon-btn" data-beast="close" title="Cerrar" aria-label="Cerrar">${icon("close")}</button>
       </header>
-      <div style="padding:0 14px"><input type="search" id="beastSearch" placeholder="Buscar criatura" value="${esc(beastQuery)}"></div>
+      <div class="drawer-search"><input type="search" id="beastSearch" placeholder="Buscar criatura" aria-label="Buscar criatura" value="${esc(beastQuery)}"></div>
       <div class="body" id="beastList"></div>
     </aside>`);
   document.body.appendChild(node);
+  const onEsc = e => { if (e.key === "Escape" && !document.querySelector(".modal-back")) { document.removeEventListener("keydown", onEsc); toggleDrawer(false); } };
+  document.addEventListener("keydown", onEsc);
   node.querySelector("#beastSearch").addEventListener("input", e => { beastQuery = e.target.value; renderBestiary(); });
   on(node, "click", "[data-beast]", (e, b) => {
     const action = b.dataset.beast;
@@ -1297,16 +1387,22 @@ function openMapSettings(map) {
 
 /* ---------- Menú ---------- */
 function openMenu() {
-  const body = el(`<div class="row" style="flex-direction:column">
-    <button class="btn" data-menu="export">Guardar copia de la partida</button>
-    <button class="btn" data-menu="import">Cargar una copia</button>
-    <button class="btn" data-menu="handout">Enseñar una imagen a la mesa</button>
-    <button class="btn" data-menu="ask">Pedir una tirada a la party</button>
-    <button class="btn" data-menu="screen">Pantalla de la party (la tele)</button>
+  const item = (key, ico, title, sub, tone = "") => `<button class="menu-item ${tone}" data-menu="${key}">
+      <span class="menu-ico">${icon(ico, 20)}</span>
+      <span class="menu-text"><b>${title}</b><small>${sub}</small></span>
+    </button>`;
+  const body = el(`<div class="menu-list">
+    <h4 class="menu-sec">En la mesa</h4>
+    ${item("screen", "tv", "Pantalla de la party", "Abrir la tele o el proyector y elegir qué enseña")}
+    ${item("link", "wifi", "Cómo entran mis jugadores", "La dirección y el código para unirse")}
+    ${item("handout", "image", "Enseñar una imagen", "Un mapa del tesoro, una carta, un retrato")}
+    ${item("ask", "dice", "Pedir una tirada", "A quién, qué y con qué dificultad")}
+    <h4 class="menu-sec">Partida</h4>
+    ${item("export", "download", "Guardar copia", "Descarga un archivo con toda la partida")}
+    ${item("import", "upload", "Cargar una copia", "Sustituye la partida por la de un archivo")}
+    <div class="menu-item static"><span class="menu-ico">${icon("lang", 20)}</span><span class="menu-text"><b>Idioma</b><small>Solo cambia en este aparato</small></span><span id="menuLang"></span></div>
+    ${item("leave", "exit", "Salir de la sesión", "Vuelves a la pantalla de entrada", "danger")}
     <input type="file" id="handoutFile" accept="image/*" hidden>
-    <button class="btn" data-menu="link">Cómo entran mis jugadores</button>
-    <div class="lang-row" id="menuLang"><span>Idioma</span></div>
-    <button class="btn danger" data-menu="leave">Salir de la sesión</button>
     <input type="file" id="importFile" accept="application/json" hidden>
   </div>`);
   const m = modal({ title: "Partida", body, actions: [{ label: "Cerrar" }] });
@@ -1356,17 +1452,42 @@ function openMenu() {
     if (what === "screen") { m.close(); openScreenPanel(); }
     if (what === "link") {
       m.close();
-      modal({
-        title: "Cómo entran tus jugadores",
-        body: `<p class="prose">Que abran esta dirección en su móvil, estando en la misma red que este ordenador:</p>
-          <p class="prose"><b class="addr" data-keep>${esc(location.origin)}</b></p>
-          <p class="prose">Eligen «Jugador», escriben su nombre y se quedan con su personaje.</p>
-          <p class="prose">La pantalla de la party está pensada para la tele o el proyector: enseña el mapa, los turnos y el estado de todos sin destripar nada.</p>`,
-        actions: [{ label: "Entendido" }]
-      });
+      showJoinInfo();
     }
     if (what === "leave") leave()
   });
+}
+
+/* Cómo entran los jugadores. Desde el ordenador del DM la dirección es
+   «localhost», que en el móvil de otro no lleva a ningún sitio: se enseña la
+   de la red, que es la que sirve, con un botón para copiarla. */
+async function showJoinInfo() {
+  const local = /^(localhost|127\.|\[::1\])/.test(location.hostname);
+  const info = await lobby().catch(() => ({}));
+  let addrs = [location.origin];
+  if (local && info.addresses && info.addresses.length) addrs = info.addresses;
+  const web = info.publicUrl || (!local && location.protocol === "https:" ? location.origin : "");
+  const addr = a => `<div class="addr-row"><code class="addr" data-keep>${esc(a)}</code>
+      <button class="btn sm" data-copy="${esc(a)}" title="Copiar">${withIcon("copy", "Copiar", 16)}</button></div>`;
+  const body = el(`<div class="join-info">
+    ${web ? `<div class="join-block">
+      <h4 class="join-h">${icon("globe", 16)}<span>Desde cualquier sitio</span></h4>
+      ${addr(web)}
+      <p class="prose small">Sirve desde casa de cada uno, con datos o con cualquier wifi, y se puede instalar como aplicación. Cualquiera con la dirección puede entrar: pásala solo a tu grupo, y cierra la mesa cuando estéis todos.</p>
+    </div>` : ""}
+    <div class="join-block">
+      <h4 class="join-h">${icon("wifi", 16)}<span>${web ? "En la misma wifi" : "En la misma wifi que este ordenador"}</span></h4>
+      ${addrs.map(addr).join("")}
+      ${addrs.length > 1 ? `<p class="prose small">Hay varias redes en este ordenador: la buena suele empezar por 192.168.</p>` : ""}
+    </div>
+    <p class="prose small">${icon("user", 14)}<span>En la entrada eligen <b>Jugador</b>, escriben su nombre y se quedan con su personaje.</span></p>
+    ${web ? "" : `<p class="prose small">${icon("globe", 14)}<span>Para jugar cada uno desde su casa, arranca Mesa con «Jugar por internet». Lo explica el README.</span></p>`}
+  </div>`);
+  on(body, "click", "[data-copy]", async (e, b) => {
+    try { await navigator.clipboard.writeText(b.dataset.copy); toast("Dirección copiada", "good"); }
+    catch { toast("No se pudo copiar: selecciónala y cópiala a mano", "bad"); }
+  });
+  modal({ title: "Cómo entran tus jugadores", body, actions: [{ label: "Entendido", tone: "primary" }] });
 }
 
 /* La tele de la mesa: una sesión aparte, que el DM gobierna desde aquí. */
@@ -1378,13 +1499,21 @@ function openScreenPanel() {
         ? `Hay <b>${connected.length}</b> pantalla${connected.length > 1 ? "s" : ""} conectada${connected.length > 1 ? "s" : ""}: ${esc(connected.map(p => p.name).join(", "))}.`
         : "Ahora mismo no hay ninguna pantalla conectada."}
     </p>
-    <div class="row" style="margin:10px 0 14px">
-      <button type="button" class="btn" id="openScreen">Abrir la pantalla aquí</button>
+    <div class="screen-open">
+      <button type="button" class="btn primary" data-open="window">Abrir en una ventana aparte</button>
+      ${"getScreenDetails" in window ? `<button type="button" class="btn" data-open="other">Abrir en el otro monitor</button>` : ""}
+      <button type="button" class="btn" data-open="tab">Abrir en otra pestaña</button>
     </div>
+    <p class="prose" style="font-size:12px;margin:0 0 14px">
+      Para la tele: arrastra esa ventana al monitor o al proyector, o compártela
+      con Chromecast desde el menú del navegador (Enviar… → Enviar pestaña).
+      Doble clic dentro la pone a pantalla completa.
+    </p>
     <fieldset>
       <legend>Qué enseña</legend>
       <label class="check"><input type="checkbox" name="map" ${session().showMapToParty ? "checked" : ""}> El mapa</label>
       <label class="check" style="margin-top:8px"><input type="checkbox" name="hp" ${session().showPartyHP ? "checked" : ""}> Los puntos de vida exactos de la party</label>
+      <label class="check" style="margin-top:8px"><input type="checkbox" name="foehp" ${session().showFoeHP ? "checked" : ""}> Cómo de heridos están los enemigos</label>
       <label class="check" style="margin-top:8px"><input type="checkbox" name="reveal" ${session().revealAll ? "checked" : ""}> El mapa entero, sin niebla</label>
     </fieldset>
     <p class="prose" style="font-size:12px">
@@ -1403,10 +1532,29 @@ function openScreenPanel() {
       }
     }]
   });
-  body.querySelector("#openScreen").addEventListener("click", () => {
-    window.open("/?role=screen", "_blank", "noopener");
+  body.querySelectorAll("[data-open]").forEach(b => b.addEventListener("click", () => {
+    openScreenWindow(b.dataset.open);
     win.close();
-  });
+  }));
+}
+
+/* La tele es otra ventana del mismo navegador. Una ventana aparte se puede
+   arrastrar al segundo monitor o enviar al Chromecast sin llevarse la vista
+   del DM; con la API de pantallas de Chrome se coloca ya en el otro monitor. */
+async function openScreenWindow(where) {
+  const url = new URL("./?role=screen", location.href).href;
+  if (where === "tab") return window.open(url, "_blank");
+  let features = "popup,width=1280,height=720";
+  if (where === "other") {
+    try {
+      const details = await window.getScreenDetails();
+      const other = details.screens.find(x => x !== details.currentScreen);
+      if (other) features = `popup,left=${other.availLeft},top=${other.availTop},width=${other.availWidth},height=${other.availHeight}`;
+      else toast("Solo se ve un monitor conectado: se abre en una ventana aparte");
+    } catch { toast("El navegador no ha dado permiso para ver los otros monitores"); }
+  }
+  const w = window.open(url, "mesa-screen", features);
+  if (!w) toast("El navegador ha bloqueado la ventana emergente: permítela para este sitio", "bad");
 }
 
 /* Pedir una tirada: al jugador le sale un botón grande en su móvil. */

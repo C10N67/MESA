@@ -19,10 +19,15 @@ MESA — cómo arrancar
 
      Tú (DM)        http://localhost:8080
      Tus jugadores  http://192.168.1.34:8080
-     Código del DM  4821
+     Código del DM  482193
 
    Abre la primera dirección en tu navegador y entra como DM con ese código.
    Pasa la segunda dirección a tus amigos (tienen que estar en el mismo wifi).
+
+   ¿Cada uno en su casa? Abre en su lugar «Jugar por internet» (Windows o
+   Mac y Linux). La ventana dará una dirección https://...trycloudflare.com
+   que sirve desde cualquier sitio, sin VPN. Pásala solo a tu grupo y, cuando
+   estéis todos, cierra la mesa pulsando el contador de conectados.
    No cierres la ventana negra mientras jugáis.
 
 4. Para la tele o el proyector: ⋯ > Pantalla de la party > Abrir la pantalla aquí.
@@ -39,6 +44,10 @@ Lo primero que conviene probar:
   · Las plantillas (cono, círculo): se pegan al cursor y un clic las deja fijas.
   · En una ficha: Atacar. Los ataques de las criaturas se leen solos de sus acciones.
   · En la charla, el botón del bocadillo: eliges a quién susurrar.
+
+Instalarla como aplicación (icono propio, sin barra del navegador):
+  en el ordenador del DM, el botón "Instalar Mesa como aplicación" de la entrada.
+  En los móviles hace falta HTTPS: mira "Instalar como aplicación" en el README.
 
 Otro puerto:   node server.js --port 3000
 Parar:         cierra la ventana negra, o Ctrl+C dentro de ella.

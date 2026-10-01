@@ -286,6 +286,7 @@ export function normalizePortal(raw = {}) {
 /* ---------- Sesión ---------- */
 const SESSION_DEFAULTS = {
   title: "Campaña sin nombre",
+  locked: false,
   activeMapId: "", focusId: "",
   combat: { on: false, round: 1, index: 0, order: [] },
   showMapToParty: true, revealAll: false, allowPlayerMove: true, showPartyHP: true,

@@ -1,15 +1,15 @@
 /* Vista del jugador. Manda su ficha y poco más: lo que el DM no enseña, no
    llega ni siquiera al navegador. */
 
-import { $, el, on, esc, lines, sign, pct, hpTone, initials, imgURL, toast, modal, clamp } from "./util.js";
+import { $, el, on, esc, lines, sign, pct, hpTone, hpBar, tweenBars, initials, imgURL, toast, modal, clamp } from "./util.js";
 import { ABILITIES, SKILLS, CONDITIONS, conditionName, modOf } from "./schema.js";
-import { store, onState, onStatus, op, patchChar, leave } from "./net.js";
+import { store, onState, onStatus, onPresence, op, patchChar, leave } from "./net.js";
 import { dicePanel, renderLog, throwDice, tellTable } from "./dice-panel.js";
 import { openAttacks, areaAttacks, slotsLeft, shapeLabel } from "./attacks.js";
 import { openCharEditor, openConditions } from "./char-editor.js";
 import { MapView } from "./map.js";
 import { langPicker } from "./i18n.js";
-import { icon } from "./icons.js";
+import { icon, withIcon } from "./icons.js";
 
 let tab = "ficha";
 let lastTab = null;
@@ -25,12 +25,12 @@ export function mountPlayer(root) {
   root.innerHTML = `
     <div class="shell">
       <div class="banner hidden" id="offline">Se ha perdido la conexión. Reintentando…</div>
-      <header class="topbar">
+      <header class="topbar player-top">
         <div class="brand"><h1>Mesa</h1></div>
         <span class="spacer"></span>
         <div class="who"><span class="dot" id="dot"></span><span class="pill" id="whoami"></span></div>
         <span id="plang"></span>
-        <button class="btn sm" id="leaveBtn">Salir</button>
+        <button class="icon-btn" id="leaveBtn" title="Salir de la partida" aria-label="Salir de la partida">${icon("exit")}</button>
       </header>
       <div class="turn-flash hidden" id="turnFlash"></div>
       <div class="asks" id="asks"></div>
@@ -55,12 +55,19 @@ export function mountPlayer(root) {
     $("#dot", root).classList.toggle("off", !ok);
   });
   onState(render);
+  onPresence(() => { if (doc() && !me()) render(); });
   bindActions(root);
   render();
 }
 
+let hadChar = null;
 function render() {
   if (!doc()) return;
+  /* Si te quedas sin personaje (el DM lo libera, o lo recuperas desde otro
+     aparato), se dice en vez de cambiar la pantalla sin explicación. */
+  const nowChar = store.session.charId && doc().chars.find(c => c.id === store.session.charId);
+  if (hadChar && !nowChar) toast(`Ya no llevas a ${hadChar}. Elige personaje para seguir.`, "bad");
+  hadChar = nowChar ? nowChar.name : null;
   $("#whoami").textContent = store.session.name;
   const pane = $("#pane");
   const mine = me();
@@ -69,8 +76,10 @@ function render() {
   noticeHandout();
   renderAsks(mine);
 
-  if (tab !== lastTab) {          // cada pestaña construye lo suyo desde cero
+  const switched = tab !== lastTab;
+  if (switched) {                 // cada pestaña construye lo suyo desde cero
     lastTab = tab;
+    pane.classList.remove("view-in"); void pane.offsetWidth; pane.classList.add("view-in");
     pane.innerHTML = "";
     delete pane.dataset.map;
     delete pane.dataset.dice;
@@ -82,6 +91,7 @@ function render() {
   else if (tab === "party") renderParty(pane);
   else if (tab === "mapa") renderMap(pane, mine);
   else renderDice(pane);
+  tweenBars(pane, "player:" + tab + ":", switched);
 }
 
 /* Cuando llega tu turno se nota: aviso arriba y un toque en el móvil. */
@@ -138,19 +148,24 @@ function renderAsks(mine) {
 }
 
 /* ---------- Sin personaje todavía ---------- */
+/* Elegir personaje desde dentro: los que lleva alguien conectado salen
+   ocupados y no se pueden coger. */
 function renderPicker(pane) {
-  const free = doc().chars.filter(c => c.kind === "pc" && !c.claimedBy);
+  const pcs = doc().chars.filter(c => c.kind === "pc");
+  const heldBy = id => (store.presence.find(p => p.charId === id && p.role === "player" && p.id !== store.session.id) || {}).name;
   pane.innerHTML = `
-    <div class="empty">
-      <h3>Todavía no tienes personaje</h3>
-      <p>Quédate con uno de los que ya hay en la mesa o hazte el tuyo.</p>
-      <div class="pick-list" style="margin-top:14px">
-        ${free.map(c => `<button class="pick" data-claim="${c.id}">
-          <span class="avatar" style="--tone:${esc(c.color)};width:34px;height:34px;font-size:12px">${initials(c.name)}</span>
-          <span><b>${esc(c.name)}</b><br><small>${esc([c.className, "nivel " + c.level].filter(Boolean).join(" · "))}</small></span>
-        </button>`).join("")}
+    <div class="empty picker">
+      <span class="empty-ico">${icon("users", 30)}</span>
+      <h3>Elige tu personaje</h3>
+      <p>Quédate con uno de los que hay en la mesa o hazte el tuyo.</p>
+      <div class="pick-list">
+        ${pcs.map(c => { const who = heldBy(c.id); return `<button class="pick ${who ? "taken" : ""}" data-claim="${c.id}" ${who ? "disabled" : ""}>
+          ${c.avatarId ? `<img class="avatar sm" src="${imgURL(c.avatarId)}" alt="">` : `<span class="avatar sm" style="--tone:${esc(c.color)}">${initials(c.name)}</span>`}
+          <span class="pick-text"><b>${esc(c.name)}</b><small>${esc([c.className, "nivel " + c.level].filter(Boolean).join(" · "))}</small></span>
+          ${who ? `<span class="pick-tag">${icon("user", 12)}${esc(who)}</span>` : ""}
+        </button>`; }).join("")}
       </div>
-      <button class="btn primary" data-new>Crear mi personaje</button>
+      <button class="btn primary" data-new>${withIcon("userPlus", "Crear mi personaje")}</button>
     </div>`;
 }
 
@@ -169,18 +184,18 @@ function renderSheet(pane, c) {
         <h2>${esc(c.name)}</h2>
         <small>${esc([c.className, c.race, "nivel " + c.level].filter(Boolean).join(" · "))}</small>
       </div>
-      <button class="btn sm" data-act="edit">Editar</button>
+      <button class="btn sm" data-act="edit" title="Editar ficha">${withIcon("pencil", "Editar", 16)}</button>
     </div>
 
-    <div class="big-hp">
+    <div class="big-hp" data-flash>
       <div class="nums">
         <b class="tnum">${c.hp}</b><span>/ ${c.maxHp}</span>
         ${c.tempHp ? `<span class="temp">+${c.tempHp} temporales</span>` : ""}
         <span class="spacer"></span>
-        <span class="pill">CA <b>${c.ac}</b></span>
-        <span class="pill">Iniciativa <b>${c.initiative}</b></span>
+        <span class="stat-chip" title="Clase de armadura">${icon("shield", 15)}<b class="tnum">${c.ac}</b></span>
+        <span class="stat-chip" title="Iniciativa">${icon("zap", 15)}<b class="tnum">${c.initiative}</b></span>
       </div>
-      <div class="bar"><i class="${hpTone(p)}" style="width:${p}%"></i></div>
+      ${hpBar(c.id, p)}
       <div class="pad">
         <button class="hurt" data-act="hp" data-n="-1">−1</button>
         <button class="hurt" data-act="hp" data-n="-5">−5</button>
@@ -188,10 +203,10 @@ function renderSheet(pane, c) {
         <button class="heal" data-act="hp" data-n="5">+5</button>
       </div>
       <div class="dealer" style="padding:8px 0 0">
-        <button class="btn sm" data-act="damage">Daño</button>
-        <input class="tnum" data-amount type="number" min="0" placeholder="0" inputmode="numeric">
-        <button class="btn sm" data-act="heal">Curación</button>
-        <button class="btn sm" data-act="conditions">Estados</button>
+        <button class="btn sm hurt" data-act="damage">${withIcon("minus", "Daño", 16)}</button>
+        <input class="tnum" data-amount type="number" min="0" placeholder="0" inputmode="numeric" aria-label="Cantidad">
+        <button class="btn sm heal" data-act="heal">${withIcon("heartPlus", "Curar", 16)}</button>
+        <button class="btn sm" data-act="conditions">${withIcon("sparkle", "Estados", 16)}</button>
       </div>
     </div>
 
@@ -199,7 +214,7 @@ function renderSheet(pane, c) {
       ${c.conditions.map(id => `<span class="pill cond" title="${esc((CONDITIONS.find(x => x.id === id) || {}).hint || "")}">${esc(conditionName(id))}</span>`).join("")}
       ${c.exhaustion ? `<span class="pill cond">Agotamiento ${c.exhaustion}</span>` : ""}
       ${c.concentration ? `<span class="pill conc">Concentrado en ${esc(c.concentration)}</span>` : ""}
-      ${c.inspiration ? '<span class="pill tag">Inspiración</span>' : ""}
+      ${c.inspiration ? `<span class="pill tag">${icon("star", 12)}Inspiración</span>` : ""}
     </div>
 
     <div class="abilities" style="margin-bottom:12px">
@@ -207,14 +222,14 @@ function renderSheet(pane, c) {
         <span>${l}</span><b class="tnum">${c[k]}</b><small>${sign(modOf(c[k]))}</small></button>`).join("")}
     </div>
 
-    <div class="row" style="margin-bottom:14px">
-      <button class="btn sm primary" data-act="attack">Atacar</button>
-      <button class="btn sm" data-act="initiative">Tirar iniciativa</button>
-      <button class="btn sm" data-act="saves">Salvaciones</button>
-      <button class="btn sm" data-act="skills">Habilidades</button>
-      ${c.hitDice ? `<button class="btn sm" data-act="hitDie">Dado de golpe (${Math.max(0, c.level - c.hitDiceUsed)})</button>` : ""}
-      ${c.concentration ? `<button class="btn sm" data-act="conc">Salvación de concentración</button>` : ""}
-      ${c.hp <= 0 ? '<button class="btn sm danger" data-act="deathRoll">Salvación de muerte</button>' : ""}
+    <div class="action-grid">
+      <button class="btn primary" data-act="attack">${withIcon("sword", "Atacar")}</button>
+      <button class="btn" data-act="initiative">${withIcon("zap", "Tirar iniciativa")}</button>
+      <button class="btn" data-act="saves">${withIcon("shield", "Salvaciones")}</button>
+      <button class="btn" data-act="skills">${withIcon("dice", "Habilidades")}</button>
+      ${c.hitDice ? `<button class="btn" data-act="hitDie">${withIcon("heartPlus", `Dado de golpe (${Math.max(0, c.level - c.hitDiceUsed)})`)}</button>` : ""}
+      ${c.concentration ? `<button class="btn" data-act="conc">${withIcon("sparkle", "Salvación de concentración")}</button>` : ""}
+      ${c.hp <= 0 ? `<button class="btn danger" data-act="deathRoll">${withIcon("skull", "Salvación de muerte")}</button>` : ""}
     </div>
 
     ${c.hp <= 0 ? `<div class="deaths" style="margin-bottom:14px">
@@ -245,22 +260,16 @@ function renderParty(pane) {
   const order = combat.on ? combat.order.map(id => doc().chars.find(c => c.id === id)).filter(Boolean) : [];
 
   pane.innerHTML = `
-    ${combat.on && order.length ? `
-      <div class="big-hp" style="margin-bottom:14px">
-        <small style="color:var(--dim)">Ronda ${combat.round} · turno de</small>
-        <h2 style="font-size:28px">${esc((order[combat.index] || {}).name || "—")}</h2>
-        <small style="color:var(--dim)">después: ${esc((order[(combat.index + 1) % order.length] || {}).name || "—")}</small>
-      </div>` : ""}
     <div class="party-strip">
       ${mates.map(c => {
         const p = pct(c);
-        return `<div class="mate">
+        return `<div class="mate" data-flash>
           ${c.avatarId ? `<img class="avatar" src="${imgURL(c.avatarId)}" alt="" style="--tone:${esc(c.color)}">`
             : `<div class="avatar" style="--tone:${esc(c.color)}">${initials(c.name)}</div>`}
           <div class="info">
             <b>${esc(c.name)}</b>
             <small style="color:var(--dim)"> ${esc(c.className)}${c.claimedBy ? " · " + esc(c.claimedBy) : ""}</small>
-            <div class="bar"><i class="${hpTone(p)}" style="width:${p}%"></i></div>
+            ${hpBar(c.id, p)}
           </div>
           <div style="text-align:right">
             <b class="tnum">${c.hp}</b><small style="color:var(--dim)">/${c.maxHp}</small><br>
