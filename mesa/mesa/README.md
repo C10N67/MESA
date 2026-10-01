@@ -81,6 +81,25 @@ Lo que conviene saber:
 - El ordenador del DM tiene que seguir encendido y con la ventana abierta
   mientras jugáis, igual que en casa.
 
+#### Si no sale la dirección de internet
+
+La ventana del servidor dice por qué y lo vuelve a intentar sola cuatro
+veces. Lo más habitual:
+
+- **«No se llega a Cloudflare»**: el antivirus o el cortafuegos de Windows
+  bloquea `cloudflared` (permítelo cuando pregunte, o añádelo a las
+  excepciones), o estás en una red que lo prohíbe (trabajo, universidad,
+  residencia). Prueba con otra red o compartiendo datos desde el móvil.
+- **«Cloudflare limita…»**: se han pedido muchos túneles seguidos. Espera un
+  minuto.
+- **Archivo de configuración**: si alguna vez configuraste cloudflared, hay
+  una carpeta `.cloudflared` en tu usuario con un `config.yml` que impide el
+  túnel rápido. Renómbralo.
+
+Para ver el error completo, abre otra ventana y escribe
+`cloudflared tunnel --url http://127.0.0.1:8080`. Mientras tanto, Mesa
+sigue funcionando en la wifi con la dirección que da la ventana.
+
 Con [Tailscale](https://tailscale.com) instalado en todos los aparatos, la
 dirección de la máquina del DM en esa red funciona tal cual y no cambia
 nunca; a cambio, cada jugador tiene que instalarlo.

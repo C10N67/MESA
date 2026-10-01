@@ -1240,3 +1240,5 @@ body.screen { background: #05060a; overflow: hidden; }
   border: 1px solid #4a3c22; background: #1d1810; color: var(--gold-soft); font-size: 13px; line-height: 1.4;
 }
 .notice .ico { flex: none; margin-top: 1px; }
+.join-block.warn { border-color: #5a2528; background: #221315; }
+.join-block.warn .join-h { color: #f0b6b7; }
