@@ -1,0 +1,1114 @@
+/* El tablero. Un solo lienzo pinta el plano, la cuadrícula, los muros, la luz,
+   la niebla, las plantillas y las fichas; asi el mapa va suave aunque se
+   arrastre a 60 fotogramas.
+
+   Se usa igual en las tres vistas: el DM lo ve entero y puede editarlo, la
+   party solo recibe lo que su personaje alcanza a ver. */
+
+import { cellKey, edgeKey, clamp, footprint, conditionName } from "./schema.js";
+import { visibleCells, reachableCells, shapeCells, gridDistance, occupied, fits } from "./los.js";
+import { initials, imgURL, pct, hpTone } from "./util.js";
+import { drawGlyph } from "./icons.js";
+
+const COLORS = {
+  void: "#07080c",
+  grid: "rgba(236,228,212,.10)",
+  wall: "#e2d3ae",
+  door: "#c88a3a",
+  doorOpen: "rgba(200,138,58,.45)",
+  fog: "#05060a",
+  known: "rgba(5,6,10,.24)",     // lo ya explorado: se distingue, pero muy poco
+  dark: "rgba(4,5,9,.55)",
+  sight: "rgba(200,155,74,.10)",
+  lit: "rgba(255,214,140,.10)",
+  pick: "rgba(200,155,74,.55)",
+  reach: "rgba(120,170,255,.16)",
+  reachEdge: "rgba(140,185,255,.5)",
+  measure: "#7fd0ff",
+  select: "#c89b4a",
+  target: "#b8383b"
+};
+
+const images = new Map();
+function image(id) {
+  if (!id) return null;
+  if (images.has(id)) return images.get(id);
+  const img = new Image();
+  img.src = imgURL(id);
+  images.set(id, img);
+  img.onload = () => document.dispatchEvent(new CustomEvent("mesa:image"));
+  return img;
+}
+
+export class MapView {
+  constructor(canvas, opts = {}) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext("2d");
+    this.mode = opts.mode || "party";        // "dm" | "party"
+    this.opts = opts;
+    this.zoom = 1;
+    this.center = null;
+    this.tool = "token";
+    this.pending = null;                      // plantilla a punto de colocarse
+    this.localShapes = [];                    // áreas que solo ve quien las coloca
+    this.hover = null;
+    this.drag = null;
+    this.band = null;                         // selección con recuadro
+    this.measure = null;
+    this.selection = new Set();
+    this.target = null;                       // ficha apuntada
+    this.data = { map: null, chars: [], session: null, you: null };
+    this._geom = null;
+    this._anim = null;
+
+    const redraw = () => this.draw();
+    this._ro = new ResizeObserver(redraw);
+    this._ro.observe(canvas.parentElement || canvas);
+    document.addEventListener("mesa:image", redraw);
+    this.bind();
+  }
+
+  destroy() { this._ro.disconnect(); cancelAnimationFrame(this._anim); }
+
+  set(data) {
+    this.data = { ...this.data, ...data };
+    this.draw();
+  }
+
+  /* ---------- Geometría ---------- */
+  geometry() {
+    const { map } = this.data;
+    const box = this.canvas.getBoundingClientRect();
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    if (this.canvas.width !== Math.round(box.width * dpr) || this.canvas.height !== Math.round(box.height * dpr)) {
+      this.canvas.width = Math.round(box.width * dpr);
+      this.canvas.height = Math.round(box.height * dpr);
+    }
+    if (!map) return null;
+
+    const W = box.width, H = box.height;
+    const free = this.mode === "dm" || map.playerZoom !== false;
+    const aspect = W / H;
+    let cropW, focus, fill = false;
+    if (this.mode === "dm") {
+      cropW = map.cols / this.zoom;
+      focus = this.center || { x: map.cols / 2, y: map.rows / 2 };
+      fill = this.zoom > 1;
+    } else if (this.zoom > 1 && free) {
+      cropW = map.cols / this.zoom;
+      focus = this.center || { x: map.cols / 2, y: map.rows / 2 };
+      fill = true;
+    } else if (map.camera === "follow") {
+      cropW = Math.min(map.cols, map.followSpan) / (map.partyZoom || 1);
+      const f = this.data.chars.find(c => c.id === (this.data.session && this.data.session.focusId));
+      focus = f && f.mx !== null ? { x: f.mx + 0.5, y: f.my + 0.5 } : { x: map.cols / 2, y: map.rows / 2 };
+      fill = true;
+    } else {
+      cropW = map.cols / (map.partyZoom || 1);
+      focus = { x: map.cols / 2, y: map.rows / 2 };
+    }
+
+    /* Con la cámara siguiendo a alguien o con zoom, el recorte toma la forma
+       del hueco disponible y se aprovecha entero: si el personaje llega al
+       borde del plano, lo que se mueve es él dentro del encuadre, en vez de
+       quedarse el mapa a un lado con una franja negra al otro. */
+    let cropH;
+    if (fill) {
+      cropH = cropW / aspect;
+      if (cropH > map.rows) { cropH = map.rows; cropW = cropH * aspect; }
+      if (cropW > map.cols) { cropW = map.cols; cropH = cropW / aspect; }
+    } else {
+      cropH = cropW * (map.rows / map.cols);
+    }
+
+    const cx = clamp(focus.x, cropW / 2, Math.max(cropW / 2, map.cols - cropW / 2));
+    const cy = clamp(focus.y, cropH / 2, Math.max(cropH / 2, map.rows - cropH / 2));
+    const cell = Math.min(W / cropW, H / cropH);
+    return { W, H, dpr, cell, originX: W / 2 - cx * cell, originY: H / 2 - cy * cell, cols: map.cols, rows: map.rows };
+  }
+
+  toCell(clientX, clientY) {
+    const g = this._geom;
+    if (!g) return null;
+    const box = this.canvas.getBoundingClientRect();
+    const fx = (clientX - box.left - g.originX) / g.cell;
+    const fy = (clientY - box.top - g.originY) / g.cell;
+    return { fx, fy, x: Math.floor(fx), y: Math.floor(fy) };
+  }
+
+  edgeAt(fx, fy) {
+    const x = Math.floor(fx), y = Math.floor(fy);
+    const dx = fx - x, dy = fy - y;
+    return [
+      { d: dx, key: edgeKey(x, y, "v") },
+      { d: 1 - dx, key: edgeKey(x + 1, y, "v") },
+      { d: dy, key: edgeKey(x, y, "h") },
+      { d: 1 - dy, key: edgeKey(x, y + 1, "h") }
+    ].sort((a, b) => a.d - b.d)[0].key;
+  }
+
+  /* Una ficha grande responde en todas las casillas que ocupa. */
+  tokenAt(x, y) {
+    const map = this.data.map;
+    return this.data.chars.find(c => {
+      if (c.mapId !== map.id || c.mx === null) return false;
+      const n = footprint(c);
+      return x >= c.mx && x < c.mx + n && y >= c.my && y < c.my + n;
+    });
+  }
+
+  canDrag(c) { return this.mode === "dm" || c.id === this.data.you; }
+
+  /* ---------- Interacción ---------- */
+  bind() {
+    const cv = this.canvas;
+    cv.style.touchAction = "none";
+    this.touches = new Map();
+
+    cv.addEventListener("pointerdown", e => {
+      if (!this.data.map) return;
+      const p = this.toCell(e.clientX, e.clientY);
+      if (!p) return;
+      const map = this.data.map;
+      const inside = p.x >= 0 && p.y >= 0 && p.x < map.cols && p.y < map.rows;
+
+      if (e.pointerType === "touch") {
+        this.touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (this.touches.size === 2) { this.startPinch(); this.drag = null; this.band = null; return; }
+      }
+
+      /* Señalar un punto: lo ve toda la mesa */
+      if (inside && e.altKey && this.opts.onPing) { this.opts.onPing(p.x, p.y); return; }
+
+      if (e.button === 2 || e.button === 1 || (e.shiftKey && this.tool === "pan")) {
+        this.startPan(e);
+        return;
+      }
+      if (!inside) return;
+
+      /* Plantilla pendiente de colocar */
+      if (this.pending) {
+        this.pending = { ...this.pending, x: this.snap(p.fx), y: this.snap(p.fy) };
+        this.placing = true;
+        cv.setPointerCapture(e.pointerId);
+        return this.draw();
+      }
+
+      if (this.tool === "measure") {
+        this.measure = { from: { x: p.x, y: p.y }, to: { x: p.x, y: p.y } };
+        cv.setPointerCapture(e.pointerId);
+        return this.draw();
+      }
+
+      if (this.mode === "dm" && this.tool === "cell") {
+        this.painting = "cell";
+        this.opts.onPaintCell && this.opts.onPaintCell(p.x, p.y, this.brush);
+        cv.setPointerCapture(e.pointerId);
+        return;
+      }
+      if (this.mode === "dm" && (this.tool === "wall" || this.tool === "door" || this.tool === "erase")) {
+        this.painting = this.tool;
+        this.opts.onEdge && this.opts.onEdge(this.edgeAt(p.fx, p.fy), this.tool);
+        cv.setPointerCapture(e.pointerId);
+        return;
+      }
+      if (this.mode === "dm" && this.tool === "pin") return this.opts.onPin && this.opts.onPin(p.x, p.y);
+      if (this.mode === "dm" && this.tool === "portal") return this.opts.onPortal && this.opts.onPortal(p.x, p.y);
+
+      const token = this.tokenAt(p.x, p.y);
+      if (token && this.canDrag(token)) {
+        if (e.shiftKey && this.mode === "dm") {
+          this.selection.has(token.id) ? this.selection.delete(token.id) : this.selection.add(token.id);
+          return this.draw();
+        }
+        const group = this.selection.has(token.id)
+          ? [...this.selection].map(id => this.data.chars.find(c => c.id === id)).filter(c => c && this.canDrag(c))
+          : [token];
+        this.drag = {
+          id: token.id, from: { x: token.mx, y: token.my }, at: { x: p.x, y: p.y }, moved: false, ok: true,
+          group: group.map(c => ({ id: c.id, dx: c.mx - token.mx, dy: c.my - token.my })),
+          range: this.rangeFor(token)
+        };
+        cv.setPointerCapture(e.pointerId);
+        return this.draw();
+      }
+
+      if (token && !this.canDrag(token)) {
+        this.opts.onToken && this.opts.onToken(token.id, e);
+        return;
+      }
+
+      /* Sitio vacío. Con ratón, el DM traza un recuadro para elegir fichas.
+         En todo lo demás se espera a ver qué hace el dedo: si se queda quieto
+         es un toque (mover, colocar, señalar) y si se mueve, arrastra el mapa.
+         Sin esto, en el móvil no había forma de recorrer un plano con zoom. */
+      const touch = e.pointerType === "touch";
+      if (this.mode === "dm" && !touch) {
+        if (!e.shiftKey) this.selection.clear();
+        this.band = { from: { x: p.fx, y: p.fy }, to: { x: p.fx, y: p.fy } };
+        cv.setPointerCapture(e.pointerId);
+        return this.draw();
+      }
+      this.tap = {
+        x: e.clientX, y: e.clientY, cell: { x: p.x, y: p.y }, moved: false,
+        from: { ...(this.center || { x: map.cols / 2, y: map.rows / 2 }) }
+      };
+      cv.setPointerCapture(e.pointerId);
+    });
+
+    cv.addEventListener("pointermove", e => {
+      if (e.pointerType === "touch" && this.touches.has(e.pointerId)) {
+        this.touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (this.touches.size === 2) return this.movePinch();
+      }
+      const p = this.toCell(e.clientX, e.clientY);
+      if (!p) return;
+      if (this.pan) {
+        const g = this._geom;
+        this.center = {
+          x: this.pan.from.x - (e.clientX - this.pan.x) / g.cell,
+          y: this.pan.from.y - (e.clientY - this.pan.y) / g.cell
+        };
+        return this.draw();
+      }
+      if (this.placing) {
+        const dx = p.fx - this.pending.x, dy = p.fy - this.pending.y;
+        if (Math.hypot(dx, dy) > 0.3 && this.pending.kind !== "circle" && this.pending.kind !== "square") {
+          this.pending.angle = Math.atan2(dy, dx);
+        }
+        return this.draw();
+      }
+      if (this.measure) {
+        if (this.measure.done) return;   // ya se soltó: la medida se queda quieta
+        this.measure.to = { x: p.x, y: p.y };
+        return this.draw();
+      }
+      if (this.painting === "cell") {
+        this.opts.onPaintCell && this.opts.onPaintCell(p.x, p.y, this.brush);
+        return;
+      }
+      if (this.painting) {
+        if (this.painting !== "door") this.opts.onEdge && this.opts.onEdge(this.edgeAt(p.fx, p.fy), this.painting);
+        return;
+      }
+      if (this.tap) {
+        const dx = e.clientX - this.tap.x, dy = e.clientY - this.tap.y;
+        if (!this.tap.moved && Math.hypot(dx, dy) < 9) return;   // margen para que un toque siga siendo un toque
+        this.tap.moved = true;
+        const g = this._geom;
+        this.center = { x: this.tap.from.x - dx / g.cell, y: this.tap.from.y - dy / g.cell };
+        return this.draw();
+      }
+      if (this.band) { this.band.to = { x: p.fx, y: p.fy }; return this.draw(); }
+      if (this.drag) {
+        if (this.drag.at.x !== p.x || this.drag.at.y !== p.y) {
+          this.drag.at = { x: p.x, y: p.y };
+          this.drag.moved = true;
+          const who = this.data.chars.find(c => c.id === this.drag.id);
+          this.drag.ok = !(who && this.drag.group.length === 1
+            && fits(this.data.map, this.data.chars, who, p.x, p.y));
+          this.draw();
+        }
+        return;
+      }
+      /* La plantilla va pegada al cursor hasta que se suelta con un clic */
+      if (this.pending) {
+        this.pending.x = this.snap(p.fx);
+        this.pending.y = this.snap(p.fy);
+        return this.draw();
+      }
+      const key = p.x + "," + p.y;
+      if (this.hover !== key) { this.hover = key; this.draw(); }
+    });
+
+    const release = e => {
+      this.touches.delete(e.pointerId);
+      if (this.touches.size < 2) this.pinch = null;
+      if (this.pan) { this.pan = null; return; }
+      if (this.placing) {
+        this.placing = false;
+        const shape = { ...this.pending };
+        this.pending = null;
+        /* Las áreas «privadas» se quedan en este navegador y no se mandan a
+           nadie: sirven para mirar a ojo si el conjuro coge a los tres
+           goblins antes de gastar el espacio. */
+        if (shape.local) {
+          this.localShapes = [...this.localShapes.slice(-5), shape];
+          this.opts.onLocalShape && this.opts.onLocalShape(shape);
+        } else this.opts.onShape && this.opts.onShape(shape);
+        return this.draw();
+      }
+      if (this.measure) {
+        this.measure.done = true;
+        if (this.opts.onMeasureEnd) this.opts.onMeasureEnd(this.measure);
+        setTimeout(() => { if (this.measure && this.measure.done) { this.measure = null; this.draw(); } }, 1600);
+        return;
+      }
+      if (this.painting) { this.painting = null; return; }
+      if (this.tap) {
+        const t = this.tap;
+        this.tap = null;
+        if (!t.moved) {
+          if (this.pinging && this.opts.onPing) this.opts.onPing(t.cell.x, t.cell.y);
+          else if (this.mode === "dm") this.opts.onCell && this.opts.onCell(t.cell.x, t.cell.y, e);
+          else if (this.data.you && this.opts.onMove) {
+            const me = this.data.chars.find(c => c.id === this.data.you);
+            if (me && me.mx !== null) this.opts.onMove(this.data.you, t.cell.x, t.cell.y);
+          }
+        }
+        return this.draw();
+      }
+      if (this.band) {
+        const b = this.band;
+        this.band = null;
+        const x0 = Math.min(b.from.x, b.to.x), x1 = Math.max(b.from.x, b.to.x);
+        const y0 = Math.min(b.from.y, b.to.y), y1 = Math.max(b.from.y, b.to.y);
+        if (Math.abs(x1 - x0) < 0.4 && Math.abs(y1 - y0) < 0.4) {
+          const p = this.toCell(e.clientX, e.clientY);
+          this.opts.onCell && this.opts.onCell(p.x, p.y, e);
+        } else {
+          for (const c of this.data.chars) {
+            if (c.mapId !== this.data.map.id || c.mx === null) continue;
+            if (c.mx + 0.5 >= x0 && c.mx + 0.5 <= x1 && c.my + 0.5 >= y0 && c.my + 0.5 <= y1) this.selection.add(c.id);
+          }
+          this.opts.onSelect && this.opts.onSelect([...this.selection]);
+        }
+        return this.draw();
+      }
+      if (this.drag) {
+        const { id, at, moved, group, from } = this.drag;
+        this.drag = null;
+        if (moved && this.opts.onMove) {
+          const dx = at.x - from.x, dy = at.y - from.y;
+          if (group.length > 1) this.opts.onMoveMany(group.map(g => ({ id: g.id, x: from.x + g.dx + dx, y: from.y + g.dy + dy })));
+          else this.opts.onMove(id, at.x, at.y);
+        } else if (!moved && this.opts.onToken) this.opts.onToken(id, e);
+        this.draw();
+      }
+    };
+    cv.addEventListener("pointerup", release);
+    cv.addEventListener("pointercancel", e => {
+      this.touches.delete(e.pointerId);
+      this.pan = this.painting = this.drag = this.band = this.measure = this.tap = null;
+      this.placing = false;
+      this.draw();
+    });
+    cv.addEventListener("contextmenu", e => e.preventDefault());
+    cv.addEventListener("pointerleave", () => { this.hover = null; this.draw(); });
+
+    cv.addEventListener("wheel", e => {
+      if (this.mode !== "dm" && !(this.data.map && this.data.map.playerZoom !== false)) return;
+      if (!e.ctrlKey && !e.metaKey && this.mode !== "dm") return;
+      e.preventDefault();
+      this.setZoom(this.zoom * (e.deltaY < 0 ? 1.15 : 1 / 1.15), this.toCell(e.clientX, e.clientY));
+    }, { passive: false });
+  }
+
+  snap(v) { return Math.round(v * 2) / 2; }
+
+  startPan(e) {
+    const map = this.data.map;
+    this.pan = { x: e.clientX, y: e.clientY, from: { ...(this.center || { x: map.cols / 2, y: map.rows / 2 }) } };
+    this.canvas.setPointerCapture(e.pointerId);
+  }
+
+  startPinch() {
+    const [a, b] = [...this.touches.values()];
+    const map = this.data.map;
+    this.tap = null;
+    this.pinch = {
+      dist: Math.hypot(a.x - b.x, a.y - b.y),
+      mid: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+      zoom: this.zoom,
+      center: { ...(this.center || { x: map.cols / 2, y: map.rows / 2 }) }
+    };
+  }
+
+  /* Dos dedos: separar y juntar acerca y aleja, y moverlos a la vez desplaza. */
+  movePinch() {
+    if (!this.pinch) return;
+    const [a, b] = [...this.touches.values()];
+    const d = Math.hypot(a.x - b.x, a.y - b.y);
+    const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    const g = this._geom;
+    this.center = {
+      x: this.pinch.center.x - (mid.x - this.pinch.mid.x) / (g ? g.cell : 40),
+      y: this.pinch.center.y - (mid.y - this.pinch.mid.y) / (g ? g.cell : 40)
+    };
+    this.setZoom(this.pinch.zoom * (d / this.pinch.dist));
+  }
+
+  setZoom(value, anchor) {
+    const free = this.mode === "dm" || (this.data.map && this.data.map.playerZoom !== false);
+    if (!free) return;
+    const z = clamp(value, 1, 10);
+    const map = this.data.map;
+    if (anchor && z > 1) this.center = { x: anchor.fx, y: anchor.fy };
+    /* Al acercarse sin señalar un punto, la vista se queda donde estaba: así
+       hay un centro concreto sobre el que arrastrar después. */
+    else if (z > 1 && !this.center && map) this.center = { x: map.cols / 2, y: map.rows / 2 };
+    this.zoom = z;
+    if (z <= 1) { this.zoom = 1; this.center = null; }
+    else if (this.center && map) {
+      const w = map.cols / this.zoom, h = w * (map.rows / map.cols);
+      this.center = { x: clamp(this.center.x, w / 2, map.cols - w / 2), y: clamp(this.center.y, h / 2, map.rows - h / 2) };
+    }
+    this.draw();
+    this.opts.onZoom && this.opts.onZoom(this.zoom);
+  }
+
+  /* Hasta dónde llega una ficha con lo que le queda de velocidad */
+  rangeFor(c) {
+    const map = this.data.map;
+    const session = this.data.session;
+    if (!map || !session || session.showMoveRange === false) return null;
+    const speed = Math.max(0, (c.speed || 30) - (c.used && c.used.move || 0));
+    if (!speed) return null;
+    const busy = new Set();
+    for (const other of this.data.chars) {
+      if (other.id === c.id || other.mapId !== map.id || other.mx === null) continue;
+      for (const [x, y] of occupied(other)) busy.add(cellKey(x, y));
+    }
+    return reachableCells(map, { x: c.mx, y: c.my }, speed, { blocked: (x, y) => busy.has(cellKey(x, y)) });
+  }
+
+  /* ---------- Dibujado ---------- */
+  draw() {
+    const g = this._geom = this.geometry();
+    const ctx = this.ctx;
+    const { map, chars, session } = this.data;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    if (!g || !map) return;
+    ctx.scale(g.dpr, g.dpr);
+    ctx.fillStyle = COLORS.void;
+    ctx.fillRect(0, 0, g.W, g.H);
+
+    const X = c => g.originX + c * g.cell;
+    const Y = c => g.originY + c * g.cell;
+    const dm = this.mode === "dm";
+
+    /* Plano */
+    const img = image(map.imageId);
+    if (img && img.complete && img.naturalWidth) {
+      ctx.drawImage(img, X(0), Y(0), map.cols * g.cell, map.rows * g.cell);
+    } else {
+      ctx.fillStyle = "#12151d";
+      ctx.fillRect(X(0), Y(0), map.cols * g.cell, map.rows * g.cell);
+    }
+
+    /* Cuadrícula */
+    if (map.grid && g.cell > 6) {
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = COLORS.grid;
+      ctx.beginPath();
+      for (let x = 0; x <= map.cols; x++) { ctx.moveTo(X(x), Y(0)); ctx.lineTo(X(x), Y(map.rows)); }
+      for (let y = 0; y <= map.rows; y++) { ctx.moveTo(X(0), Y(y)); ctx.lineTo(X(map.cols), Y(y)); }
+      ctx.stroke();
+    }
+
+    /* Qué se ve */
+    let seen = null;
+    const known = new Set(map.explored || []);
+    if (dm) {
+      seen = (session && session.revealAll) ? null : visibleCells({ chars }, map);
+    } else {
+      seen = map.visible ? new Set(map.visible) : null;
+    }
+
+    if (seen) {
+      if (dm) {
+        ctx.fillStyle = COLORS.sight;
+        seen.forEach(k => {
+          const [x, y] = k.split(",").map(Number);
+          ctx.fillRect(X(x), Y(y), g.cell + 0.5, g.cell + 0.5);
+        });
+      } else {
+        for (let y = 0; y < map.rows; y++) {
+          for (let x = 0; x < map.cols; x++) {
+            const k = cellKey(x, y);
+            if (seen.has(k)) continue;
+            ctx.fillStyle = known.has(k) ? COLORS.known : COLORS.fog;
+            ctx.fillRect(X(x) - 0.5, Y(y) - 0.5, g.cell + 1, g.cell + 1);
+          }
+        }
+      }
+    }
+
+    /* Terreno pintado: niebla, oscuridad y luces fijas */
+    for (const [k, kind] of Object.entries(map.cells || {})) {
+      const [x, y] = k.split(",").map(Number);
+      if (!dm && seen && !seen.has(k) && !known.has(k)) continue;
+      const px = X(x), py = Y(y);
+      if (kind === "fog") {
+        ctx.fillStyle = "rgba(168,178,196,.30)";
+        ctx.fillRect(px, py, g.cell + 0.5, g.cell + 0.5);
+      } else if (kind === "dark") {
+        ctx.fillStyle = dm ? "rgba(4,5,9,.62)" : "rgba(4,5,9,.9)";
+        ctx.fillRect(px, py, g.cell + 0.5, g.cell + 0.5);
+      } else if (kind === "lit") {
+        const cx = px + g.cell / 2, cy = py + g.cell / 2;
+        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, g.cell * 1.1);
+        grad.addColorStop(0, "rgba(255,206,130,.35)");
+        grad.addColorStop(1, "rgba(255,206,130,0)");
+        ctx.fillStyle = grad;
+        ctx.fillRect(px - g.cell, py - g.cell, g.cell * 3, g.cell * 3);
+      }
+    }
+
+    /* Alcance de movimiento mientras se arrastra */
+    if (this.drag && this.drag.range) {
+      ctx.fillStyle = COLORS.reach;
+      for (const k of this.drag.range.keys()) {
+        const [x, y] = k.split(",").map(Number);
+        ctx.fillRect(X(x) + 1, Y(y) + 1, g.cell - 2, g.cell - 2);
+      }
+    }
+
+    /* Plantillas de área */
+    for (const s of map.shapes || []) {
+      if (!dm && !s.party) continue;
+      this.shape(ctx, g, s, X, Y);
+    }
+    for (const s of this.localShapes) this.shape(ctx, g, s, X, Y);
+    if (this.pending) this.shape(ctx, g, this.pending, X, Y, true);
+
+    /* Muros y puertas */
+    const thick = Math.max(2, g.cell * 0.12);
+    for (const [key, type] of Object.entries(map.edges || {})) {
+      const [x, y, dir] = key.split(",");
+      const cx = Number(x), cy = Number(y);
+      if (!dm && seen && !seen.has(cellKey(cx, cy)) && !known.has(cellKey(cx, cy))
+        && !seen.has(cellKey(cx - (dir === "v" ? 1 : 0), cy - (dir === "h" ? 1 : 0)))) continue;
+      ctx.lineWidth = thick;
+      ctx.lineCap = "round";
+      ctx.strokeStyle = type === "wall" ? COLORS.wall : type === "door" ? COLORS.door : COLORS.doorOpen;
+      ctx.setLineDash(type === "doorOpen" ? [thick, thick * 1.6] : []);
+      ctx.beginPath();
+      if (dir === "v") { ctx.moveTo(X(cx), Y(cy)); ctx.lineTo(X(cx), Y(cy + 1)); }
+      else { ctx.moveTo(X(cx), Y(cy)); ctx.lineTo(X(cx + 1), Y(cy)); }
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    /* Accesos a otros mapas */
+    for (const p of map.portals || []) {
+      if (!dm && seen && !seen.has(cellKey(p.x, p.y)) && !known.has(cellKey(p.x, p.y))) continue;
+      const cx = X(p.x) + g.cell / 2, cy = Y(p.y) + g.cell / 2;
+      ctx.save();
+      ctx.strokeStyle = "#8878d8";
+      ctx.fillStyle = "rgba(136,120,216,.22)";
+      ctx.lineWidth = Math.max(1.5, g.cell * 0.06);
+      ctx.beginPath();
+      ctx.roundRect(X(p.x) + 2, Y(p.y) + 2, g.cell - 4, g.cell - 4, g.cell * 0.2);
+      ctx.fill(); ctx.stroke();
+      if (g.cell > 16) drawGlyph(ctx, "stairs", cx, cy, g.cell * 0.62, "#cfc7ee");
+      ctx.restore();
+    }
+
+    /* Chinchetas: una placa con su marca. Las que solo ve el DM van en morado
+       y con el borde a rayas, pero igual de sólidas: antes se quedaban en un
+       emoji translúcido que casi no se veía sobre un plano oscuro. */
+    for (const pin of map.pins || []) {
+      if (!dm && !pin.party) continue;
+      this.pinBadge(ctx, g, pin, X, Y);
+    }
+
+    /* Fichas */
+    const dragging = this.drag;
+    const order = session && session.combat && session.combat.on ? session.combat.order : [];
+    const nowId = order.length ? order[session.combat.index] : null;
+    for (const c of chars) {
+      if (c.mapId !== map.id || c.mx === null) continue;
+      let x = c.mx, y = c.my;
+      if (dragging) {
+        const inGroup = dragging.group.find(gi => gi.id === c.id);
+        if (inGroup) {
+          x = dragging.from.x + inGroup.dx + (dragging.at.x - dragging.from.x);
+          y = dragging.from.y + inGroup.dy + (dragging.at.y - dragging.from.y);
+        }
+      }
+      /* Lo recordado se pinta aunque ahora mismo no se vea: para eso se recuerda. */
+      if (!dm && !c.memory && seen && !occupied({ ...c, mx: x, my: y }).some(([ox, oy]) => seen.has(cellKey(ox, oy)))) continue;
+      this.token(ctx, g, c, x, y, X, Y, {
+        now: c.id === nowId, selected: this.selection.has(c.id), target: this.target === c.id, memory: !!c.memory
+      });
+    }
+
+    /* Recuadro de selección */
+    if (this.band) {
+      const b = this.band;
+      ctx.strokeStyle = COLORS.select;
+      ctx.fillStyle = "rgba(200,155,74,.10)";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([5, 4]);
+      const x = X(Math.min(b.from.x, b.to.x)), y = Y(Math.min(b.from.y, b.to.y));
+      const w = Math.abs(b.to.x - b.from.x) * g.cell, h = Math.abs(b.to.y - b.from.y) * g.cell;
+      ctx.fillRect(x, y, w, h); ctx.strokeRect(x, y, w, h);
+      ctx.setLineDash([]);
+    }
+
+    /* Si la ficha no cabe ahí, se avisa antes de soltarla */
+    if (dragging && dragging.moved && dragging.ok === false) {
+      const who = chars.find(c => c.id === dragging.id);
+      const n = who ? footprint(who) : 1;
+      ctx.save();
+      ctx.strokeStyle = "#b8383b";
+      ctx.fillStyle = "rgba(184,56,59,.22)";
+      ctx.lineWidth = Math.max(2, g.cell * 0.08);
+      ctx.fillRect(X(dragging.at.x), Y(dragging.at.y), g.cell * n, g.cell * n);
+      ctx.strokeRect(X(dragging.at.x), Y(dragging.at.y), g.cell * n, g.cell * n);
+      ctx.restore();
+    }
+
+    /* Regla */
+    if (this.measure) this.ruler(ctx, g, this.measure.from, this.measure.to, X, Y);
+    if (dragging && dragging.moved) {
+      this.ruler(ctx, g, dragging.from, dragging.at, X, Y, dragging.range);
+    }
+
+    /* Casilla bajo el ratón */
+    if (this.hover && !dragging) {
+      const [hx, hy] = this.hover.split(",").map(Number);
+      if (hx >= 0 && hy >= 0 && hx < map.cols && hy < map.rows) {
+        ctx.strokeStyle = COLORS.pick;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(X(hx) + 1, Y(hy) + 1, g.cell - 2, g.cell - 2);
+      }
+    }
+
+    /* Señal */
+    const ping = session && session.ping;
+    if (ping && ping.mapId === map.id && Date.now() - ping.ts < 4000) {
+      const t = (Date.now() - ping.ts) / 4000;
+      const cx = X(ping.x) + g.cell / 2, cy = Y(ping.y) + g.cell / 2;
+      ctx.save();
+      ctx.globalAlpha = 1 - t;
+      ctx.strokeStyle = ping.color || "#ffd27f";
+      ctx.lineWidth = 3;
+      for (const phase of [0, 0.33, 0.66]) {
+        const f = ((t * 2 + phase) % 1);
+        ctx.beginPath();
+        ctx.arc(cx, cy, g.cell * (0.3 + f * 1.4), 0, Math.PI * 2);
+        ctx.globalAlpha = (1 - t) * (1 - f) * 0.9;
+        ctx.stroke();
+      }
+      ctx.restore();
+      this.tick();
+    }
+  }
+
+  tick() {
+    cancelAnimationFrame(this._anim);
+    this._anim = requestAnimationFrame(() => this.draw());
+  }
+
+  conditionBadges(ctx, g, conds, cx, cy, r) {
+    const shown = conds.length > 3 ? conds.slice(0, 3) : conds;
+    const extra = conds.length - shown.length;
+    const total = shown.length + (extra ? 1 : 0);
+    const br = Math.max(6, Math.min(g.cell * 0.17, r * 0.5));
+    const spread = Math.min(Math.PI * 0.72, 0.5 + total * 0.26);
+    const start = -Math.PI / 2 - spread / 2;
+    const ring = r + br * 0.85;
+
+    for (let i = 0; i < total; i++) {
+      const a = total === 1 ? -Math.PI / 2 : start + (spread * i) / (total - 1);
+      const bx = cx + Math.cos(a) * ring, by = cy + Math.sin(a) * ring;
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(bx, by, br, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(10,12,17,.92)";
+      ctx.fill();
+      ctx.lineWidth = Math.max(1, br * 0.18);
+      ctx.strokeStyle = "#b8383b";
+      ctx.stroke();
+      if (i < shown.length) {
+        const mark = COND_MARKS[shown[i]] || COND_MARKS.otro;
+        ctx.strokeStyle = "#f0d9c8";
+        ctx.fillStyle = "#f0d9c8";
+        ctx.lineWidth = Math.max(1.1, br * 0.2);
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        mark(ctx, bx, by, br * 0.62);
+      } else {
+        ctx.fillStyle = "#f0d9c8";
+        ctx.font = `700 ${Math.round(br * 1.05)}px system-ui, sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("+" + extra, bx, by + 0.5);
+      }
+      ctx.restore();
+    }
+  }
+
+  pinBadge(ctx, g, pin, X, Y) {
+    const cx = X(pin.x) + g.cell / 2, cy = Y(pin.y) + g.cell / 2;
+    const r = Math.max(7, g.cell * 0.3);
+    const tone = pin.party ? "#d99a2b" : "#8878d8";
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(9,11,16,.9)";
+    ctx.fill();
+    ctx.strokeStyle = tone;
+    ctx.lineWidth = Math.max(2, g.cell * 0.07);
+    if (!pin.party) ctx.setLineDash([r * 0.55, r * 0.45]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    PIN_MARKS[pin.kind] ? PIN_MARKS[pin.kind](ctx, cx, cy, r, tone) : PIN_MARKS.nota(ctx, cx, cy, r, tone);
+    ctx.restore();
+  }
+
+  /* A quién pillaría esta área, para poder decidir antes de gastar el conjuro */
+  covered(shape) {
+    const map = this.data.map;
+    if (!map) return [];
+    const cells = shapeCells(map, shape);
+    return this.data.chars.filter(c =>
+      c.mapId === map.id && c.mx !== null && occupied(c).some(([x, y]) => cells.has(cellKey(x, y))));
+  }
+
+  shape(ctx, g, s, X, Y, ghost = false) {
+    const step = this.data.map.feet || 5;
+    const r = (s.size / step) * g.cell;
+    const ox = X(s.x), oy = Y(s.y);
+    ctx.save();
+    ctx.globalAlpha = ghost ? 0.55 : 0.85;
+    ctx.fillStyle = s.color + "33";
+    ctx.strokeStyle = s.color;
+    ctx.lineWidth = 2;
+    if (s.local) ctx.setLineDash([7, 5]);
+    ctx.beginPath();
+    if (s.kind === "circle") ctx.arc(ox, oy, r, 0, Math.PI * 2);
+    else if (s.kind === "square") ctx.rect(ox - r, oy - r, r * 2, r * 2);
+    else if (s.kind === "cone") {
+      const half = Math.PI / 6;
+      ctx.moveTo(ox, oy);
+      ctx.arc(ox, oy, r, s.angle - half, s.angle + half);
+      ctx.closePath();
+    } else {
+      const w = (s.width / step) * g.cell / 2;
+      const ca = Math.cos(s.angle), sa = Math.sin(s.angle);
+      ctx.moveTo(ox - sa * w, oy + ca * w);
+      ctx.lineTo(ox + ca * r - sa * w, oy + sa * r + ca * w);
+      ctx.lineTo(ox + ca * r + sa * w, oy + sa * r - ca * w);
+      ctx.lineTo(ox + sa * w, oy - ca * w);
+      ctx.closePath();
+    }
+    ctx.fill();
+    ctx.stroke();
+    ctx.setLineDash([]);
+    if (s.label && g.cell > 14) {
+      ctx.fillStyle = "#ece4d4";
+      ctx.font = `600 ${Math.max(10, Math.round(g.cell * 0.24))}px system-ui, sans-serif`;
+      ctx.textAlign = "center";
+      ctx.fillText(s.label, ox, oy - 4);
+    }
+    ctx.restore();
+  }
+
+  ruler(ctx, g, from, to, X, Y, range) {
+    const map = this.data.map;
+    const cells = gridDistance(from.x, from.y, to.x, to.y, map.diagonals);
+    const feet = range && range.has(cellKey(to.x, to.y))
+      ? range.get(cellKey(to.x, to.y)) * (map.feet || 5)
+      : cells * (map.feet || 5);
+    const ax = X(from.x) + g.cell / 2, ay = Y(from.y) + g.cell / 2;
+    const bx = X(to.x) + g.cell / 2, by = Y(to.y) + g.cell / 2;
+    ctx.save();
+    ctx.strokeStyle = COLORS.measure;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 5]);
+    ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(bx, by, 4, 0, Math.PI * 2); ctx.fillStyle = COLORS.measure; ctx.fill();
+
+    const text = `${feet} pies · ${cells} ${cells === 1 ? "casilla" : "casillas"}`;
+    ctx.font = "600 13px system-ui, sans-serif";
+    const w = ctx.measureText(text).width + 12;
+    const lx = clamp((ax + bx) / 2 - w / 2, 2, g.W - w - 2);
+    const ly = clamp((ay + by) / 2 - 26, 2, g.H - 26);
+    ctx.fillStyle = "rgba(7,8,12,.85)";
+    ctx.strokeStyle = "rgba(127,208,255,.5)";
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.roundRect(lx, ly, w, 22, 6); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#cfe9ff";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(text, lx + w / 2, ly + 12);
+    ctx.restore();
+  }
+
+  token(ctx, g, c, x, y, X, Y, { now, selected, target, memory } = {}) {
+    const n = footprint(c);
+    const span = g.cell * n;
+    const tiny = /Diminuto|Tiny/i.test(String(c.size || c.sizeType || ""));
+    const r = span * (tiny ? 0.26 : 0.4);
+    const cx = X(x) + span / 2, cy = Y(y) + span / 2;
+    const down = c.hp <= 0;
+
+    /* Luz que lleva encima */
+    if (c.light && this.data.map.dark) {
+      const rad = c.light * g.cell;
+      const grad = ctx.createRadialGradient(cx, cy, r, cx, cy, rad);
+      grad.addColorStop(0, "rgba(255,206,130,.16)");
+      grad.addColorStop(1, "rgba(255,206,130,0)");
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(cx, cy, rad, 0, Math.PI * 2); ctx.fill();
+    }
+
+    if (now) {
+      ctx.save();
+      ctx.strokeStyle = "#d99a2b";
+      ctx.lineWidth = Math.max(2, g.cell * 0.08);
+      ctx.shadowColor = "#d99a2b"; ctx.shadowBlur = 12;
+      ctx.beginPath(); ctx.arc(cx, cy, r + Math.max(4, g.cell * 0.14), 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+    }
+
+    ctx.save();
+    if (memory) ctx.globalAlpha = 0.45;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = c.color || "#c89b4a";
+    ctx.globalAlpha *= down ? 0.35 : 1;
+    ctx.fill();
+
+    const img = image(c.avatarId);
+    if (img && img.complete && img.naturalWidth) {
+      ctx.clip();
+      ctx.drawImage(img, cx - r, cy - r, r * 2, r * 2);
+    } else if (span > 18) {
+      ctx.fillStyle = "rgba(10,10,12,.82)";
+      ctx.font = `600 ${Math.round(r * 0.9)}px system-ui, sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(initials(c.name), cx, cy + 1);
+    }
+    ctx.restore();
+
+    if (memory) {
+      ctx.save();
+      ctx.strokeStyle = "rgba(236,228,212,.55)";
+      ctx.setLineDash([Math.max(3, g.cell * 0.1), Math.max(3, g.cell * 0.1)]);
+      ctx.lineWidth = Math.max(1.5, g.cell * 0.05);
+      ctx.beginPath(); ctx.arc(cx, cy, r + Math.max(3, g.cell * 0.1), 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+      ctx.save();
+      ctx.globalAlpha = 0.45;
+    }
+
+    /* Aro de vida. En la vista del DM se ve siempre; en la de la party solo
+       la de los personajes, y la de los enemigos únicamente si el DM ha
+       decidido enseñarla (en cuyo caso el servidor manda el porcentaje). */
+    const showRing = this.mode === "dm" || c.kind === "pc" || c.hpPct !== undefined;
+    if (showRing && !down) {
+      const p = c.hpPct !== undefined ? c.hpPct : pct(c);
+      ctx.beginPath();
+      ctx.arc(cx, cy, r + Math.max(2, g.cell * 0.055), -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (p / 100));
+      ctx.lineWidth = Math.max(2, g.cell * 0.09);
+      ctx.strokeStyle = { ok: "#4f9d5d", warn: "#d99a2b", bad: "#b8383b", out: "#555" }[hpTone(p)];
+      ctx.stroke();
+    }
+    if (down) {
+      ctx.strokeStyle = "#b8383b";
+      ctx.lineWidth = Math.max(2, g.cell * 0.07);
+      ctx.beginPath();
+      ctx.moveTo(cx - r * 0.6, cy - r * 0.6); ctx.lineTo(cx + r * 0.6, cy + r * 0.6);
+      ctx.moveTo(cx + r * 0.6, cy - r * 0.6); ctx.lineTo(cx - r * 0.6, cy + r * 0.6);
+      ctx.stroke();
+    }
+    if (c.hidden) {
+      ctx.strokeStyle = "rgba(236,228,212,.8)";
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(cx, cy, r + 4, 0, Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    if (selected) {
+      ctx.strokeStyle = COLORS.select;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([3, 3]);
+      ctx.strokeRect(X(x) + 1, Y(y) + 1, span - 2, span - 2);
+      ctx.setLineDash([]);
+    }
+    if (target) {
+      ctx.strokeStyle = COLORS.target;
+      ctx.lineWidth = Math.max(2, g.cell * 0.07);
+      ctx.beginPath(); ctx.arc(cx, cy, r + Math.max(5, g.cell * 0.18), 0, Math.PI * 2); ctx.stroke();
+    }
+
+    /* Estados: una chapita con su marca por cada uno, en arco sobre la ficha.
+       Caben tres; a partir de ahí la última dice cuántos faltan, porque con
+       cinco marcas diminutas no se distingue ninguna. Los puntos rojos de
+       antes obligaban a abrir la ficha para saber qué le pasaba a quién. */
+    const conds = c.conditions || [];
+    if (conds.length && g.cell > 18) this.conditionBadges(ctx, g, conds, cx, cy, r);
+
+    /* Nombre */
+    if (g.cell > 26) {
+      const label = c.name.length > 14 ? c.name.slice(0, 13) + "…" : c.name;
+      ctx.font = `600 ${Math.max(9, Math.round(g.cell * 0.2))}px system-ui, sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      const w = ctx.measureText(label).width + 8;
+      ctx.fillStyle = "rgba(7,8,12,.72)";
+      ctx.fillRect(cx - w / 2, cy + r + 2, w, g.cell * 0.24);
+      ctx.fillStyle = "#ece4d4";
+      ctx.fillText(label, cx, cy + r + 4);
+    }
+    if (memory) ctx.restore();
+  }
+}
+
+/* Una marca por estado, dibujada a trazo dentro de su chapita. Se reconocen
+   de un vistazo desde el otro lado de la mesa, que es de lo que se trata. */
+const slash = (ctx, x, y, s) => { ctx.beginPath(); ctx.moveTo(x - s, y - s); ctx.lineTo(x + s, y + s); ctx.stroke(); };
+const COND_MARKS = {
+  /* ojo tachado */
+  cegado: (ctx, x, y, s) => {
+    ctx.beginPath();
+    ctx.moveTo(x - s, y); ctx.quadraticCurveTo(x, y - s * 0.95, x + s, y);
+    ctx.quadraticCurveTo(x, y + s * 0.95, x - s, y);
+    ctx.stroke();
+    ctx.beginPath(); ctx.arc(x, y, s * 0.3, 0, Math.PI * 2); ctx.fill();
+    slash(ctx, x, y, s * 0.95);
+  },
+  /* red */
+  apresado: (ctx, x, y, s) => {
+    ctx.beginPath();
+    for (let i = -1; i <= 1; i++) {
+      ctx.moveTo(x - s, y + i * s * 0.7); ctx.lineTo(x + s, y + i * s * 0.7 + s * 0.7);
+      ctx.moveTo(x - s, y + i * s * 0.7 + s * 0.7); ctx.lineTo(x + s, y + i * s * 0.7);
+    }
+    ctx.stroke();
+  },
+  /* mano que sujeta */
+  agarrado: (ctx, x, y, s) => {
+    ctx.beginPath(); ctx.arc(x, y, s * 0.75, Math.PI * 0.25, Math.PI * 1.05); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x, y, s * 0.75, Math.PI * 1.25, Math.PI * 2.05); ctx.stroke();
+  },
+  /* boca abierta de susto */
+  asustado: (ctx, x, y, s) => {
+    ctx.beginPath();
+    ctx.moveTo(x - s, y + s * 0.7); ctx.lineTo(x - s * 0.35, y - s * 0.6);
+    ctx.lineTo(x + s * 0.35, y + s * 0.6); ctx.lineTo(x + s, y - s * 0.7);
+    ctx.stroke();
+  },
+  /* estrellitas */
+  aturdido: (ctx, x, y, s) => {
+    ctx.beginPath();
+    for (let i = 0; i < 3; i++) {
+      const a = i * Math.PI / 3;
+      ctx.moveTo(x - Math.cos(a) * s, y - Math.sin(a) * s);
+      ctx.lineTo(x + Math.cos(a) * s, y + Math.sin(a) * s);
+    }
+    ctx.stroke();
+  },
+  /* figura tumbada */
+  derribado: (ctx, x, y, s) => {
+    ctx.beginPath(); ctx.arc(x - s * 0.55, y + s * 0.1, s * 0.32, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x - s * 0.15, y + s * 0.1); ctx.lineTo(x + s, y + s * 0.1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x - s, y + s * 0.75); ctx.lineTo(x + s, y + s * 0.75); ctx.stroke();
+  },
+  /* corazón */
+  encantado: (ctx, x, y, s) => {
+    ctx.beginPath();
+    ctx.moveTo(x, y + s * 0.8);
+    ctx.bezierCurveTo(x - s * 1.4, y - s * 0.2, x - s * 0.4, y - s * 1.1, x, y - s * 0.3);
+    ctx.bezierCurveTo(x + s * 0.4, y - s * 1.1, x + s * 1.4, y - s * 0.2, x, y + s * 0.8);
+    ctx.fill();
+  },
+  /* onda tachada */
+  ensordecido: (ctx, x, y, s) => {
+    ctx.beginPath(); ctx.arc(x - s * 0.3, y, s * 0.5, -Math.PI / 2.4, Math.PI / 2.4); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x - s * 0.3, y, s * 0.95, -Math.PI / 2.4, Math.PI / 2.4); ctx.stroke();
+    slash(ctx, x, y, s * 0.9);
+  },
+  /* gota */
+  envenenado: (ctx, x, y, s) => {
+    ctx.beginPath();
+    ctx.moveTo(x, y - s);
+    ctx.bezierCurveTo(x + s, y, x + s * 0.75, y + s, x, y + s);
+    ctx.bezierCurveTo(x - s * 0.75, y + s, x - s, y, x, y - s);
+    ctx.fill();
+  },
+  /* prohibido */
+  incapacitado: (ctx, x, y, s) => {
+    ctx.beginPath(); ctx.arc(x, y, s * 0.9, 0, Math.PI * 2); ctx.stroke();
+    slash(ctx, x, y, s * 0.62);
+  },
+  /* contorno a rayas */
+  invisible: (ctx, x, y, s) => {
+    ctx.save(); ctx.setLineDash([s * 0.45, s * 0.4]);
+    ctx.beginPath(); ctx.arc(x, y, s * 0.85, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+  },
+  /* rayo */
+  paralizado: (ctx, x, y, s) => {
+    ctx.beginPath();
+    ctx.moveTo(x + s * 0.45, y - s); ctx.lineTo(x - s * 0.45, y + s * 0.1);
+    ctx.lineTo(x + s * 0.2, y + s * 0.1); ctx.lineTo(x - s * 0.4, y + s);
+    ctx.stroke();
+  },
+  /* piedra */
+  petrificado: (ctx, x, y, s) => {
+    ctx.beginPath();
+    ctx.moveTo(x - s, y + s * 0.7); ctx.lineTo(x - s * 0.45, y - s * 0.75);
+    ctx.lineTo(x + s * 0.5, y - s * 0.5); ctx.lineTo(x + s, y + s * 0.7);
+    ctx.closePath(); ctx.stroke();
+  },
+  /* zeta de dormido */
+  inconsciente: (ctx, x, y, s) => {
+    ctx.beginPath();
+    ctx.moveTo(x - s * 0.8, y - s * 0.7); ctx.lineTo(x + s * 0.8, y - s * 0.7);
+    ctx.lineTo(x - s * 0.8, y + s * 0.7); ctx.lineTo(x + s * 0.8, y + s * 0.7);
+    ctx.stroke();
+  },
+  /* flecha hacia abajo */
+  agotamiento: (ctx, x, y, s) => {
+    ctx.beginPath();
+    ctx.moveTo(x, y - s); ctx.lineTo(x, y + s * 0.9);
+    ctx.moveTo(x - s * 0.6, y + s * 0.25); ctx.lineTo(x, y + s * 0.9); ctx.lineTo(x + s * 0.6, y + s * 0.25);
+    ctx.stroke();
+  },
+  /* círculos concéntricos */
+  concentrado: (ctx, x, y, s) => {
+    ctx.beginPath(); ctx.arc(x, y, s * 0.9, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x, y, s * 0.32, 0, Math.PI * 2); ctx.fill();
+  },
+  /* cualquier otro que se añada a mano */
+  otro: (ctx, x, y, s) => {
+    ctx.beginPath(); ctx.arc(x, y, s * 0.45, 0, Math.PI * 2); ctx.fill();
+  }
+};
+
+/* Las marcas de las chinchetas, dibujadas a trazo */
+const PIN_MARKS = {
+  nota: (ctx, cx, cy, r, tone) => {
+    ctx.strokeStyle = tone; ctx.lineWidth = Math.max(1.4, r * 0.16); ctx.lineCap = "round";
+    ctx.beginPath();
+    for (let i = -1; i <= 1; i++) { ctx.moveTo(cx - r * 0.42, cy + i * r * 0.34); ctx.lineTo(cx + r * (i === 1 ? 0.1 : 0.42), cy + i * r * 0.34); }
+    ctx.stroke();
+  },
+  peligro: (ctx, cx, cy, r, tone) => {
+    ctx.strokeStyle = tone; ctx.lineWidth = Math.max(1.8, r * 0.2); ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(cx, cy - r * 0.45); ctx.lineTo(cx, cy + r * 0.12); ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy + r * 0.42, Math.max(1.2, r * 0.11), 0, Math.PI * 2); ctx.fillStyle = tone; ctx.fill();
+  },
+  tesoro: (ctx, cx, cy, r, tone) => {
+    ctx.strokeStyle = tone; ctx.lineWidth = Math.max(1.4, r * 0.16); ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - r * 0.5); ctx.lineTo(cx + r * 0.5, cy); ctx.lineTo(cx, cy + r * 0.5); ctx.lineTo(cx - r * 0.5, cy);
+    ctx.closePath(); ctx.stroke();
+  },
+  pregunta: (ctx, cx, cy, r, tone) => {
+    ctx.strokeStyle = tone; ctx.lineWidth = Math.max(1.5, r * 0.17); ctx.lineCap = "round";
+    ctx.beginPath(); ctx.arc(cx, cy - r * 0.16, r * 0.28, Math.PI * 0.9, Math.PI * 2.35); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, cy + r * 0.06); ctx.lineTo(cx, cy + r * 0.2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx, cy + r * 0.46, Math.max(1.1, r * 0.1), 0, Math.PI * 2); ctx.fillStyle = tone; ctx.fill();
+  }
+};
+
+export const EDGE_CYCLE = { none: "wall", wall: "door", door: "doorOpen", doorOpen: null };
+export { cellKey, edgeKey };

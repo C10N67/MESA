@@ -1,0 +1,15 @@
+{
+  "name": "mesa",
+  "productName": "Mesa",
+  "version": "2.0.0",
+  "description": "Partida de D&D en red: una vista para el DM y otra para cada jugador",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": { "node": ">=18" }
+}

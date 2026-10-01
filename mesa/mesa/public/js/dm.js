@@ -1,0 +1,1453 @@
+/* Vista del DM: todo a la vista y todo editable. */
+
+import { $, el, on, esc, lines, sign, pct, hpTone, initials, imgURL, toast, modal, confirmBox, shrinkImage, clamp } from "./util.js";
+import { CONDITIONS, conditionName, ABILITIES, SKILLS, PIN_KINDS, modOf, normalizeChar, normalizeBeast, normalizeMap, normalizePin, normalizePortal, uid, encounterDifficulty } from "./schema.js";
+import { openAttacks, attacksOf } from "./attacks.js";
+import { feetChars } from "./los.js";
+import { store, onState, onPresence, onStatus, op, patchChar, patchSession, patchMap, uploadImage, leave } from "./net.js";
+import { dicePanel, renderLog, throwDice, tellTable, currentMode, isSecret } from "./dice-panel.js";
+import { openCharEditor, openConditions } from "./char-editor.js";
+import { MapView } from "./map.js";
+import { langPicker } from "./i18n.js";
+import { icon } from "./icons.js";
+import { rollHitPoints } from "./dice.js";
+
+let tab = "mesa";
+let openCards = new Set();
+let mapView = null;
+let mapTool = "token";
+let beastQuery = "";
+let drawerOpen = false;
+let shapeSize = 20;
+let targetId = null;
+let lastAlert = null;   // null = todavía no se ha pintado nada
+
+const doc = () => store.doc;
+const chars = () => doc().chars;
+const pcs = () => chars().filter(c => c.kind === "pc");
+const foes = () => chars().filter(c => c.kind === "monster");
+const byId = id => chars().find(c => c.id === id);
+const session = () => doc().session;
+const activeMap = () => doc().maps.find(m => m.id === session().activeMapId) || doc().maps[0];
+
+export function mountDM(root) {
+  root.innerHTML = `
+    <div class="shell">
+      <div class="banner hidden" id="offline">Se ha perdido la conexión con la partida. Reintentando…</div>
+      <header class="topbar">
+        <div class="brand">
+          <h1>Mesa</h1>
+          <input class="campaign" id="campaign" aria-label="Nombre de la campaña">
+        </div>
+        <nav class="tabs" role="tablist">
+          <button role="tab" data-tab="mesa" aria-selected="true">La mesa</button>
+          <button role="tab" data-tab="mapa" aria-selected="false">Mapa</button>
+        </nav>
+        <span class="spacer"></span>
+        <div class="who" id="presence"></div>
+        <button class="btn sm" id="bestiaryBtn">Bestiario</button>
+        <button class="btn sm" id="combatBtn">Iniciar combate</button>
+        <button class="btn sm" id="restBtn">Descansar</button>
+        <button class="icon-btn" id="undoBtn" title="Deshacer el último cambio">${icon("undo")}</button>
+        <button class="icon-btn" id="moreBtn" aria-label="Más opciones" title="Más opciones">${icon("more")}</button>
+        <button class="btn primary sm" id="addBtn">Añadir personaje</button>
+      </header>
+      <div class="rail hidden" id="rail"></div>
+      <div class="showing hidden" id="showing"></div>
+      <div class="layout">
+        <main>
+          <section id="tableView"></section>
+          <section id="mapPane" class="hidden"></section>
+        </main>
+      </div>
+    </div>`;
+
+  const layout = root.querySelector(".layout");
+  layout.appendChild(dicePanel({ isDM: true }));
+
+  /* Cabecera */
+  const campaign = $("#campaign", root);
+  campaign.addEventListener("change", () => patchSession({ title: campaign.value.trim() || "Campaña sin nombre" }));
+  on(root, "click", "[data-tab]", (e, b) => {
+    tab = b.dataset.tab;
+    root.querySelectorAll("[data-tab]").forEach(x => x.setAttribute("aria-selected", String(x === b)));
+    render();
+  });
+  $("#addBtn", root).addEventListener("click", () => openCharEditor(null, {}));
+  $("#bestiaryBtn", root).addEventListener("click", () => toggleDrawer());
+  $("#combatBtn", root).addEventListener("click", toggleCombat);
+  $("#restBtn", root).addEventListener("click", openRest);
+  $("#undoBtn", root).addEventListener("click", () => { op("undo"); toast("Deshecho"); });
+  $("#moreBtn", root).addEventListener("click", openMenu);
+
+  onStatus(ok => $("#offline", root).classList.toggle("hidden", ok));
+  onPresence(renderPresence);
+  onState(render);
+  bindTable(root);
+  bindKeys();
+  render();
+}
+
+/* ---------- Presencia ---------- */
+function renderPresence(list = store.presence) {
+  const host = $("#presence");
+  if (!host) return;
+  const others = list.filter(p => p.role !== "dm");
+  host.innerHTML = `<span class="dot ${store.online ? "" : "off"}"></span>
+    <span class="pill">${others.length} en la mesa</span>`;
+  host.title = others.map(p => p.name + (p.role === "screen" ? " (pantalla)" : "")).join("\n") || "Nadie más conectado";
+}
+
+/* Alguien ha pisado una casilla con nota: se enseña una vez, aquí y ahora. */
+function noticeStep() {
+  const a = session().alert;
+  const first = lastAlert === null;
+  if (!a) { lastAlert = ""; return; }
+  if (a.id === lastAlert) return;
+  lastAlert = a.id;
+  /* Al entrar en la partida no se reabre el último aviso: ya pasó. */
+  if (first || Date.now() - a.ts > 30000) return;
+  const label = (PIN_KINDS.find(([k]) => k === a.kind) || ["", "Nota"])[1];
+  modal({
+    title: `${a.who} pisa: ${label}`,
+    body: `<p class="prose" style="font-size:12px;margin:0 0 6px">${esc(a.mapName || "")}</p>
+      <p class="said" style="font-family:var(--serif);font-size:17px">${esc(a.text) || "(nota sin texto)"}</p>
+      <p class="prose" style="font-size:12px">${a.party ? "La party también la ve." : "Esta nota solo la ves tú."}</p>`,
+    actions: [
+      ...(a.party ? [] : [{ label: "Enseñársela ahora", run: () => {
+        const map = activeMap();
+        const pin = (map.pins || []).find(p => p.id === a.pinId);
+        if (pin) { op("pin.set", { mapId: map.id, pin: { ...pin, party: true } }); tellTable(`${a.who} encuentra algo: ${a.text}`); }
+      } }]),
+      { label: "Entendido", tone: "primary" }
+    ]
+  });
+}
+
+/* ---------- Pintado ---------- */
+function render() {
+  if (!doc()) return;
+  const campaign = $("#campaign");
+  if (campaign && document.activeElement !== campaign) campaign.value = session().title;
+
+  $("#combatBtn").textContent = session().combat.on ? "Terminar combate" : "Iniciar combate";
+  $("#tableView").classList.toggle("hidden", tab !== "mesa");
+  $("#mapPane").classList.toggle("hidden", tab !== "mapa");
+
+  noticeStep();
+
+  const showing = $("#showing");
+  showing.classList.toggle("hidden", !session().handoutId);
+  if (session().handoutId) {
+    showing.innerHTML = `<img src="${imgURL(session().handoutId)}" alt="">
+      <span>Estás enseñando <b>${esc(session().handoutText || "una imagen")}</b> a toda la mesa</span>
+      <button class="btn sm" id="hideHandout">Guardarla</button>`;
+    showing.querySelector("#hideHandout").addEventListener("click", () => patchSession({ handoutId: "", handoutText: "" }));
+  }
+
+  renderRail();
+  if (tab === "mesa") renderTable(); else renderMap();
+  renderLog($("#log"));
+  renderPresence();
+  if (drawerOpen) renderBestiary();
+}
+
+function renderRail() {
+  const rail = $("#rail");
+  const c = session().combat;
+  rail.classList.toggle("hidden", !c.on);
+  if (!c.on) return;
+  const order = c.order.map(byId).filter(Boolean);
+  const now = order[c.index];
+  const used = (now && now.used) || {};
+  const left = now ? Math.max(0, (now.speed || 30) - (used.move || 0)) : 0;
+
+  rail.innerHTML = `
+    <div class="round"><b class="tnum">${c.round}</b><span>ronda</span></div>
+    <div class="strip">
+      ${order.map((x, i) => `
+        <span class="turn-slot">
+          <button class="turn ${i === c.index ? "now" : ""} ${x.hp <= 0 ? "down" : ""}"
+                  data-goto="${i}" data-turn-id="${x.id}" draggable="true">
+            <span class="pip" style="background:${esc(x.color)}">${x.initiative}</span>
+            <b>${esc(x.name)}</b>
+            <small>${x.kind === "pc" ? "CA " + x.ac : x.hp <= 0 ? "fuera" : x.hp + "/" + x.maxHp}${
+              (x.conditions || []).length ? " · " + esc(x.conditions.map(conditionName).join(", ")) : ""}</small>
+          </button>
+          <button class="turn-drop" data-drop-turn="${x.id}" title="Sacar del combate" aria-label="Sacar del combate">${icon("close", 12)}</button>
+        </span>`).join("")}
+    </div>
+    ${now ? `<div class="turn-tools" title="Lo que le queda a ${esc(now.name)} en este turno">
+      <button class="chip ${used.action ? "spent" : ""}" data-use="action">Acción</button>
+      <button class="chip ${used.bonus ? "spent" : ""}" data-use="bonus">Adicional</button>
+      <button class="chip ${used.reaction ? "spent" : ""}" data-use="reaction">Reacción</button>
+      <span class="chip ${left ? "" : "spent"}">${left} de ${now.speed} pies</span>
+      <button class="chip" data-act="attackNow">Atacar</button>
+      <button class="chip" data-act="delay">Retrasar</button>
+    </div>` : ""}
+    <div class="row" style="flex:none;gap:6px">
+      <button class="btn sm" data-act="rollInit">Tirar iniciativa</button>
+      <button class="btn sm" data-act="addToOrder">Añadir…</button>
+      <button class="btn sm" data-act="prevTurn">Anterior</button>
+      <button class="btn sm primary" data-act="nextTurn">Siguiente turno</button>
+    </div>`;
+
+  /* Reordenar la iniciativa arrastrando */
+  let from = null;
+  rail.querySelectorAll("[data-turn-id]").forEach(node => {
+    node.addEventListener("dragstart", e => { from = node.dataset.turnId; e.dataTransfer.effectAllowed = "move"; });
+    node.addEventListener("dragover", e => { e.preventDefault(); node.classList.add("drop"); });
+    node.addEventListener("dragleave", () => node.classList.remove("drop"));
+    node.addEventListener("drop", e => {
+      e.preventDefault();
+      node.classList.remove("drop");
+      const to = node.dataset.turnId;
+      if (!from || from === to) return;
+      const list = session().combat.order.filter(id => id !== from);
+      const at = list.indexOf(to);
+      list.splice(at, 0, from);
+      patchSession({ combat: { ...session().combat, order: list, index: Math.max(0, list.indexOf((order[c.index] || {}).id)) } });
+    });
+  });
+}
+
+function renderTable() {
+  const view = $("#tableView");
+  const monsters = foes();
+  const enc = encounterDifficulty(pcs(), monsters);
+  const upright = pcs().filter(c => c.hp > 0);
+
+  view.innerHTML = `
+    <div class="band">
+      <div class="stat"><b class="tnum">${pcs().length}</b><span>personajes</span></div>
+      <div class="stat"><b class="tnum">${upright.reduce((s, c) => s + c.hp, 0)}</b><span>puntos de vida en pie</span></div>
+      <div class="stat"><b class="tnum">${pcs().length - upright.length}</b><span>caídos</span></div>
+      ${monsters.length ? `<div class="stat"><b class="tnum">${monsters.filter(m => m.hp > 0).length}</b>
+        <span>enemigos · ${enc ? enc.adjusted + " PX ajustados, dificultad " + enc.label : ""}</span></div>` : ""}
+    </div>
+    ${pcs().length ? `<div class="grid">${pcs().map(cardHTML).join("")}</div>` : `
+      <div class="empty">
+        <h3>Aún no hay nadie en la mesa</h3>
+        <p>Crea las fichas tú, o dile a cada jugador que entre desde su móvil y se haga la suya.</p>
+        <button class="btn primary" data-act="add" style="margin-top:12px">Añadir personaje</button>
+      </div>`}
+    ${monsters.length ? `
+      <div class="section-title"><h2>Enemigos</h2><span class="line"></span>
+        <button class="btn sm" data-act="clearFoes">Retirar monstruos</button></div>
+      <div class="grid">${monsters.map(cardHTML).join("")}</div>` : ""}`;
+}
+
+function cardHTML(c) {
+  const p = pct(c);
+  const open = openCards.has(c.id);
+  const monster = c.kind === "monster";
+  const avatar = c.avatarId
+    ? `<img class="avatar" src="${imgURL(c.avatarId)}" alt="" style="--tone:${esc(c.color)}">`
+    : `<div class="avatar" style="--tone:${esc(c.color)}">${initials(c.name)}</div>`;
+
+  return `
+  <article class="card ${c.hp <= 0 ? "down" : ""}" data-id="${c.id}" style="--tone:${esc(c.color)}">
+    <div class="head">
+      ${avatar}
+      <div class="id">
+        <b>${esc(c.name)}</b>
+        <small>${monster
+          ? esc([c.sizeType, c.cr ? "VD " + c.cr : ""].filter(Boolean).join(" · "))
+          : esc([c.className, c.race, "nivel " + c.level, c.claimedBy ? "· " + c.claimedBy : ""].filter(Boolean).join(" "))}</small>
+      </div>
+      <div class="acts">
+        ${monster ? `<button class="icon-btn" data-act="hide" title="${c.hidden ? "Oculto para la party" : "Visible para la party"}">${icon(c.hidden ? "eyeOff" : "eye")}</button>
+          <button class="icon-btn" data-act="clone" title="Duplicar">${icon("copy")}</button>` : ""}
+        <button class="icon-btn" data-act="edit" title="Editar ficha">${icon("pencil")}</button>
+        <button class="icon-btn" data-act="remove" title="Quitar de la mesa">${icon("close")}</button>
+        <button class="icon-btn" data-act="fold" title="Ver más" aria-expanded="${open}">${icon(open ? "up" : "down")}</button>
+      </div>
+    </div>
+
+    <div class="hp">
+      <div class="nums">
+        <b class="tnum">${c.hp}</b><span>/ ${c.maxHp}</span>
+        ${c.tempHp ? `<span class="temp">+${c.tempHp} temporales</span>` : ""}
+        <span class="spacer"></span>
+        <span class="pill">CA <b>${c.ac}</b></span>
+      </div>
+      <div class="bar"><i class="${hpTone(p)}" style="width:${p}%"></i></div>
+    </div>
+
+    <div class="dealer">
+      <button class="btn sm" data-act="damage" title="Restar vida">−</button>
+      <input class="tnum" data-amount type="number" min="0" placeholder="0" inputmode="numeric">
+      <button class="btn sm" data-act="heal" title="Curar">+</button>
+      <button class="btn sm" data-act="temp" title="Vida temporal">Temp</button>
+      <button class="btn sm" data-act="conditions" title="Estados">Estados</button>
+      <button class="btn sm" data-act="attack" title="Tirar un ataque">Atacar</button>
+      <button class="btn sm ${targetId === c.id ? "primary" : ""}" data-act="target" title="Apuntar con los ataques">${icon("target")}</button>
+    </div>
+
+    <div class="meta">
+      <span class="pill">Iniciativa <b>${c.initiative}</b></span>
+      <span class="pill">Velocidad <b>${c.speed}</b></span>
+      ${c.concentration ? `<span class="pill conc" data-act="concSave" data-dc="10" title="Tirar la salvación de concentración">Concentrado en ${esc(c.concentration)} · tirar</span>` : ""}
+      ${c.exhaustion ? `<span class="pill cond">Agotamiento ${c.exhaustion}</span>` : ""}
+      ${c.conditions.map(id => `<span class="pill cond" title="${esc((CONDITIONS.find(x => x.id === id) || {}).hint || "")}" data-act="dropCond" data-cond="${id}">${esc(conditionName(id))}${(c.condMeta || {})[id] ? " " + c.condMeta[id] + "r" : ""} ✕</span>`).join("")}
+      ${c.inspiration ? '<span class="pill tag">Inspiración</span>' : ""}
+      ${c.mx !== null ? '<span class="pill tag">En el mapa</span>' : ""}
+    </div>
+
+    ${open ? detailHTML(c) : ""}
+  </article>`;
+}
+
+function detailHTML(c) {
+  const monster = c.kind === "monster";
+  const block = (title, text) => text ? `<div class="block"><h4>${title}</h4>${lines(text).map(l => `<p>${esc(l)}</p>`).join("")}</div>` : "";
+  return `
+  <div class="detail">
+    <div class="abilities">
+      ${ABILITIES.map(([k, l]) => `<button class="abil" data-act="checkAbility" data-ability="${k}">
+        <span>${l}</span><b class="tnum">${c[k]}</b><small>${sign(modOf(c[k]))}</small></button>`).join("")}
+    </div>
+    <div class="row">
+      <button class="btn sm" data-act="rollInitOne">Iniciativa</button>
+      <button class="btn sm" data-act="rollSave">Salvación…</button>
+      <button class="btn sm" data-act="rollSkill">Habilidad…</button>
+      ${!monster ? '<button class="btn sm" data-act="inspire">Inspiración</button>' : ""}
+      ${!monster && c.hitDice ? `<button class="btn sm" data-act="hitDie">Dado de golpe (${Math.max(0, c.level - c.hitDiceUsed)})</button>` : ""}
+    </div>
+    ${attacksOf(c).length ? `<div class="atk-strip">
+      ${attacksOf(c).slice(0, 8).map(a => `<span class="chip">${esc(a.name)} <b>${a.atk >= 0 ? "+" : ""}${a.atk}</b> ${esc(a.damage)}</span>`).join("")}
+    </div>` : ""}
+    ${!monster && c.slots.some(n => n > 0) ? `<div class="slots">
+      ${c.slots.map((n, i) => n ? `<span class="slot" data-act="slot" data-level="${i}">${i + 1}º
+        ${Array.from({ length: n }, (_, j) => `<i class="${j < c.slotsUsed[i] ? "used" : ""}"></i>`).join("")}</span>` : "").join("")}
+    </div>` : ""}
+    ${c.resources.length ? `<div class="slots">
+      ${c.resources.map((r, i) => `<span class="slot" data-act="res" data-res="${i}">${esc(r.name)}
+        <b class="tnum">${r.max - r.uses}/${r.max}</b></span>`).join("")}</div>` : ""}
+    ${!monster ? `<div class="deaths">
+      <span class="set ok">Éxitos ${[0, 1, 2].map(i => `<button data-act="death" data-kind="ok" data-n="${i + 1}" class="${c.deathOk > i ? "on" : ""}"></button>`).join("")}</span>
+      <span class="set bad">Fallos ${[0, 1, 2].map(i => `<button data-act="death" data-kind="fail" data-n="${i + 1}" class="${c.deathFail > i ? "on" : ""}"></button>`).join("")}</span>
+      <button class="btn sm" data-act="deathRoll">Tirar salvación de muerte</button>
+    </div>` : ""}
+    ${block("Sentidos", c.senses)}${block("Idiomas", c.languages)}${block("Resistencias", c.resistances)}
+    ${block("Rasgos", c.traits)}${block("Acciones", c.actions)}
+    ${block("Ataques", c.weapons)}${block("Conjuros", c.spells)}${block("Equipo", c.inventory)}${block("Notas", c.notes)}
+  </div>`;
+}
+
+/* ---------- Acciones de la mesa ---------- */
+function bindTable(root) {
+  on(root, "click", "[data-act]", (e, btn) => {
+    const card = btn.closest("[data-id]");
+    const c = card ? byId(card.dataset.id) : null;
+    const amount = () => Math.max(0, +(card.querySelector("[data-amount]").value || 0));
+    const act = btn.dataset.act;
+
+    /* Hay acciones que son de la mesa (pasar turno, tirar iniciativa) y otras
+       que son de una ficha concreta. Si la segunda llega sin ficha, se deja
+       pasar en vez de reventar. */
+    const sinFicha = ["add", "nextTurn", "prevTurn", "rollInit", "addToOrder", "delay", "attackNow", "clearFoes"];
+    if (!c && !sinFicha.includes(act)) return;
+
+    switch (act) {
+      case "add": return openCharEditor(null, {});
+      case "fold":
+        openCards.has(c.id) ? openCards.delete(c.id) : openCards.add(c.id);
+        return render();
+      case "edit": return c.kind === "monster" ? openMonsterInstance(c) : openCharEditor(c, {});
+      case "remove": return removeChar(c);
+      case "clone": return cloneMonster(c);
+      case "hide": return patchChar(c.id, { hidden: !c.hidden });
+      case "damage": return dealDamage(c, amount(), card);
+      case "heal": return dealHeal(c, amount(), card);
+      case "temp": {
+        const n = amount();
+        if (!n) return;
+        patchChar(c.id, { tempHp: Math.max(c.tempHp, n) });
+        card.querySelector("[data-amount]").value = "";
+        return;
+      }
+      case "conditions": return openConditions(c);
+      case "dropCond": return patchChar(c.id, { conditions: c.conditions.filter(x => x !== btn.dataset.cond) });
+      case "checkAbility": {
+        const k = btn.dataset.ability;
+        const label = `${c.name} · ${ABILITIES.find(a => a[0] === k)[1]}`;
+        return throwDice("1d20" + sign(modOf(c[k])), { label, mode: currentMode(), secret: isSecret() });
+      }
+      case "rollSave": return pickAndRoll(c, "save");
+      case "rollSkill": return pickAndRoll(c, "skill");
+      case "rollInitOne": {
+        const r = throwDice("1d20" + sign(modOf(c.dex)), { label: c.name + " · iniciativa" });
+        if (r) patchChar(c.id, { initiative: r.total });
+        return;
+      }
+      case "inspire": return patchChar(c.id, { inspiration: !c.inspiration });
+      case "slot": {
+        const i = +btn.dataset.level;
+        const used = c.slotsUsed.slice();
+        used[i] = used[i] >= c.slots[i] ? 0 : used[i] + 1;
+        return patchChar(c.id, { slotsUsed: used });
+      }
+      case "res": {
+        const i = +btn.dataset.res;
+        const list = c.resources.map((r, j) => j !== i ? r : { ...r, uses: r.uses >= r.max ? 0 : r.uses + 1 });
+        return patchChar(c.id, { resources: list });
+      }
+      case "death": {
+        const n = +btn.dataset.n;
+        const key = btn.dataset.kind === "ok" ? "deathOk" : "deathFail";
+        return patchChar(c.id, { [key]: c[key] === n ? n - 1 : n });
+      }
+      case "deathRoll": return deathSave(c);
+      case "clearFoes": return clearMonsters();
+      case "nextTurn": return step(1);
+      case "prevTurn": return step(-1);
+      case "rollInit": return rollInitiative();
+      case "addToOrder": return pickForOrder();
+      case "delay": return delayTurn();
+      case "attackNow": {
+        const who = byId(session().combat.order[session().combat.index]);
+        return who && attack(who);
+      }
+      case "attack": return attack(c);
+      case "target": {
+        targetId = targetId === c.id ? null : c.id;
+        if (mapView) mapView.target = targetId;
+        toast(targetId ? "Apuntando a " + c.name : "Sin objetivo");
+        return render();
+      }
+      case "concSave": {
+        const dc = +btn.dataset.dc || 10;
+        const r = throwDice("1d20" + sign(modOf(c.con) + (c.saves.includes("con") ? c.proficiency : 0)),
+          { label: `${c.name} · concentración CD ${dc}` });
+        if (r && r.total < dc) { patchChar(c.id, { concentration: "" }); tellTable(`${c.name} pierde la concentración`); }
+        return;
+      }
+      case "hitDie": return spendHitDie(c);
+    }
+  });
+
+  on(root, "click", "[data-goto]", (e, b) => {
+    patchSession({ combat: { ...session().combat, index: +b.dataset.goto } });
+  });
+
+  on(root, "click", "[data-drop-turn]", (e, b) => {
+    const c = session().combat;
+    const id = b.dataset.dropTurn;
+    const order = c.order.filter(x => x !== id);
+    if (!order.length) return patchSession({ combat: { on: false, round: 1, index: 0, order: [] } });
+    const wasAt = c.order.indexOf(id);
+    patchSession({ combat: { ...c, order, index: Math.min(c.index > wasAt ? c.index - 1 : c.index, order.length - 1) } });
+    toast((byId(id) || {}).name + " sale del combate");
+  });
+
+  on(root, "click", "[data-use]", (e, b) => {
+    const c = session().combat;
+    const who = byId(c.order[c.index]);
+    if (!who) return;
+    const k = b.dataset.use;
+    patchChar(who.id, { used: { ...(who.used || {}), [k]: !(who.used || {})[k] } });
+  });
+
+  on(root, "keydown", "[data-amount]", e => {
+    if (e.key !== "Enter") return;
+    const card = e.target.closest("[data-id]");
+    const c = byId(card.dataset.id);
+    const n = Math.max(0, +e.target.value || 0);
+    e.shiftKey ? dealHeal(c, n, card) : dealDamage(c, n, card);
+  });
+}
+
+/* El reparto de vida lo hace el servidor: ahí están escritas de una sola vez
+   las reglas de vida temporal, caída y concentración. */
+function dealDamage(c, n, card) {
+  if (!n) return;
+  op("hp.apply", { id: c.id, damage: n });
+  if (card) card.querySelector("[data-amount]").value = "";
+}
+
+function dealHeal(c, n, card) {
+  if (!n) return;
+  op("hp.apply", { id: c.id, heal: n });
+  if (card) card.querySelector("[data-amount]").value = "";
+}
+
+/* ---------- Ataques ---------- */
+function targetsFor(c) {
+  const map = activeMap();
+  const rivals = chars().filter(x => x.id !== c.id && x.hp > 0);
+  return rivals.map(x => {
+    const near = map && x.mx !== null && c.mx !== null && x.mapId === c.mapId ? feetChars(map, c, x) : null;
+    return { ...x, name: x.name + (near !== null ? ` (a ${near} pies)` : "") };
+  }).sort((a, b) => (a.kind === c.kind) - (b.kind === c.kind));
+}
+
+function attack(c) {
+  openAttacks(c, { targets: targetsFor(c), preselect: targetId, secret: c.kind === "monster" && isSecret() });
+}
+
+function delayTurn() {
+  const c = { ...session().combat };
+  const id = c.order[c.index];
+  if (!id) return;
+  const list = c.order.filter(x => x !== id);
+  list.push(id);
+  patchSession({ combat: { ...c, order: list, index: Math.max(0, c.index) % Math.max(1, list.length) } });
+  tellTable(`${byId(id).name} retrasa su turno`);
+}
+
+function pickForOrder() {
+  const out = chars().filter(c => !session().combat.order.includes(c.id));
+  if (!out.length) return toast("Ya están todos en la iniciativa");
+  const body = el(`<div class="cond-grid">${out.map(c =>
+    `<button class="btn sm" data-add="${c.id}">${esc(c.name)} · ${c.initiative}</button>`).join("")}</div>`);
+  const m = modal({ title: "Meter en la iniciativa", body, wide: true, actions: [{ label: "Cerrar" }] });
+  on(body, "click", "[data-add]", (e, b) => {
+    const c = session().combat;
+    const list = [...c.order, b.dataset.add]
+      .map(byId).filter(Boolean)
+      .sort((a, z) => z.initiative - a.initiative || modOf(z.dex) - modOf(a.dex))
+      .map(x => x.id);
+    patchSession({ combat: { ...c, order: list } });
+    m.close();
+  });
+}
+
+function deathSave(c) {
+  const r = throwDice("1d20", { label: c.name + " · salvación de muerte" });
+  if (!r) return;
+  if (r.total === 20) return patchChar(c.id, { hp: 1, deathOk: 0, deathFail: 0 });
+  if (r.total === 1) return patchChar(c.id, { deathFail: Math.min(3, c.deathFail + 2) });
+  if (r.total >= 10) patchChar(c.id, { deathOk: Math.min(3, c.deathOk + 1) });
+  else patchChar(c.id, { deathFail: Math.min(3, c.deathFail + 1) });
+}
+
+function pickAndRoll(c, kind) {
+  const list = kind === "save"
+    ? ABILITIES.map(([k, l]) => ({ id: k, name: l, mod: modOf(c[k]) + (c.saves.includes(k) ? c.proficiency : 0) }))
+    : SKILLS.map(([id, name, ab]) => ({ id, name, mod: modOf(c[ab]) + (c.skills.includes(id) ? c.proficiency : 0) }));
+  const body = el(`<div class="cond-grid">${list.map(x =>
+    `<button class="btn sm" data-pick="${x.id}" data-mod="${x.mod}">${esc(x.name)} ${sign(x.mod)}</button>`).join("")}</div>`);
+  const m = modal({ title: (kind === "save" ? "Salvación de " : "Prueba de ") + c.name, body, wide: true, actions: [{ label: "Cerrar" }] });
+  on(body, "click", "[data-pick]", (e, b) => {
+    throwDice("1d20" + sign(+b.dataset.mod), { label: `${c.name} · ${b.textContent.trim()}`, mode: currentMode(), secret: isSecret() });
+    m.close();
+  });
+}
+
+async function removeChar(c) {
+  if (!await confirmBox(`¿Quitar a ${c.name} de la mesa? Su ficha se pierde.`)) return;
+  op("char.remove", { ids: [c.id] });
+}
+
+function cloneMonster(c) {
+  const copy = normalizeChar({ ...c, id: uid(), name: nextName(c.name), claimedBy: "" });
+  op("char.add", { char: copy });
+}
+
+function nextName(base) {
+  const stem = base.replace(/\s\d+$/, "");
+  const used = chars().filter(c => c.name.startsWith(stem)).length;
+  return `${stem} ${used + 1}`;
+}
+
+async function clearMonsters() {
+  if (!await confirmBox("¿Retirar del encuentro a todos los monstruos?")) return;
+  op("char.remove", { ids: foes().map(c => c.id) });
+}
+
+/* ---------- Combate ---------- */
+function toggleCombat() {
+  const c = session().combat;
+  if (c.on) {
+    patchSession({ combat: { on: false, round: 1, index: 0, order: [] } });
+    tellTable("Termina el combate");
+    return;
+  }
+  openCombatRoster();
+}
+
+/* A cuánto se considera que una criatura está «en el ajo». Más lejos de esto
+   se queda fuera de la iniciativa, aunque esté en el mismo mapa. */
+const COMBAT_REACH = 12;
+
+/* Quién entra al empezar un combate.
+
+   No entra todo el que esté en el mapa: se caen los que están fuera de
+   combate, las criaturas que la party todavía no ha visto (meterlas delataría
+   que hay algo ahí) y las que están lejos de la pelea. La lista se puede
+   retocar a mano antes de empezar. */
+function combatCandidates() {
+  const map = activeMap();
+  const heroes = pcs().filter(c => c.hp > 0);
+  const near = c => {
+    if (!map || c.mx === null || c.mapId !== map.id) return false;
+    return heroes.some(h => h.mx !== null && h.mapId === map.id && feetChars(map, h, c) <= COMBAT_REACH * (map.feet || 5));
+  };
+  return chars().filter(c => {
+    if (c.hp <= 0) return false;
+    if (c.kind === "pc") return true;
+    return c.discovered && near(c);
+  });
+}
+
+const sortByInitiative = list => list.slice()
+  .sort((a, b) => b.initiative - a.initiative || modOf(b.dex) - modOf(a.dex) || a.name.localeCompare(b.name))
+  .map(c => c.id);
+
+const buildOrder = () => sortByInitiative(combatCandidates());
+
+/* Antes de empezar, se enseña quién va a entrar y se puede quitar a cualquiera. */
+function openCombatRoster() {
+  const inside = new Set(combatCandidates().map(c => c.id));
+  const rest = chars().filter(c => !inside.has(c.id));
+  const row = c => `<label class="pick-row init">
+    <input type="checkbox" value="${c.id}" ${inside.has(c.id) ? "checked" : ""}>
+    <span class="avatar" style="--tone:${esc(c.color)};width:26px;height:26px;font-size:10px">${initials(c.name)}</span>
+    <span><b>${esc(c.name)}</b><small>${esc(whyOut(c, inside))}</small></span>
+    <input type="number" class="tnum" data-init="${c.id}" value="${c.initiative}" min="-10" max="99"
+      aria-label="Iniciativa de ${esc(c.name)}" title="Iniciativa. Escríbela a mano o tírala.">
+    <button type="button" class="btn sm" data-roll="${c.id}" title="Tirar su iniciativa">d20</button>
+  </label>`;
+  const body = el(`<div>
+    <p class="prose" style="font-size:13px;margin:0 0 10px">Entran estos. Quita o añade a quien quieras, y escribe la iniciativa a mano o tírala.</p>
+    <div class="row" style="margin-bottom:10px">
+      <button type="button" class="btn sm" id="rollAllInit">Tirar por todos</button>
+      <button type="button" class="btn sm" id="rollFoesInit">Tirar solo por las criaturas</button>
+    </div>
+    <div class="pick-list">${[...combatCandidates(), ...rest].map(row).join("")}</div>
+  </div>`);
+
+  /* Tirar aquí mismo y que el número caiga en su casilla */
+  const rollOne = (c, secret) => {
+    const r = throwDice("1d20" + sign(modOf(c.dex)), { label: c.name + " · iniciativa", secret });
+    if (!r) return;
+    const box = body.querySelector(`[data-init="${c.id}"]`);
+    if (box) box.value = r.total;
+  };
+  on(body, "click", "[data-roll]", (e, b) => { const c = byId(b.dataset.roll); if (c) rollOne(c, c.kind === "monster"); });
+  body.querySelector("#rollAllInit").addEventListener("click", () =>
+    [...body.querySelectorAll("input:checked")].forEach(i => { const c = byId(i.value); if (c) rollOne(c, c.kind === "monster"); }));
+  body.querySelector("#rollFoesInit").addEventListener("click", () =>
+    [...body.querySelectorAll("input:checked")].forEach(i => { const c = byId(i.value); if (c && c.kind === "monster") rollOne(c, true); }));
+
+  modal({
+    title: "Quién entra en combate", body, wide: true,
+    actions: [{ label: "Cancelar" }, {
+      label: "Empezar", tone: "primary",
+      run: host => {
+        const chosen = [...host.querySelectorAll("input[type=checkbox]:checked")].map(i => i.value);
+        if (!chosen.length) return false;
+        /* La iniciativa escrita a mano manda sobre la que tuvieran guardada */
+        const nums = new Map();
+        chosen.forEach(id => {
+          const box = host.querySelector(`[data-init="${id}"]`);
+          const n = box ? +box.value : null;
+          if (n !== null && !Number.isNaN(n)) nums.set(id, n);
+        });
+        nums.forEach((n, id) => { if (byId(id) && byId(id).initiative !== n) patchChar(id, { initiative: n }); });
+        const order = chosen.map(byId).filter(Boolean)
+          .sort((a, b) => (nums.get(b.id) ?? b.initiative) - (nums.get(a.id) ?? a.initiative)
+            || modOf(b.dex) - modOf(a.dex) || a.name.localeCompare(b.name))
+          .map(c => c.id);
+        patchSession({ combat: { on: true, round: 1, index: 0, order } });
+        tellTable("Empieza el combate");
+      }
+    }]
+  });
+}
+
+function whyOut(c, inside) {
+  if (inside.has(c.id)) return c.kind === "pc" ? "de la party" : "iniciativa " + c.initiative;
+  if (c.hp <= 0) return "fuera de combate";
+  if (c.kind === "monster" && !c.discovered) return "la party aún no lo ha visto";
+  if (c.mx === null) return "no está en el tablero";
+  return "lejos de la pelea";
+}
+
+function rollInitiative() {
+  const rolled = new Map();
+  const c0 = session().combat;
+  const list = c0.on && c0.order.length ? c0.order.map(byId).filter(Boolean) : combatCandidates();
+  list.forEach(c => {
+    const r = throwDice("1d20" + sign(modOf(c.dex)), { label: c.name + " · iniciativa", secret: c.kind === "monster" });
+    if (r) rolled.set(c.id, r.total);
+  });
+  rolled.forEach((total, id) => patchChar(id, { initiative: total }));
+  // el orden se calcula aquí mismo, sin esperar a que vuelva el estado
+  const order = list.slice()
+    .sort((a, b) => (rolled.get(b.id) ?? b.initiative) - (rolled.get(a.id) ?? a.initiative)
+      || modOf(b.dex) - modOf(a.dex) || a.name.localeCompare(b.name))
+    .map(c => c.id);
+  patchSession({ combat: { ...session().combat, on: true, order, index: 0 } });
+}
+
+/* El paso de turno lo lleva el servidor: ahí caducan los estados por rondas,
+   se devuelven acción y movimiento y se saltan los monstruos caídos. */
+function step(dir) {
+  if (!session().combat.on) return;
+  op("combat.step", { dir });
+}
+
+/* ---------- Descansos ---------- */
+function openRest() {
+  const body = el(`<div class="row" style="flex-direction:column">
+    <button class="btn" data-rest="short">Descanso corto</button>
+    <button class="btn" data-rest="long">Descanso largo</button>
+    <p class="prose" style="font-size:12px">En el corto cada uno decide cuántos dados de golpe gasta; en el largo se recupera todo.</p>
+  </div>`);
+  const m = modal({ title: "Descansar", body, actions: [{ label: "Cerrar" }] });
+  on(body, "click", "[data-rest]", (e, b) => { m.close(); b.dataset.rest === "long" ? longRest() : shortRest(); });
+}
+
+async function shortRest() {
+  if (!await confirmBox("Descanso corto: se recuperan los recursos de uso corto y cada personaje puede gastar dados de golpe desde su ficha.", { danger: false, okLabel: "Descansar" })) return;
+  pcs().forEach(c => patchChar(c.id, { used: { action: false, bonus: false, reaction: false, move: 0 } }));
+  tellTable("La party toma un descanso corto");
+}
+
+/* Gastar un dado de golpe: cura la tirada más el modificador de Constitución */
+function spendHitDie(c) {
+  const die = (c.hitDice || "").split(/d/i)[1];
+  if (!die) return toast("Apunta los dados de golpe en su ficha (por ejemplo 5d8)", "bad");
+  const total = Math.max(1, +c.level - c.hitDiceUsed);
+  if (total <= 0) return toast("No le quedan dados de golpe");
+  const r = throwDice(`1d${die}` + sign(modOf(c.con)), { label: c.name + " · dado de golpe" });
+  if (!r) return;
+  op("hp.apply", { id: c.id, heal: Math.max(1, r.total), note: "dado de golpe" });
+  patchChar(c.id, { hitDiceUsed: c.hitDiceUsed + 1 });
+}
+
+async function longRest() {
+  if (!await confirmBox("Descanso largo: la party recupera toda la vida, los espacios de conjuro y los recursos. Los monstruos no se enteran.", { danger: false, okLabel: "Descansar" })) return;
+  pcs().forEach(c => patchChar(c.id, {
+    hp: c.maxHp, tempHp: 0, deathOk: 0, deathFail: 0,
+    slotsUsed: c.slots.map(() => 0),
+    resources: c.resources.map(r => ({ ...r, uses: 0 })),
+    exhaustion: Math.max(0, c.exhaustion - 1),
+    hitDiceUsed: Math.floor(c.hitDiceUsed / 2),
+    conditions: c.conditions.filter(x => !["inconsciente", "envenenado", "derribado"].includes(x)),
+    concentration: ""
+  }));
+  tellTable("La party toma un descanso largo");
+}
+
+/* ---------- Monstruo ya en la mesa ---------- */
+function openMonsterInstance(c) {
+  const body = el(`<div>
+    <div class="cols2">
+      <label class="field"><span>Nombre</span><input name="name" value="${esc(c.name)}"></label>
+      <label class="field"><span>Clase de armadura</span><input name="ac" type="number" value="${c.ac}"></label>
+      <label class="field"><span>Vida</span><input name="hp" type="number" value="${c.hp}"></label>
+      <label class="field"><span>Vida máxima</span><input name="maxHp" type="number" value="${c.maxHp}"></label>
+      <label class="field"><span>Iniciativa</span><input name="initiative" type="number" value="${c.initiative}"></label>
+      <label class="field"><span>Color</span><input name="color" type="color" value="${esc(c.color)}" style="height:38px"></label>
+    </div>
+    <label class="field"><span>Notas del DM sobre esta criatura</span><textarea name="notes">${esc(c.notes)}</textarea></label>
+    <label class="check"><input type="checkbox" name="hidden" ${c.hidden ? "checked" : ""}> Oculto para la party</label>
+  </div>`);
+  modal({
+    title: "Ajustes de " + c.name,
+    body,
+    actions: [{ label: "Cancelar" }, {
+      label: "Guardar", tone: "primary",
+      run: host => {
+        const v = n => host.querySelector(`[name="${n}"]`).value;
+        patchChar(c.id, {
+          name: v("name"), ac: +v("ac"), hp: +v("hp"), maxHp: Math.max(1, +v("maxHp")),
+          initiative: +v("initiative"), color: v("color"), notes: v("notes"),
+          hidden: host.querySelector('[name="hidden"]').checked
+        });
+      }
+    }]
+  });
+}
+
+/* ---------- Bestiario ---------- */
+function toggleDrawer(force) {
+  drawerOpen = force === undefined ? !drawerOpen : force;
+  let node = $("#drawer");
+  if (!drawerOpen) { if (node) node.remove(); return; }
+  node = el(`
+    <aside class="drawer" id="drawer">
+      <header>
+        <h2>Bestiario</h2>
+        <span class="spacer"></span>
+        <button class="btn sm" data-beast="new">Crear</button>
+        <button class="icon-btn" data-beast="close">${icon("close")}</button>
+      </header>
+      <div style="padding:0 14px"><input type="search" id="beastSearch" placeholder="Buscar criatura" value="${esc(beastQuery)}"></div>
+      <div class="body" id="beastList"></div>
+    </aside>`);
+  document.body.appendChild(node);
+  node.querySelector("#beastSearch").addEventListener("input", e => { beastQuery = e.target.value; renderBestiary(); });
+  on(node, "click", "[data-beast]", (e, b) => {
+    const action = b.dataset.beast;
+    if (action === "close") return toggleDrawer(false);
+    if (action === "new") return openBeastEditor(null);
+    const beast = doc().bestiary.find(x => x.id === b.dataset.id);
+    if (action === "spawn") return spawn(beast, b.closest(".beast"));
+    if (action === "edit") return openBeastEditor(beast);
+    if (action === "drop") return dropBeast(beast);
+  });
+  renderBestiary();
+}
+
+function renderBestiary() {
+  const host = $("#beastList");
+  if (!host) return;
+  const q = beastQuery.trim().toLowerCase();
+  const list = doc().bestiary.filter(b => !q || (b.name + " " + b.sizeType).toLowerCase().includes(q));
+  host.innerHTML = list.map(b => `
+    <div class="beast" style="--tone:${esc(b.color)}">
+      <div class="top">
+        ${b.avatarId
+          ? `<img class="avatar" src="${imgURL(b.avatarId)}" alt="" style="--tone:${esc(b.color)};width:30px;height:30px">`
+          : `<div class="avatar" style="--tone:${esc(b.color)};width:30px;height:30px;font-size:11px">${initials(b.name)}</div>`}
+        <b>${esc(b.name)}</b>
+        <span class="spacer"></span>
+        <small>VD ${esc(b.cr)} · ${b.xp} PX</small>
+      </div>
+      <small>${esc(b.sizeType)} · CA ${b.ac} · ${b.hpAvg} PV${b.hpDice ? " (" + esc(b.hpDice) + ")" : ""}</small>
+      <div class="go">
+        <input type="number" min="1" max="20" value="1" data-qty aria-label="Cantidad">
+        <label class="check" style="font-size:12px"><input type="checkbox" data-rollhp checked> PV al azar</label>
+        <span class="spacer"></span>
+        <button class="btn sm" data-beast="edit" data-id="${b.id}">${icon("pencil")}</button>
+        ${b.custom ? `<button class="icon-btn" data-beast="drop" data-id="${b.id}">${icon("close")}</button>` : ""}
+        <button class="btn sm primary" data-beast="spawn" data-id="${b.id}">Al combate</button>
+      </div>
+    </div>`).join("") || '<p class="prose">No hay ninguna criatura con ese nombre.</p>';
+}
+
+function spawn(beast, row) {
+  const qty = clamp(+row.querySelector("[data-qty]").value || 1, 1, 20);
+  const rollHp = row.querySelector("[data-rollhp]").checked;
+  const list = [];
+  for (let i = 0; i < qty; i++) {
+    const hp = rollHp && beast.hpDice ? rollHitPoints(beast.hpDice, beast.hpAvg) : beast.hpAvg;
+    list.push(normalizeChar({
+      id: uid(), kind: "monster", monsterKey: beast.id, name: beast.name,
+      color: beast.color, avatarId: beast.avatarId, size: beast.size || "Mediano",
+      hp, maxHp: hp, ac: beast.ac, speed: beast.speed,
+      initiative: rollHitPoints("1d20", 10) + modOf(beast.dex),
+      str: beast.str, dex: beast.dex, con: beast.con, int: beast.int, wis: beast.wis, cha: beast.cha,
+      sizeType: beast.sizeType, cr: beast.cr, xp: beast.xp, senses: beast.senses, languages: beast.languages,
+      resistances: beast.resistances, traits: beast.traits, actions: beast.actions
+    }));
+  }
+  // nombres correlativos aunque se añadan de golpe: Goblin 1, Goblin 2…
+  let n = chars().filter(c => c.name.replace(/\s\d+$/, "") === beast.name).length;
+  list.forEach(m => { n++; m.name = qty > 1 || n > 1 ? `${beast.name} ${n}` : beast.name; });
+  op("char.add", { chars: list });
+  toast(`${qty} × ${beast.name} al encuentro. Pulsa una casilla del mapa para colocarlos.`, "good");
+}
+
+function openBeastEditor(beast) {
+  const b = normalizeBeast(beast || {});
+  const isNew = !beast;
+  const f = (label, name, value, type = "text") =>
+    `<label class="field"><span>${label}</span><input name="${name}" type="${type}" value="${esc(value)}"></label>`;
+  let avatarId = b.avatarId;
+  const body = el(`<div>
+    <div class="row" style="align-items:flex-start;margin-bottom:12px">
+      <div style="flex:0 0 96px">
+        <div class="avatar" id="bavPreview" style="width:78px;height:78px;font-size:22px;--tone:${esc(b.color)}${
+          b.avatarId ? `;background-image:url(${imgURL(b.avatarId)});background-size:cover` : ""}">${b.avatarId ? "" : initials(b.name || "?")}</div>
+        <button type="button" class="btn sm" id="bavPick" style="margin-top:8px;width:78px">Retrato</button>
+        <input type="file" id="bavFile" accept="image/*" hidden>
+      </div>
+      <div style="flex:1 1 300px">
+        <div class="cols2">
+          ${f("Nombre", "name", b.name)}
+          <label class="field"><span>Tamaño</span><select name="size">
+            ${["Diminuto", "Pequeño", "Mediano", "Grande", "Enorme", "Gargantuesco"].map(t =>
+              `<option ${String(b.size).includes(t) ? "selected" : ""}>${t}</option>`).join("")}
+          </select></label>
+        </div>
+      </div>
+    </div>
+    <div class="cols2">
+      ${f("Tamaño y tipo (texto)", "sizeType", b.sizeType)}
+      ${f("Valor de desafío", "cr", b.cr)}${f("Puntos de experiencia", "xp", b.xp, "number")}
+      ${f("Clase de armadura", "ac", b.ac, "number")}${f("Vida media", "hpAvg", b.hpAvg, "number")}
+      ${f("Dados de vida", "hpDice", b.hpDice)}${f("Velocidad", "speed", b.speed, "number")}
+    </div>
+    <div class="row">${ABILITIES.map(([k, l]) => `<label class="field" style="flex:1 1 80px"><span>${l}</span>
+      <input name="${k}" type="number" value="${b[k]}"></label>`).join("")}</div>
+    <div class="cols2">${f("Sentidos", "senses", b.senses)}${f("Idiomas", "languages", b.languages)}</div>
+    <label class="field"><span>Resistencias e inmunidades</span><input name="resistances" value="${esc(b.resistances)}"></label>
+    <label class="field"><span>Rasgos (uno por línea)</span><textarea name="traits">${esc(b.traits)}</textarea></label>
+    <label class="field"><span>Acciones (una por línea)</span><textarea name="actions">${esc(b.actions)}</textarea></label>
+    <label class="field"><span>Color</span><input name="color" type="color" value="${esc(b.color)}" style="height:38px"></label>
+  </div>`);
+
+  const bfile = body.querySelector("#bavFile");
+  body.querySelector("#bavPick").addEventListener("click", () => bfile.click());
+  bfile.addEventListener("change", async () => {
+    if (!bfile.files[0]) return;
+    try {
+      const { blob } = await shrinkImage(bfile.files[0], 192);
+      avatarId = await uploadImage(blob);
+      const prev = body.querySelector("#bavPreview");
+      prev.textContent = "";
+      prev.style.backgroundImage = `url(${imgURL(avatarId)})`;
+      prev.style.backgroundSize = "cover";
+      toast("Retrato guardado", "good");
+    } catch (err) { toast(err.message, "bad"); }
+  });
+
+  modal({
+    title: isNew ? "Nueva criatura" : "Editar " + b.name,
+    body, wide: true,
+    actions: [{ label: "Cancelar" }, {
+      label: "Guardar", tone: "primary",
+      run: host => {
+        const v = n => host.querySelector(`[name="${n}"]`).value;
+        const next = normalizeBeast({
+          ...b, custom: true,
+          name: v("name") || "Criatura", sizeType: v("sizeType"), cr: v("cr"), xp: +v("xp"),
+          avatarId, size: v("size") || "Mediano",
+          ac: +v("ac"), hpAvg: +v("hpAvg"), hpDice: v("hpDice"), speed: +v("speed"),
+          senses: v("senses"), languages: v("languages"), resistances: v("resistances"),
+          traits: v("traits"), actions: v("actions"), color: v("color"),
+          ...Object.fromEntries(ABILITIES.map(([k]) => [k, +v(k)]))
+        });
+        const list = isNew ? [...doc().bestiary, next] : doc().bestiary.map(x => x.id === b.id ? next : x);
+        op("bestiary.set", { list });
+      }
+    }]
+  });
+}
+
+async function dropBeast(b) {
+  if (!await confirmBox(`¿Borrar ${b.name} del bestiario?`)) return;
+  op("bestiary.set", { list: doc().bestiary.filter(x => x.id !== b.id) });
+}
+
+/* ---------- Mapa ---------- */
+function renderMap() {
+  const pane = $("#mapPane");
+  const map = activeMap();
+  if (!pane.dataset.ready || !mapView) {
+    pane.dataset.ready = "1";
+    pane.innerHTML = `
+      <div class="map-wrap">
+        <div class="map-bar">
+          <select id="mapPick" aria-label="Mapa activo" style="max-width:200px"></select>
+          <div class="tool-set" id="tools">
+            <button data-tool="token" aria-pressed="true" title="Mover y seleccionar fichas">Fichas</button>
+            <button data-tool="measure" aria-pressed="false" title="Medir distancias">Regla</button>
+            <button data-tool="wall" aria-pressed="false">Muro</button>
+            <button data-tool="door" aria-pressed="false">Puerta</button>
+            <button data-tool="erase" aria-pressed="false">Borrar</button>
+            <button data-tool="pin" aria-pressed="false" title="Clavar una nota">Nota</button>
+            <button data-tool="portal" aria-pressed="false" title="Escalera o acceso a otro mapa">Acceso</button>
+          </div>
+          <div class="tool-set" id="terrain">
+            <button data-brush="fog" title="Niebla: ver a través cuesta el triple">${icon("brush")} Niebla</button>
+            <button data-brush="dark" title="Oscuridad: no se ve a través">${icon("brush")} Oscuridad</button>
+            <button data-brush="lit" title="Luz fija: alumbra aunque el mapa esté a oscuras">${icon("brush")} Luz</button>
+            <button data-brush="none" title="Quitar el terreno pintado">${icon("eraser")}</button>
+          </div>
+          <div class="tool-set" id="shapes">
+            <button data-shape="circle" title="Esfera o ráfaga">${icon("circle")}</button>
+            <button data-shape="cone" title="Cono">${icon("cone")}</button>
+            <button data-shape="line" title="Línea">${icon("line")}</button>
+            <button data-shape="square" title="Cubo">${icon("square")}</button>
+            <input type="number" id="shapeSize" min="5" max="200" step="5" value="20" title="Tamaño en pies" aria-label="Tamaño de la plantilla en pies">
+            <button data-shape="clear" title="Quitar todas las plantillas">${icon("close")}</button>
+          </div>
+          <button class="btn sm" data-map="fit">Encajar</button>
+          <button class="btn sm" data-map="zoomOut">−</button>
+          <span class="pill" id="zoomLabel">100%</span>
+          <button class="btn sm" data-map="zoomIn">+</button>
+          <span class="spacer"></span>
+          <span class="pill" id="mapHint"></span>
+          <button class="btn sm" data-map="settings">Ajustes del mapa</button>
+        </div>
+        <div class="board" id="board"><canvas id="canvas"></canvas><div class="coords" id="coords"></div></div>
+      </div>`;
+
+    mapView = new MapView($("#canvas", pane), {
+      mode: "dm",
+      onMove: (id, x, y) => op("token.move", { id, x, y, mapId: activeMap().id }),
+      onMoveMany: moves => op("token.moveMany", { moves: moves.map(m => ({ ...m, mapId: activeMap().id })) }),
+      onCell: (x, y) => placeHere(x, y),
+      onToken: (id, e) => {
+        if (e && (e.ctrlKey || e.metaKey)) {
+          targetId = targetId === id ? null : id;
+          mapView.target = targetId;
+          return render();
+        }
+        tokenMenu(id);
+      },
+      onEdge: (key, tool) => paintEdge(key, tool),
+      onPaintCell: (x, y, brush) => op("map.cells", { mapId: activeMap().id, patch: { [x + "," + y]: brush === "none" ? null : brush } }),
+      onShape: shape => op("shape.add", { mapId: activeMap().id, shape }),
+      onPin: (x, y) => editPin({ x, y }),
+      onPortal: (x, y) => editPortal({ x, y }),
+      onPing: (x, y) => op("ping", { x, y, mapId: activeMap().id }),
+      onSelect: ids => { const h = $("#mapHint"); if (h) h.textContent = ids.length ? ids.length + " fichas elegidas" : ""; },
+      onZoom: z => { const l = $("#zoomLabel"); if (l) l.textContent = Math.round(z * 100) + "%"; }
+    });
+
+    on(pane, "click", "[data-tool]", (e, b) => {
+      mapTool = b.dataset.tool;
+      mapView.tool = mapTool;
+      mapView.pending = null;
+      pane.querySelectorAll("[data-tool]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+      pane.querySelectorAll("[data-shape],[data-brush]").forEach(x => x.setAttribute("aria-pressed", "false"));
+      const hint = {
+        token: "Arrastra para mover · recuadro para elegir varias · Alt+clic para señalar",
+        measure: "Arrastra de una casilla a otra para medir",
+        wall: "Arrastra por los bordes de las casillas",
+        door: "Pulsa un borde: cerrada, abierta, sin puerta",
+        erase: "Arrastra para quitar muros y puertas",
+        pin: "Pulsa donde quieras clavar la nota",
+        portal: "Pulsa donde esté la escalera"
+      }[mapTool] || "";
+      $("#mapHint", pane).textContent = hint;
+    });
+
+    on(pane, "click", "[data-brush]", (e, b) => {
+      mapView.tool = "cell";
+      mapView.brush = b.dataset.brush;
+      mapView.pending = null;
+      pane.querySelectorAll("[data-tool],[data-shape]").forEach(x => x.setAttribute("aria-pressed", "false"));
+      pane.querySelectorAll("[data-brush]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+      $("#mapHint", pane).textContent = b.dataset.brush === "none"
+        ? "Arrastra para dejar las casillas limpias"
+        : "Arrastra para pintar casillas; cambia lo que la party alcanza a ver";
+    });
+
+    on(pane, "click", "[data-shape]", (e, b) => {
+      const kind = b.dataset.shape;
+      if (kind === "clear") return op("shape.clear", { mapId: activeMap().id });
+      shapeSize = clamp(+$("#shapeSize", pane).value || 20, 5, 200);
+      mapView.tool = "shape";
+      mapView.pending = { kind, size: shapeSize, width: 5, angle: 0, x: 0, y: 0, color: "#8878d8", label: shapeSize + " pies", party: true };
+      pane.querySelectorAll("[data-shape]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+      pane.querySelectorAll("[data-tool],[data-brush]").forEach(x => x.setAttribute("aria-pressed", "false"));
+      $("#mapHint", pane).textContent = "Pulsa para colocar; arrastra para girar";
+    });
+    on(pane, "click", "[data-map]", (e, b) => mapAction(b.dataset.map));
+    $("#mapPick", pane).addEventListener("change", e => patchSession({ activeMapId: e.target.value }));
+    $("#canvas", pane).addEventListener("pointermove", e => {
+      const p = mapView.toCell(e.clientX, e.clientY);
+      if (p) $("#coords", pane).textContent = `${p.x}, ${p.y}`;
+    });
+  }
+
+  const pick = $("#mapPick", pane);
+  pick.innerHTML = doc().maps.map(m => `<option value="${m.id}" ${m.id === map.id ? "selected" : ""}>${esc(m.name)}</option>`).join("");
+  mapView.set({ map, chars: chars(), session: session(), you: null });
+}
+
+/* Poner una ficha en el tablero: al pulsar en una casilla vacía se ofrece a
+   quien todavía no esté puesto en este mapa. */
+function placeHere(x, y) {
+  const map = activeMap();
+  const out = chars().filter(c => c.mapId !== map.id || c.mx === null);
+  if (!out.length) return toast("Ya están todos colocados en este mapa");
+  const body = el(`<div class="pick-list">
+    ${out.map(c => `<button class="pick" data-place="${c.id}">
+      <span class="avatar" style="--tone:${esc(c.color)};width:30px;height:30px;font-size:11px">${initials(c.name)}</span>
+      <span><b>${esc(c.name)}</b><br><small>${esc(c.kind === "pc" ? [c.className, "nivel " + c.level].filter(Boolean).join(" · ") : c.sizeType || "criatura")}</small></span>
+    </button>`).join("")}
+    ${out.length > 1 ? '<button class="btn sm" data-place-all>Colocar aquí a todos los que faltan</button>' : ""}
+  </div>`);
+  const m = modal({ title: `Colocar en ${x}, ${y}`, body, actions: [{ label: "Cerrar" }] });
+  on(body, "click", "[data-place]", (e, b) => { op("token.move", { id: b.dataset.place, x, y, mapId: map.id }); m.close(); });
+  on(body, "click", "[data-place-all]", () => {
+    op("token.moveMany", { moves: out.map((c, i) => ({ id: c.id, x: x + (i % 4), y: y + Math.floor(i / 4), mapId: map.id })) });
+    m.close();
+  });
+}
+
+/* Menú de una ficha del tablero */
+function tokenMenu(id) {
+  const c = byId(id);
+  if (!c) return;
+  const body = el(`<div class="row" style="flex-direction:column">
+    <button class="btn" data-tk="target">${targetId === id ? "Dejar de apuntarle" : "Apuntar con los ataques"}</button>
+    <button class="btn" data-tk="attack">Atacar con ${esc(c.name)}</button>
+    <button class="btn" data-tk="focus">Centrar la cámara de la party aquí</button>
+    <button class="btn" data-tk="conditions">Estados</button>
+    <button class="btn" data-tk="edit">Abrir la ficha</button>
+    ${c.kind === "monster" ? `<button class="btn" data-tk="hide">${c.hidden ? "Enseñar a la party" : "Ocultar a la party"}</button>` : ""}
+    <button class="btn danger" data-tk="off">Sacar del mapa</button>
+  </div>`);
+  const m = modal({ title: c.name, body, actions: [{ label: "Cerrar" }] });
+  on(body, "click", "[data-tk]", (e, b) => {
+    const what = b.dataset.tk;
+    m.close();
+    if (what === "target") { targetId = targetId === id ? null : id; mapView.target = targetId; return render(); }
+    if (what === "attack") return attack(c);
+    if (what === "focus") { patchSession({ focusId: id }); return toast("La cámara sigue a " + c.name); }
+    if (what === "conditions") return openConditions(c);
+    if (what === "edit") return c.kind === "monster" ? openMonsterInstance(c) : openCharEditor(c, {});
+    if (what === "hide") return patchChar(c.id, { hidden: !c.hidden });
+    if (what === "off") return patchChar(c.id, { mapId: "", mx: null, my: null });
+  });
+}
+
+/* ---------- Notas clavadas y accesos ---------- */
+function editPin(seed) {
+  const map = activeMap();
+  const existing = (map.pins || []).find(p => p.x === seed.x && p.y === seed.y);
+  const pin = normalizePin(existing || seed);
+  const body = el(`<div>
+    <label class="field"><span>Nota</span><textarea name="text" placeholder="Trampa de dardos: CD 13 de Destreza">${esc(pin.text)}</textarea></label>
+    <div class="cols2">
+      <label class="field"><span>Qué es</span><select name="kind">
+        ${PIN_KINDS.map(([k, l]) => `<option value="${k}" ${k === pin.kind ? "selected" : ""}>${l}</option>`).join("")}
+      </select></label>
+      <label class="check" style="align-self:end"><input type="checkbox" name="party" ${pin.party ? "checked" : ""}> También la ve la party</label>
+    </div>
+    <p class="prose" style="font-size:12px">Cuando un personaje pise esta casilla te saltará el aviso con la nota, la vea la party o no.</p>
+  </div>`);
+  modal({
+    title: existing ? "Nota del mapa" : "Clavar una nota",
+    body,
+    actions: [
+      ...(existing ? [{ label: "Quitar", tone: "danger", run: () => op("pin.set", { mapId: map.id, pin, remove: true }) }] : []),
+      { label: "Cancelar" },
+      { label: "Guardar", tone: "primary", run: host => {
+        const v = n => host.querySelector(`[name="${n}"]`);
+        op("pin.set", { mapId: map.id, pin: { ...pin, text: v("text").value, kind: v("kind").value, party: v("party").checked } });
+      } }
+    ]
+  });
+}
+
+function editPortal(seed) {
+  const map = activeMap();
+  const existing = (map.portals || []).find(p => p.x === seed.x && p.y === seed.y);
+  const portal = normalizePortal(existing || seed);
+  const others = doc().maps.filter(m => m.id !== map.id);
+  if (!others.length && !existing) return toast("Crea antes otro mapa al que llevar", "bad");
+  const body = el(`<div>
+    <div class="cols2">
+      <label class="field"><span>Nombre</span><input name="label" value="${esc(portal.label)}"></label>
+      <label class="field"><span>Lleva a</span><select name="toMap">
+        ${others.map(m => `<option value="${m.id}" ${m.id === portal.toMap ? "selected" : ""}>${esc(m.name)}</option>`).join("")}
+      </select></label>
+      <label class="field"><span>Casilla de llegada X</span><input name="toX" type="number" value="${portal.toX ?? ""}" placeholder="misma"></label>
+      <label class="field"><span>Casilla de llegada Y</span><input name="toY" type="number" value="${portal.toY ?? ""}" placeholder="misma"></label>
+    </div>
+    <label class="check"><input type="checkbox" name="auto" ${portal.auto ? "checked" : ""}> Cruzar solo al pisarlo</label>
+    <p class="prose" style="font-size:12px">Cuando un personaje lo pisa se le lleva al otro mapa y la mesa cambia de plano.</p>
+  </div>`);
+  modal({
+    title: existing ? "Acceso" : "Nuevo acceso",
+    body,
+    actions: [
+      ...(existing ? [{ label: "Quitar", tone: "danger", run: () => op("portal.set", { mapId: map.id, portal, remove: true }) }] : []),
+      { label: "Cancelar" },
+      { label: "Guardar", tone: "primary", run: host => {
+        const v = n => host.querySelector(`[name="${n}"]`);
+        op("portal.set", { mapId: map.id, portal: {
+          ...portal, label: v("label").value || "Escalera", toMap: v("toMap").value,
+          toX: v("toX").value === "" ? null : +v("toX").value,
+          toY: v("toY").value === "" ? null : +v("toY").value,
+          auto: v("auto").checked
+        } });
+      } }
+    ]
+  });
+}
+
+function paintEdge(key, tool) {
+  const map = activeMap();
+  const edges = { ...map.edges };
+  if (tool === "erase") delete edges[key];
+  else if (tool === "wall") edges[key] = "wall";
+  else if (tool === "door") edges[key] = edges[key] === "door" ? "doorOpen" : "door";
+  patchMap(map.id, { edges });
+}
+
+function mapAction(what) {
+  const map = activeMap();
+  if (what === "zoomIn") return mapView.setZoom(mapView.zoom * 1.25);
+  if (what === "zoomOut") return mapView.setZoom(mapView.zoom / 1.25);
+  if (what === "fit") return mapView.setZoom(1);
+  if (what === "settings") return openMapSettings(map);
+}
+
+function openMapSettings(map) {
+  const body = el(`<div>
+    <div class="cols2">
+      <label class="field"><span>Nombre</span><input name="name" value="${esc(map.name)}"></label>
+      <label class="field"><span>Radio de visión (casillas)</span><input name="radius" type="number" min="1" max="40" value="${map.radius}"></label>
+      <label class="field"><span>Columnas</span><input name="cols" type="number" min="5" max="90" value="${map.cols}"></label>
+      <label class="field"><span>Filas</span><input name="rows" type="number" min="5" max="70" value="${map.rows}"></label>
+    </div>
+    <div class="row" style="margin-bottom:12px">
+      <button type="button" class="btn sm" id="imgBtn">Imagen de fondo</button>
+      <button type="button" class="btn sm" id="fitGrid">Cuadrar cuadrícula con la imagen</button>
+      <input type="file" id="imgFile" accept="image/*" hidden>
+    </div>
+    <fieldset>
+      <legend>Qué ve la party</legend>
+      <label class="check"><input type="checkbox" name="show" ${session().showMapToParty ? "checked" : ""}> Enseñar este mapa en la pantalla de la party</label>
+      <label class="check" style="margin-top:8px"><input type="checkbox" name="reveal" ${session().revealAll ? "checked" : ""}> Revelar el mapa entero</label>
+      <label class="check" style="margin-top:8px"><input type="checkbox" name="remember" ${map.remember ? "checked" : ""}> Recordar lo explorado</label>
+      <label class="check" style="margin-top:8px"><input type="checkbox" name="grid" ${map.grid ? "checked" : ""}> Dibujar la cuadrícula</label>
+      <label class="check" style="margin-top:8px"><input type="checkbox" name="move" ${session().allowPlayerMove ? "checked" : ""}> Dejar que cada jugador mueva su ficha</label>
+      <label class="check" style="margin-top:8px"><input type="checkbox" name="dark" ${map.dark ? "checked" : ""}> Mapa a oscuras (solo se ve con antorchas o visión en la oscuridad)</label>
+      <label class="check" style="margin-top:8px"><input type="checkbox" name="playerZoom" ${map.playerZoom ? "checked" : ""}> Dejar que los jugadores se acerquen y alejen</label>
+      <label class="check" style="margin-top:8px"><input type="checkbox" name="range" ${session().showMoveRange !== false ? "checked" : ""}> Pintar el alcance al arrastrar una ficha</label>
+      <label class="check" style="margin-top:8px"><input type="checkbox" name="foehp" ${session().showFoeHP ? "checked" : ""}> Enseñar a la party cuánta vida les queda a los enemigos</label>
+      <div class="cols2" style="margin-top:12px">
+        <label class="field"><span>Cámara</span>
+          <select name="camera">
+            <option value="full" ${map.camera === "full" ? "selected" : ""}>Todo el mapa</option>
+            <option value="follow" ${map.camera === "follow" ? "selected" : ""}>Centrada en el personaje</option>
+          </select></label>
+        <label class="field"><span>Casillas a lo ancho al seguir</span>
+          <input name="followSpan" type="number" min="4" max="60" value="${map.followSpan}"></label>
+        <label class="field"><span>Pies por casilla</span>
+          <input name="feet" type="number" min="1" max="100" value="${map.feet}"></label>
+        <label class="field"><span>Diagonales</span>
+          <select name="diagonals">
+            <option value="5e" ${map.diagonals !== "alt" ? "selected" : ""}>Cada una, 5 pies</option>
+            <option value="alt" ${map.diagonals === "alt" ? "selected" : ""}>Variante 5-10-5</option>
+          </select></label>
+      </div>
+    </fieldset>
+    <div class="row">
+      <button type="button" class="btn sm" id="resetFog">Restablecer niebla</button>
+      <button type="button" class="btn sm" id="clearWalls">Vaciar muros</button>
+      <button type="button" class="btn sm" id="clearCells">Quitar niebla y oscuridad</button>
+      <button type="button" class="btn sm" id="frameWalls">Cerrar contorno</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button type="button" class="btn sm" id="newMap">Mapa nuevo</button>
+      <button type="button" class="btn sm danger" id="dropMap">Borrar este mapa</button>
+    </div>
+  </div>`);
+
+  const file = body.querySelector("#imgFile");
+  body.querySelector("#imgBtn").addEventListener("click", () => file.click());
+  file.addEventListener("change", async () => {
+    if (!file.files[0]) return;
+    try {
+      const { blob, w, h } = await shrinkImage(file.files[0], 2200);
+      const imageId = await uploadImage(blob);
+      const cols = map.cols;
+      patchMap(map.id, { imageId, imageW: w, imageH: h, rows: clamp(Math.round(cols / (w / h)), 5, 70) });
+      toast("Plano cargado", "good");
+    } catch (err) { toast(err.message, "bad"); }
+  });
+  body.querySelector("#fitGrid").addEventListener("click", () => {
+    const m = activeMap();
+    if (!m.imageW) return toast("Este mapa no tiene imagen de fondo", "bad");
+    patchMap(m.id, { rows: clamp(Math.round(m.cols / (m.imageW / m.imageH)), 5, 70) });
+    toast("Cuadrícula ajustada a la imagen");
+  });
+  body.querySelector("#resetFog").addEventListener("click", () => patchMap(map.id, { explored: [] }));
+  body.querySelector("#clearWalls").addEventListener("click", () => patchMap(map.id, { edges: {} }));
+  body.querySelector("#clearCells").addEventListener("click", () => patchMap(map.id, { cells: {} }));
+  body.querySelector("#frameWalls").addEventListener("click", () => {
+    const edges = { ...map.edges };
+    for (let x = 0; x < map.cols; x++) { edges[`${x},0,h`] = "wall"; edges[`${x},${map.rows},h`] = "wall"; }
+    for (let y = 0; y < map.rows; y++) { edges[`0,${y},v`] = "wall"; edges[`${map.cols},${y},v`] = "wall"; }
+    patchMap(map.id, { edges });
+  });
+  body.querySelector("#newMap").addEventListener("click", () => {
+    op("map.add", { map: normalizeMap({ name: "Mapa " + (doc().maps.length + 1) }) });
+    toast("Mapa creado", "good");
+  });
+  body.querySelector("#dropMap").addEventListener("click", async () => {
+    if (await confirmBox("¿Borrar este mapa y todo lo que tiene dibujado?")) op("map.remove", { id: map.id });
+  });
+
+  modal({
+    title: "Ajustes de " + map.name, body, wide: true,
+    actions: [{ label: "Cerrar" }, {
+      label: "Guardar", tone: "primary",
+      run: host => {
+        const v = n => host.querySelector(`[name="${n}"]`);
+        patchMap(map.id, {
+          name: v("name").value || "Mapa",
+          radius: +v("radius").value || 5,
+          cols: +v("cols").value || map.cols,
+          rows: +v("rows").value || map.rows,
+          remember: v("remember").checked,
+          grid: v("grid").checked,
+          camera: v("camera").value,
+          followSpan: +v("followSpan").value || 14,
+          dark: v("dark").checked,
+          playerZoom: v("playerZoom").checked,
+          feet: +v("feet").value || 5,
+          diagonals: v("diagonals").value
+        });
+        patchSession({
+          showMapToParty: v("show").checked,
+          revealAll: v("reveal").checked,
+          allowPlayerMove: v("move").checked,
+          showMoveRange: v("range").checked,
+          showFoeHP: v("foehp").checked
+        });
+      }
+    }]
+  });
+}
+
+/* ---------- Menú ---------- */
+function openMenu() {
+  const body = el(`<div class="row" style="flex-direction:column">
+    <button class="btn" data-menu="export">Guardar copia de la partida</button>
+    <button class="btn" data-menu="import">Cargar una copia</button>
+    <button class="btn" data-menu="handout">Enseñar una imagen a la mesa</button>
+    <button class="btn" data-menu="ask">Pedir una tirada a la party</button>
+    <button class="btn" data-menu="screen">Pantalla de la party (la tele)</button>
+    <input type="file" id="handoutFile" accept="image/*" hidden>
+    <button class="btn" data-menu="link">Cómo entran mis jugadores</button>
+    <div class="lang-row" id="menuLang"><span>Idioma</span></div>
+    <button class="btn danger" data-menu="leave">Salir de la sesión</button>
+    <input type="file" id="importFile" accept="application/json" hidden>
+  </div>`);
+  const m = modal({ title: "Partida", body, actions: [{ label: "Cerrar" }] });
+  body.querySelector("#menuLang").appendChild(langPicker());
+  const hand = body.querySelector("#handoutFile");
+  hand.addEventListener("change", async () => {
+    if (!hand.files[0]) return;
+    try {
+      const { blob } = await shrinkImage(hand.files[0], 1600);
+      const handoutId = await uploadImage(blob);
+      patchSession({ handoutId, handoutText: hand.files[0].name.replace(/\.[a-z0-9]+$/i, "") });
+      toast("La mesa está viendo la imagen", "good");
+      m.close();
+    } catch (err) { toast(err.message, "bad"); }
+  });
+
+  const file = body.querySelector("#importFile");
+  file.addEventListener("change", async () => {
+    if (!file.files[0]) return;
+    try {
+      const data = JSON.parse(await file.files[0].text());
+      if (!await confirmBox("Cargar esta copia reemplaza la partida actual. ¿Seguimos?")) return;
+      op("doc.replace", { doc: data.doc || data });
+      toast("Partida cargada", "good");
+      m.close();
+    } catch { toast("Ese archivo no parece una copia de Mesa", "bad"); }
+  });
+
+  on(body, "click", "[data-menu]", (e, b) => {
+    const what = b.dataset.menu;
+    if (what === "export") {
+      const blob = new Blob([JSON.stringify({ doc: doc() }, null, 1)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `mesa-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+    if (what === "import") file.click();
+    if (what === "handout") {
+      if (session().handoutId) {
+        modal({ title: "Ya estás enseñando una imagen", body: '<p class="prose">Puedes cambiarla o guardarla.</p>',
+          actions: [{ label: "Guardar la imagen", run: () => patchSession({ handoutId: "", handoutText: "" }) }, { label: "Cambiarla", tone: "primary", run: () => hand.click() }] });
+      } else hand.click();
+    }
+    if (what === "ask") { m.close(); askForRoll(); }
+    if (what === "screen") { m.close(); openScreenPanel(); }
+    if (what === "link") {
+      m.close();
+      modal({
+        title: "Cómo entran tus jugadores",
+        body: `<p class="prose">Que abran esta dirección en su móvil, estando en la misma red que este ordenador:</p>
+          <p class="prose"><b class="addr" data-keep>${esc(location.origin)}</b></p>
+          <p class="prose">Eligen «Jugador», escriben su nombre y se quedan con su personaje.</p>
+          <p class="prose">La pantalla de la party está pensada para la tele o el proyector: enseña el mapa, los turnos y el estado de todos sin destripar nada.</p>`,
+        actions: [{ label: "Entendido" }]
+      });
+    }
+    if (what === "leave") leave()
+  });
+}
+
+/* La tele de la mesa: una sesión aparte, que el DM gobierna desde aquí. */
+function openScreenPanel() {
+  const connected = store.presence.filter(p => p.role === "screen");
+  const body = el(`<div>
+    <p class="prose" style="font-size:13px">
+      ${connected.length
+        ? `Hay <b>${connected.length}</b> pantalla${connected.length > 1 ? "s" : ""} conectada${connected.length > 1 ? "s" : ""}: ${esc(connected.map(p => p.name).join(", "))}.`
+        : "Ahora mismo no hay ninguna pantalla conectada."}
+    </p>
+    <div class="row" style="margin:10px 0 14px">
+      <button type="button" class="btn" id="openScreen">Abrir la pantalla aquí</button>
+    </div>
+    <fieldset>
+      <legend>Qué enseña</legend>
+      <label class="check"><input type="checkbox" name="map" ${session().showMapToParty ? "checked" : ""}> El mapa</label>
+      <label class="check" style="margin-top:8px"><input type="checkbox" name="hp" ${session().showPartyHP ? "checked" : ""}> Los puntos de vida exactos de la party</label>
+      <label class="check" style="margin-top:8px"><input type="checkbox" name="reveal" ${session().revealAll ? "checked" : ""}> El mapa entero, sin niebla</label>
+    </fieldset>
+    <p class="prose" style="font-size:12px">
+      La tele entra con su propia sesión: no hereda la tuya y no puede tocar nada.
+      Si la abres en este mismo ordenador, seguirás siendo el DM en esta ventana.
+      Desde la tele, el botón de salir vuelve al menú.
+    </p>
+  </div>`);
+  const win = modal({
+    title: "Pantalla de la party", body,
+    actions: [{ label: "Cerrar" }, {
+      label: "Guardar", tone: "primary",
+      run: host => {
+        const v = n => host.querySelector(`[name="${n}"]`).checked;
+        patchSession({ showMapToParty: v("map"), showPartyHP: v("hp"), showFoeHP: v("foehp"), revealAll: v("reveal") });
+      }
+    }]
+  });
+  body.querySelector("#openScreen").addEventListener("click", () => {
+    window.open("/?role=screen", "_blank", "noopener");
+    win.close();
+  });
+}
+
+/* Pedir una tirada: al jugador le sale un botón grande en su móvil. */
+function askForRoll() {
+  const body = el(`<div>
+    <label class="field"><span>Qué pides</span><input name="label" placeholder="Salvación de Destreza" value="Percepción"></label>
+    <div class="cols2">
+      <label class="field"><span>Fórmula</span><input name="formula" value="1d20"></label>
+      <label class="field"><span>Dificultad (opcional)</span><input name="dc" type="number" placeholder="13"></label>
+    </div>
+    <p class="prose" style="font-size:12px;margin:6px 0">¿A quién?</p>
+    <div class="cond-grid">
+      ${pcs().map(c => `<label><input type="checkbox" value="${c.id}" checked>${esc(c.name)}</label>`).join("")}
+    </div>
+  </div>`);
+  modal({
+    title: "Pedir una tirada", body, wide: true,
+    actions: [{ label: "Cancelar" }, {
+      label: "Pedirla", tone: "primary",
+      run: host => {
+        const v = n => host.querySelector(`[name="${n}"]`).value;
+        const ids = [...host.querySelectorAll("input[type=checkbox]:checked")].map(i => i.value);
+        if (!ids.length) return false;
+        op("request.set", { request: { ids, label: v("label") || "Tirada", formula: v("formula") || "1d20", dc: +v("dc") || 0 } });
+        tellTable(`El DM pide ${v("label")}${v("dc") ? " (CD " + v("dc") + ")" : ""}`);
+      }
+    }]
+  });
+}
+
+/* ---------- Atajos ---------- */
+function bindKeys() {
+  document.addEventListener("keydown", e => {
+    if (e.target.matches("input, textarea, select")) return;
+    const meta = e.ctrlKey || e.metaKey;
+    if (meta && e.key.toLowerCase() === "k") { e.preventDefault(); toggleCombat(); }
+    else if (meta && e.key.toLowerCase() === "b") { e.preventDefault(); toggleDrawer(); }
+    else if (meta && e.key.toLowerCase() === "n") { e.preventDefault(); openCharEditor(null, {}); }
+    else if (e.key === " " || e.key === "Enter" || (meta && e.key === "ArrowRight")) { e.preventDefault(); step(1); }
+    else if (meta && e.key.toLowerCase() === "z") { e.preventDefault(); op("undo"); toast("Deshecho"); }
+    else if (e.key === "Escape" && mapView) { mapView.selection.clear(); mapView.pending = null; mapView.draw(); }
+    else if (meta && e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+  });
+}

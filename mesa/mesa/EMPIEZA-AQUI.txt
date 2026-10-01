@@ -1,0 +1,44 @@
+MESA — cómo arrancar
+====================
+
+1. Descomprime esta carpeta entera en cualquier sitio (Escritorio, Documentos...).
+   IMPORTANTE: descomprimir de verdad, no abrir el zip "por encima".
+
+2. Arranca:
+
+   WINDOWS   doble clic en   Abrir Mesa (Windows).bat
+   MAC       doble clic en   Abrir Mesa (Mac y Linux).command
+             (la primera vez: clic derecho > Abrir > Abrir)
+
+   Si prefieres la terminal, o si el doble clic no hace nada:
+
+     cd <la carpeta donde has descomprimido>
+     node server.js
+
+3. Se abre una ventana negra con algo así:
+
+     Tú (DM)        http://localhost:8080
+     Tus jugadores  http://192.168.1.34:8080
+     Código del DM  4821
+
+   Abre la primera dirección en tu navegador y entra como DM con ese código.
+   Pasa la segunda dirección a tus amigos (tienen que estar en el mismo wifi).
+   No cierres la ventana negra mientras jugáis.
+
+4. Para la tele o el proyector: ⋯ > Pantalla de la party > Abrir la pantalla aquí.
+   Entra con su propia sesión, no toca nada de la partida, y tiene su botón de salir.
+
+5. El idioma (español o inglés) se elige por persona: en la pantalla de entrada,
+   arriba a la derecha si eres jugador, o en ⋯ > Idioma si eres el DM.
+
+Lo primero que conviene probar:
+  · Ajustes del mapa > "Recordar lo explorado": el plano se destapa solo según camináis.
+  · Los pinceles Niebla, Oscuridad y Luz: pintas casillas y cambia lo que se ve.
+  · Bestiario > Al combate, y luego pulsa una casilla del mapa para colocarlos.
+    Un ogro ocupa 2x2 y no cabe por una puerta de una casilla.
+  · Las plantillas (cono, círculo): se pegan al cursor y un clic las deja fijas.
+  · En una ficha: Atacar. Los ataques de las criaturas se leen solos de sus acciones.
+  · En la charla, el botón del bocadillo: eliges a quién susurrar.
+
+Otro puerto:   node server.js --port 3000
+Parar:         cierra la ventana negra, o Ctrl+C dentro de ella.
