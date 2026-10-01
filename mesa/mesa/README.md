@@ -8,6 +8,21 @@ mapa y los turnos.
 No necesita instalar nada más que Node.js, no tiene dependencias y funciona sin
 internet: basta con que todos estéis en el mismo wifi.
 
+## Probarla sin instalar nada
+
+En **<https://aleexnager.github.io/DnD/>** está la versión de prueba: la misma
+aplicación, pero con la partida corriendo dentro de tu navegador, sin
+servidor. Trae una partida de ejemplo (cuatro personajes y unos goblins al
+otro lado de una puerta) y se guarda en ese navegador.
+
+Entra como **DM** (no pide código) y abre la **Pantalla** en otra pestaña o
+ventana: las dos juegan la misma partida, así que puedes proyectar esa
+pestaña igual que harías en casa. También se puede abrir un **Jugador** en
+una tercera pestaña para ver lo que vería su móvil. Lo que **no** puede es
+recibir a tus jugadores desde sus teléfonos: para eso hace falta el servidor,
+que es lo de abajo. En Chrome para Android, que no comparte la partida entre
+pestañas, cada pestaña lleva la suya.
+
 ## Arrancarla
 
 1. Instala **Node.js** una vez, desde <https://nodejs.org> (opción LTS).
@@ -410,8 +425,9 @@ hueco y, cuando alguien llega al borde del plano, **lo que se mueve es él dentr
 del encuadre**, en vez de quedarse el mapa a un lado con una franja negra al
 otro.
 
-Fuera de combate no hay nada encima del mapa: solo el plano, y debajo la party
-centrada. En combate **el mapa sigue mandando**: se queda en el centro con todo
+Fuera de combate no hay nada encima del mapa: solo el plano y, debajo, la
+party **en segundo plano**: una franja fina con cara, nombre, vida y estados.
+En combate **el mapa sigue mandando**: se queda en el centro con todo
 el alto libre, **la party pegada al borde izquierdo y los enemigos pegados al
 borde derecho**, en espejo y con cartas compactas (cara, nombre, vida y
 estados). Si todavía no hay enemigos a la vista, su columna se la queda el
@@ -419,8 +435,31 @@ mapa. **Quien tiene el turno** va en una franja arriba: retrato, vida, clase de
 armadura, los pies de movimiento que le quedan, si ha gastado ya la acción, la
 adicional o la reacción, los estados que sufre, en qué está concentrado y quién
 va después. Debajo, la tira de iniciativa. Los que no están en la pelea se
-apagan. En una pantalla estrecha o en vertical todo se apila con el mapa
-primero.
+apagan. Al empezar y al acabar el combate, las cartas viajan de la franja de
+abajo a la columna de la izquierda (y vuelven) en vez de saltar.
+
+Con la mazmorra llena de fichas, las columnas no necesitan que nadie las
+desplace desde el sofá: primero se compactan y, si aun así no caben, los
+enemigos se **agrupan por tipo** («Goblin ×12, 9 en pie») con un punto de
+color por cada uno según cómo está. En una pantalla estrecha o en vertical
+todo se apila con el mapa primero.
+
+### Proyectar la tele
+
+La pantalla es una ventana más del navegador del DM. En **⋯ → Pantalla de la
+party**:
+
+- **Abrir en una ventana aparte**: sale sin barras y se arrastra al segundo
+  monitor o al proyector. Doble clic dentro y queda a pantalla completa.
+- **Abrir en el otro monitor** (Chrome y Edge): la coloca directamente en la
+  otra pantalla conectada por cable. La primera vez el navegador pide permiso.
+- **Abrir en otra pestaña**: para enviarla al **Chromecast** desde el menú del
+  navegador (*Enviar…* → *Enviar pestaña*).
+
+La pantalla entra sola, sin pasar por el menú de entrada. Aunque esa pestaña
+no sea la que tienes delante, el mapa se mantiene al día: si el navegador no
+le da fotogramas, las fichas se colocan en su sitio en vez de quedarse a
+medio deslizar.
 
 ### Movimiento
 
@@ -469,7 +508,7 @@ En la pantalla de la party, doble clic entra y sale de pantalla completa.
 ## Estructura
 
 ```
-server.js              servidor: estático, estado, filtrado por rol y guardado
+server.js              servidor: red, disco y reparto a cada aparato
 public/
   index.html           el documento; la interfaz la monta el JavaScript
   manifest.webmanifest lo que hace falta para instalarla como aplicación
@@ -479,6 +518,10 @@ public/
   js/
     main.js            entrada a la partida y reparto de vistas
     net.js             conexión, reconexión y envío de operaciones
+    engine.js          las reglas de la partida (lo usan el servidor y la versión de prueba)
+    local.js           versión de prueba: habla con la partida que corre en el navegador
+    local-host.js      versión de prueba: el «servidor» dentro del navegador
+    local-worker.js    versión de prueba: lo comparte entre pestañas
     schema.js          forma de los datos y migración (lo usan servidor y navegador)
     los.js             muros, luz, visión, distancias y plantillas (compartido)
     attacks.js         leer y lanzar ataques

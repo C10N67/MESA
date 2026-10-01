@@ -74,6 +74,10 @@ export class MapView {
     this._ro = new ResizeObserver(redraw);
     this._ro.observe(canvas.parentElement || canvas);
     document.addEventListener("mesa:image", redraw);
+    /* Una pestaña en segundo plano no recibe fotogramas: al volver, se pinta
+       el estado final en vez de seguir una animación congelada. */
+    document.addEventListener("visibilitychange", redraw);
+    this._base = null;                        // plano y cuadrícula ya pintados
     this.bind();
   }
 
@@ -87,6 +91,11 @@ export class MapView {
 
   /* Lo que acaba de cambiar y merece un gesto en el tablero: un golpe, una
      cura, un turno nuevo. Nada se anima en bucle. */
+  /* Sin animaciones: si el sistema pide menos movimiento o si la pestaña no
+     se está viendo (el navegador no da fotogramas y la ficha se quedaría a
+     medio camino). */
+  still() { return reducedMotion() || (typeof document !== "undefined" && document.hidden); }
+
   noticeChanges() {
     const { chars, session } = this.data;
     const t = performance.now();
@@ -110,7 +119,7 @@ export class MapView {
     const DUR = 280;
     let s = this._glide.get(c.id);
     const fresh = !s || s.mapId !== c.mapId || s.frame !== this._frame - 1;
-    if (fresh || reducedMotion()) {
+    if (fresh || this.still()) {
       s = { fx: x, fy: y, tx: x, ty: y, t0: t, mapId: c.mapId, frame: this._frame };
       this._glide.set(c.id, s);
       return { x, y };
@@ -198,7 +207,7 @@ export class MapView {
   smoothCam(to) {
     const t = performance.now(), DUR = 420;
     const c = this._cam;
-    if (!c || reducedMotion() || Math.hypot(to.x - c.tx, to.y - c.ty) > 30) {
+    if (!c || this.still() || Math.hypot(to.x - c.tx, to.y - c.ty) > 30) {
       this._cam = { fx: to.x, fy: to.y, tx: to.x, ty: to.y, t0: t };
       return to;
     }
@@ -568,32 +577,17 @@ export class MapView {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     if (!g || !map) return;
-    ctx.scale(g.dpr, g.dpr);
-    ctx.fillStyle = COLORS.void;
-    ctx.fillRect(0, 0, g.W, g.H);
-
     const X = c => g.originX + c * g.cell;
     const Y = c => g.originY + c * g.cell;
     const dm = this.mode === "dm";
 
-    /* Plano */
-    const img = image(map.imageId);
-    if (img && img.complete && img.naturalWidth) {
-      ctx.drawImage(img, X(0), Y(0), map.cols * g.cell, map.rows * g.cell);
-    } else {
-      ctx.fillStyle = "#12151d";
-      ctx.fillRect(X(0), Y(0), map.cols * g.cell, map.rows * g.cell);
-    }
-
-    /* Cuadrícula */
-    if (map.grid && g.cell > 6) {
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = COLORS.grid;
-      ctx.beginPath();
-      for (let x = 0; x <= map.cols; x++) { ctx.moveTo(X(x), Y(0)); ctx.lineTo(X(x), Y(map.rows)); }
-      for (let y = 0; y <= map.rows; y++) { ctx.moveTo(X(0), Y(y)); ctx.lineTo(X(map.cols), Y(y)); }
-      ctx.stroke();
-    }
+    /* Plano y cuadrícula: lo más caro de pintar (una imagen grande escalada)
+       y lo que menos cambia. Se pinta una vez en un lienzo aparte y se copia
+       mientras no cambien el encuadre ni el plano: al arrastrar fichas o al
+       pasar el ratón ya no se reescala el mapa entero a cada fotograma. */
+    if (!this.canvas.width || !this.canvas.height) return;   // pestaña oculta: no hay nada que pintar
+    ctx.drawImage(this.baseLayer(g, map), 0, 0);
+    ctx.scale(g.dpr, g.dpr);
 
     /* Qué se ve */
     let seen = null;
@@ -807,6 +801,40 @@ export class MapView {
     if (this._moving) this.tick();
   }
 
+  baseLayer(g, map) {
+    const img = image(map.imageId);
+    const ready = !!(img && img.complete && img.naturalWidth);
+    const key = [this.canvas.width, this.canvas.height, g.dpr, g.cell, g.originX, g.originY,
+      map.imageId, ready, map.grid, map.cols, map.rows].join("|");
+    if (this._base && this._base.key === key) return this._base.canvas;
+    const off = (this._base && this._base.canvas) || document.createElement("canvas");
+    off.width = this.canvas.width;
+    off.height = this.canvas.height;
+    const ctx = off.getContext("2d");
+    ctx.setTransform(g.dpr, 0, 0, g.dpr, 0, 0);
+    ctx.fillStyle = COLORS.void;
+    ctx.fillRect(0, 0, g.W, g.H);
+    const X = c => g.originX + c * g.cell;
+    const Y = c => g.originY + c * g.cell;
+    if (ready) {
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(img, X(0), Y(0), map.cols * g.cell, map.rows * g.cell);
+    } else {
+      ctx.fillStyle = "#12151d";
+      ctx.fillRect(X(0), Y(0), map.cols * g.cell, map.rows * g.cell);
+    }
+    if (map.grid && g.cell > 6) {
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = COLORS.grid;
+      ctx.beginPath();
+      for (let x = 0; x <= map.cols; x++) { ctx.moveTo(X(x), Y(0)); ctx.lineTo(X(x), Y(map.rows)); }
+      for (let y = 0; y <= map.rows; y++) { ctx.moveTo(X(0), Y(y)); ctx.lineTo(X(map.cols), Y(y)); }
+      ctx.stroke();
+    }
+    this._base = { key, canvas: off };
+    return off;
+  }
+
   tick() {
     cancelAnimationFrame(this._anim);
     this._anim = requestAnimationFrame(() => this.draw());
@@ -957,7 +985,7 @@ export class MapView {
     const down = c.hp <= 0;
 
     /* Golpe o cura: un halo rojo o verde que se apaga en medio segundo */
-    if (mark && !reducedMotion()) {
+    if (mark && !this.still()) {
       const k = (t - mark.t0) / 650;
       if (k >= 1) this._marks.delete(c.id);
       else {
@@ -974,7 +1002,7 @@ export class MapView {
     }
 
     /* Empieza su turno: un aro dorado se abre una vez desde la ficha */
-    if (pulse && !reducedMotion()) {
+    if (pulse && !this.still()) {
       const k = (t - pulse.t0) / 900;
       if (k >= 1) this._pulse = null;
       else {

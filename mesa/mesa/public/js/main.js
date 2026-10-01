@@ -1,8 +1,10 @@
 /* Puerta de entrada: quién eres y con qué personaje juegas. */
 
 import { $, el, esc, toast, initials } from "./util.js";
-import { store, savedSession, forgetSession, join, lobby, connect, onState } from "./net.js";
+import { store, savedSession, forgetSession, join, lobby, ping, connect, onState, DEMO } from "./net.js";
 import { startI18n, langPicker } from "./i18n.js";
+
+const SHARED = typeof SharedWorker === "function";
 
 const app = () => document.getElementById("app");
 
@@ -18,10 +20,17 @@ async function boot() {
   const saved = savedSession(wanted);
   if (saved && (!wanted || saved.role === wanted)) {
     store.session = saved;
-    const alive = await fetch("/api/ping?token=" + encodeURIComponent(saved.token))
-      .then(r => r.ok).catch(() => false);
+    const alive = await ping(saved.token);
     if (alive) return start(saved.role);
     forgetSession(saved.role);
+  }
+  /* La tele no tiene nada que elegir: si la abre el DM con ?role=screen,
+     entra sola, que es lo cómodo cuando la ventana ya está en el proyector. */
+  if (wanted === "screen") {
+    try {
+      const data = await join({ name: "Pantalla", role: "screen" });
+      return start(data.role);
+    } catch { /* si falla, se enseña la entrada normal */ }
   }
   gate(wanted);
 }
@@ -49,6 +58,11 @@ async function gate(wanted) {
     <div class="panel">
       <h1>Mesa</h1>
       <p class="sub">${esc(info.title || "Partida de D&D")}</p>
+      ${DEMO ? `<div class="demo-note">
+        <b>Versión de prueba</b>
+        <p>Todo corre en este navegador, sin servidor. Entra como <b>DM</b> aquí y abre la <b>Pantalla</b> en otra pestaña o ventana: las dos juegan la misma partida y puedes proyectar esa pestaña. ${SHARED ? "" : "En este navegador cada pestaña lleva su propia partida."}</p>
+        <p>Para jugar con los móviles de tus jugadores hace falta el servidor: <a href="https://github.com/aleexnager/DnD/archive/refs/heads/main.zip" rel="noopener">descargar Mesa</a> y abrir <i>Abrir Mesa</i>.</p>
+      </div>` : ""}
 
       <div class="roles">
         <button data-role="dm" aria-pressed="false"><b>DM</b><small>llevas la partida</small></button>
@@ -71,7 +85,7 @@ async function gate(wanted) {
     </div>`;
 
   $("#gateLang").appendChild(langPicker());
-  if (info.offline) toast("No se encuentra el servidor de la partida. ¿Está abierta la ventana de Mesa?", "bad");
+  if (info.offline && !DEMO) toast("No se encuentra el servidor de la partida. ¿Está abierta la ventana de Mesa?", "bad");
   paintInstall();
 
   const nameInput = $("#name");
@@ -79,9 +93,9 @@ async function gate(wanted) {
 
   const paint = () => {
     document.querySelectorAll("[data-role]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.role === role)));
-    $("#pinField").classList.toggle("hidden", role !== "dm");
+    $("#pinField").classList.toggle("hidden", role !== "dm" || DEMO);
     $("#hint").textContent = role === "dm"
-      ? "El código aparece en la ventana donde arrancaste Mesa."
+      ? (DEMO ? "En la versión de prueba no hace falta código." : "El código aparece en la ventana donde arrancaste Mesa.")
       : role === "screen"
         ? "Ponla en la tele o el proyector. Doble clic para pantalla completa."
         : "Elige tu personaje, o entra sin él y créalo desde dentro.";
@@ -162,7 +176,7 @@ function paintInstall() {
 }
 
 if ("serviceWorker" in navigator && window.isSecureContext) {
-  window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
 }
 
 startI18n();

@@ -47,7 +47,7 @@ export function saveSession(s) {
    dirección para que se puedan elegir los tres papeles otra vez. */
 export function leave() {
   forgetSession();
-  location.href = "/";
+  location.href = "./";
 }
 
 export function forgetSession(role) {
@@ -58,58 +58,102 @@ export function forgetSession(role) {
   if (!role || !store.session || store.session.role === which) store.session = null;
 }
 
+/* ---------- Transporte ----------
+   Lo normal es hablar con el servidor de Node por HTTP. En la versión de
+   prueba (GitHub Pages, o ?demo) no hay servidor: el mismo motor corre en el
+   navegador y lo comparten todas las pestañas (local.js). Las vistas no
+   notan la diferencia. */
+export const DEMO = (() => {
+  try {
+    const q = new URLSearchParams(location.search).get("demo");
+    if (q === "0") localStorage.removeItem("mesa.demo");
+    if (q !== null && q !== "0") localStorage.setItem("mesa.demo", "1");
+    return location.hostname.endsWith(".github.io") || localStorage.getItem("mesa.demo") === "1";
+  } catch { return location.hostname.endsWith(".github.io"); }
+})();
+
+const http = {
+  async hello() { return (await fetch("api/hello")).json(); },
+  async join(body) {
+    const res = await fetch("api/join", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "No se pudo entrar");
+    return data;
+  },
+  /* true: sesión viva · false: el servidor ya no la conoce · null: no contesta */
+  async ping(token) {
+    try { return (await fetch("api/ping?token=" + encodeURIComponent(token))).ok; } catch { return null; }
+  },
+  stream(token, on) {
+    const es = new EventSource("api/stream?token=" + encodeURIComponent(token));
+    es.addEventListener("state", e => on.state(JSON.parse(e.data)));
+    es.addEventListener("presence", e => on.presence(JSON.parse(e.data)));
+    es.onerror = () => { es.close(); on.error(); };
+    return () => es.close();
+  },
+  async ops(token, ops) {
+    const res = await fetch("api/op", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, ops }) });
+    return { status: res.status, data: await res.json() };
+  },
+  async image(token, blob) {
+    const res = await fetch("api/image?token=" + encodeURIComponent(token), {
+      method: "POST", headers: { "Content-Type": blob.type || "image/webp" }, body: blob
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "No se pudo subir la imagen");
+    return data.imageId;
+  },
+  leave() {}
+};
+
+let transportP = null;
+const transport = () => transportP || (transportP = DEMO ? import("./local.js").then(m => m.localTransport()) : Promise.resolve(http));
+
 export async function join({ name, role, pin, charId }) {
-  const res = await fetch("/api/join", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, role, pin, charId })
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "No se pudo entrar");
+  const data = await (await transport()).join({ name, role, pin, charId });
   saveSession({ ...data, name });
   return data;
 }
 
 export async function lobby() {
-  const res = await fetch("/api/hello");
-  return res.json();
+  return (await transport()).hello();
+}
+
+export async function ping(token) {
+  return (await transport()).ping(token);
 }
 
 /* ---------- Flujo de estado ---------- */
-let source = null;
+let closeStream = null;
 let retry = 0;
 
-export function connect() {
+export async function connect() {
   if (!store.session) return;
-  if (source) source.close();
-  source = new EventSource("/api/stream?token=" + encodeURIComponent(store.session.token));
-
-  source.addEventListener("state", e => {
-    retry = 0;
-    if (!store.online) { store.online = true; emit("status", true); }
-    const payload = JSON.parse(e.data);
-    store.doc = payload.doc;
-    if (payload.doc.you) store.session.charId = payload.doc.you;
-    emit("state", store.doc);
+  const t = await transport();
+  if (closeStream) closeStream();
+  closeStream = t.stream(store.session.token, {
+    state(payload) {
+      retry = 0;
+      if (!store.online) { store.online = true; emit("status", true); }
+      store.doc = payload.doc;
+      if (payload.doc.you) store.session.charId = payload.doc.you;
+      emit("state", store.doc);
+    },
+    presence(list) {
+      store.presence = list;
+      emit("presence", store.presence);
+    },
+    error() {
+      if (store.online) { store.online = false; emit("status", false); }
+      retry = Math.min(retry + 1, 8);
+      setTimeout(async () => {
+        // Si el servidor se reinició, el testigo ya no vale y hay que volver a entrar
+        const alive = await t.ping(store.session.token);
+        if (alive === false) { forgetSession(); location.reload(); return; }
+        connect();
+      }, Math.min(4000, 400 * retry));
+    }
   });
-
-  source.addEventListener("presence", e => {
-    store.presence = JSON.parse(e.data);
-    emit("presence", store.presence);
-  });
-
-  source.onerror = () => {
-    if (store.online) { store.online = false; emit("status", false); }
-    source.close();
-    retry = Math.min(retry + 1, 8);
-    setTimeout(async () => {
-      // Si el servidor se reinició, el testigo ya no vale y hay que volver a entrar
-      const alive = await fetch("/api/ping?token=" + encodeURIComponent(store.session.token))
-        .then(r => r.status !== 401).catch(() => true);
-      if (!alive) { forgetSession(); location.reload(); return; }
-      connect();
-    }, Math.min(4000, 400 * retry));
-  };
 }
 
 let queue = [];
@@ -131,29 +175,23 @@ async function flush() {
   flushing = false;
   if (!ops.length || !store.session) return;
   try {
-    const res = await fetch("/api/op", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token: store.session.token, ops })
-    });
-    if (res.status === 401) { forgetSession(); location.reload(); return; }
-    const data = await res.json();
-    if (!res.ok) toast(data.error || "No se pudo aplicar el cambio", "bad");
+    const { status, data } = await (await transport()).ops(store.session.token, ops);
+    if (status === 401) { forgetSession(); location.reload(); return; }
+    if (status >= 400) toast(data.error || "No se pudo aplicar el cambio", "bad");
   } catch {
     toast("Sin conexión con la partida", "bad");
   }
 }
 
 export async function uploadImage(blob) {
-  const res = await fetch("/api/image?token=" + encodeURIComponent(store.session.token), {
-    method: "POST",
-    headers: { "Content-Type": blob.type || "image/webp" },
-    body: blob
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "No se pudo subir la imagen");
-  return data.imageId;
+  return (await transport()).image(store.session.token, blob);
 }
+
+/* Al cerrar la pestaña, en la versión de prueba se avisa para que no se quede
+   como conectada (por HTTP lo nota el servidor solo). */
+addEventListener("pagehide", () => {
+  if (transportP && store.session) transportP.then(t => t.leave(store.session.token));
+});
 
 /* Atajos de uso frecuente */
 export const patchChar = (id, fields) => op("char.patch", { id, fields });

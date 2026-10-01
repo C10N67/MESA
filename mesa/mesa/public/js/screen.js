@@ -2,7 +2,7 @@
    Solo enseña lo que el DM quiere enseñar, y no tiene ningún control con el
    que alguien pueda descuadrarla al pasar por delante. */
 
-import { $, esc, pct, initials, imgURL, hpBar, tweenBars } from "./util.js";
+import { $, esc, pct, hpTone, initials, imgURL, hpBar, tweenBars, reducedMotion } from "./util.js";
 import { store, onState, onStatus, leave } from "./net.js";
 import { conditionName } from "./schema.js";
 import { MapView } from "./map.js";
@@ -72,6 +72,11 @@ function render() {
   const foes = chars.filter(c => c.kind === "monster");
   const fighting = new Set(order.map(c => c.id));
   const stage = $("#stage");
+  /* Al empezar o acabar el combate las cartas cambian de sitio (de la franja
+     de abajo a la columna de la izquierda): se apunta dónde estaban para que
+     viajen hasta el nuevo en vez de aparecer de golpe. */
+  const switching = stage.classList.contains("fighting") !== combat.on;
+  const before = switching ? cardRects(stage) : null;
   stage.classList.toggle("fighting", combat.on);
   stage.classList.toggle("no-foes", combat.on && !foes.length);
 
@@ -161,6 +166,82 @@ function render() {
     : `<p class="state" style="padding:8px">Ninguno a la vista</p>`;
 
   tweenBars(stage, "screen:");
+  fitRails(combat.on, { foes, now, fighting });
+  if (before) flip(stage, before);
+}
+
+/* Con la mazmorra llena de fichas, la columna no puede pedir que alguien la
+   desplace desde el sofá: las cartas se compactan hasta que caben. Si aun
+   así no caben, la columna se desliza sola hasta quien tiene el turno. */
+function fitRails(fighting, { foes, now, fighting: inFight }) {
+  for (const list of [$("#roster"), $("#foes")]) {
+    list.classList.remove("dense", "tiny", "grouped");
+    if (!fighting) continue;
+    if (list.scrollHeight > list.clientHeight + 1) list.classList.add("dense");
+    if (list.scrollHeight > list.clientHeight + 1) list.classList.add("tiny");
+    /* Una horda no cabe carta a carta: se agrupa por tipo («Goblin ×12»),
+       con un punto por cada uno según cómo está. */
+    if (list.id === "foes" && list.scrollHeight > list.clientHeight + 1) {
+      list.classList.remove("dense", "tiny");
+      list.classList.add("grouped");
+      list.innerHTML = groupFoes(foes, now, inFight);
+    }
+    const turn = list.querySelector(".is-turn");
+    if (turn && list.scrollHeight > list.clientHeight + 1) {
+      list.scrollTo({ top: turn.offsetTop - list.clientHeight / 2 + turn.offsetHeight / 2, behavior: "smooth" });
+    }
+  }
+}
+
+function groupFoes(foes, now, fighting) {
+  const groups = new Map();
+  for (const c of foes) {
+    const key = c.name.replace(/\s*\d+$/, "") || c.name;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(c);
+  }
+  return [...groups].map(([name, list]) => {
+    const up = list.filter(c => c.hp > 0).length;
+    const first = list[0];
+    const turn = now && list.some(c => c.id === now.id);
+    const active = list.some(c => fighting.has(c.id));
+    return `<div class="who-card group ${turn ? "is-turn" : ""} ${active ? "" : "aside"} ${up ? "" : "down"}" style="--tone:${esc(first.color)}">
+      <div class="who-top">
+        ${first.avatarId ? `<img class="avatar" src="${imgURL(first.avatarId)}" alt="">`
+          : `<div class="avatar" style="--tone:${esc(first.color)}">${initials(name)}</div>`}
+        <div class="who-id">
+          <b>${esc(name)} <span class="count">×${list.length}</span></b>
+          <span class="state">${turn ? esc(now.name) + " · " : ""}${up} en pie</span>
+        </div>
+      </div>
+      <div class="dots">${list.map(c => {
+        const p = c.hpPct !== undefined ? c.hpPct : (c.hp > 0 ? 100 : 0);
+        return `<i class="${c.hp <= 0 ? "out" : hpTone(p)} ${now && now.id === c.id ? "now" : ""}" title="${esc(c.name)}"></i>`;
+      }).join("")}</div>
+    </div>`;
+  }).join("");
+}
+
+function cardRects(root) {
+  const out = new Map();
+  root.querySelectorAll(".who-card[data-id]").forEach(n => out.set(n.dataset.id, n.getBoundingClientRect()));
+  return out;
+}
+
+function flip(root, before) {
+  if (reducedMotion() || document.hidden) return;
+  root.querySelectorAll(".who-card[data-id]").forEach(n => {
+    const a = before.get(n.dataset.id);
+    if (!a) return;
+    const b = n.getBoundingClientRect();
+    if (!b.width) return;
+    const dx = a.left - b.left, dy = a.top - b.top;
+    if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+    n.animate([
+      { transform: `translate(${dx}px, ${dy}px) scale(${a.width / b.width})`, transformOrigin: "top left" },
+      { transform: "none", transformOrigin: "top left" }
+    ], { duration: 520, easing: "cubic-bezier(.22, 1, .36, 1)" });
+  });
 }
 
 /* Una carta de personaje o de criatura. En combate se queda en lo justo
@@ -171,7 +252,7 @@ function whoCard(c, session, { inTurn = false, fighting = true } = {}) {
   const exact = monster ? false : session.showPartyHP;
   const sub = monster ? (c.memory ? "donde le visteis" : c.sizeType || "criatura") : [c.className, c.race].filter(Boolean).join(" · ");
   return `<div class="who-card ${c.hp <= 0 ? "down" : ""} ${inTurn ? "is-turn" : ""} ${fighting ? "" : "aside"} ${c.memory ? "memory" : ""}"
-      style="--tone:${esc(c.color)}" data-flash>
+      style="--tone:${esc(c.color)}" data-flash data-id="${esc(c.id)}">
     <div class="who-top">
       ${c.avatarId ? `<img class="avatar" src="${imgURL(c.avatarId)}" alt="" style="--tone:${esc(c.color)}">`
         : `<div class="avatar" style="--tone:${esc(c.color)}">${initials(c.name)}</div>`}

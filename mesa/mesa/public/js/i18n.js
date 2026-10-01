@@ -411,8 +411,61 @@ const EN = {
   "Compartir": "Share", "Añadir a pantalla de inicio": "Add to Home Screen",
   "Para instalar Mesa como aplicación en este aparato hace falta entrar por HTTPS. Mira «Instalar como aplicación» en el README.":
     "Installing Mesa as an app on this device needs HTTPS. See “Install as an app” in the README.",
-  "Mesa necesita JavaScript para funcionar.": "Mesa needs JavaScript to run."
+  "Mesa necesita JavaScript para funcionar.": "Mesa needs JavaScript to run.",
+
+  /* Versión de prueba */
+  "Versión de prueba": "Demo version",
+  "En la versión de prueba no hace falta código.": "The demo version needs no code.",
+  "Todo corre en este navegador, sin servidor. Entra como": "Everything runs in this browser, no server. Join as",
+  "aquí y abre la": "here and open the", "en otra pestaña o ventana: las dos juegan la misma partida y puedes proyectar esa pestaña.":
+    "in another tab or window: both play the same game and you can cast that tab.",
+  "En este navegador cada pestaña lleva su propia partida.": "In this browser each tab keeps its own game.",
+  "Para jugar con los móviles de tus jugadores hace falta el servidor:": "To play with your players' phones you need the server:",
+  "descargar Mesa": "download Mesa", "y abrir": "and run", "Abrir Mesa": "Abrir Mesa",
+
+  /* La tele */
+  "Abrir en una ventana aparte": "Open in a separate window", "Abrir en el otro monitor": "Open on the other monitor",
+  "Abrir en otra pestaña": "Open in another tab",
+  "Para la tele: arrastra esa ventana al monitor o al proyector, o compártela con Chromecast desde el menú del navegador (Enviar… → Enviar pestaña). Doble clic dentro la pone a pantalla completa.":
+    "For the TV: drag that window to the monitor or projector, or cast it with Chromecast from the browser menu (Cast… → Cast tab). Double-click inside for full screen.",
+  "Cómo de heridos están los enemigos": "How hurt the enemies are",
+  "Solo se ve un monitor conectado: se abre en una ventana aparte": "Only one monitor detected: opening a separate window",
+  "El navegador no ha dado permiso para ver los otros monitores": "The browser didn't allow access to the other monitors",
+  "El navegador ha bloqueado la ventana emergente: permítela para este sitio": "The browser blocked the pop-up: allow it for this site",
+  "en pie": "standing", "Clase de armadura": "Armor class", "Velocidad (pies)": "Speed (feet)", "tirar": "roll",
+
+  /* Cómo de herido parece un enemigo (lo escribe el servidor) */
+  "Ileso": "Unhurt", "Con algún rasguño": "Scratched", "Herido": "Wounded", "Malherido": "Badly wounded",
+  "Al borde de caer": "About to fall", "Fuera de combate": "Out of the fight",
+
+  /* Clases y especies del manual: suelen escribirse tal cual en la ficha */
+  "Bárbaro": "Barbarian", "Bárbara": "Barbarian", "Bardo": "Bard", "Barda": "Bard",
+  "Clérigo": "Cleric", "Clériga": "Cleric", "Druida": "Druid", "Guerrero": "Fighter", "Guerrera": "Fighter",
+  "Monje": "Monk", "Monja": "Monk", "Paladín": "Paladin", "Paladina": "Paladin",
+  "Explorador": "Ranger", "Exploradora": "Ranger", "Pícaro": "Rogue", "Pícara": "Rogue",
+  "Hechicero": "Sorcerer", "Hechicera": "Sorcerer", "Brujo": "Warlock", "Bruja": "Warlock",
+  "Mago": "Wizard", "Maga": "Wizard", "Artífice": "Artificer",
+  "Humano": "Human", "Humana": "Human", "Elfo": "Elf", "Elfa": "Elf", "Enano": "Dwarf", "Enana": "Dwarf",
+  "Mediano": "Halfling", "Mediana": "Halfling", "Gnomo": "Gnome", "Gnoma": "Gnome",
+  "Semielfo": "Half-elf", "Semielfa": "Half-elf", "Semiorco": "Half-orc", "Semiorca": "Half-orc",
+  "Dracónido": "Dragonborn", "Dracónida": "Dragonborn", "Tiflin": "Tiefling", "Tiefling": "Tiefling"
 };
+
+/* Tamaños y tipos de criatura, para «Humanoide pequeño» y compañía */
+const SIZES = { diminuto: "Tiny", pequeño: "Small", mediano: "Medium", grande: "Large", enorme: "Huge", gargantuesco: "Gargantuan" };
+const TYPES = {
+  humanoide: "humanoid", bestia: "beast", "no muerto": "undead", monstruosidad: "monstrosity", gigante: "giant",
+  dragón: "dragon", aberración: "aberration", celestial: "celestial", constructo: "construct", elemental: "elemental",
+  feérico: "fey", infernal: "fiend", demonio: "fiend", diablo: "fiend", planta: "plant", cieno: "ooze", criatura: "creature"
+};
+function creature(text) {
+  const t = text.trim().toLowerCase();
+  let m = t.match(/^(.+?) (diminuto|pequeño|mediano|grande|enorme|gargantuesco)(.*)$/);
+  if (m && TYPES[m[1]]) return `${SIZES[m[2]]} ${TYPES[m[1]]}${m[3]}`;
+  m = t.match(/^(diminuto|pequeño|mediano|grande|enorme|gargantuesco) (.+?)$/);
+  if (m && TYPES[m[2]]) return `${SIZES[m[1]]} ${TYPES[m[2]]}`;
+  return null;
+}
 
 /* Traduce una palabra suelta si está en el diccionario, y si no la deja igual.
    Lo usan los patrones para las partes que sí se pueden traducir. */
@@ -425,6 +478,17 @@ const PATTERNS = [
   [/^Ronda (\d+) · turno de$/i, "Round $1 · turn of"],
   [/^después: (.+)$/, "next: $1"],
   [/^nivel (\d+)$/i, "level $1"],
+  /* «Pícara Elfa nivel 3»: clase y especie sueltas y el nivel al final */
+  [/^(.+?) nivel (\d+)$/i, (m, who, n) => `${who.split(" ").map(w => word(w)).join(" ")} level ${n}`],
+  [/^Turno de ([^·]+)$/, "$1's turn"],
+  [/^después ([^·]+)$/, "next $1"],
+  [/^Concentrado en ([^·]+)$/, "Concentrating on $1"],
+  [/^le habéis hecho (\d+) de daño$/, "you've dealt $1 damage"],
+  [/^Lo que le queda a (.+) en este turno$/, "What $1 has left this turn"],
+  [/^(.+) no tiene ningún ataque apuntado\. Añádelo en su ficha\.$/, "$1 has no attacks listed. Add one on their sheet."],
+  [/^Ronda (\d+) · le toca a$/i, "Round $1 · up now"],
+  [/^(\d+) en pie$/, "$1 standing"],
+  [/^(.+) \(pantalla\)$/, (m, who) => `${word(who)} (screen)`],
   [/^VD (.+) · (\d+) PX$/, "CR $1 · $2 XP"],
   [/^CA (\d+)$/, "AC $1"],
   [/^(\d+) pies · (\d+) casillas?$/, "$1 feet · $2 squares"],
@@ -496,16 +560,40 @@ let observer = null;
 function translate(text) {
   const raw = text.trim();
   if (!raw) return null;
-  if (EN[raw]) return text.replace(raw, EN[raw]);
-  /* Los párrafos de las plantillas llegan partidos en varias líneas con su
-     sangría: se comparan como una sola línea para no tener que repetir cada
-     frase con sus espacios exactos. */
-  const flat = raw.replace(/\s+/g, " ");
-  if (EN[flat]) return text.replace(raw, EN[flat]);
-  for (const [re, out] of PATTERNS) {
-    if (re.test(raw)) return text.replace(raw, raw.replace(re, out));
+  const whole = translateOne(raw);
+  if (whole !== null) return text.replace(raw, whole);
+  /* Una lista en varias líneas (quién está conectado): línea a línea */
+  if (raw.includes("\n")) {
+    const lines = raw.split("\n").map(l => translate(l) ?? l);
+    const out = lines.join("\n");
+    return out === raw ? null : text.replace(raw, out);
+  }
+  /* Las líneas compuestas con «·» (clase · especie · nivel, herida · daño
+     hecho, ronda · quién va después) se traducen trozo a trozo. */
+  if (raw.includes(" · ")) {
+    let changed = false;
+    const parts = raw.split(" · ").map(part => {
+      const out = translateOne(part);
+      if (out === null) return part;
+      changed = true;
+      return out;
+    });
+    if (changed) return text.replace(raw, parts.join(" · "));
   }
   return null;
+}
+
+/* Los párrafos de las plantillas llegan partidos en varias líneas con su
+   sangría: se comparan como una sola línea para no tener que repetir cada
+   frase con sus espacios exactos. */
+function translateOne(raw) {
+  if (EN[raw]) return EN[raw];
+  const flat = raw.replace(/\s+/g, " ");
+  if (EN[flat]) return EN[flat];
+  for (const [re, out] of PATTERNS) {
+    if (re.test(raw)) return raw.replace(re, out);
+  }
+  return creature(raw);
 }
 
 /* Un pequeño selector de idioma, igual en todas las vistas. */
@@ -551,6 +639,13 @@ export function startI18n() {
   observer = new MutationObserver(records => {
     if (working || lang === "es") return;
     for (const r of records) {
+      /* Un título o un texto de ayuda que se cambia después de pintar */
+      if (r.type === "attributes") {
+        const v = r.target.getAttribute(r.attributeName);
+        const out = v && translate(v);
+        if (out !== null && out !== undefined && out !== v) { working = true; r.target.setAttribute(r.attributeName, out); working = false; }
+        continue;
+      }
       if (r.type === "characterData") { const out = translate(r.target.nodeValue); if (out !== null) { working = true; r.target.nodeValue = out; working = false; } }
       for (const node of r.addedNodes) {
         if (node.nodeType === 3) { const out = translate(node.nodeValue); if (out !== null) { working = true; node.nodeValue = out; working = false; } }
@@ -558,7 +653,7 @@ export function startI18n() {
       }
     }
   });
-  observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+  observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ATTRS });
   sweep(document.body);
 }
 

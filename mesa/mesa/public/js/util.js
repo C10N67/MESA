@@ -12,8 +12,14 @@ export const sign = n => (n >= 0 ? "+" : "") + n;
 export const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 export const pct = c => clamp(Math.round((c.hp / Math.max(1, c.maxHp)) * 100), 0, 100);
 
-export const initials = n => (n || "?").trim().split(/\s+/).slice(0, 2)
-  .map(w => w[0] || "").join("").toUpperCase() || "?";
+/* «Goblin 10» es G10, no G1: con muchas criaturas iguales, el número es lo
+   que las distingue en el mapa. */
+export const initials = n => {
+  const words = (n || "?").trim().split(/\s+/);
+  const last = words[words.length - 1];
+  if (words.length > 1 && /^\d+$/.test(last)) return ((words[0][0] || "") + last).toUpperCase();
+  return words.slice(0, 2).map(w => w[0] || "").join("").toUpperCase() || "?";
+};
 
 export const hpTone = p => (p <= 0 ? "out" : p < 25 ? "bad" : p < 55 ? "warn" : "ok");
 
@@ -159,7 +165,12 @@ export function shrinkImage(file, maxSide) {
   });
 }
 
-export const imgURL = id => (id ? "/img/" + id : "");
+/* Las imágenes van por ruta relativa: Mesa puede vivir en una subcarpeta
+   (GitHub Pages la sirve en /DnD/). En la versión de prueba, la que se acaba
+   de subir en esta pestaña se enseña directamente desde memoria. */
+const localImages = new Map();
+export const registerLocalImage = (id, url) => localImages.set(id, url);
+export const imgURL = id => (id ? localImages.get(id) || "img/" + id : "");
 
 /* ---------- Fechas ---------- */
 export const hhmm = ts => new Date(ts).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });

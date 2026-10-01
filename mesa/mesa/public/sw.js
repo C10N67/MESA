@@ -9,24 +9,30 @@
      no se vuelven a descargar. En un móvil, un plano de 2 MB por recarga se
      nota.
    - La partida en sí (/api/) no se toca jamás: el estado vivo, las tiradas y
-     el flujo de cambios van siempre directos al servidor. */
+     el flujo de cambios van siempre directos al servidor.
 
-const VERSION = "mesa-2.1.0";
+   Todas las rutas son relativas al sitio donde vive Mesa: en GitHub Pages es
+   una subcarpeta (/DnD/), no la raíz. */
+
+const VERSION = "mesa-2.2.0";
 const SHELL_CACHE = VERSION + "-app";
 const IMG_CACHE = "mesa-img";
 const IMG_LIMIT = 80;
+const DEMO_IMG_CACHE = "mesa-demo-img";   // lo que se sube en la versión de prueba: no se recorta
 
+const BASE = new URL("./", self.location.href);
 const SHELL = [
-  "/",
-  "/css/mesa.css",
-  "/manifest.webmanifest",
-  "/icons/icon.svg",
-  "/icons/icon-192.png",
-  "/js/main.js", "/js/net.js", "/js/util.js", "/js/i18n.js", "/js/icons.js",
-  "/js/schema.js", "/js/catalog.js", "/js/los.js", "/js/map.js", "/js/dice.js",
-  "/js/dice-panel.js", "/js/attacks.js", "/js/attacks-core.js", "/js/char-editor.js",
-  "/js/dm.js", "/js/player.js", "/js/screen.js"
-];
+  "./",
+  "css/mesa.css",
+  "manifest.webmanifest",
+  "icons/icon.svg",
+  "icons/icon-192.png",
+  "js/main.js", "js/net.js", "js/util.js", "js/i18n.js", "js/icons.js",
+  "js/schema.js", "js/catalog.js", "js/los.js", "js/map.js", "js/dice.js",
+  "js/dice-panel.js", "js/attacks.js", "js/attacks-core.js", "js/char-editor.js",
+  "js/dm.js", "js/player.js", "js/screen.js",
+  "js/engine.js", "js/local.js", "js/local-host.js", "js/local-worker.js"
+].map(p => new URL(p, BASE).href);
 
 self.addEventListener("install", event => {
   event.waitUntil(
@@ -41,7 +47,7 @@ self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys()
       .then(keys => Promise.all(keys
-        .filter(k => k !== SHELL_CACHE && k !== IMG_CACHE)
+        .filter(k => k !== SHELL_CACHE && k !== IMG_CACHE && k !== DEMO_IMG_CACHE)
         .map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
@@ -52,9 +58,11 @@ self.addEventListener("fetch", event => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
-  if (url.pathname.startsWith("/api/")) return;
+  if (!url.href.startsWith(BASE.href)) return;
+  const rel = url.href.slice(BASE.href.length);
+  if (rel.startsWith("api/")) return;
 
-  if (url.pathname.startsWith("/img/")) {
+  if (rel.startsWith("img/")) {
     event.respondWith(imageFirst(req));
     return;
   }
@@ -71,7 +79,7 @@ async function networkFirst(req) {
     const hit = await cache.match(stripQuery(req));
     if (hit) return hit;
     if (req.mode === "navigate") {
-      const shell = await cache.match("/");
+      const shell = await cache.match(BASE.href);
       if (shell) return shell;
     }
     return new Response("Sin conexión con la partida", { status: 503, headers: { "Content-Type": "text/plain; charset=utf-8" } });
@@ -86,9 +94,9 @@ function stripQuery(req) {
 }
 
 async function imageFirst(req) {
-  const cache = await caches.open(IMG_CACHE);
-  const hit = await cache.match(req);
+  const hit = await caches.match(req);   // también las de la versión de prueba
   if (hit) return hit;
+  const cache = await caches.open(IMG_CACHE);
   const res = await fetch(req);
   if (res.ok) {
     await cache.put(req, res.clone());

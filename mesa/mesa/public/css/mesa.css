@@ -581,7 +581,7 @@ button .ico { pointer-events: none; }
 }
 
 /* El tablero, a la altura que de verdad queda libre en el teléfono */
-.player-shell .board { height: min(calc(100vh - 250px), calc(100dvh - 250px)); }
+.player-shell .board { height: min(calc(100vh - 310px), calc(100dvh - 310px)); min-height: 260px; }
 @media (max-width: 1080px) { .map-wrap { height: min(calc(100vh - 150px), calc(100dvh - 150px)); } }
 .party-strip.faded .mate { opacity: .55; border-style: dashed; }
 
@@ -889,3 +889,61 @@ body.screen { background: #05060a; overflow: hidden; }
   .topbar { padding-top: max(12px, env(safe-area-inset-top)); }
   .gate { padding-top: max(24px, env(safe-area-inset-top)); }
 }
+
+/* Aviso de la versión de prueba */
+.demo-note {
+  border: 1px solid #4a4030; background: #1d1810; border-radius: 12px;
+  padding: 10px 12px; margin: -8px 0 16px; font-size: 12.5px; color: var(--dim);
+}
+.demo-note b { color: var(--gold-soft); }
+.demo-note p { margin: 4px 0 0; }
+.screen-open { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 8px; }
+
+/* Fuera de combate la party pasa a segundo plano: una franja fina bajo el
+   mapa, con lo justo (cara, nombre, vida y estados). */
+.stage:not(.fighting) .side.heroes h3 { display: none; }
+.stage:not(.fighting) .side-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.stage:not(.fighting) .who-card {
+  width: clamp(170px, 13vw, 220px); padding: 6px 10px; border-radius: 10px; opacity: .88;
+}
+.stage:not(.fighting) .who-card .avatar { width: 28px; height: 28px; font-size: 11px; border-radius: 8px; }
+.stage:not(.fighting) .who-card .who-top { gap: 8px; }
+.stage:not(.fighting) .who-card .who-top b { font-size: 15px; }
+.stage:not(.fighting) .who-card .who-id .state { display: none; }
+.stage:not(.fighting) .who-card .ac { font-size: 12px; padding: 0 5px; }
+.stage:not(.fighting) .who-card .bar { margin-top: 5px; height: 4px; }
+.stage:not(.fighting) .who-card .row-line { font-size: 11px; margin-top: 3px; }
+.stage:not(.fighting) .who-card .conds i { font-size: 10.5px; padding: 1px 6px; }
+
+/* Columnas llenas: primero se quita lo accesorio, luego se queda en una línea */
+.side-list.dense .who-card .who-id .state { display: none; }
+.side-list.dense .who-card { padding: 6px 9px; }
+.side-list.dense .who-card .avatar { width: 28px; height: 28px; font-size: 11px; }
+.side-list.dense .who-card .row-line { margin-top: 3px; }
+.side-list.tiny { gap: 4px; }
+.side-list.tiny .who-card { padding: 4px 8px; border-radius: 8px; }
+.side-list.tiny .who-card .avatar { width: 22px; height: 22px; font-size: 9px; border-radius: 6px; }
+.side-list.tiny .who-card .who-top b { font-size: 14px; }
+.side-list.tiny .who-card .ac { display: none; }
+.side-list.tiny .who-card .bar { margin-top: 4px; height: 3px; }
+.side-list.tiny .who-card .row-line > span:not(.conds) { display: none; }
+.side-list.tiny .who-card .row-line { margin-top: 2px; }
+.side-list.tiny .who-card .conds i { font-size: 10px; padding: 0 5px; }
+
+/* Hordas agrupadas por tipo */
+.side-list.grouped .who-card { padding: 8px 10px; }
+.side-list.grouped .count { font-family: var(--sans); font-size: 13px; color: var(--dim); font-weight: 600; }
+.who-card.group .dots { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+.side.foes .who-card.group .dots { justify-content: flex-end; }
+.who-card.group .dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--moss); }
+.who-card.group .dots i.warn { background: var(--amber); }
+.who-card.group .dots i.bad { background: var(--blood); }
+.who-card.group .dots i.out { background: #3a3f4c; }
+.who-card.group .dots i.now { box-shadow: 0 0 0 2px var(--gold); }
+
+/* Un hijo de la columna principal no puede ensanchar la página: sin esto, la
+   barra de herramientas del mapa (que no se parte en el móvil) empujaba la
+   vista del jugador a 480 px en un teléfono de 390 y la página salía alejada,
+   con la barra de pestañas de abajo fuera del alcance del dedo. */
+.shell > * { min-width: 0; }
+.player-shell { width: 100%; }

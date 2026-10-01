@@ -1385,13 +1385,21 @@ function openScreenPanel() {
         ? `Hay <b>${connected.length}</b> pantalla${connected.length > 1 ? "s" : ""} conectada${connected.length > 1 ? "s" : ""}: ${esc(connected.map(p => p.name).join(", "))}.`
         : "Ahora mismo no hay ninguna pantalla conectada."}
     </p>
-    <div class="row" style="margin:10px 0 14px">
-      <button type="button" class="btn" id="openScreen">Abrir la pantalla aquí</button>
+    <div class="screen-open">
+      <button type="button" class="btn primary" data-open="window">Abrir en una ventana aparte</button>
+      ${"getScreenDetails" in window ? `<button type="button" class="btn" data-open="other">Abrir en el otro monitor</button>` : ""}
+      <button type="button" class="btn" data-open="tab">Abrir en otra pestaña</button>
     </div>
+    <p class="prose" style="font-size:12px;margin:0 0 14px">
+      Para la tele: arrastra esa ventana al monitor o al proyector, o compártela
+      con Chromecast desde el menú del navegador (Enviar… → Enviar pestaña).
+      Doble clic dentro la pone a pantalla completa.
+    </p>
     <fieldset>
       <legend>Qué enseña</legend>
       <label class="check"><input type="checkbox" name="map" ${session().showMapToParty ? "checked" : ""}> El mapa</label>
       <label class="check" style="margin-top:8px"><input type="checkbox" name="hp" ${session().showPartyHP ? "checked" : ""}> Los puntos de vida exactos de la party</label>
+      <label class="check" style="margin-top:8px"><input type="checkbox" name="foehp" ${session().showFoeHP ? "checked" : ""}> Cómo de heridos están los enemigos</label>
       <label class="check" style="margin-top:8px"><input type="checkbox" name="reveal" ${session().revealAll ? "checked" : ""}> El mapa entero, sin niebla</label>
     </fieldset>
     <p class="prose" style="font-size:12px">
@@ -1410,10 +1418,29 @@ function openScreenPanel() {
       }
     }]
   });
-  body.querySelector("#openScreen").addEventListener("click", () => {
-    window.open("/?role=screen", "_blank", "noopener");
+  body.querySelectorAll("[data-open]").forEach(b => b.addEventListener("click", () => {
+    openScreenWindow(b.dataset.open);
     win.close();
-  });
+  }));
+}
+
+/* La tele es otra ventana del mismo navegador. Una ventana aparte se puede
+   arrastrar al segundo monitor o enviar al Chromecast sin llevarse la vista
+   del DM; con la API de pantallas de Chrome se coloca ya en el otro monitor. */
+async function openScreenWindow(where) {
+  const url = new URL("./?role=screen", location.href).href;
+  if (where === "tab") return window.open(url, "_blank");
+  let features = "popup,width=1280,height=720";
+  if (where === "other") {
+    try {
+      const details = await window.getScreenDetails();
+      const other = details.screens.find(x => x !== details.currentScreen);
+      if (other) features = `popup,left=${other.availLeft},top=${other.availTop},width=${other.availWidth},height=${other.availHeight}`;
+      else toast("Solo se ve un monitor conectado: se abre en una ventana aparte");
+    } catch { toast("El navegador no ha dado permiso para ver los otros monitores"); }
+  }
+  const w = window.open(url, "mesa-screen", features);
+  if (!w) toast("El navegador ha bloqueado la ventana emergente: permítela para este sitio", "bad");
 }
 
 /* Pedir una tirada: al jugador le sale un botón grande en su móvil. */
