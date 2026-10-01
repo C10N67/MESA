@@ -42,6 +42,46 @@ npx localtunnel --port 8080     # o: cloudflared tunnel --url http://localhost:8
 Reparte esa URL y el código del DM solo a tu grupo: quien tenga la dirección
 puede entrar como jugador.
 
+## Instalar como aplicación
+
+Mesa es una **aplicación web instalable** (PWA): se abre en su propia ventana,
+sin barra del navegador, con su icono en el escritorio o en la pantalla de
+inicio, y con accesos directos a **DM**, **Jugador** y **Pantalla** (clic
+derecho o pulsación larga en el icono).
+
+- **En el ordenador del DM** (Chrome o Edge), entrando por
+  `http://localhost:8080`: icono de instalar en la barra de direcciones, o el
+  botón **Instalar Mesa como aplicación** de la pantalla de entrada.
+- **En Android**: menú ⋮ → *Instalar aplicación*.
+- **En iPhone y iPad** (Safari): *Compartir* → *Añadir a pantalla de inicio*.
+
+**Lo que hay que saber:** los navegadores solo dejan instalar una aplicación
+desde `localhost` o por **HTTPS**. Desde el ordenador donde corre Mesa funciona
+tal cual; en los móviles, con `http://192.168.x.x` se puede jugar igual de
+bien, pero no instalar. Tres formas de tener HTTPS, de menos a más trabajo:
+
+1. **Tailscale** (recomendado si ya lo usáis, con HTTPS activado en su consola): `tailscale serve --bg 8080`
+   publica Mesa en `https://tu-maquina.tu-red.ts.net` con certificado válido,
+   solo para tu red privada.
+2. **Un túnel** de un comando: `cloudflared tunnel --url http://localhost:8080`
+   da una dirección `https://…trycloudflare.com` mientras dure la sesión.
+3. **Certificado propio** con [mkcert](https://github.com/FiloSottile/mkcert):
+
+   ```bash
+   mkcert -install
+   mkcert 192.168.1.34 localhost        # la IP que te da la ventana de Mesa
+   node server.js --cert 192.168.1.34+1.pem --key 192.168.1.34+1-key.pem
+   ```
+
+   Cada móvil tiene que confiar en la autoridad de mkcert una vez (el archivo
+   `rootCA.pem` que indica `mkcert -CAROOT`). También vale con las variables
+   `MESA_CERT` y `MESA_KEY`.
+
+Instalada o no, la partida vive en el servidor: la aplicación guarda solo el
+código y las imágenes (planos y retratos no se vuelven a descargar), nunca el
+estado. Si el servidor no está en marcha, la entrada lo dice en vez de quedarse
+en blanco.
+
 ## Idioma
 
 Arriba a la derecha (o en **⋯ → Idioma**, y en la propia pantalla de entrada)
@@ -371,12 +411,30 @@ del encuadre**, en vez de quedarse el mapa a un lado con una franja negra al
 otro.
 
 Fuera de combate no hay nada encima del mapa: solo el plano, y debajo la party
-centrada. En combate la pantalla se parte: **los tuyos a la izquierda, los
-enemigos a la derecha** y en el centro, en grande, **quien tiene el turno**: retrato, vida,
-clase de armadura, los pies de movimiento que le quedan, si ha gastado ya la
-acción, la adicional o la reacción, los estados que sufre y en qué está
-concentrado. Los que no están en la pelea se apagan, y la tira de iniciativa se
-desplaza sola para que el turno actual quede siempre centrado.
+centrada. En combate **el mapa sigue mandando**: se queda en el centro con todo
+el alto libre, **la party pegada al borde izquierdo y los enemigos pegados al
+borde derecho**, en espejo y con cartas compactas (cara, nombre, vida y
+estados). Si todavía no hay enemigos a la vista, su columna se la queda el
+mapa. **Quien tiene el turno** va en una franja arriba: retrato, vida, clase de
+armadura, los pies de movimiento que le quedan, si ha gastado ya la acción, la
+adicional o la reacción, los estados que sufre, en qué está concentrado y quién
+va después. Debajo, la tira de iniciativa. Los que no están en la pelea se
+apagan. En una pantalla estrecha o en vertical todo se apila con el mapa
+primero.
+
+### Movimiento
+
+Las animaciones son pocas y con intención: solo se mueve lo que acaba de
+cambiar. Las fichas **se deslizan** de casilla a casilla (y la cámara que sigue
+a un personaje lo acompaña sin saltos); al empezar un turno, un **aro dorado**
+se abre una vez desde la ficha de quien actúa; un golpe deja un **halo rojo** y
+una cura uno verde, en el mapa y en su carta, y las barras de vida bajan
+deslizándose. Las ventanas, el bestiario y las pestañas entran con un fundido
+corto. Nada se anima en bucle, así que la tele no gasta de más, y quien tenga
+activado «reducir movimiento» en su sistema no ve ninguna animación.
+
+Una criatura que sale de la niebla aparece sin deslizarse: si lo hiciera,
+enseñaría por dónde ha venido.
 
 ## Dónde viven los datos
 
@@ -414,6 +472,9 @@ En la pantalla de la party, doble clic entra y sale de pantalla completa.
 server.js              servidor: estático, estado, filtrado por rol y guardado
 public/
   index.html           el documento; la interfaz la monta el JavaScript
+  manifest.webmanifest lo que hace falta para instalarla como aplicación
+  sw.js                trabajador de fondo: guarda el código y las imágenes
+  icons/               iconos de la aplicación (normal, «maskable» y Apple)
   css/mesa.css         estilos
   js/
     main.js            entrada a la partida y reparto de vistas
@@ -443,8 +504,9 @@ data/                  la partida y las imágenes (se crea al arrancar)
   los susurros de otro.
 - Las tiradas de ataque y el reparto de puntos de vida se resuelven en el
   servidor. Nadie puede decidir desde su navegador que ha impactado.
-- Pensado para jugar con amigos en una red de confianza. No hay cuentas ni
-  cifrado: si lo expones a internet, usa un túnel privado y no repartas la URL.
+- Pensado para jugar con amigos en una red de confianza. No hay cuentas y, sin
+  `--cert`, tampoco cifrado: si lo expones a internet, usa un túnel privado
+  (que ya pone HTTPS) y no repartas la URL.
 
 ## Lo que aún no hace
 

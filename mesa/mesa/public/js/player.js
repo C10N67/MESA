@@ -1,7 +1,7 @@
 /* Vista del jugador. Manda su ficha y poco más: lo que el DM no enseña, no
    llega ni siquiera al navegador. */
 
-import { $, el, on, esc, lines, sign, pct, hpTone, initials, imgURL, toast, modal, clamp } from "./util.js";
+import { $, el, on, esc, lines, sign, pct, hpTone, hpBar, tweenBars, initials, imgURL, toast, modal, clamp } from "./util.js";
 import { ABILITIES, SKILLS, CONDITIONS, conditionName, modOf } from "./schema.js";
 import { store, onState, onStatus, op, patchChar, leave } from "./net.js";
 import { dicePanel, renderLog, throwDice, tellTable } from "./dice-panel.js";
@@ -69,8 +69,10 @@ function render() {
   noticeHandout();
   renderAsks(mine);
 
-  if (tab !== lastTab) {          // cada pestaña construye lo suyo desde cero
+  const switched = tab !== lastTab;
+  if (switched) {                 // cada pestaña construye lo suyo desde cero
     lastTab = tab;
+    pane.classList.remove("view-in"); void pane.offsetWidth; pane.classList.add("view-in");
     pane.innerHTML = "";
     delete pane.dataset.map;
     delete pane.dataset.dice;
@@ -82,6 +84,7 @@ function render() {
   else if (tab === "party") renderParty(pane);
   else if (tab === "mapa") renderMap(pane, mine);
   else renderDice(pane);
+  tweenBars(pane, "player:" + tab + ":", switched);
 }
 
 /* Cuando llega tu turno se nota: aviso arriba y un toque en el móvil. */
@@ -172,7 +175,7 @@ function renderSheet(pane, c) {
       <button class="btn sm" data-act="edit">Editar</button>
     </div>
 
-    <div class="big-hp">
+    <div class="big-hp" data-flash>
       <div class="nums">
         <b class="tnum">${c.hp}</b><span>/ ${c.maxHp}</span>
         ${c.tempHp ? `<span class="temp">+${c.tempHp} temporales</span>` : ""}
@@ -180,7 +183,7 @@ function renderSheet(pane, c) {
         <span class="pill">CA <b>${c.ac}</b></span>
         <span class="pill">Iniciativa <b>${c.initiative}</b></span>
       </div>
-      <div class="bar"><i class="${hpTone(p)}" style="width:${p}%"></i></div>
+      ${hpBar(c.id, p)}
       <div class="pad">
         <button class="hurt" data-act="hp" data-n="-1">−1</button>
         <button class="hurt" data-act="hp" data-n="-5">−5</button>
@@ -254,13 +257,13 @@ function renderParty(pane) {
     <div class="party-strip">
       ${mates.map(c => {
         const p = pct(c);
-        return `<div class="mate">
+        return `<div class="mate" data-flash>
           ${c.avatarId ? `<img class="avatar" src="${imgURL(c.avatarId)}" alt="" style="--tone:${esc(c.color)}">`
             : `<div class="avatar" style="--tone:${esc(c.color)}">${initials(c.name)}</div>`}
           <div class="info">
             <b>${esc(c.name)}</b>
             <small style="color:var(--dim)"> ${esc(c.className)}${c.claimedBy ? " · " + esc(c.claimedBy) : ""}</small>
-            <div class="bar"><i class="${hpTone(p)}" style="width:${p}%"></i></div>
+            ${hpBar(c.id, p)}
           </div>
           <div style="text-align:right">
             <b class="tnum">${c.hp}</b><small style="color:var(--dim)">/${c.maxHp}</small><br>

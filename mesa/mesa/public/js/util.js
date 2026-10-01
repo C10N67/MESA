@@ -17,6 +17,42 @@ export const initials = n => (n || "?").trim().split(/\s+/).slice(0, 2)
 
 export const hpTone = p => (p <= 0 ? "out" : p < 25 ? "bad" : p < 55 ? "warn" : "ok");
 
+/* ---------- Movimiento ----------
+   Quien pide menos movimiento en su sistema no lo recibe: ni en CSS ni en lo
+   que se anima desde aquí o desde el lienzo del mapa. */
+export const reducedMotion = () =>
+  typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* La barra de vida lleva su identificador para que, al repintarse, se deslice
+   desde donde estaba en vez de saltar. */
+export const hpBar = (id, p) =>
+  `<div class="bar"><i class="${hpTone(p)}" data-bar="${esc(id)}" data-p="${p}" style="width:${p}%"></i></div>`;
+
+/* Las vistas se repintan enteras a cada cambio, así que una transición de
+   CSS no tiene de dónde partir. Se recuerda el último valor de cada barra y se
+   anima desde ahí; la tarjeta que la contiene destella en rojo si ha perdido
+   vida y en verde si la ha recuperado. Con «silent» solo se apunta el valor:
+   al volver a una pestaña, lo que cambió mientras no se miraba ya no es noticia. */
+const lastBars = new Map();
+export function tweenBars(root, scope = "", silent = false) {
+  if (!root) return;
+  const still = silent || reducedMotion();
+  root.querySelectorAll("[data-bar]").forEach(bar => {
+    const key = scope + bar.dataset.bar;
+    const to = Number(bar.dataset.p);
+    const from = lastBars.get(key);
+    lastBars.set(key, to);
+    if (still || from === undefined || from === to) return;
+    bar.style.transition = "none";
+    bar.style.width = from + "%";
+    void bar.offsetWidth;
+    bar.style.transition = "";
+    bar.style.width = to + "%";
+    const card = bar.closest("[data-flash]");
+    if (card) card.classList.add(to < from ? "hurt" : "healed");
+  });
+}
+
 export function el(html) {
   const t = document.createElement("template");
   t.innerHTML = html.trim();
@@ -57,7 +93,16 @@ export function modal({ title, body, actions = [], wide = false, onOpen }) {
   if (typeof body === "string") bodyHost.innerHTML = body; else bodyHost.appendChild(body);
 
   const foot = back.querySelector("footer");
-  const close = () => { back.remove(); document.removeEventListener("keydown", onKey); };
+  /* Se va con un fundido corto; mientras tanto ya no recibe clics. */
+  let closed = false;
+  const close = () => {
+    if (closed) return;
+    closed = true;
+    document.removeEventListener("keydown", onKey);
+    if (reducedMotion()) return back.remove();
+    back.classList.add("closing");
+    setTimeout(() => back.remove(), 140);
+  };
   actions.forEach(a => {
     const b = el(`<button class="btn ${a.tone || ""}">${esc(a.label)}</button>`);
     b.addEventListener("click", () => { if (a.run && a.run(bodyHost) === false) return; close(); });

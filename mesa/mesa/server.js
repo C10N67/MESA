@@ -2,14 +2,19 @@
    Node 18+, sin dependencias. Sirve la aplicación, guarda el estado en disco
    y mantiene al día a todos los dispositivos conectados.
 
-   node server.js [--port 8080] [--pin 1234] [--data ./data]
+   node server.js [--port 8080] [--pin 1234] [--data ./data] [--cert cert.pem --key key.pem]
+
+   Con --cert y --key (o MESA_CERT y MESA_KEY) sirve por HTTPS, que es lo que
+   necesitan los móviles para instalar Mesa como aplicación.
 */
 "use strict";
 
 import { createServer } from "node:http";
-import { readFile, writeFile, mkdir, rm } from "node:fs/promises";
-import { existsSync, createReadStream, statSync } from "node:fs";
+import { createServer as createSecureServer } from "node:https";
+import { readFile, writeFile, mkdir, rename } from "node:fs/promises";
+import { existsSync, createReadStream, statSync, readFileSync } from "node:fs";
 import { randomBytes } from "node:crypto";
+import { gzipSync } from "node:zlib";
 import { networkInterfaces } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -33,6 +38,8 @@ const PORT = Number(process.env.PORT || arg("port", 8080));
 const DATA = path.resolve(HERE, arg("data", "data"));
 const IMAGES = path.join(DATA, "images");
 const STATE_FILE = path.join(DATA, "mesa.json");
+const CERT = process.env.MESA_CERT || arg("cert", "");
+const KEY = process.env.MESA_KEY || arg("key", "");
 
 /* ---------- Estado ---------- */
 let doc = emptyDoc();
@@ -63,7 +70,6 @@ async function persist() {
   const tmp = STATE_FILE + ".tmp";
   const saved = { pin, doc: { ...doc, session: { ...doc.session, alert: null, ping: null } } };
   await writeFile(tmp, JSON.stringify(saved, null, 1), "utf8");
-  const { rename } = await import("node:fs/promises");
   await rename(tmp, STATE_FILE);
 }
 
@@ -99,9 +105,23 @@ function pickCells(map, seen, explored) {
   return out;
 }
 
+/* Lo que ve la party es lo mismo para todos los jugadores y para la tele:
+   solo cambian el registro (los susurros) y quién eres. Se calcula una vez
+   por difusión en vez de una vez por aparato, que es lo caro (visión, muros
+   cercanos, niebla). */
+let partyCache = null;
+
 function redact(client) {
   if (client.role === "dm") return { ...doc, you: null };
+  if (!partyCache || partyCache.rev !== rev) partyCache = { rev, view: partyView() };
+  return {
+    ...partyCache.view,
+    log: doc.log.filter(e => canRead(client, e)),
+    you: client.charId || null
+  };
+}
 
+function partyView() {
   const map = doc.maps.find(m => m.id === doc.session.activeMapId) || null;
   const showMap = map && doc.session.showMapToParty;
   const seen = showMap && !doc.session.revealAll
@@ -185,9 +205,7 @@ function redact(client) {
     chars,
     bestiary: [],
     maps,
-    session: { ...doc.session, notes: "", alert: null, activeMapId: showMap ? map.id : "" },
-    log: doc.log.filter(e => canRead(client, e)),
-    you: client.charId || null
+    session: { ...doc.session, notes: "", alert: null, activeMapId: showMap ? map.id : "" }
   };
 }
 
@@ -733,7 +751,43 @@ function readBody(req, limit = MAX_BODY) {
   });
 }
 
-const server = createServer(async (req, res) => {
+/* La aplicación se pide entera cada vez que alguien entra o recarga. Con
+   ETag, el navegador pregunta «¿ha cambiado?» y el servidor contesta 304 sin
+   mandar nada; y lo que sí viaja, va comprimido (unos 360 KB de código se
+   quedan en menos de 100). Se guarda comprimido en memoria mientras el
+   archivo no cambie. */
+const gzCache = new Map();   // ruta -> { mtime, size, etag, gz }
+const COMPRESSIBLE = new Set([".html", ".js", ".css", ".json", ".svg", ".webmanifest"]);
+
+function serveStatic(req, res, file) {
+  const st = statSync(file);
+  const ext = path.extname(file);
+  const etag = `"${st.size.toString(36)}-${Math.floor(st.mtimeMs).toString(36)}"`;
+  const headers = {
+    "Content-Type": MIME[ext] || "application/octet-stream",
+    "Cache-Control": "no-cache",
+    ETag: etag,
+    Vary: "Accept-Encoding"
+  };
+  if (path.basename(file) === "sw.js") headers["Service-Worker-Allowed"] = "/";
+  if (req.headers["if-none-match"] === etag) { res.writeHead(304, headers); return res.end(); }
+
+  const gzipOK = COMPRESSIBLE.has(ext) && /\bgzip\b/.test(String(req.headers["accept-encoding"] || ""));
+  if (gzipOK) {
+    let hit = gzCache.get(file);
+    if (!hit || hit.etag !== etag) {
+      hit = { etag, gz: gzipSync(readFileSync(file), { level: 9 }) };
+      gzCache.set(file, hit);
+    }
+    res.writeHead(200, { ...headers, "Content-Encoding": "gzip", "Content-Length": hit.gz.length });
+    return res.end(req.method === "HEAD" ? undefined : hit.gz);
+  }
+  res.writeHead(200, { ...headers, "Content-Length": st.size });
+  if (req.method === "HEAD") return res.end();
+  createReadStream(file).pipe(res);
+}
+
+const handler = async (req, res) => {
   const url = new URL(req.url, "http://" + (req.headers.host || "localhost"));
   const p = url.pathname;
 
@@ -781,13 +835,19 @@ const server = createServer(async (req, res) => {
         "X-Accel-Buffering": "no"
       });
       res.write(": mesa\n\n");
+      if (client.res && client.res !== res) { try { client.res.end(); } catch {} }
       client.res = res;
       observe();     // quien acaba de entrar recibe la visibilidad de ahora, no la de antes
+      partyCache = null;
       send(client, "state", { rev, doc: redact(client) });
       broadcastPresence();
       const ping = setInterval(() => { try { res.write(": ping\n\n"); } catch {} }, 20000);
       req.on("close", () => {
         clearInterval(ping);
+        /* Al reconectar, la conexión vieja puede cerrarse después de abrirse
+           la nueva: solo se suelta si sigue siendo la suya. Antes se quedaba
+           sin flujo y a los 15 s se perdía la sesión. */
+        if (client.res !== res) return;
         client.res = null;
         setTimeout(() => {
           if (!client.res) {
@@ -806,10 +866,18 @@ const server = createServer(async (req, res) => {
       const ops = Array.isArray(body.ops) ? body.ops : [body.op];
       const worthRemembering = ops.some(o => o && !["ping", "chat", "log.add", "request.done", "undo"].includes(o.type));
       if (worthRemembering) remember();
+      /* Si una operación del lote falla, las anteriores ya se aplicaron: hay
+         que repartirlas igual, o los demás no se enteran hasta el siguiente
+         cambio y el disco tampoco. */
+      let applied = 0;
       for (const op of ops) {
         const err = await apply(client, op);
-        if (err === "SKIP_HISTORY") continue;
-        if (err) return json(res, 400, { error: err });
+        if (err === "SKIP_HISTORY") { applied++; continue; }
+        if (err) {
+          if (applied) push();
+          return json(res, 400, { error: err });
+        }
+        applied++;
       }
       push();
       return json(res, 200, { ok: true, charId: client.charId });
@@ -842,19 +910,21 @@ const server = createServer(async (req, res) => {
     /* Estático */
     const rel = p === "/" ? "index.html" : decodeURIComponent(p).replace(/^\/+/, "");
     const file = path.join(PUBLIC, rel);
-    if (!file.startsWith(PUBLIC) || !existsSync(file) || statSync(file).isDirectory()) {
+    if (!file.startsWith(PUBLIC + path.sep) || !existsSync(file) || statSync(file).isDirectory()) {
       res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
       return res.end("No está aquí");
     }
-    res.writeHead(200, {
-      "Content-Type": MIME[path.extname(file)] || "application/octet-stream",
-      "Cache-Control": "no-cache"
-    });
-    createReadStream(file).pipe(res);
+    return serveStatic(req, res, file);
   } catch (err) {
-    json(res, 500, { error: err.message });
+    if (!res.headersSent) json(res, 500, { error: err.message });
+    else res.end();
   }
-});
+};
+
+const secure = !!(CERT && KEY);
+const server = secure
+  ? createSecureServer({ cert: readFileSync(path.resolve(CERT)), key: readFileSync(path.resolve(KEY)) }, handler)
+  : createServer(handler);
 
 /* ---------- Arranque ---------- */
 const lanIP = () => {
@@ -867,11 +937,12 @@ const lanIP = () => {
 await boot();
 server.listen(PORT, "0.0.0.0", () => {
   const ip = lanIP();
+  const scheme = secure ? "https" : "http";
   console.log(`
-  Mesa está en marcha.
+  Mesa está en marcha${secure ? " (HTTPS)" : ""}.
 
-  Tú (DM)        http://localhost:${PORT}
-  Tus jugadores  http://${ip}:${PORT}
+  Tú (DM)        ${scheme}://localhost:${PORT}
+  Tus jugadores  ${scheme}://${ip}:${PORT}
   Código del DM  ${pin}
 
   Los datos se guardan en ${DATA}
@@ -879,4 +950,11 @@ server.listen(PORT, "0.0.0.0", () => {
 `);
 });
 
-process.on("SIGINT", async () => { await persist(); process.exit(0); });
+/* Al cerrar (Ctrl+C, o el sistema parando el proceso) se guarda lo último */
+for (const sig of ["SIGINT", "SIGTERM"]) {
+  process.on(sig, async () => {
+    clearTimeout(saveTimer);
+    try { await persist(); } catch (e) { console.error("No se pudo guardar:", e.message); }
+    process.exit(0);
+  });
+}

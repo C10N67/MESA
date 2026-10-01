@@ -7,7 +7,7 @@
 
 import { cellKey, edgeKey, clamp, footprint, conditionName } from "./schema.js";
 import { visibleCells, reachableCells, shapeCells, gridDistance, occupied, fits } from "./los.js";
-import { initials, imgURL, pct, hpTone } from "./util.js";
+import { initials, imgURL, pct, hpTone, reducedMotion } from "./util.js";
 import { drawGlyph } from "./icons.js";
 
 const COLORS = {
@@ -60,6 +60,15 @@ export class MapView {
     this.data = { map: null, chars: [], session: null, you: null };
     this._geom = null;
     this._anim = null;
+    this._glide = new Map();                  // id -> trayecto de la ficha que se desliza
+    this._held = new Map();                   // id -> dónde se soltó, hasta que el servidor confirme
+    this._marks = new Map();                  // id -> destello de golpe o de cura
+    this._hp = new Map();                     // id -> última vida vista, para saber si ha bajado
+    this._frame = 0;
+    this._pulse = null;                       // aro que se abre al empezar un turno
+    this._lastNow = undefined;
+    this._seenMemo = { map: null, chars: null, reveal: null, seen: null };
+    this._cam = null;                         // cámara que sigue a alguien, suavizada
 
     const redraw = () => this.draw();
     this._ro = new ResizeObserver(redraw);
@@ -72,7 +81,65 @@ export class MapView {
 
   set(data) {
     this.data = { ...this.data, ...data };
+    this.noticeChanges();
     this.draw();
+  }
+
+  /* Lo que acaba de cambiar y merece un gesto en el tablero: un golpe, una
+     cura, un turno nuevo. Nada se anima en bucle. */
+  noticeChanges() {
+    const { chars, session } = this.data;
+    const t = performance.now();
+    for (const c of chars || []) {
+      const hp = c.hpPct !== undefined ? c.hpPct : c.hp;
+      const before = this._hp.get(c.id);
+      this._hp.set(c.id, hp);
+      if (before !== undefined && hp !== before) this._marks.set(c.id, { kind: hp < before ? "hurt" : "heal", t0: t });
+    }
+    const combat = session && session.combat;
+    const nowId = combat && combat.on && combat.order.length ? combat.order[combat.index] : null;
+    if (this._lastNow !== undefined && nowId && nowId !== this._lastNow) this._pulse = { id: nowId, t0: t };
+    this._lastNow = nowId;
+  }
+
+  /* Las fichas se deslizan de casilla a casilla en vez de saltar. Si una
+     aparece de la nada, viene de muy lejos o no estaba dibujada en el
+     fotograma anterior, se coloca sin más: así una criatura que sale de la
+     niebla no enseña por dónde ha venido. */
+  glide(c, x, y, t) {
+    const DUR = 280;
+    let s = this._glide.get(c.id);
+    const fresh = !s || s.mapId !== c.mapId || s.frame !== this._frame - 1;
+    if (fresh || reducedMotion()) {
+      s = { fx: x, fy: y, tx: x, ty: y, t0: t, mapId: c.mapId, frame: this._frame };
+      this._glide.set(c.id, s);
+      return { x, y };
+    }
+    if (s.tx !== x || s.ty !== y) {
+      const cur = this.glideAt(s, t, DUR);
+      const far = Math.hypot(x - cur.x, y - cur.y) > 8;
+      Object.assign(s, far ? { fx: x, fy: y } : { fx: cur.x, fy: cur.y }, { tx: x, ty: y, t0: t });
+    }
+    s.frame = this._frame;
+    const pos = this.glideAt(s, t, DUR);
+    if (t - s.t0 < DUR) this._moving = true;
+    return pos;
+  }
+
+  glideAt(s, t, dur) {
+    const k = Math.min(1, (t - s.t0) / dur);
+    const e = 1 - Math.pow(1 - k, 3);
+    return { x: s.fx + (s.tx - s.fx) * e, y: s.fy + (s.ty - s.fy) * e };
+  }
+
+  /* Visión del DM: es cara (rayos contra muros) y antes se recalculaba a cada
+     movimiento del ratón. Solo cambia cuando cambian las fichas o el mapa. */
+  dmSight(map, chars, reveal) {
+    const m = this._seenMemo;
+    if (m.map !== map || m.chars !== chars || m.reveal !== reveal) {
+      this._seenMemo = { map, chars, reveal, seen: reveal ? null : visibleCells({ chars }, map) };
+    }
+    return this._seenMemo.seen;
   }
 
   /* ---------- Geometría ---------- */
@@ -101,7 +168,7 @@ export class MapView {
     } else if (map.camera === "follow") {
       cropW = Math.min(map.cols, map.followSpan) / (map.partyZoom || 1);
       const f = this.data.chars.find(c => c.id === (this.data.session && this.data.session.focusId));
-      focus = f && f.mx !== null ? { x: f.mx + 0.5, y: f.my + 0.5 } : { x: map.cols / 2, y: map.rows / 2 };
+      focus = this.smoothCam(f && f.mx !== null ? { x: f.mx + 0.5, y: f.my + 0.5 } : { x: map.cols / 2, y: map.rows / 2 });
       fill = true;
     } else {
       cropW = map.cols / (map.partyZoom || 1);
@@ -125,6 +192,22 @@ export class MapView {
     const cy = clamp(focus.y, cropH / 2, Math.max(cropH / 2, map.rows - cropH / 2));
     const cell = Math.min(W / cropW, H / cropH);
     return { W, H, dpr, cell, originX: W / 2 - cx * cell, originY: H / 2 - cy * cell, cols: map.cols, rows: map.rows };
+  }
+
+  /* La cámara que sigue a un personaje lo acompaña en vez de dar saltos */
+  smoothCam(to) {
+    const t = performance.now(), DUR = 420;
+    const c = this._cam;
+    if (!c || reducedMotion() || Math.hypot(to.x - c.tx, to.y - c.ty) > 30) {
+      this._cam = { fx: to.x, fy: to.y, tx: to.x, ty: to.y, t0: t };
+      return to;
+    }
+    if (c.tx !== to.x || c.ty !== to.y) {
+      const cur = this.glideAt(c, t, DUR);
+      Object.assign(c, { fx: cur.x, fy: cur.y, tx: to.x, ty: to.y, t0: t });
+    }
+    if (t - c.t0 < DUR) this._moving = true;
+    return this.glideAt(c, t, DUR);
   }
 
   toCell(clientX, clientY) {
@@ -380,6 +463,9 @@ export class MapView {
         this.drag = null;
         if (moved && this.opts.onMove) {
           const dx = at.x - from.x, dy = at.y - from.y;
+          const until = performance.now() + 1500;
+          for (const gi of group) this._held.set(gi.id, { x: from.x + gi.dx + dx, y: from.y + gi.dy + dy, until });
+          setTimeout(() => this.draw(), 1550);
           if (group.length > 1) this.opts.onMoveMany(group.map(g => ({ id: g.id, x: from.x + g.dx + dx, y: from.y + g.dy + dy })));
           else this.opts.onMove(id, at.x, at.y);
         } else if (!moved && this.opts.onToken) this.opts.onToken(id, e);
@@ -474,6 +560,8 @@ export class MapView {
 
   /* ---------- Dibujado ---------- */
   draw() {
+    this._frame++;
+    this._moving = false;
     const g = this._geom = this.geometry();
     const ctx = this.ctx;
     const { map, chars, session } = this.data;
@@ -511,7 +599,7 @@ export class MapView {
     let seen = null;
     const known = new Set(map.explored || []);
     if (dm) {
-      seen = (session && session.revealAll) ? null : visibleCells({ chars }, map);
+      seen = this.dmSight(map, chars, !!(session && session.revealAll));
     } else {
       seen = map.visible ? new Set(map.visible) : null;
     }
@@ -524,14 +612,17 @@ export class MapView {
           ctx.fillRect(X(x), Y(y), g.cell + 0.5, g.cell + 0.5);
         });
       } else {
+        /* Dos trazados y dos rellenos, en vez de un relleno por casilla */
+        const fog = new Path2D(), memo = new Path2D();
         for (let y = 0; y < map.rows; y++) {
           for (let x = 0; x < map.cols; x++) {
             const k = cellKey(x, y);
             if (seen.has(k)) continue;
-            ctx.fillStyle = known.has(k) ? COLORS.known : COLORS.fog;
-            ctx.fillRect(X(x) - 0.5, Y(y) - 0.5, g.cell + 1, g.cell + 1);
+            (known.has(k) ? memo : fog).rect(X(x) - 0.5, Y(y) - 0.5, g.cell + 1, g.cell + 1);
           }
         }
+        ctx.fillStyle = COLORS.known; ctx.fill(memo);
+        ctx.fillStyle = COLORS.fog; ctx.fill(fog);
       }
     }
 
@@ -618,20 +709,37 @@ export class MapView {
     const dragging = this.drag;
     const order = session && session.combat && session.combat.on ? session.combat.order : [];
     const nowId = order.length ? order[session.combat.index] : null;
+    const t = performance.now();
     for (const c of chars) {
       if (c.mapId !== map.id || c.mx === null) continue;
       let x = c.mx, y = c.my;
+      let direct = false;
       if (dragging) {
         const inGroup = dragging.group.find(gi => gi.id === c.id);
         if (inGroup) {
           x = dragging.from.x + inGroup.dx + (dragging.at.x - dragging.from.x);
           y = dragging.from.y + inGroup.dy + (dragging.at.y - dragging.from.y);
+          direct = true;
         }
+      }
+      /* Recién soltada: se queda donde la dejó el dedo hasta que el servidor
+         confirme. Si lo rechaza, vuelve deslizándose a su sitio. */
+      const held = this._held.get(c.id);
+      if (!direct && held) {
+        if (held.x === c.mx && held.y === c.my) this._held.delete(c.id);
+        else if (t < held.until) { x = held.x; y = held.y; direct = true; }
+        else this._held.delete(c.id);
       }
       /* Lo recordado se pinta aunque ahora mismo no se vea: para eso se recuerda. */
       if (!dm && !c.memory && seen && !occupied({ ...c, mx: x, my: y }).some(([ox, oy]) => seen.has(cellKey(ox, oy)))) continue;
-      this.token(ctx, g, c, x, y, X, Y, {
-        now: c.id === nowId, selected: this.selection.has(c.id), target: this.target === c.id, memory: !!c.memory
+      let pos;
+      if (direct) {
+        this._glide.set(c.id, { fx: x, fy: y, tx: x, ty: y, t0: t, mapId: c.mapId, frame: this._frame });
+        pos = { x, y };
+      } else pos = this.glide(c, x, y, t);
+      this.token(ctx, g, c, pos.x, pos.y, X, Y, {
+        now: c.id === nowId, selected: this.selection.has(c.id), target: this.target === c.id, memory: !!c.memory,
+        mark: this._marks.get(c.id), pulse: this._pulse && this._pulse.id === c.id ? this._pulse : null, t
       });
     }
 
@@ -696,6 +804,7 @@ export class MapView {
       ctx.restore();
       this.tick();
     }
+    if (this._moving) this.tick();
   }
 
   tick() {
@@ -839,13 +948,44 @@ export class MapView {
     ctx.restore();
   }
 
-  token(ctx, g, c, x, y, X, Y, { now, selected, target, memory } = {}) {
+  token(ctx, g, c, x, y, X, Y, { now, selected, target, memory, mark, pulse, t = 0 } = {}) {
     const n = footprint(c);
     const span = g.cell * n;
     const tiny = /Diminuto|Tiny/i.test(String(c.size || c.sizeType || ""));
     const r = span * (tiny ? 0.26 : 0.4);
     const cx = X(x) + span / 2, cy = Y(y) + span / 2;
     const down = c.hp <= 0;
+
+    /* Golpe o cura: un halo rojo o verde que se apaga en medio segundo */
+    if (mark && !reducedMotion()) {
+      const k = (t - mark.t0) / 650;
+      if (k >= 1) this._marks.delete(c.id);
+      else {
+        ctx.save();
+        const tone = mark.kind === "hurt" ? "184,56,59" : "79,157,93";
+        const grad = ctx.createRadialGradient(cx, cy, r * 0.6, cx, cy, r * (1.5 + k * 0.6));
+        grad.addColorStop(0, `rgba(${tone},${0.55 * (1 - k)})`);
+        grad.addColorStop(1, `rgba(${tone},0)`);
+        ctx.fillStyle = grad;
+        ctx.beginPath(); ctx.arc(cx, cy, r * (1.5 + k * 0.6), 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+        this._moving = true;
+      }
+    }
+
+    /* Empieza su turno: un aro dorado se abre una vez desde la ficha */
+    if (pulse && !reducedMotion()) {
+      const k = (t - pulse.t0) / 900;
+      if (k >= 1) this._pulse = null;
+      else {
+        ctx.save();
+        ctx.strokeStyle = `rgba(217,154,43,${0.8 * (1 - k)})`;
+        ctx.lineWidth = Math.max(2, g.cell * 0.07) * (1 - k * 0.5);
+        ctx.beginPath(); ctx.arc(cx, cy, r + Math.max(4, g.cell * 0.14) + k * g.cell * 0.9, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+        this._moving = true;
+      }
+    }
 
     /* Luz que lleva encima */
     if (c.light && this.data.map.dark) {

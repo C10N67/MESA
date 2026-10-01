@@ -1,6 +1,6 @@
 /* Vista del DM: todo a la vista y todo editable. */
 
-import { $, el, on, esc, lines, sign, pct, hpTone, initials, imgURL, toast, modal, confirmBox, shrinkImage, clamp } from "./util.js";
+import { $, el, on, esc, lines, sign, pct, hpTone, hpBar, tweenBars, initials, imgURL, toast, modal, confirmBox, shrinkImage, clamp } from "./util.js";
 import { CONDITIONS, conditionName, ABILITIES, SKILLS, PIN_KINDS, modOf, normalizeChar, normalizeBeast, normalizeMap, normalizePin, normalizePortal, uid, encounterDifficulty } from "./schema.js";
 import { openAttacks, attacksOf } from "./attacks.js";
 import { feetChars } from "./los.js";
@@ -13,6 +13,7 @@ import { icon } from "./icons.js";
 import { rollHitPoints } from "./dice.js";
 
 let tab = "mesa";
+let shownTab = null;
 let openCards = new Set();
 let mapView = null;
 let mapTool = "token";
@@ -146,7 +147,13 @@ function render() {
   }
 
   renderRail();
-  if (tab === "mesa") renderTable(); else renderMap();
+  const switched = tab !== shownTab;
+  if (tab === "mesa") { renderTable(); tweenBars($("#tableView"), "dm:", switched); } else renderMap();
+  if (switched) {
+    shownTab = tab;
+    const pane = $(tab === "mesa" ? "#tableView" : "#mapPane");
+    pane.classList.remove("view-in"); void pane.offsetWidth; pane.classList.add("view-in");
+  }
   renderLog($("#log"));
   renderPresence();
   if (drawerOpen) renderBestiary();
@@ -246,7 +253,7 @@ function cardHTML(c) {
     : `<div class="avatar" style="--tone:${esc(c.color)}">${initials(c.name)}</div>`;
 
   return `
-  <article class="card ${c.hp <= 0 ? "down" : ""}" data-id="${c.id}" style="--tone:${esc(c.color)}">
+  <article class="card ${c.hp <= 0 ? "down" : ""}" data-id="${c.id}" data-flash style="--tone:${esc(c.color)}">
     <div class="head">
       ${avatar}
       <div class="id">
@@ -271,7 +278,7 @@ function cardHTML(c) {
         <span class="spacer"></span>
         <span class="pill">CA <b>${c.ac}</b></span>
       </div>
-      <div class="bar"><i class="${hpTone(p)}" style="width:${p}%"></i></div>
+      ${hpBar(c.id, p)}
     </div>
 
     <div class="dealer">

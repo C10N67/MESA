@@ -400,8 +400,18 @@ const EN = {
 
   /* La mesa */
   "La mesa": "Table", "enemigos": "enemies",
-  "trivial": "trivial", "fácil": "easy", "media": "medium", "difícil": "hard", "mortal": "deadly"
+  "trivial": "trivial", "fácil": "easy", "media": "medium", "difícil": "hard", "mortal": "deadly",
 
+  /* Instalar como aplicación */
+  "Instalar Mesa como aplicación": "Install Mesa as an app",
+  "Mesa ya está instalada": "Mesa is installed",
+  "No se encuentra el servidor de la partida. ¿Está abierta la ventana de Mesa?":
+    "Can't reach the game server. Is the Mesa window still open?",
+  "Para tenerla como aplicación: botón": "To keep it as an app: tap",
+  "Compartir": "Share", "Añadir a pantalla de inicio": "Add to Home Screen",
+  "Para instalar Mesa como aplicación en este aparato hace falta entrar por HTTPS. Mira «Instalar como aplicación» en el README.":
+    "Installing Mesa as an app on this device needs HTTPS. See “Install as an app” in the README.",
+  "Mesa necesita JavaScript para funcionar.": "Mesa needs JavaScript to run."
 };
 
 /* Traduce una palabra suelta si está en el diccionario, y si no la deja igual.

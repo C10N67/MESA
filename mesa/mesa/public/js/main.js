@@ -40,7 +40,7 @@ async function start(role) {
 }
 
 async function gate(wanted) {
-  const info = await lobby().catch(() => ({ players: [], title: "Mesa" }));
+  const info = await lobby().catch(() => ({ players: [], title: "Mesa", offline: true }));
   let role = wanted || "player";
   let charId = null;
 
@@ -66,10 +66,13 @@ async function gate(wanted) {
 
       <button class="btn primary" id="go" style="width:100%;margin-top:8px">Entrar a la partida</button>
       <p class="prose" style="font-size:12px;margin-top:14px" id="hint"></p>
+      <div class="install hidden" id="install"></div>
       <div class="gate-lang" id="gateLang"></div>
     </div>`;
 
   $("#gateLang").appendChild(langPicker());
+  if (info.offline) toast("No se encuentra el servidor de la partida. ¿Está abierta la ventana de Mesa?", "bad");
+  paintInstall();
 
   const nameInput = $("#name");
   nameInput.value = localStorage.getItem("mesa.name") || "";
@@ -115,6 +118,51 @@ async function gate(wanted) {
   });
 
   app().addEventListener("keydown", e => { if (e.key === "Enter") $("#go").click(); });
+}
+
+/* ---------- Instalar como aplicación ----------
+   Chrome y Edge avisan de que se puede instalar; Safari en iPhone no, así
+   que ahí se explica el gesto. Y sin HTTPS (fuera de este ordenador) el
+   navegador no deja instalar nada: se dice en vez de enseñar un botón que no
+   haría nada. */
+let installPrompt = null;
+const standalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault();
+  installPrompt = e;
+  paintInstall();
+});
+window.addEventListener("appinstalled", () => {
+  installPrompt = null;
+  paintInstall();
+  toast("Mesa ya está instalada", "good");
+});
+
+function paintInstall() {
+  const box = document.getElementById("install");
+  if (!box) return;
+  let html = "";
+  if (standalone()) html = "";
+  else if (installPrompt) html = `<button class="btn" id="installBtn" style="width:100%">Instalar Mesa como aplicación</button>`;
+  else if (isIOS() && window.isSecureContext) html = `<p class="prose" style="font-size:12px;margin:0">Para tenerla como aplicación: botón <b>Compartir</b> → <b>Añadir a pantalla de inicio</b>.</p>`;
+  else if (!window.isSecureContext) html = `<p class="prose" style="font-size:12px;margin:0">Para instalar Mesa como aplicación en este aparato hace falta entrar por HTTPS. Mira «Instalar como aplicación» en el README.</p>`;
+  box.innerHTML = html;
+  box.classList.toggle("hidden", !html);
+  const btn = document.getElementById("installBtn");
+  if (btn) btn.addEventListener("click", async () => {
+    const ev = installPrompt;
+    installPrompt = null;
+    if (!ev) return;
+    ev.prompt();
+    await ev.userChoice.catch(() => null);
+    paintInstall();
+  });
+}
+
+if ("serviceWorker" in navigator && window.isSecureContext) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
 }
 
 startI18n();
