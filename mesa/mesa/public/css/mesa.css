@@ -215,7 +215,7 @@ main { padding: 18px max(14px, 2.2vw) 60px; min-width: 0; }
 .block p { margin: 0 0 3px; font-size: 13px; }
 .deaths { display: flex; gap: 14px; align-items: center; }
 .deaths .set { display: flex; gap: 4px; align-items: center; font-size: 12px; color: var(--dim); }
-.deaths button { width: 15px; height: 15px; border-radius: 50%; border: 1px solid var(--edge); background: #0d1017; }
+.deaths .set button { width: 15px; height: 15px; border-radius: 50%; border: 1px solid var(--edge); background: #0d1017; padding: 0; }
 .deaths .ok button.on { background: var(--moss); border-color: var(--moss); }
 .deaths .bad button.on { background: var(--blood); border-color: var(--blood); }
 
@@ -321,7 +321,7 @@ legend { padding: 0 6px; color: var(--dim); font-size: 12px; }
 .roles button b { display: block; font-family: var(--serif); font-size: 15px; }
 .roles button small { color: var(--dim); font-size: 11px; }
 .roles button[aria-pressed=true] { border-color: var(--gold); background: #241d10; }
-.pick-list { display: grid; gap: 6px; max-height: 240px; overflow-y: auto; margin-bottom: 14px; }
+.pick-list { display: grid; gap: 6px; max-height: min(320px, 42vh); overflow-y: auto; margin-bottom: 14px; }
 .pick { display: flex; gap: 10px; align-items: center; border: 1px solid var(--edge); border-radius: 10px; padding: 8px 10px; background: #0e1219; text-align: left; }
 .pick[aria-pressed=true] { border-color: var(--gold); }
 .pick.taken { opacity: .5; }
@@ -495,7 +495,7 @@ legend { padding: 0 6px; color: var(--dim); font-size: 12px; }
 
 /* --- Los iconos heredan el color y se alinean con el texto --- */
 .ico { display: block; flex: none; }
-.tabbar b .ico, .tabs .ico { margin: 0 auto; }
+.tabbar b .ico { margin: 0 auto; }
 button .ico { pointer-events: none; }
 .tool-set button { display: inline-flex; align-items: center; gap: 6px; }
 
@@ -520,8 +520,8 @@ button .ico { pointer-events: none; }
    Tarjetas de la mesa: caben más botones que antes (atacar,
    apuntar, dados de golpe), así que nada se corta ni se sale.
    ============================================================ */
-.grid { grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
-@media (min-width: 1500px) { .grid { grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); } }
+.grid { grid-template-columns: repeat(auto-fill, minmax(min(360px, 100%), 1fr)); }
+@media (min-width: 1500px) { .grid { grid-template-columns: repeat(auto-fill, minmax(min(400px, 100%), 1fr)); } }
 
 .card { overflow: hidden; }
 .card .head { align-items: flex-start; flex-wrap: nowrap; }
@@ -947,3 +947,269 @@ body.screen { background: #05060a; overflow: hidden; }
    con la barra de pestañas de abajo fuera del alcance del dedo. */
 .shell > * { min-width: 0; }
 .player-shell { width: 100%; }
+
+/* ============================================================
+   Mesa 2.3 · acabado de aplicación
+   Iconos en las acciones, barras que se adaptan al ancho en vez
+   de desbordarse, y una jerarquía más clara: lo que se usa a
+   cada momento delante, lo ocasional en menús.
+   ============================================================ */
+:root {
+  --r-sm: 8px; --r-md: 12px; --r-lg: 16px;
+  --line: rgba(236, 228, 212, .07);
+  --glow: 0 0 0 3px rgba(200, 155, 74, .16);
+}
+
+/* Botones con icono */
+.btn, .chip, .tabs button, .adv button, .menu-item, .choice, .presence, .pill, .stat-chip {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+}
+.btn .ico, .chip .ico, .pill .ico { flex: none; }
+.pill .ico { opacity: .8; }
+.btn.hurt { color: #f0b6b7; }
+.btn.heal { color: #a8dcb4; }
+.btn.hurt:hover { border-color: #6a2d31; background: #2a1618; }
+.btn.heal:hover { border-color: #2f5a39; background: #142319; }
+.btn:focus-visible, .chip:focus-visible, .icon-btn:focus-visible { box-shadow: var(--glow); }
+.btn.on { box-shadow: inset 0 0 0 1px rgba(200, 155, 74, .25); }
+
+/* ---------- Barra superior del DM ---------- */
+.topbar { min-height: 60px; }
+.brand h1 { font-size: 21px; }
+.top-actions { display: flex; align-items: center; gap: 6px; }
+.tabs button { gap: 6px; }
+.presence {
+  height: 32px; padding: 0 11px; border-radius: 999px; border: 1px solid var(--edge);
+  background: var(--stone); color: var(--dim); font-size: 13px; cursor: pointer;
+}
+.presence:hover { color: var(--vellum); border-color: #3b4459; }
+.presence .count { display: none; font-weight: 700; color: var(--vellum); }
+#combatBtn.on { border-color: rgba(184, 56, 59, .55); color: #f0b6b7; background: #241416; box-shadow: none; }
+
+/* ---------- Barra de combate: dos pisos ---------- */
+.rail { flex-direction: column; flex-wrap: nowrap !important; align-items: stretch; gap: 8px; padding: 10px max(14px, 2.2vw); }
+.rail > * { min-width: 0; }
+.rail-main { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.rail-main .strip { flex: 1; min-width: 0; }
+.rail-nav { display: flex; align-items: center; gap: 6px; flex: none; }
+.rail-nav .btn { padding: 8px 14px; }
+.rail-sub { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; font-size: 13px; }
+.rail-sub .turn-tools { flex-wrap: wrap; flex: 0 1 auto; min-width: 0; }
+.rail-who { color: var(--dim); margin-right: 4px; white-space: nowrap; }
+.rail-who b { color: var(--gold-soft); font-weight: 600; }
+.chip { gap: 5px; }
+.chip .ico { opacity: .85; }
+
+/* ---------- Tarjetas ---------- */
+.dealer .btn { gap: 6px; }
+.pill.cond { gap: 4px; }
+.pill.cond .ico { opacity: .6; }
+.pill.cond:hover .ico { opacity: 1; color: #f0b6b7; }
+.pill.holder { gap: 5px; position: relative; padding-left: 18px; }
+.pill.holder::before {
+  content: ""; position: absolute; left: 8px; top: 50%; width: 6px; height: 6px; margin-top: -3px;
+  border-radius: 50%; background: #4a5162;
+}
+.pill.holder.on { color: var(--vellum); border-color: #2f5a39; }
+.pill.holder.on::before { background: var(--moss); box-shadow: 0 0 0 2px rgba(79, 157, 93, .25); }
+
+/* ---------- Menús y elecciones ---------- */
+.menu-list { display: grid; gap: 4px; }
+.menu-sec {
+  margin: 10px 4px 4px; font: 600 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--dim);
+}
+.menu-sec:first-child { margin-top: 0; }
+.menu-item {
+  justify-content: flex-start; gap: 12px; width: 100%; text-align: left; padding: 10px 12px;
+  border-radius: var(--r-md); border: 1px solid transparent; background: transparent; color: var(--vellum);
+  transition: background .14s, border-color .14s;
+}
+.menu-item:not(.static):hover { background: var(--stone-2); border-color: var(--edge); }
+.menu-ico {
+  width: 38px; height: 38px; flex: none; display: grid; place-items: center; border-radius: 10px;
+  background: var(--stone-2); border: 1px solid var(--edge); color: var(--gold-soft);
+}
+.menu-text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.menu-text b { font-weight: 600; font-size: 14.5px; }
+.menu-text small { color: var(--dim); font-size: 12.5px; line-height: 1.35; }
+.menu-item.danger { color: #f0b6b7; }
+.menu-item.danger .menu-ico { color: #f0b6b7; background: #2a1416; border-color: #5a2528; }
+.menu-item.static .lang-pick select { min-width: 110px; }
+
+.choice-list { display: grid; gap: 10px; }
+.choice {
+  justify-content: flex-start; gap: 14px; width: 100%; text-align: left; padding: 14px 16px;
+  border-radius: var(--r-lg); border: 1px solid var(--edge);
+  background: linear-gradient(180deg, var(--stone-2), var(--stone)); color: var(--vellum);
+  transition: border-color .15s, transform .12s var(--ease-out, ease);
+}
+.choice:hover { border-color: var(--gold); }
+.choice-ico {
+  width: 52px; height: 52px; flex: none; display: grid; place-items: center; border-radius: 14px;
+  background: #241d10; color: var(--gold-soft); border: 1px solid #4a3c22;
+}
+.choice-text { display: flex; flex-direction: column; gap: 2px; }
+.choice-text b { font-family: var(--serif); font-size: 18px; font-weight: 600; }
+.choice-text small { color: var(--dim); font-size: 13px; line-height: 1.4; }
+
+/* Quién está conectado */
+.people { display: grid; gap: 6px; }
+.people-sub { margin: 12px 2px 2px; font: 600 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+.person {
+  display: flex; align-items: center; gap: 12px; padding: 9px 10px;
+  border: 1px solid var(--edge); border-radius: var(--r-md); background: var(--stone-2);
+}
+.person.off { opacity: .7; border-style: dashed; }
+.person-ico { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border-radius: 9px; background: var(--stone-3); color: var(--gold-soft); }
+.person-id { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.person-id b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.person-id small { color: var(--dim); font-size: 12.5px; }
+
+/* ---------- Entrada ---------- */
+.gate .panel { padding: 28px 26px 22px; }
+.gate-logo {
+  width: 58px; height: 58px; margin: 0 auto 10px; display: grid; place-items: center; border-radius: 16px;
+  color: #22190a; background: linear-gradient(160deg, var(--gold-soft), #a87a2a);
+  box-shadow: 0 10px 30px rgba(200, 155, 74, .25);
+}
+.roles button { display: grid; justify-items: center; gap: 3px; padding: 14px 6px 12px; transition: border-color .15s, background .15s; }
+.roles button .ico { color: var(--dim); margin-bottom: 2px; }
+.roles button[aria-pressed=true] .ico { color: var(--gold-soft); }
+.roles button:hover { border-color: #3b4459; }
+.field-label { font-size: 12px; color: var(--dim); margin: 0 0 6px; }
+.pick { width: 100%; transition: border-color .15s, background .15s; }
+.pick:hover:not([disabled]) { border-color: #3b4459; }
+.pick[aria-pressed=true] { border-color: var(--gold); background: #1a1610; }
+.pick[disabled] { cursor: not-allowed; }
+.pick-text { display: flex; flex-direction: column; min-width: 0; flex: 1; line-height: 1.3; }
+.pick-text b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pick-text small { color: var(--dim); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pick-tag {
+  display: inline-flex; align-items: center; gap: 4px; flex: none; max-width: 45%;
+  font-size: 11.5px; color: var(--dim); padding: 3px 8px; border-radius: 999px; border: 1px solid var(--edge);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pick-check { color: var(--gold-soft); flex: none; display: grid; }
+.avatar.sm { width: 34px; height: 34px; font-size: 12px; border-radius: 9px; }
+.avatar.ghost { background: var(--stone-3); color: var(--dim); }
+.go { width: 100%; margin-top: 8px; padding: 12px 14px; font-size: 15px; }
+.go:disabled { opacity: .6; cursor: progress; }
+.hint { font-size: 12px; margin: 12px 0 0; }
+.form-error {
+  display: flex; align-items: flex-start; gap: 8px; margin: 4px 0 8px; padding: 10px 12px;
+  border-radius: 10px; border: 1px solid #5a2528; background: #2a1416; color: #f0b6b7; font-size: 13px; line-height: 1.4;
+  animation: riseIn .2s var(--ease-out, ease) both;
+}
+.form-error .ico { flex: none; margin-top: 1px; }
+
+/* ---------- Jugador ---------- */
+.player-top { gap: 10px; }
+.player-top .who .pill { max-width: 38vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stat-chip {
+  gap: 6px; padding: 5px 10px; border-radius: 10px; border: 1px solid var(--edge); background: #0e1219; color: var(--dim);
+}
+.stat-chip b { font-family: var(--serif); font-size: 19px; color: var(--vellum); font-weight: 600; }
+.action-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin-bottom: 14px; }
+.action-grid .btn { padding: 11px 12px; }
+.empty.picker { display: grid; justify-items: center; gap: 4px; }
+.empty.picker .pick-list { width: 100%; max-width: 440px; margin: 12px 0 6px; max-height: none; text-align: left; }
+.empty-ico { width: 56px; height: 56px; display: grid; place-items: center; border-radius: 16px; background: var(--stone-2); color: var(--gold-soft); margin-bottom: 6px; }
+.turn-flash b { display: flex; align-items: center; gap: 8px; }
+
+/* ---------- Dados ---------- */
+.dock header h2 { display: flex; align-items: center; gap: 8px; }
+.dock header h2 .ico { color: var(--gold-soft); }
+.adv { flex-wrap: nowrap; }
+.adv button { gap: 5px; white-space: nowrap; padding: 7px 4px; }
+.dice-form .btn { flex: none; }
+
+/* ---------- Anchos intermedios: los secundarios se quedan en icono ---------- */
+@media (max-width: 1280px) {
+  .top-actions #bestiaryBtn .lbl, .top-actions #restBtn .lbl { display: none; }
+  .top-actions #bestiaryBtn, .top-actions #restBtn { padding: 7px 9px; }
+}
+@media (max-width: 1080px) {
+  .top-actions .btn .lbl { display: none; }
+  .top-actions .btn { padding: 7px 9px; }
+  .presence .lbl { display: none; }
+  .presence .count { display: inline; }
+  .rail-nav .btn .lbl { display: none; }
+}
+
+/* ---------- Teléfono ---------- */
+@media (max-width: 700px) {
+  .topbar { padding: 8px 12px; gap: 8px; min-height: 0; }
+  .shell > .topbar:not(.player-top) { display: grid; grid-template-columns: 1fr auto; grid-template-areas: "brand presence" "tabs tabs" "actions actions"; }
+  .shell > .topbar:not(.player-top) .brand { grid-area: brand; min-width: 0; }
+  .shell > .topbar:not(.player-top) .brand .campaign { width: 100%; min-width: 0; }
+  .shell > .topbar:not(.player-top) .tabs { grid-area: tabs; }
+  .shell > .topbar:not(.player-top) .tabs button { flex: 1; }
+  .shell > .topbar:not(.player-top) .spacer { display: none; }
+  .shell > .topbar:not(.player-top) .presence { grid-area: presence; }
+  .top-actions { grid-area: actions; justify-content: space-between; }
+  .top-actions .btn, .top-actions .icon-btn { flex: 1; min-width: 0; }
+  .rail { padding: 8px 12px; }
+  .rail .round { padding-right: 8px; }
+  .rail-main { gap: 8px; }
+  .rail-main .strip { order: 0; width: auto; }
+  .rail-sub { font-size: 12px; }
+  .rail-sub .chip { padding: 5px 8px; }
+  .rail-who { width: 100%; }
+  .card .dealer .btn .lbl { display: none; }
+  .player-top .brand h1 { font-size: 18px; }
+  .choice { padding: 12px; }
+  .choice-ico { width: 44px; height: 44px; }
+  .action-grid { grid-template-columns: 1fr 1fr; }
+  .gate .panel { padding: 22px 16px calc(18px + env(safe-area-inset-bottom)); }
+  .roles { grid-template-columns: repeat(3, 1fr); }
+  .roles button small { font-size: 10.5px; }
+}
+@media (max-width: 380px) {
+  .roles button small { display: none; }
+  .action-grid { grid-template-columns: 1fr; }
+}
+
+/* En la pestaña de dados del jugador el panel no se pliega */
+.player-shell .dock header [data-toggle] { display: none; }
+.drawer header h2 { display: flex; align-items: center; gap: 8px; font-size: 18px; }
+.drawer header h2 .ico { color: var(--gold-soft); }
+.drawer-search { padding: 12px 14px 4px; }
+
+/* Nada de etiquetas partidas en dos líneas en la barra */
+.tabs button, .presence, .top-actions .btn, .rail-sub .chip, .rail-nav .btn { white-space: nowrap; }
+@media (max-width: 1440px) {
+  .presence .lbl { display: none; }
+  .presence .count { display: inline; }
+}
+/* Cabecera de la tarjeta: los botones en una fila, siempre */
+.card .acts { flex-wrap: nowrap; max-width: none; gap: 0; }
+.card .acts .icon-btn { width: 30px; }
+/* La fila de vida se adapta al ancho de la tarjeta, no al de la pantalla */
+.card { container-type: inline-size; }
+.deaths { justify-content: space-between; }
+@container (max-width: 560px) {
+  .dealer [data-act="temp"] .lbl, .dealer [data-act="conditions"] .lbl { display: none; }
+}
+@container (max-width: 400px) {
+  .dealer .btn .lbl { display: none; }
+  .dealer .btn { padding: 7px 10px; }
+}
+
+/* Cómo entran los jugadores */
+.join-info .steps { list-style: none; padding: 0; margin: 0 0 10px; display: grid; gap: 10px; }
+.join-info .steps li { display: flex; gap: 10px; align-items: flex-start; line-height: 1.45; }
+.step-n {
+  flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
+  background: #241d10; color: var(--gold-soft); border: 1px solid #4a3c22; font-size: 12px; font-weight: 700;
+}
+.addr-row { display: flex; gap: 8px; align-items: center; margin: 0 0 8px 34px; }
+.addr-row .addr {
+  flex: 1; min-width: 0; padding: 10px 12px; border-radius: 10px; background: #0e1219; border: 1px solid var(--edge);
+  font: 600 16px/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--gold-soft);
+  overflow-wrap: anywhere; user-select: all;
+}
+.prose.small { font-size: 12.5px; display: flex; gap: 6px; align-items: flex-start; }
+
+/* Dentro de una ventana, un botón largo se parte en dos líneas antes que
+   pisar al de al lado */
+.modal-body .btn { white-space: normal; line-height: 1.25; text-align: center; min-width: 0; }

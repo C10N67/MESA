@@ -36,12 +36,16 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
 
   /* Quién puede leer cada entrada del registro. La pantalla de la tele no lee
      nada privado, y un susurro solo llega a quien va dirigido y a quien lo manda. */
+  /* Quien manda un susurro se reconoce por su sesión o por su personaje,
+     nunca por el nombre: dos «Ana» en días distintos no comparten secretos. */
   function canRead(client, e) {
     if (client.role === "dm") return true;
     if (e.private) {
       if (client.role === "screen") return false;
-      if (e.actor === client.name) return true;
-      return (e.to || []).includes(client.charId);
+      if (e.byClient) { if (e.byClient === client.id) return true; }
+      else if (e.actor === client.name) return true;          // entradas de antes de este cambio
+      if (client.charId && e.from && e.from === client.charId) return true;
+      return !!client.charId && (e.to || []).includes(client.charId);
     }
     return !e.secret;
   }
@@ -353,6 +357,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
           // cada jugador puede hacerse su propia ficha, una y de tipo personaje
           if (list.length !== 1 || !list[0] || list[0].kind === "monster") return "Solo el DM";
           const own = normalizeChar({ ...list[0], kind: "pc", claimedBy: client.name });
+          if (client.role !== "player") return "Solo los jugadores se hacen su ficha";
           client.charId = own.id;
           doc.chars.push(own);
           onPresence();
@@ -365,6 +370,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         if (!dm) return "Solo el DM";
         const ids = new Set(op.ids || [op.id]);
         doc.chars = doc.chars.filter(c => !ids.has(c.id));
+        for (const cl of clients.values()) if (ids.has(cl.charId)) cl.charId = null;
         doc.session.combat.order = doc.session.combat.order.filter(id => !ids.has(id));
         break;
       }
@@ -373,11 +379,19 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         doc.chars.sort((a, b) => op.ids.indexOf(a.id) - op.ids.indexOf(b.id));
         break;
       case "char.claim": {
+        if (client.role !== "player") return "Solo un jugador puede quedarse con un personaje";
+        const problem = takeChar(client, op.id);
+        if (problem) return problem;
+        onPresence();
+        break;
+      }
+      /* El DM suelta un personaje: quien lo llevara vuelve a elegir */
+      case "char.release": {
+        if (!dm) return "Solo el DM";
         const c = findChar(op.id);
-        if (!c || c.kind !== "pc") return "Ficha no válida";
-        for (const other of clients.values()) if (other !== client && other.charId === op.id) other.charId = null;
-        client.charId = op.id;
-        c.claimedBy = client.name;
+        if (!c) return "No existe ese personaje";
+        for (const cl of clients.values()) if (cl.charId === c.id) cl.charId = null;
+        c.claimedBy = "";
         onPresence();
         break;
       }
@@ -569,7 +583,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         const asked = Array.isArray(op.to) ? op.to : (op.whisper ? ["dm"] : []);
         const to = [...new Set(asked.filter(x => x === "dm" || doc.chars.some(c => c.id === x && c.kind === "pc")))].slice(0, 12);
         doc.log.push({
-          id: rid(6), ts: Date.now(), actor: client.name, kind: "chat",
+          id: rid(6), ts: Date.now(), actor: client.name, byClient: client.id, kind: "chat",
           text, to, from: dm ? "dm" : (client.charId || ""), private: to.length > 0,
           names: to.map(x => x === "dm" ? "DM" : (findChar(x) || {}).name).filter(Boolean)
         });
@@ -632,33 +646,92 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
 
 
   /* ---------- Entrada y lotes de operaciones ---------- */
+  /* ---------- Sesiones ----------
+     Una sesión no se borra al cortarse la conexión: un móvil que se bloquea
+     diez minutos tiene que volver a su sitio sin pasar por la entrada. Lo que
+     sí cambia es si está conectada («online»), y eso es lo que manda:
+
+     - Un personaje lo bloquea quien lo lleva y está conectado. Si esa sesión
+       está desconectada, otro aparato puede recuperarlo (el mismo jugador que
+       ha cambiado de móvil) y la sesión vieja se queda sin él.
+     - No puede haber dos personas conectadas con el mismo nombre: el nombre
+       es lo que se lee en el registro y en la charla.
+     - El DM puede liberar cualquier personaje. */
+  const online = c => !!c.online;
+  /* Para bloquear un personaje o un nombre se cuenta también quien acaba de
+     irse hace unos segundos: recargar la página no debe dejar el hueco libre. */
+  const RELOAD_GRACE = 8000;
+  const active = c => online(c) || Date.now() - (c.seen || 0) < RELOAD_GRACE;
+  const holder = (charId, except = null) =>
+    [...clients.values()].find(cl => cl !== except && cl.charId === charId && cl.role === "player");
+  const sameName = (a, b) => a.trim().toLocaleLowerCase("es") === b.trim().toLocaleLowerCase("es");
+
+  function takeChar(client, charId) {
+    const c = findChar(charId);
+    if (!c || c.kind !== "pc") return "Ese personaje ya no está en la mesa";
+    const other = holder(charId, client);
+    if (other && active(other)) return `${c.name} ya lo lleva ${other.name} en otro aparato. Si eres tú, sal allí primero o pide al DM que lo libere.`;
+    for (const cl of clients.values()) if (cl !== client && cl.charId === charId) cl.charId = null;
+    client.charId = charId;
+    c.claimedBy = client.name;
+    return null;
+  }
+
   function hello() {
     return {
       title: doc.session.title,
-      players: doc.chars.filter(c => c.kind === "pc").map(c => ({
-        id: c.id, name: c.name, className: c.className, level: c.level, color: c.color,
-        taken: [...clients.values()].some(cl => cl.charId === c.id)
-      }))
+      players: doc.chars.filter(c => c.kind === "pc").map(c => {
+        const h = holder(c.id);
+        const busy = h && active(h);
+        return {
+          id: c.id, name: c.name, className: c.className, race: c.race, level: c.level, color: c.color,
+          avatarId: c.avatarId, taken: !!busy, takenBy: busy ? h.name : ""
+        };
+      })
     };
   }
 
-  /* Devuelve { error } o { client, token }. Con checkPin a false (la versión
-     de prueba, todo en el mismo navegador) no se pide el código del DM. */
+  /* Devuelve { error, status } o { client, token }. Con checkPin a false (la
+     versión de prueba, todo en el mismo navegador) no se pide el código. */
   function join(body = {}, { checkPin = true } = {}) {
     const role = ROLES.includes(body.role) ? body.role : "player";
-    if (checkPin && role === "dm" && String(body.pin || "").trim() !== pin) return { error: "El código del DM no coincide" };
-    const token = rid(16);
-    const client = {
-      id: rid(4),
-      name: String(body.name || (role === "dm" ? "DM" : "Invitado")).slice(0, 24),
-      role, charId: role === "player" && body.charId ? body.charId : null
-    };
-    clients.set(token, client);
-    if (client.charId) {
-      const c = findChar(client.charId);
-      if (c) c.claimedBy = client.name;
+    if (checkPin && role === "dm" && String(body.pin || "").trim() !== pin) return { error: "El código del DM no coincide", status: 403 };
+    const name = String(body.name || "").replace(/\s+/g, " ").trim().slice(0, 24)
+      || (role === "dm" ? "DM" : role === "screen" ? "Pantalla" : "Invitado");
+    if (role !== "screen") {
+      const clash = [...clients.values()].find(cl => active(cl) && cl.role !== "screen" && sameName(cl.name, name)
+        && !(role === "dm" && cl.role === "dm"));
+      if (clash) return { error: `Ya hay alguien conectado como «${clash.name}». Elige otro nombre.`, status: 409 };
     }
+    const client = { id: rid(4), name, role, charId: null, online: false, seen: 0 };
+    if (role === "player" && body.charId) {
+      const problem = takeChar(client, body.charId);
+      if (problem) return { error: problem, status: 409 };
+    }
+    const token = rid(16);
+    clients.set(token, client);
     return { client, token };
+  }
+
+  /* La conexión de una sesión se abre o se cierra */
+  function setOnline(client, value) {
+    client.online = !!value;
+    client.seen = Date.now();
+  }
+
+  /* Sesiones que nadie usa desde hace mucho: fuera */
+  function purge(maxAgeMs = 30 * 24 * 3600 * 1000) {
+    const now = Date.now();
+    for (const [t, c] of clients) if (!online(c) && now - (c.seen || 0) > maxAgeMs) clients.delete(t);
+  }
+
+  /* Lo que se guarda en disco para que reiniciar el servidor no eche a nadie */
+  const saveClients = () => [...clients.entries()].map(([t, c]) => [t, { id: c.id, name: c.name, role: c.role, charId: c.charId, seen: c.seen || Date.now() }]);
+  function loadClients(list) {
+    for (const [t, c] of Array.isArray(list) ? list : []) {
+      if (!t || !c || !ROLES.includes(c.role)) continue;
+      clients.set(t, { ...c, charId: c.charId && findChar(c.charId) ? c.charId : null, online: false });
+    }
   }
 
   /* Aplica un lote. Si una operación falla, las anteriores ya se aplicaron y
@@ -691,7 +764,9 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
     partyCache = null;
   }
 
-  const presence = () => [...clients.values()].map(c => ({ id: c.id, name: c.name, role: c.role, charId: c.charId }));
+  /* Quién está conectado ahora mismo */
+  const presence = () => [...clients.values()].filter(online)
+    .map(c => ({ id: c.id, name: c.name, role: c.role, charId: c.charId }));
 
   return {
     get doc() { return doc; },
@@ -700,7 +775,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
     set pin(v) { pin = String(v || ""); },
     get rev() { return rev; },
     clients,
-    hello, join, run, advance, refresh, presence,
+    hello, join, run, advance, refresh, presence, setOnline, purge, saveClients, loadClients,
     snapshot: redact
   };
 }

@@ -45,8 +45,42 @@ const P = {
   sword: '<path d="m14 4 6 0 0 6-8.5 8.5-3.5-3.5L14 4Z"/><path d="m7 15-3 3 2 2 3-3"/><path d="m5.5 16.5 2 2"/>',
   heart: '<path d="M12 20s-7.5-4.4-7.5-9.4A4.1 4.1 0 0 1 12 8.2a4.1 4.1 0 0 1 7.5 2.4C19.5 15.6 12 20 12 20Z"/>',
   check: '<path d="m5 12.5 4.5 4.5L19 7"/>',
-  lang: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.2 2.4 3.3 5.3 3.3 8.5S14.2 18.1 12 20.5c-2.2-2.4-3.3-5.3-3.3-8.5S9.8 5.9 12 3.5Z"/>'
+  lang: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.2 2.4 3.3 5.3 3.3 8.5S14.2 18.1 12 20.5c-2.2-2.4-3.3-5.3-3.3-8.5S9.8 5.9 12 3.5Z"/>',
+
+  /* Añadidos para que cada acción tenga su marca */
+  swords: '<path d="M14.5 17.5 3 6V3h3l11.5 11.5"/><path d="m13 19 6-6"/><path d="m16 16 4 4"/><path d="m19 21 2-2"/><path d="M9.5 6.5 14 2h3v3l-4.5 4.5"/><path d="m5 14 4 4"/><path d="m7 17-3 3"/><path d="m3 19 2 2"/>',
+  moon: '<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/>',
+  fire: '<path d="M12 21c-3.9 0-6.5-2.6-6.5-6 0-3.5 3-5.5 3.5-9 2 1.3 3 3 3 5 .8-.6 1.4-1.6 1.5-3 2.4 1.8 5 4.4 5 7 0 3.4-2.6 6-6.5 6Z"/><path d="M12 21c-1.6 0-2.7-1.1-2.7-2.6 0-1.6 1.4-2.4 1.7-4 1.9 1 3.7 2.4 3.7 4 0 1.5-1.1 2.6-2.7 2.6Z"/>',
+  userPlus: '<circle cx="9.5" cy="8" r="3.5"/><path d="M3 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M19 8v6M16 11h6"/>',
+  user: '<circle cx="12" cy="8" r="3.8"/><path d="M4.5 20.5c0-4 3.3-6.5 7.5-6.5s7.5 2.5 7.5 6.5"/>',
+  crown: '<path d="M3.5 18h17"/><path d="M4.5 15 3 7l5 3.5L12 5l4 5.5L21 7l-1.5 8h-15Z"/>',
+  tv: '<rect x="2.5" y="4.5" width="19" height="13" rx="2"/><path d="M8 21h8"/><path d="M12 17.5V21"/>',
+  sparkle: '<path d="M12 3c.6 4.2 2.8 6.4 7 7-4.2.6-6.4 2.8-7 7-.6-4.2-2.8-6.4-7-7 4.2-.6 6.4-2.8 7-7Z"/><path d="M19 16.5c.2 1.4.9 2.1 2.3 2.3-1.4.2-2.1.9-2.3 2.3-.2-1.4-.9-2.1-2.3-2.3 1.4-.2 2.1-.9 2.3-2.3Z"/>',
+  heartPlus: '<path d="M12 20s-7.5-4.4-7.5-9.4A4.1 4.1 0 0 1 12 8.2a4.1 4.1 0 0 1 7.5 2.4c0 1.1-.4 2.2-1 3.2"/><path d="M18 15.5v5M15.5 18h5"/>',
+  shieldPlus: '<path d="M12 3 5 5.8v5.4c0 4.4 3 7.6 7 9.3 4-1.7 7-4.9 7-9.3V5.8L12 3Z"/><path d="M12 8.5v6M9 11.5h6"/>',
+  prev: '<path d="m15 6-6 6 6 6"/>',
+  next: '<path d="m9 6 6 6-6 6"/>',
+  skip: '<path d="m6 6 7 6-7 6V6Z"/><path d="M18 6v12"/>',
+  hourglass: '<path d="M6.5 3h11M6.5 21h11"/><path d="M7.5 3v3.2a4.5 4.5 0 0 0 2 3.7L12 12l2.5-2.1a4.5 4.5 0 0 0 2-3.7V3"/><path d="M7.5 21v-3.2a4.5 4.5 0 0 1 2-3.7L12 12l2.5 2.1a4.5 4.5 0 0 1 2 3.7V21"/>',
+  download: '<path d="M12 4v11"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4.5 19.5h15"/>',
+  upload: '<path d="M12 15V4"/><path d="m7.5 8.5 4.5-4.5 4.5 4.5"/><path d="M4.5 19.5h15"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7L11.6 6.7"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3A4 4 0 0 0 11 18.7l1.4-1.4"/>',
+  unlink: '<path d="M14.5 15.5 13 17a4 4 0 0 1-5.7-5.7l1.5-1.5"/><path d="M9.5 8.5 11 7a4 4 0 0 1 5.7 5.7l-1.5 1.5"/><path d="M4 4l16 16"/>',
+  wifi: '<path d="M2.5 9a14 14 0 0 1 19 0"/><path d="M5.5 12.3a9.5 9.5 0 0 1 13 0"/><path d="M8.7 15.6a5 5 0 0 1 6.6 0"/><circle cx="12" cy="19" r="1" fill="currentColor" stroke="none"/>',
+  key: '<circle cx="8" cy="15" r="4"/><path d="m11 12 8.5-8.5"/><path d="m16.5 6.5 2.5 2.5"/><path d="m14.5 8.5 2 2"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7.6" r=".9" fill="currentColor" stroke="none"/>',
+  send: '<path d="M4 12 20 4l-4 16-4-6.5L4 12Z"/><path d="m12 13.5 8-9.5"/>',
+  scroll: '<path d="M7 3.5h11a2 2 0 0 1 2 2V7h-4"/><path d="M16 7v11.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V17h10"/><path d="M7 3.5a2 2 0 0 0-2 2V17"/><path d="M9 8h4M9 11.5h4"/>',
+  star: '<path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9L12 3.5Z"/>',
+  skull: '<path d="M12 3a7.5 7.5 0 0 0-7.5 7.5c0 2.6 1.3 4.4 3 5.5V19h9v-3c1.7-1.1 3-2.9 3-5.5A7.5 7.5 0 0 0 12 3Z"/><circle cx="9" cy="11" r="1.5"/><circle cx="15" cy="11" r="1.5"/><path d="M10.5 19v2M13.5 19v2"/>',
+  boot: '<path d="M7 3h6v8l6 3.5a2.5 2.5 0 0 1 1.5 2.3V20H4v-4l3-2V3Z"/><path d="M4 17h16.5"/>',
+  zap: '<path d="M13 2.5 4.5 13.5H11l-1 8 8.5-11H12l1-8Z"/>',
+  play: '<path d="M7 4.5v15l12-7.5-12-7.5Z"/>',
 };
+
+/* Botón con icono y texto: el texto se puede esconder en pantallas estrechas
+   (clase «lbl») y sigue sirviendo de nombre accesible. */
+export const withIcon = (name, label, size = 17) => `${icon(name, size)}<span class="lbl">${label}</span>`;
 
 export function icon(name, size = 18) {
   const body = P[name];

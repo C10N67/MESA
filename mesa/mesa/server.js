@@ -53,6 +53,8 @@ async function boot() {
     const saved = JSON.parse(await readFile(STATE_FILE, "utf8"));
     engine.doc = await absorbLegacyImages(migrate(saved.doc || saved));
     engine.pin = saved.pin || "";
+    engine.loadClients(saved.clients);
+    engine.purge();
   } catch { /* partida nueva */ }
   if (!engine.pin) engine.pin = process.env.MESA_PIN || arg("pin", "") || String(randomBytes(2).readUInt16BE() % 9000 + 1000);
   await persist();
@@ -66,7 +68,7 @@ function scheduleSave() {
 async function persist() {
   const tmp = STATE_FILE + ".tmp";
   const doc = engine.doc;
-  const saved = { pin: engine.pin, doc: { ...doc, session: { ...doc.session, alert: null, ping: null } } };
+  const saved = { pin: engine.pin, clients: engine.saveClients(), doc: { ...doc, session: { ...doc.session, alert: null, ping: null } } };
   await writeFile(tmp, JSON.stringify(saved, null, 1), "utf8");
   await rename(tmp, STATE_FILE);
 }
@@ -183,7 +185,8 @@ const handler = async (req, res) => {
   const p = url.pathname;
 
   try {
-    if (p === "/api/hello") return json(res, 200, engine.hello());
+    /* Con las direcciones de red del DM: «localhost» no le sirve a nadie más */
+    if (p === "/api/hello") return json(res, 200, { ...engine.hello(), addresses: lanAddresses() });
 
     if (p === "/api/ping") {
       const ok = clients.has(url.searchParams.get("token") || "");
@@ -193,8 +196,9 @@ const handler = async (req, res) => {
     if (p === "/api/join" && req.method === "POST") {
       const body = JSON.parse((await readBody(req, 8192)).toString() || "{}");
       const out = engine.join(body);
-      if (out.error) return json(res, 403, { error: out.error });
+      if (out.error) return json(res, out.status || 403, { error: out.error });
       out.client.res = null;
+      scheduleSave();
       return json(res, 200, { token: out.token, id: out.client.id, role: out.client.role, charId: out.client.charId });
     }
 
@@ -210,6 +214,7 @@ const handler = async (req, res) => {
       res.write(": mesa\n\n");
       if (client.res && client.res !== res) { try { client.res.end(); } catch {} }
       client.res = res;
+      engine.setOnline(client, true);
       engine.refresh();     // quien acaba de entrar recibe la visibilidad de ahora, no la de antes
       send(client, "state", { rev: engine.rev, doc: engine.snapshot(client) });
       broadcastPresence();
@@ -217,16 +222,13 @@ const handler = async (req, res) => {
       req.on("close", () => {
         clearInterval(ping);
         /* Al reconectar, la conexión vieja puede cerrarse después de abrirse
-           la nueva: solo se suelta si sigue siendo la suya. Antes se quedaba
-           sin flujo y a los 15 s se perdía la sesión. */
+           la nueva: solo cuenta si sigue siendo la suya. La sesión no se
+           borra: un móvil bloqueado vuelve a su sitio al desbloquearse. */
         if (client.res !== res) return;
         client.res = null;
-        setTimeout(() => {
-          if (!client.res) {
-            for (const [t, c] of clients) if (c === client) clients.delete(t);
-            broadcastPresence();
-          }
-        }, 15000);   // margen para recargar la página sin perder el sitio
+        engine.setOnline(client, false);
+        broadcastPresence();
+        scheduleSave();
       });
       return;
     }
@@ -286,6 +288,13 @@ const server = secure
   : createServer(handler);
 
 /* ---------- Arranque ---------- */
+function lanAddresses() {
+  const out = [];
+  for (const list of Object.values(networkInterfaces())) {
+    for (const net of list || []) if (net.family === "IPv4" && !net.internal) out.push(`${secure ? "https" : "http"}://${net.address}:${PORT}`);
+  }
+  return out;
+}
 const lanIP = () => {
   for (const list of Object.values(networkInterfaces())) {
     for (const net of list || []) if (net.family === "IPv4" && !net.internal) return net.address;
@@ -294,6 +303,7 @@ const lanIP = () => {
 };
 
 await boot();
+setInterval(() => engine.purge(), 3600 * 1000).unref();
 server.listen(PORT, "0.0.0.0", () => {
   const ip = lanIP();
   const scheme = secure ? "https" : "http";

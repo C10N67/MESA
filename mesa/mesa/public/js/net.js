@@ -136,7 +136,9 @@ export async function connect() {
       retry = 0;
       if (!store.online) { store.online = true; emit("status", true); }
       store.doc = payload.doc;
-      if (payload.doc.you) store.session.charId = payload.doc.you;
+      /* «you» manda también cuando viene vacío: si el DM libera tu personaje
+         o lo recuperas desde otro aparato, esta pestaña se queda sin él. */
+      if (store.session.role === "player") store.session.charId = payload.doc.you || null;
       emit("state", store.doc);
     },
     presence(list) {

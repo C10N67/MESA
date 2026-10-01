@@ -1,6 +1,7 @@
 /* Puerta de entrada: quién eres y con qué personaje juegas. */
 
-import { $, el, esc, toast, initials } from "./util.js";
+import { $, el, esc, toast, initials, imgURL } from "./util.js";
+import { icon, withIcon } from "./icons.js";
 import { store, savedSession, forgetSession, join, lobby, ping, connect, onState, DEMO } from "./net.js";
 import { startI18n, langPicker } from "./i18n.js";
 
@@ -49,13 +50,14 @@ async function start(role) {
 }
 
 async function gate(wanted) {
-  const info = await lobby().catch(() => ({ players: [], title: "Mesa", offline: true }));
+  let info = await lobby().catch(() => ({ players: [], title: "Mesa", offline: true }));
   let role = wanted || "player";
   let charId = null;
 
   app().className = "gate";
   app().innerHTML = `
     <div class="panel">
+      <div class="gate-logo">${icon("shield", 30)}</div>
       <h1>Mesa</h1>
       <p class="sub">${esc(info.title || "Partida de D&D")}</p>
       ${DEMO ? `<div class="demo-note">
@@ -64,10 +66,10 @@ async function gate(wanted) {
         <p>Para jugar con los móviles de tus jugadores hace falta el servidor: <a href="https://github.com/aleexnager/DnD/archive/refs/heads/main.zip" rel="noopener">descargar Mesa</a> y abrir <i>Abrir Mesa</i>.</p>
       </div>` : ""}
 
-      <div class="roles">
-        <button data-role="dm" aria-pressed="false"><b>DM</b><small>llevas la partida</small></button>
-        <button data-role="player" aria-pressed="true"><b>Jugador</b><small>llevas un personaje</small></button>
-        <button data-role="screen" aria-pressed="false"><b>Pantalla</b><small>la tele de la mesa</small></button>
+      <div class="roles" role="radiogroup" aria-label="Cómo entras">
+        <button data-role="dm" aria-pressed="false">${icon("crown", 22)}<b>DM</b><small>llevas la partida</small></button>
+        <button data-role="player" aria-pressed="true">${icon("user", 22)}<b>Jugador</b><small>llevas un personaje</small></button>
+        <button data-role="screen" aria-pressed="false">${icon("tv", 22)}<b>Pantalla</b><small>la tele de la mesa</small></button>
       </div>
 
       <label class="field"><span>Tu nombre</span>
@@ -78,8 +80,9 @@ async function gate(wanted) {
 
       <div id="picker"></div>
 
-      <button class="btn primary" id="go" style="width:100%;margin-top:8px">Entrar a la partida</button>
-      <p class="prose" style="font-size:12px;margin-top:14px" id="hint"></p>
+      <p class="form-error hidden" id="gateError" role="alert"></p>
+      <button class="btn primary go" id="go">${withIcon("next", "Entrar a la partida")}</button>
+      <p class="prose hint" id="hint"></p>
       <div class="install hidden" id="install"></div>
       <div class="gate-lang" id="gateLang"></div>
     </div>`;
@@ -99,15 +102,23 @@ async function gate(wanted) {
       : role === "screen"
         ? "Ponla en la tele o el proyector. Doble clic para pantalla completa."
         : "Elige tu personaje, o entra sin él y créalo desde dentro.";
+    /* Un personaje que lleva alguien conectado no se puede elegir: sale
+       apagado y con el nombre de quien lo lleva. */
+    if (charId && (info.players || []).some(p => p.id === charId && p.taken)) charId = null;
     $("#picker").innerHTML = role !== "player" ? "" : `
-      <p class="prose" style="font-size:12px;margin:0 0 6px">Tu personaje</p>
+      <p class="field-label">Tu personaje</p>
       <div class="pick-list">
         ${(info.players || []).map(p => `
-          <button class="pick ${p.taken ? "taken" : ""}" data-char="${p.id}" aria-pressed="${charId === p.id}">
-            <span class="avatar" style="--tone:${esc(p.color)};width:32px;height:32px;font-size:12px">${initials(p.name)}</span>
-            <span><b>${esc(p.name)}</b><br><small>${esc([p.className, "nivel " + p.level].filter(Boolean).join(" · "))}${p.taken ? " · ya lo lleva alguien" : ""}</small></span>
+          <button class="pick ${p.taken ? "taken" : ""}" data-char="${p.id}" aria-pressed="${charId === p.id}" ${p.taken ? "disabled" : ""}>
+            ${p.avatarId ? `<img class="avatar sm" src="${imgURL(p.avatarId)}" alt="">` : `<span class="avatar sm" style="--tone:${esc(p.color)}">${initials(p.name)}</span>`}
+            <span class="pick-text"><b>${esc(p.name)}</b><small>${esc([p.className, "nivel " + p.level].filter(Boolean).join(" · "))}</small></span>
+            ${p.taken ? `<span class="pick-tag">${icon("user", 12)}${esc(p.takenBy || "ocupado")}</span>` : charId === p.id ? `<span class="pick-check">${icon("check", 16)}</span>` : ""}
           </button>`).join("")}
-        <button class="pick" data-char="" aria-pressed="${charId === null}"><span><b>Todavía no tengo</b><br><small>lo creas al entrar</small></span></button>
+        <button class="pick new" data-char="" aria-pressed="${charId === null}">
+          <span class="avatar sm ghost">${icon("userPlus", 16)}</span>
+          <span class="pick-text"><b>Todavía no tengo</b><small>lo creas al entrar</small></span>
+          ${charId === null ? `<span class="pick-check">${icon("check", 16)}</span>` : ""}
+        </button>
       </div>`;
   };
   paint();
@@ -116,18 +127,36 @@ async function gate(wanted) {
     const roleBtn = e.target.closest("[data-role]");
     if (roleBtn) { role = roleBtn.dataset.role; paint(); return; }
     const charBtn = e.target.closest("[data-char]");
-    if (charBtn) { charId = charBtn.dataset.char || null; paint(); }
+    if (charBtn && !charBtn.disabled) { charId = charBtn.dataset.char || null; paint(); }
   });
 
+  /* Los errores se dicen junto al botón, que es donde se está mirando */
+  const fail = msg => {
+    const box = $("#gateError");
+    box.innerHTML = `${icon("info", 16)}<span>${esc(msg)}</span>`;
+    box.classList.remove("hidden");
+  };
+  let busy = false;
   $("#go").addEventListener("click", async () => {
+    if (busy) return;
+    $("#gateError").classList.add("hidden");
     const name = nameInput.value.trim() || (role === "dm" ? "DM" : role === "screen" ? "Pantalla" : "");
-    if (!name) return toast("Escribe tu nombre para entrar", "bad");
+    if (!name) { nameInput.focus(); return fail("Escribe tu nombre para entrar."); }
     localStorage.setItem("mesa.name", name);
+    busy = true;
+    $("#go").disabled = true;
     try {
       const data = await join({ name, role, pin: $("#pin").value.trim(), charId });
       await start(data.role);
     } catch (err) {
-      toast(err.message, "bad");
+      fail(err.message);
+      /* Lo que cambió mientras elegías (alguien cogió ese personaje) se repinta */
+      info = await lobby().catch(() => info);
+      paint();
+    } finally {
+      busy = false;
+      const go = $("#go");
+      if (go) go.disabled = false;
     }
   });
 

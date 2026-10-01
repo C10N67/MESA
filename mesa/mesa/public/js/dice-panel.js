@@ -3,7 +3,7 @@
    cualquiera puede susurrarle sin que se entere la mesa. */
 
 import { el, on, esc, hhmm, toast, modal } from "./util.js";
-import { icon } from "./icons.js";
+import { icon, withIcon } from "./icons.js";
 import { roll, detail } from "./dice.js";
 import { store, addLog, op } from "./net.js";
 
@@ -56,7 +56,7 @@ export function dicePanel({ isDM = false } = {}) {
   const node = el(`
     <aside class="dock" id="dock">
       <header>
-        <h2>Dados y mesa</h2>
+        <h2>${icon("dice", 18)}<span>Dados y mesa</span></h2>
         <span class="spacer"></span>
         ${isDM ? `<button class="icon-btn" data-clear title="Vaciar el registro">${icon("trash")}</button>` : ""}
         <button class="icon-btn" data-toggle title="Abrir o cerrar">${icon("up")}</button>
@@ -69,11 +69,11 @@ export function dicePanel({ isDM = false } = {}) {
         <button data-mode="dis" aria-pressed="false">Desventaja</button>
         <button data-mode="normal" aria-pressed="true">Normal</button>
         <button data-mode="adv" aria-pressed="false">Ventaja</button>
-        ${isDM ? `<button data-secret aria-pressed="false" title="Nadie más lo ve">En secreto</button>` : ""}
+        ${isDM ? `<button data-secret aria-pressed="false" title="En secreto: nadie más lo ve" aria-label="En secreto">${icon("eyeOff", 15)}<span>Secreto</span></button>` : ""}
       </div>
       <form class="dice-form">
         <input name="f" placeholder="1d20+5, 2d6, 8d6…" aria-label="Fórmula de dados" autocomplete="off">
-        <button class="btn primary sm" type="submit">Tirar</button>
+        <button class="btn primary sm" type="submit">${withIcon("dice", "Tirar", 16)}</button>
       </form>
       <div class="log-tabs">
         <button data-filter="todo" aria-pressed="true">Todo</button>
@@ -85,7 +85,7 @@ export function dicePanel({ isDM = false } = {}) {
       <form class="chat-form">
         <button type="button" class="icon-btn" data-whisper title="Susurrar a alguien en concreto" aria-pressed="false">${icon("whisper")}</button>
         <input name="t" placeholder="Escribe a la mesa…" aria-label="Mensaje" autocomplete="off" maxlength="500">
-        <button class="btn sm" type="submit">Decir</button>
+        <button class="btn sm" type="submit" title="Enviar" aria-label="Enviar">${icon("send", 16)}</button>
       </form>
     </aside>`);
 

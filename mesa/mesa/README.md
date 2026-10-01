@@ -97,6 +97,31 @@ código y las imágenes (planos y retratos no se vuelven a descargar), nunca el
 estado. Si el servidor no está en marcha, la entrada lo dice en vez de quedarse
 en blanco.
 
+## Jugadores, personajes y sesiones
+
+- **Cada personaje lo lleva una sola persona.** En la entrada, los que ya
+  lleva alguien conectado salen apagados y con su nombre; no se pueden elegir.
+  Desde dentro tampoco se le puede quitar el personaje a nadie.
+- **No puede haber dos personas conectadas con el mismo nombre** (da igual
+  mayúsculas o minúsculas): el nombre es lo que se lee en el registro y en la
+  charla. Si pasa, se dice junto al botón de entrar.
+- **Bloquear el móvil no te echa.** La sesión se queda guardada aunque se
+  corte la conexión; al volver, sigues en tu ficha sin pasar por la entrada.
+  Y como se guarda en disco, **reiniciar el servidor tampoco echa a nadie**.
+- **Cambiar de móvil.** Si tu sesión está desconectada (el móvil viejo sin
+  batería), entras desde otro aparato con tu personaje y el viejo lo pierde.
+  Si sigue conectado, sal allí primero o pide al DM que lo libere.
+- **El DM manda.** En cada tarjeta se ve quién lleva el personaje, con un
+  punto verde si está conectado. Con el botón de **liberar** (en la tarjeta o
+  en el contador de conectados de arriba) el personaje queda libre y quien lo
+  llevara vuelve a elegir, con un aviso de por qué.
+- Los susurros se reconocen por la sesión y el personaje, no por el nombre:
+  alguien que entra otro día con tu mismo nombre no lee lo que susurraste.
+
+En **⋯ → Cómo entran mis jugadores** sale la dirección de la red del
+ordenador del DM (la de `localhost` no le sirve a nadie más), con un botón
+para copiarla.
+
 ## Idioma
 
 Arriba a la derecha (o en **⋯ → Idioma**, y en la propia pantalla de entrada)

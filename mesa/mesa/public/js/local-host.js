@@ -119,7 +119,7 @@ export function createHost(base) {
       if (saved && saved.doc) {
         const { migrate } = await import("./schema.js");
         engine.doc = migrate(saved.doc);
-        for (const [token, c] of saved.clients || []) clients.set(token, c);
+        engine.loadClients(saved.clients);
       } else engine.doc = sampleDoc(engine.doc);
     } catch { engine.doc = sampleDoc(engine.doc); }
     engine.pin = "demo";
@@ -132,7 +132,7 @@ export function createHost(base) {
       const doc = engine.doc;
       kvSet("state", {
         doc: { ...doc, session: { ...doc.session, alert: null, ping: null } },
-        clients: [...clients.entries()].map(([t, c]) => [t, { id: c.id, name: c.name, role: c.role, charId: c.charId }])
+        clients: engine.saveClients()
       }).catch(() => {});
     }, 400);
   };
@@ -150,7 +150,7 @@ export function createHost(base) {
     save();
   };
   const presence = () => {
-    const live = engine.presence().filter(p => [...ports.keys()].some(t => clients.get(t) && clients.get(t).id === p.id));
+    const live = engine.presence();
     for (const port of ports.values()) port.postMessage({ event: "presence", data: live });
   };
 
@@ -161,7 +161,7 @@ export function createHost(base) {
       case "hello": return engine.hello();
       case "join": {
         const out = engine.join(msg.body, { checkPin: false });
-        if (out.error) throw new Error(out.error);
+        if (out.error) throw Object.assign(new Error(out.error), { status: out.status });
         save();
         return { token: out.token, id: out.client.id, role: out.client.role, charId: out.client.charId };
       }
@@ -169,6 +169,7 @@ export function createHost(base) {
       case "stream": {
         if (!c) throw Object.assign(new Error("sesión caducada"), { status: 401 });
         ports.set(msg.token, port);
+        engine.setOnline(c, true);
         engine.refresh();
         port.postMessage({ event: "state", data: { rev: engine.rev, doc: engine.snapshot(c) } });
         presence();
@@ -186,6 +187,7 @@ export function createHost(base) {
       }
       case "leave": {
         ports.delete(msg.token);
+        if (c) engine.setOnline(c, false);
         presence();
         return true;
       }
