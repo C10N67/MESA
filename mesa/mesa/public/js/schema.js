@@ -70,7 +70,12 @@ const CHAR_DEFAULTS = {
   attacks: [],          // ataques listos para tirar
   condMeta: {},         // estado -> rondas que le quedan
   used: { action: false, bonus: false, reaction: false, move: 0 },
-  reach: 1              // alcance cuerpo a cuerpo, en casillas
+  reach: 1,             // alcance cuerpo a cuerpo, en casillas
+  /* Conjuros */
+  spellbook: [],        // conjuros que conoce, ya listos para lanzar
+  castAbility: "",      // característica de lanzamiento (int, wis, cha)
+  spellDC: 0,           // CD fija (0 = 8 + competencia + característica)
+  spellAtk: 0           // ataque fijo (0 = competencia + característica)
 };
 
 /* Cuántas casillas ocupa cada tamaño, como en el manual: lo diminuto y lo
@@ -134,6 +139,10 @@ export function normalizeChar(raw = {}) {
   c.light = clamp(Math.trunc(num(c.light)), 0, 40);
   c.reach = clamp(Math.trunc(num(c.reach, 1)), 1, 6);
   c.attacks = Array.isArray(c.attacks) ? c.attacks.map(normalizeAttack).filter(a => a.name) : [];
+  c.spellbook = Array.isArray(c.spellbook) ? c.spellbook.map(normalizeSpell).slice(0, 80) : [];
+  c.castAbility = ["int", "wis", "cha"].includes(c.castAbility) ? c.castAbility : "";
+  c.spellDC = clamp(Math.trunc(num(c.spellDC)), 0, 30);
+  c.spellAtk = clamp(Math.trunc(num(c.spellAtk)), 0, 20);
   c.condMeta = c.condMeta && typeof c.condMeta === "object" && !Array.isArray(c.condMeta) ? { ...c.condMeta } : {};
   c.used = { action: false, bonus: false, reaction: false, move: 0, ...(c.used || {}) };
   c.mx = c.mx === null || c.mx === "" || !Number.isFinite(Number(c.mx)) ? null : Math.trunc(Number(c.mx));
@@ -160,6 +169,58 @@ export function normalizeAttack(raw = {}) {
     width: clamp(num(raw.width, 5), 1, 60)   // ancho de la línea, en pies
   };
 }
+
+/* ---------- Conjuros ----------
+   Un conjuro sabe qué hace, no solo cómo se llama:
+
+   mode    attack  tirada de ataque de conjuro contra la CA (rays: varios rayos)
+           save    salvación de cada objetivo (half: mitad de daño si la supera)
+           auto    impacta siempre (proyectil mágico: darts dardos)
+           heal    cura (healMod: suma la característica de lanzamiento)
+           sleep   reparte una reserva de puntos de vida, de menos a más
+           none    sin tirada: se anuncia, gasta el espacio y concentra
+   damage  dados a nivel base; upcast: lo que suma por cada nivel de más
+   scale   truco que crece a los niveles 5, 11 y 17 (scaleRays: en rayos)
+   cond    estado que pone si falla la salvación o recibe el ataque
+   shape   área para colocar en el mapa (circle, cone, line, square) */
+export const SPELL_MODES = ["attack", "save", "auto", "heal", "sleep", "none"];
+export const ABILITY_KEYS = ["str", "dex", "con", "int", "wis", "cha"];
+export function normalizeSpell(raw = {}) {
+  const str = (v, n = 80) => String(v || "").slice(0, n);
+  return {
+    id: str(raw.id, 40) || uid(),
+    name: str(raw.name, 48) || "Conjuro",
+    level: clamp(Math.trunc(num(raw.level)), 0, 9),
+    school: str(raw.school, 24), time: str(raw.time, 40), range: str(raw.range, 40),
+    duration: str(raw.duration, 48), conc: !!raw.conc, desc: str(raw.desc, 400),
+    mode: SPELL_MODES.includes(raw.mode) ? raw.mode : "none",
+    save: ABILITY_KEYS.includes(raw.save) ? raw.save : "",
+    half: !!raw.half,
+    damage: str(raw.damage, 40), type: str(raw.type, 32), upcast: str(raw.upcast, 20),
+    scale: !!raw.scale, scaleRays: !!raw.scaleRays,
+    rays: clamp(Math.trunc(num(raw.rays, 1)), 1, 10), raysUp: clamp(Math.trunc(num(raw.raysUp)), 0, 3),
+    darts: clamp(Math.trunc(num(raw.darts)), 0, 12),
+    heal: str(raw.heal, 20), healMod: !!raw.healMod,
+    cond: str(raw.cond, 24), condRounds: clamp(Math.trunc(num(raw.condRounds)), 0, 1000),
+    failText: str(raw.failText, 80),
+    targets: clamp(Math.trunc(num(raw.targets, 1)), 1, 20), targetsUp: clamp(Math.trunc(num(raw.targetsUp)), 0, 3),
+    shape: SHAPE_KINDS.includes(raw.shape) ? raw.shape : "",
+    size: clamp(num(raw.size, 0), 0, 300), width: clamp(num(raw.width, 5), 1, 60),
+    melee: !!raw.melee
+  };
+}
+
+/* Dados de más: "8d6" con dos niveles de más y "1d6" por nivel → "10d6" */
+export function addDice(base, extra, times) {
+  if (!extra || times <= 0) return base;
+  const m = /^(\d*)d(\d+)$/i.exec(extra.trim());
+  const b = /^(\d*)d(\d+)(.*)$/i.exec(String(base).trim());
+  if (m && b && m[2] === b[2]) return `${(+(b[1] || 1)) + (+(m[1] || 1)) * times}d${b[2]}${b[3]}`;
+  return Array.from({ length: times }, () => extra).reduce((f, e) => `${f}+${e}`, base);
+}
+/* Los trucos suben a los niveles 5, 11 y 17 */
+export const cantripTier = level => level >= 17 ? 4 : level >= 11 ? 3 : level >= 5 ? 2 : 1;
+export const scaleDice = (formula, times) => String(formula).replace(/^(\d*)d(\d+)/i, (m, n, f) => `${(+(n || 1)) * times}d${f}`);
 
 export const SHAPE_NAMES = [
   ["", "Sin área"], ["circle", "Esfera o ráfaga"], ["cone", "Cono"],
@@ -225,7 +286,33 @@ export function normalizeMap(raw = {}) {
   m.pins = Array.isArray(m.pins) ? m.pins.map(normalizePin).slice(0, 60) : [];
   m.portals = Array.isArray(m.portals) ? m.portals.map(normalizePortal).slice(0, 40) : [];
   m.edges = m.edges && typeof m.edges === "object" && !Array.isArray(m.edges) ? { ...m.edges } : {};
+  /* Capas por casilla que pinta el DM:
+     rough  terreno difícil (cuesta el doble de movimiento)
+     rooms  salas que se revelan enteras al entrar
+     vis    «show» se ve siempre, «hide» no se ve nunca */
+  const layer = v => v && typeof v === "object" && !Array.isArray(v) ? { ...v } : {};
+  m.rough = layer(m.rough);
+  m.rooms = layer(m.rooms);
+  m.vis = layer(m.vis);
+  m.drawings = Array.isArray(m.drawings) ? m.drawings.map(normalizeDrawing).filter(d => d.points.length > 1).slice(-150) : [];
   return m;
+}
+
+/* Un trazo a mano alzada sobre el plano. Los puntos van en casillas (con
+   decimales), así el dibujo sigue en su sitio aunque cambie el zoom. */
+export function normalizeDrawing(raw = {}) {
+  const pts = Array.isArray(raw.points) ? raw.points : [];
+  return {
+    id: raw.id || uid(),
+    points: pts.slice(0, 800)
+      .filter(p => Array.isArray(p) && Number.isFinite(+p[0]) && Number.isFinite(+p[1]))
+      .map(p => [Math.round(+p[0] * 100) / 100, Math.round(+p[1] * 100) / 100]),
+    color: /^#[0-9a-f]{3,8}$/i.test(String(raw.color || "")) ? raw.color : "#e0bd76",
+    width: clamp(num(raw.width, 0.08), 0.02, 0.6),        // grosor, en casillas
+    party: raw.party !== false,
+    by: String(raw.by || "").slice(0, 24),
+    byId: String(raw.byId || "")
+  };
 }
 
 /* Lo que se puede pintar sobre una casilla y qué le hace a la vista:

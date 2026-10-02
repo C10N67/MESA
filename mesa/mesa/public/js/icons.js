@@ -80,6 +80,13 @@ const P = {
   unlock: '<rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 7.6-1.7"/><circle cx="12" cy="15.5" r="1.2" fill="currentColor" stroke="none"/>',
   globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z"/>',
   ban: '<circle cx="12" cy="12" r="8.5"/><path d="m6 6 12 12"/>',
+  diagonal: '<path d="M5 19 19 5"/><path d="M3.5 20.5h3M17.5 3.5h3"/>',
+  room: '<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 12h4.5M15.5 12H20"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
+  scribble: '<path d="M3 17c2.5-3.5 4.5-6 6.5-4.5S9 18 12 18s4-5.5 8.5-10"/>',
+  mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/>',
+  micOff: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 10.7 5"/><path d="M12 17.5V21"/><path d="M4 4l16 16"/>',
+  headset: '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/>',
+  wand: '<path d="M4 20 15 9"/><path d="m14 4 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2Z"/><path d="m19 11 .6 1.2 1.2.6-1.2.6-.6 1.2-.6-1.2-1.2-.6 1.2-.6.6-1.2Z"/>',
 };
 
 /* Botón con icono y texto: el texto se puede esconder en pantallas estrechas

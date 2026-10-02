@@ -11,8 +11,8 @@
      absorbImages(d) saca las imágenes incrustadas de una copia antigua
      onPresence()    avisa de que ha cambiado quién está conectado */
 
-import { emptyDoc, migrate, cellKey, normalizeChar, normalizeMap, normalizeShape, normalizePin, normalizePortal, normalizeAttack } from "./schema.js";
-import { visibleCells, edgesNear, gridDistance, occupied, fits } from "./los.js";
+import { emptyDoc, migrate, cellKey, normalizeChar, normalizeMap, normalizeShape, normalizePin, normalizePortal, normalizeAttack, normalizeDrawing, modOf, addDice, scaleDice, cantripTier } from "./schema.js";
+import { visibleCells, edgesNear, gridDistance, pathCost, occupied, fits } from "./los.js";
 import { roll, detail } from "./dice.js";
 import { critDamage } from "./attacks-core.js";
 
@@ -52,6 +52,16 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
 
   /* Del terreno pintado solo viaja lo que la party ya ha visto: el trazado de un
      banco de niebla al otro lado del mapa dibujaría el plano sin querer. */
+  /* Una capa por casillas, recortada a lo que la party ha visto */
+  function pickLayer(layer, seen, explored) {
+    const out = {};
+    if (!layer) return out;
+    if (doc.session.revealAll) return { ...layer };
+    const known = new Set(explored);
+    for (const k of Object.keys(layer)) if ((seen && seen.has(k)) || known.has(k)) out[k] = layer[k];
+    return out;
+  }
+
   function pickCells(map, seen, explored) {
     const all = map.cells || {};
     if (doc.session.revealAll) return { ...all };
@@ -131,7 +141,9 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
 
     const maps = [];
     if (showMap) {
-      const explored = map.remember ? map.explored : [];
+      /* Lo que el DM oculta a mano se olvida también de lo explorado */
+      const hidden = k => (map.vis || {})[k] === "hide";
+      const explored = map.remember ? map.explored.filter(k => !hidden(k)) : [];
       const visibleList = doc.session.revealAll ? null : [...seen];
       maps.push({
         id: map.id, name: map.name, imageId: map.imageId, imageW: map.imageW, imageH: map.imageH,
@@ -144,6 +156,8 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         dark: map.dark, feet: map.feet, diagonals: map.diagonals, playerZoom: map.playerZoom,
         cells: pickCells(map, seen, explored),
         shapes: (map.shapes || []).filter(sh => sh.party),
+        rough: pickLayer(map.rough, seen, explored),
+        drawings: (map.drawings || []).filter(d => d.party),
         pins: (map.pins || []).filter(pin => {
           if (!pin.party || !pin.discovered) return false;
           const k = cellKey(pin.x, pin.y);
@@ -247,6 +261,153 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
      Se resuelven aquí y no en el navegador por dos razones: el jugador no conoce
      la clase de armadura del monstruo (y no debe conocerla), y así nadie puede
      decidir por su cuenta que ha impactado. */
+  /* ---------- Conjuros ----------
+     El servidor lo resuelve todo: gasta el espacio, tira los ataques y las
+     salvaciones de cada objetivo, reparte el daño (la mitad si se salva,
+     cuando toca), pone los estados con su duración y deja la concentración
+     puesta. Al jugador no se le enseña la CA ni la vida de nadie: solo lo que
+     ha pasado. */
+  const ABILITY_ES = { str: "Fuerza", dex: "Destreza", con: "Constitución", int: "Inteligencia", wis: "Sabiduría", cha: "Carisma" };
+  const rollSave = (c, ability) => roll("1d20" + signed(modOf(c[ability]) + ((c.saves || []).includes(ability) ? (c.proficiency || 2) : 0)));
+  const signed = n => (n >= 0 ? "+" : "") + n;
+  const concentrationNote = (c, dc, push) => push({ kind: "event",
+    text: `${c.name} tiene que superar una salvación de Constitución CD ${dc} o pierde la concentración en ${c.concentration}` });
+  function setCondition(c, id, rounds) {
+    if (!id) return;
+    if (!c.conditions.includes(id)) c.conditions = [...c.conditions, id];
+    if (rounds) c.condMeta = { ...(c.condMeta || {}), [id]: rounds };
+  }
+
+  function castSpell(client, op) {
+    const caster = findChar(op.casterId);
+    if (!caster) return "No existe esa ficha";
+    if (client.role !== "dm" && caster.id !== client.charId) return "Esa ficha no es tuya";
+    /* Se usa el conjuro guardado en la ficha, no el que diga el navegador */
+    const sp = (caster.spellbook || []).find(x => x.id === op.spellId);
+    if (!sp) return "Ese conjuro no está en su lista";
+    const secret = client.role === "dm" && !!op.secret;
+    const push = entry => doc.log.push({ id: rid(6), ts: Date.now(), actor: client.name, ...entry });
+
+    /* Espacio de conjuro: primero se comprueba todo, y solo al final se gasta */
+    const slot = sp.level > 0 ? Math.max(sp.level, Math.min(9, Math.trunc(Number(op.slot) || sp.level))) : 0;
+    const extra = Math.max(0, slot - sp.level);
+    const hasSlots = caster.slots.some(n => n > 0);
+    if (sp.level > 0) {
+      if (hasSlots && (caster.slots[slot - 1] || 0) - (caster.slotsUsed[slot - 1] || 0) <= 0) return `No le quedan espacios de nivel ${slot}`;
+      if (!hasSlots && caster.kind === "pc") return "Apunta sus espacios de conjuro en la ficha";
+    }
+    /* Objetivos: los que existan; con un límite según el conjuro */
+    const maxTargets = sp.targets + sp.targetsUp * extra;
+    const targets = [...new Set(Array.isArray(op.targets) ? op.targets : [])]
+      .map(findChar).filter(Boolean).slice(0, Math.max(1, maxTargets));
+    const needsTarget = ["attack", "save", "auto", "heal", "sleep"].includes(sp.mode);
+    if (needsTarget && !targets.length) return "Elige al menos un objetivo";
+
+    if (sp.level > 0 && hasSlots) {
+      const used = [...caster.slotsUsed];
+      used[slot - 1] = (used[slot - 1] || 0) + 1;
+      caster.slotsUsed = used;
+    }
+
+
+    /* Números del lanzador */
+    const ability = caster.castAbility || "int";
+    const mod = modOf(caster[ability]);
+    const prof = caster.proficiency || 2;
+    const dc = caster.spellDC || 8 + prof + mod;
+    const atkBonus = caster.spellAtk || prof + mod;
+    const tier = sp.scale ? cantripTier(caster.level || 1) : 1;
+
+    /* Concentración: un conjuro nuevo con concentración quita el anterior */
+    if (sp.conc) {
+      if (caster.concentration && caster.concentration !== sp.name) {
+        push({ kind: "event", secret, text: `${caster.name} deja de concentrarse en ${caster.concentration}` });
+      }
+      caster.concentration = sp.name;
+    }
+
+    const lvlText = sp.level === 0 ? "truco" : `nivel ${slot}`;
+    const head = (text, extraFields = {}) => push({ kind: "attack", secret, label: `${caster.name} · ${sp.name}`, text, ...extraFields });
+    const hurt = (t, amount, note) => {
+      const r = applyHp(t, { damage: amount });
+      if (r.concentrationCheck) concentrationNote(t, r.concentrationCheck, push);
+      return r;
+    };
+    let damage = sp.damage ? (sp.scale && !sp.scaleRays ? scaleDice(sp.damage, tier) : sp.damage) : "";
+    if (damage && sp.upcast && sp.mode !== "heal") damage = addDice(damage, sp.upcast, extra);
+    const typeText = sp.type ? " " + sp.type : "";
+
+    if (sp.mode === "attack") {
+      const rays = sp.scaleRays ? tier : sp.rays + sp.raysUp * extra;
+      head(`${sp.name} (${lvlText}): ${rays > 1 ? rays + " ataques" : "ataque"} de conjuro ${signed(atkBonus)}`);
+      for (let i = 0; i < rays; i++) {
+        const t = targets[i % targets.length];
+        const atk = roll("1d20" + signed(atkBonus), op.mode === "adv" || op.mode === "dis" ? op.mode : "normal");
+        const hit = atk.crit || (!atk.fumble && atk.total >= (t.ac || 10));
+        let text = `${t.name}: ${atk.total}${atk.crit ? " · ¡CRÍTICO!" : atk.fumble ? " · pifia" : hit ? " · impacta" : " · falla"}`;
+        if (hit && damage) {
+          const d = roll(atk.crit ? critDamage(damage) : damage);
+          const r = hurt(t, d.total);
+          text += ` · ${d.total} de daño${typeText}${r.dropped ? " y cae" : ""}`;
+        }
+        if (hit && sp.cond) { setCondition(t, sp.cond, sp.condRounds); text += ` · queda ${sp.cond}`; }
+        push({ kind: "event", secret, text, detail: detail(atk) });
+      }
+    } else if (sp.mode === "save") {
+      /* Un solo dado de daño para todos, como manda el reglamento */
+      const d = damage ? roll(damage) : null;
+      head(`${sp.name} (${lvlText}): salvación de ${ABILITY_ES[sp.save] || "Destreza"} CD ${dc}` +
+        (d ? ` · ${d.total} de daño${typeText}${sp.half ? " (la mitad si la supera)" : ""}` : ""),
+        d ? { total: d.total, detail: detail(d) } : {});
+      for (const t of targets) {
+        const sv = rollSave(t, sp.save || "dex");
+        const passed = sv.total >= dc;
+        let text = `${t.name}: salvación ${sv.total} · ${passed ? "la supera" : "falla"}`;
+        if (d) {
+          const amount = passed ? (sp.half ? Math.floor(d.total / 2) : 0) : d.total;
+          if (amount) { const r = hurt(t, amount); text += ` · ${amount} de daño${r.dropped ? " y cae" : ""}`; }
+        }
+        if (!passed && sp.cond) { setCondition(t, sp.cond, sp.condRounds); text += ` · queda ${sp.cond}`; }
+        if (!passed && sp.failText) text += ` · ${sp.failText}`;
+        push({ kind: "event", secret, text });
+      }
+    } else if (sp.mode === "auto") {
+      const darts = sp.darts + extra;
+      head(`${sp.name} (${lvlText}): ${darts} dardos que no fallan`);
+      const per = new Map();
+      for (let i = 0; i < darts; i++) {
+        const t = targets[i % targets.length];
+        per.set(t, (per.get(t) || 0) + roll(sp.damage || "1d4+1").total);
+      }
+      for (const [t, amount] of per) {
+        const r = hurt(t, amount);
+        push({ kind: "event", secret, text: `${t.name}: ${amount} de daño${typeText}${r.dropped ? " y cae" : ""}` });
+      }
+    } else if (sp.mode === "heal") {
+      const formula = addDice(sp.heal || "1d8", sp.upcast, extra) + (sp.healMod ? signed(mod) : "");
+      head(`${sp.name} (${lvlText}): cura ${formula}`);
+      for (const t of targets) {
+        const h = roll(formula);
+        const r = applyHp(t, { heal: Math.max(1, h.total) });
+        push({ kind: "event", secret, text: `${t.name} recupera ${r.delta} de vida${r.revived ? " y vuelve en sí" : ""}`, detail: detail(h) });
+      }
+    } else if (sp.mode === "sleep") {
+      const pool = roll(damage || "5d8");
+      head(`${sp.name} (${lvlText}): ${pool.total} puntos de sueño`, { total: pool.total, detail: detail(pool) });
+      let left = pool.total;
+      for (const t of [...targets].filter(t => t.hp > 0 && !t.conditions.includes("inconsciente")).sort((a, b) => a.hp - b.hp)) {
+        if (t.hp > left) { push({ kind: "event", secret, text: `${t.name} resiste el sueño` }); continue; }
+        left -= t.hp;
+        setCondition(t, sp.cond || "inconsciente", sp.condRounds || 10);
+        push({ kind: "event", secret, text: `${t.name} se queda dormido` });
+      }
+    } else {
+      head(`${sp.name} (${lvlText})${targets.length ? " sobre " + targets.map(t => t.name).join(", ") : ""}${sp.desc ? ": " + sp.desc : ""}`);
+    }
+    if (sp.conc) push({ kind: "event", secret, text: `${caster.name} se concentra en ${sp.name}` });
+    return null;
+  }
+
   function resolveAttack(client, op) {
     const attacker = findChar(op.attackerId);
     if (!attacker) return "No existe esa ficha";
@@ -258,17 +419,23 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
     const push = entry => doc.log.push({ id: rid(6), ts: Date.now(), actor: client.name, ...entry });
 
     if (a.save) {
-      const [ability, dc] = a.save.split(" ");
+      const [ability, dcText] = a.save.split(" ");
+      const dc = Number(dcText) || 10;
       const dmg = a.damage ? roll(a.damage) : null;
       push({
         kind: "attack", secret, label: `${attacker.name} · ${a.name}`,
-        text: `${a.name}: salvación de ${ability.toUpperCase()} CD ${dc}${target ? " para " + target.name : ""}` +
+        text: `${a.name}: salvación de ${ABILITY_ES[ability] || ability.toUpperCase()} CD ${dc}${target ? " para " + target.name : ""}` +
           (dmg ? ` · ${dmg.total} de daño${a.type ? " " + a.type : ""}` : ""),
         total: dmg ? dmg.total : 0, detail: dmg ? detail(dmg) : ""
       });
+      /* El objetivo tira su salvación: si la supera, la mitad del daño */
       if (target && dmg) {
-        const r = applyHp(target, { damage: dmg.total });
-        push({ kind: "event", secret, text: `${target.name} recibe ${dmg.total} de daño (${a.name} de ${attacker.name})${r.dropped ? " y cae" : ""}` });
+        const sv = rollSave(target, ability);
+        const passed = sv.total >= dc;
+        const amount = passed ? Math.floor(dmg.total / 2) : dmg.total;
+        const r = amount ? applyHp(target, { damage: amount }) : {};
+        push({ kind: "event", secret, text: `${target.name}: salvación ${sv.total} (${passed ? "la supera" : "falla"}) · recibe ${amount} de daño${r.dropped ? " y cae" : ""}` });
+        if (r.concentrationCheck) concentrationNote(target, r.concentrationCheck, push);
       }
       return null;
     }
@@ -427,7 +594,9 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         /* lo que cuesta el paso, para el contador de movimiento del turno */
         if (map && c.mx !== null && c.mapId === map.id) {
           c.used = { action: false, bonus: false, reaction: false, move: 0, ...(c.used || {}) };
-          c.used.move += gridDistance(c.mx, c.my, op.x, op.y, map.diagonals) * (map.feet || 5);
+          /* por el camino más barato: rodeando muros y pagando el doble en el
+             terreno difícil, como lo pinta el mapa al arrastrar */
+          c.used.move += pathCost(map, { x: c.mx, y: c.my }, { x: op.x, y: op.y }) * (map.feet || 5);
         }
         c.mapId = map ? map.id : (op.mapId || c.mapId || doc.session.activeMapId);
         c.mx = op.x; c.my = op.y;
@@ -497,6 +666,8 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         if (!dm) return "Solo el DM";
         doc.log = [];
         break;
+      case "spell.cast":
+        return castSpell(client, op);
       case "attack.resolve":
         return resolveAttack(client, op);
 
@@ -559,6 +730,67 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
           if (!kind) delete cells[k]; else cells[k] = kind;
         }
         mp.cells = cells;
+        break;
+      }
+
+      /* Muros, puertas y diagonales tramo a tramo. Antes se mandaba el mapa
+         entero de muros a cada paso del ratón, y al arrastrar deprisa cada
+         envío pisaba al anterior: solo quedaba el último tramo. */
+      case "map.edges": {
+        if (!dm) return "Solo el DM";
+        const mp = doc.maps.find(x => x.id === (op.mapId || doc.session.activeMapId));
+        if (!mp) return "No existe ese mapa";
+        const edges = { ...(mp.edges || {}) };
+        for (const [k, v] of Object.entries(op.patch || {})) {
+          if (!/^\d+,\d+,(v|h|d|a)$/.test(k)) continue;
+          if (!v) delete edges[k];
+          else if (["wall", "door", "doorOpen", "window"].includes(v)) edges[k] = v;
+        }
+        mp.edges = edges;
+        break;
+      }
+
+      /* Capas que pinta el DM: terreno difícil, salas y ver/ocultar a mano */
+      case "map.layer": {
+        if (!dm) return "Solo el DM";
+        const mp = doc.maps.find(x => x.id === (op.mapId || doc.session.activeMapId));
+        if (!mp) return "No existe ese mapa";
+        const allowed = { rough: [1], rooms: [1], vis: ["show", "hide"] }[op.layer];
+        if (!allowed) return "Capa desconocida";
+        const layer = { ...(mp[op.layer] || {}) };
+        for (const [k, v] of Object.entries(op.patch || {})) {
+          if (!/^\d+,\d+$/.test(k)) continue;
+          if (!v) delete layer[k];
+          else if (allowed.includes(v)) layer[k] = v;
+        }
+        mp[op.layer] = layer;
+        break;
+      }
+
+      /* Dibujo a mano alzada. Lo de los jugadores lo ve siempre la party; lo
+         del DM, según decida. Cada uno borra lo suyo, el DM borra todo. */
+      case "drawing.add": {
+        if (client.role === "screen") return "La pantalla no dibuja";
+        const mp = doc.maps.find(x => x.id === (op.mapId || doc.session.activeMapId));
+        if (!mp) return "No existe ese mapa";
+        const d = normalizeDrawing({ ...op.drawing, party: dm ? op.drawing && op.drawing.party !== false : true, by: client.name, byId: client.id });
+        if (d.points.length < 2) return null;
+        mp.drawings = [...(mp.drawings || []), d].slice(-150);
+        break;
+      }
+      case "drawing.remove": {
+        const mp = doc.maps.find(x => x.id === (op.mapId || doc.session.activeMapId));
+        if (!mp) return "No existe ese mapa";
+        const d = (mp.drawings || []).find(x => x.id === op.id);
+        if (!d) return null;
+        if (!dm && d.byId !== client.id) return "Solo puedes borrar tus dibujos";
+        mp.drawings = mp.drawings.filter(x => x.id !== op.id);
+        break;
+      }
+      case "drawing.clear": {
+        const mp = doc.maps.find(x => x.id === (op.mapId || doc.session.activeMapId));
+        if (!mp) return "No existe ese mapa";
+        mp.drawings = (mp.drawings || []).filter(x => dm ? (op.mine ? x.byId !== client.id : false) : x.byId !== client.id);
         break;
       }
 

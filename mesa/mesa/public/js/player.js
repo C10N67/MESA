@@ -8,10 +8,38 @@ import { dicePanel, renderLog, throwDice, tellTable } from "./dice-panel.js";
 import { openAttacks, areaAttacks, slotsLeft, shapeLabel } from "./attacks.js";
 import { openCharEditor, openConditions } from "./char-editor.js";
 import { MapView } from "./map.js";
+import { openSpellbook } from "./spellbook.js";
 import { langPicker } from "./i18n.js";
 import { icon, withIcon } from "./icons.js";
 
 let tab = "ficha";
+let lastArea = null;      // la última área de conjuro colocada en el mapa
+let afterArea = null;     // qué hacer cuando se coloque
+
+/* Lo que necesita la ventana de conjuros desde la vista del jugador */
+function spellCtx() {
+  return {
+    getChar: id => doc().chars.find(x => x.id === id),
+    targets: () => doc().chars.filter(x => x.hp > 0 || x.kind === "pc"),
+    preselect: sp => {
+      if (sp.shape && lastArea && mapView) return mapView.covered(lastArea).map(x => x.id);
+      return sp.mode === "heal" && me() ? [me().id] : [];
+    },
+    previewArea: (sp, reopen) => {
+      const c = me();
+      tab = "mapa";
+      document.querySelectorAll("[data-ptab]").forEach(x => x.setAttribute("aria-selected", String(x.dataset.ptab === "mapa")));
+      render();
+      if (!mapView) return toast("El DM no está enseñando ningún mapa", "bad");
+      mapView.tool = "shape";
+      mapView.pinging = false;
+      mapView.pending = { kind: sp.shape, size: sp.size, width: sp.width, angle: 0, x: 0, y: 0,
+        color: (c && c.color) || "#8878d8", label: sp.name, local: true };
+      afterArea = reopen;
+      toast("Coloca el área: pulsa para dejarla y arrastra para girarla");
+    }
+  };
+}
 let lastTab = null;
 let mapView = null;
 let lastTurnId = null;
@@ -224,6 +252,7 @@ function renderSheet(pane, c) {
 
     <div class="action-grid">
       <button class="btn primary" data-act="attack">${withIcon("sword", "Atacar")}</button>
+      <button class="btn" data-act="spells">${withIcon("wand", c.spellbook.length ? `Conjuros (${c.spellbook.length})` : "Conjuros")}</button>
       <button class="btn" data-act="initiative">${withIcon("zap", "Tirar iniciativa")}</button>
       <button class="btn" data-act="saves">${withIcon("shield", "Salvaciones")}</button>
       <button class="btn" data-act="skills">${withIcon("dice", "Habilidades")}</button>
@@ -348,6 +377,8 @@ function renderMap(pane, mine) {
           <button data-ptool="token" aria-pressed="true">Mover</button>
           <button data-ptool="measure" aria-pressed="false">Medir</button>
           <button data-ptool="ping" aria-pressed="false">Señalar</button>
+          <button data-ptool="draw" aria-pressed="false" title="Dibujar sobre el plano: lo ve toda la mesa">${icon("scribble", 15)}Dibujar</button>
+          <button data-ptool="drawErase" aria-pressed="false" title="Borrar uno de tus trazos" aria-label="Borrar un trazo">${icon("eraser", 15)}</button>
         </div>
         <button class="btn sm" id="areaBtn">Mis áreas</button>
         <button class="btn sm hidden" id="areaClear">Quitar áreas</button>
@@ -365,9 +396,14 @@ function renderMap(pane, mine) {
         op("token.move", { id, x, y });
       },
       onPing: (x, y) => op("ping", { x, y, mapId: map.id, color: mine.color }),
+      onDrawing: points => op("drawing.add", { mapId: map.id, drawing: { points, color: mine.color, width: 0.08 } }),
+      onDrawingErase: id => op("drawing.remove", { mapId: map.id, id }),
       onLocalShape: shape => {
         const dentro = mapView.covered(shape).map(c => c.name);
         toast(dentro.length ? `${shape.label}: coge a ${dentro.join(", ")}` : `${shape.label}: no coge a nadie`);
+        /* Si venía de «Colocar el área» al lanzar un conjuro, se vuelve a la
+           ventana con quienes han quedado dentro ya marcados */
+        if (afterArea) { lastArea = shape; const go = afterArea; afterArea = null; setTimeout(go, 350); }
       },
       onToken: id => {
         const t = doc().chars.find(c => c.id === id);
@@ -376,6 +412,7 @@ function renderMap(pane, mine) {
         toast(`${t.name}: a ${pies} pies`);
       }
     });
+    mapView.drawColor = mine.color;
     on(pane, "click", "[data-ptool]", (e, b) => {
       mapView.tool = b.dataset.ptool === "ping" ? "token" : b.dataset.ptool;
       mapView.pinging = b.dataset.ptool === "ping";
@@ -459,6 +496,7 @@ function bindActions(root) {
         const rivals = doc().chars.filter(x => x.id !== c.id && x.hp > 0);
         return openAttacks(c, { targets: rivals });
       }
+      case "spells": return openSpellbook(c, spellCtx());
       case "hitDie": {
         const die = (c.hitDice || "").split(/d/i)[1];
         if (!die) return toast("Apunta tus dados de golpe en la ficha (por ejemplo 5d8)", "bad");

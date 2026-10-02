@@ -40,6 +40,28 @@ function image(id) {
   return img;
 }
 
+/* Distancia de un punto a un segmento */
+function segDist(px, py, a, b) {
+  const vx = b[0] - a[0], vy = b[1] - a[1];
+  const len = vx * vx + vy * vy;
+  const t = len ? Math.max(0, Math.min(1, ((px - a[0]) * vx + (py - a[1]) * vy) / len)) : 0;
+  return Math.hypot(px - (a[0] + vx * t), py - (a[1] + vy * t));
+}
+
+/* Ramer-Douglas-Peucker: un trazo de 300 puntos se queda en 30 sin cambiar
+   de forma, que es lo que viaja por la red y se guarda */
+function simplify(points, eps) {
+  if (points.length < 3) return points;
+  let idx = 0, max = 0;
+  const a = points[0], b = points[points.length - 1];
+  for (let i = 1; i < points.length - 1; i++) {
+    const d = segDist(points[i][0], points[i][1], a, b);
+    if (d > max) { max = d; idx = i; }
+  }
+  if (max <= eps) return [a, b];
+  return [...simplify(points.slice(0, idx + 1), eps).slice(0, -1), ...simplify(points.slice(idx), eps)];
+}
+
 export class MapView {
   constructor(canvas, opts = {}) {
     this.canvas = canvas;
@@ -228,15 +250,29 @@ export class MapView {
     return { fx, fy, x: Math.floor(fx), y: Math.floor(fy) };
   }
 
-  edgeAt(fx, fy) {
+  edgeAt(fx, fy, withDiagonals = false) {
     const x = Math.floor(fx), y = Math.floor(fy);
     const dx = fx - x, dy = fy - y;
-    return [
+    const options = [
       { d: dx, key: edgeKey(x, y, "v") },
       { d: 1 - dx, key: edgeKey(x + 1, y, "v") },
       { d: dy, key: edgeKey(x, y, "h") },
       { d: 1 - dy, key: edgeKey(x, y + 1, "h") }
-    ].sort((a, b) => a.d - b.d)[0].key;
+    ];
+    /* Al borrar, también cuentan las diagonales que haya en la casilla */
+    if (withDiagonals) {
+      const edges = (this.data.map && this.data.map.edges) || {};
+      if (edges[edgeKey(x, y, "d")]) options.push({ d: Math.abs(dx - dy) / Math.SQRT2, key: edgeKey(x, y, "d") });
+      if (edges[edgeKey(x, y, "a")]) options.push({ d: Math.abs(dx + dy - 1) / Math.SQRT2, key: edgeKey(x, y, "a") });
+    }
+    return options.sort((a, b) => a.d - b.d)[0].key;
+  }
+
+  /* Muro en diagonal: la que pase más cerca del puntero (\ o /) */
+  diagonalAt(fx, fy) {
+    const x = Math.floor(fx), y = Math.floor(fy);
+    const dx = fx - x, dy = fy - y;
+    return Math.abs(dx - dy) <= Math.abs(dx + dy - 1) ? "d" : "a";
   }
 
   /* Una ficha grande responde en todas las casillas que ocupa. */
@@ -292,16 +328,36 @@ export class MapView {
         return this.draw();
       }
 
-      if (this.mode === "dm" && this.tool === "cell") {
-        this.painting = "cell";
-        this.opts.onPaintCell && this.opts.onPaintCell(p.x, p.y, this.brush);
+      if (this.mode === "dm" && (this.tool === "cell" || this.tool === "layer")) {
+        this.painting = this.tool;
+        this.lastPaint = null;
+        this.paintAt(p);
+        cv.setPointerCapture(e.pointerId);
+        return;
+      }
+      if (this.mode === "dm" && this.tool === "diag") {
+        /* La dirección se elige en la primera casilla y se mantiene durante
+           el trazo: así una pared larga sale recta */
+        this.painting = "diag";
+        this.diag = { sx: p.x, sy: p.y, dir: null, done: new Set(), fx: p.fx, fy: p.fy };
         cv.setPointerCapture(e.pointerId);
         return;
       }
       if (this.mode === "dm" && (this.tool === "wall" || this.tool === "door" || this.tool === "erase")) {
         this.painting = this.tool;
-        this.opts.onEdge && this.opts.onEdge(this.edgeAt(p.fx, p.fy), this.tool);
+        this.opts.onEdge && this.opts.onEdge(this.edgeAt(p.fx, p.fy, this.tool === "erase"), this.tool);
         cv.setPointerCapture(e.pointerId);
+        return;
+      }
+      /* Dibujo a mano alzada: lo pueden usar el DM y los jugadores */
+      if (this.tool === "draw") {
+        this.stroke = { points: [[p.fx, p.fy]] };
+        cv.setPointerCapture(e.pointerId);
+        return this.draw();
+      }
+      if (this.tool === "drawErase") {
+        const hit = this.drawingAt(p.fx, p.fy);
+        if (hit && this.opts.onDrawingErase) this.opts.onDrawingErase(hit.id);
         return;
       }
       if (this.mode === "dm" && this.tool === "pin") return this.opts.onPin && this.opts.onPin(p.x, p.y);
@@ -375,12 +431,21 @@ export class MapView {
         this.measure.to = { x: p.x, y: p.y };
         return this.draw();
       }
-      if (this.painting === "cell") {
-        this.opts.onPaintCell && this.opts.onPaintCell(p.x, p.y, this.brush);
+      if (this.painting === "diag") { this.diagonalTo(p); return; }
+      if (this.painting === "cell" || this.painting === "layer") {
+        this.paintAt(p);
         return;
       }
       if (this.painting) {
-        if (this.painting !== "door") this.opts.onEdge && this.opts.onEdge(this.edgeAt(p.fx, p.fy), this.painting);
+        if (this.painting !== "door") this.opts.onEdge && this.opts.onEdge(this.edgeAt(p.fx, p.fy, this.painting === "erase"), this.painting);
+        return;
+      }
+      if (this.stroke) {
+        const last = this.stroke.points[this.stroke.points.length - 1];
+        if (Math.hypot(p.fx - last[0], p.fy - last[1]) > 0.06) {
+          this.stroke.points.push([p.fx, p.fy]);
+          this.draw();
+        }
         return;
       }
       if (this.tap) {
@@ -436,7 +501,19 @@ export class MapView {
         setTimeout(() => { if (this.measure && this.measure.done) { this.measure = null; this.draw(); } }, 1600);
         return;
       }
-      if (this.painting) { this.painting = null; return; }
+      if (this.painting === "diag" && this.diag && !this.diag.dir) {
+        /* un clic sin arrastrar: la diagonal que pase más cerca del puntero */
+        const d = this.diag;
+        this.opts.onEdge && this.opts.onEdge(edgeKey(d.sx, d.sy, this.diagonalAt(d.fx, d.fy)), "wall");
+      }
+      if (this.painting) { this.painting = null; this.lastPaint = null; this.diag = null; return; }
+      if (this.stroke) {
+        const pts = simplify(this.stroke.points, 0.04);
+        this.stroke = null;
+        if (pts.length > 1 && this.opts.onDrawing) this.opts.onDrawing(pts);
+        else if (pts.length === 1 && this.opts.onDrawing) this.opts.onDrawing([pts[0], [pts[0][0] + 0.01, pts[0][1] + 0.01]]);
+        return this.draw();
+      }
       if (this.tap) {
         const t = this.tap;
         this.tap = null;
@@ -484,7 +561,7 @@ export class MapView {
     cv.addEventListener("pointerup", release);
     cv.addEventListener("pointercancel", e => {
       this.touches.delete(e.pointerId);
-      this.pan = this.painting = this.drag = this.band = this.measure = this.tap = null;
+      this.pan = this.painting = this.drag = this.band = this.measure = this.tap = this.stroke = null;
       this.placing = false;
       this.draw();
     });
@@ -500,6 +577,56 @@ export class MapView {
   }
 
   snap(v) { return Math.round(v * 2) / 2; }
+
+  /* Pinta la casilla bajo el puntero una sola vez por pasada */
+  paintAt(p) {
+    const map = this.data.map;
+    if (!map || p.x < 0 || p.y < 0 || p.x >= map.cols || p.y >= map.rows) return;
+    const key = p.x + "," + p.y;
+    if (this.lastPaint === key) return;
+    this.lastPaint = key;
+    if (this.painting === "cell") this.opts.onPaintCell && this.opts.onPaintCell(p.x, p.y, this.brush);
+    else if (this.painting === "layer") this.opts.onPaintLayer && this.opts.onPaintLayer(p.x, p.y, this.layer, this.layerValue);
+    else if (this.painting === "diag") this.opts.onEdge && this.opts.onEdge(edgeKey(p.x, p.y, this.diagDir), "wall");
+  }
+
+  /* Muro diagonal arrastrando: la dirección la marca el propio arrastre (hacia
+     arriba a la derecha es «/», hacia abajo a la derecha «\») y el trazo se
+     ajusta a una línea de 45° desde la primera casilla, rellenando las de en
+     medio aunque el ratón vaya deprisa. */
+  diagonalTo(p) {
+    const d = this.diag;
+    if (!d) return;
+    const dx = p.x - d.sx, dy = p.y - d.sy;
+    if (!d.dir) {
+      if (!dx || !dy) return;                 // todavía no se sabe hacia dónde
+      d.dir = dx * dy < 0 ? "a" : "d";
+      d.sgn = Math.sign(dx);
+    }
+    const k = Math.max(0, Math.round((Math.abs(dx) + Math.abs(dy)) / 2) * Math.sign(dx * d.sgn || 1));
+    const map = this.data.map;
+    for (let i = 0; i <= Math.abs(k); i++) {
+      const step = i * d.sgn * Math.sign(k || 1);
+      const x = d.sx + step, y = d.dir === "d" ? d.sy + step : d.sy - step;
+      if (!map || x < 0 || y < 0 || x >= map.cols || y >= map.rows) continue;
+      const key = edgeKey(x, y, d.dir);
+      if (d.done.has(key)) continue;
+      d.done.add(key);
+      this.opts.onEdge && this.opts.onEdge(key, "wall");
+    }
+  }
+
+  /* El trazo más cercano al puntero, si está a menos de un tercio de casilla */
+  drawingAt(fx, fy) {
+    let best = null, bestD = 0.35;
+    for (const d of (this.data.map && this.data.map.drawings) || []) {
+      for (let i = 1; i < d.points.length; i++) {
+        const dist = segDist(fx, fy, d.points[i - 1], d.points[i]);
+        if (dist < bestD) { bestD = dist; best = d; }
+      }
+    }
+    return best;
+  }
 
   startPan(e) {
     const map = this.data.map;
@@ -641,6 +768,16 @@ export class MapView {
       }
     }
 
+    /* Terreno difícil: rayado en diagonal, que se lee sin tapar el plano */
+    const rough = Object.keys(map.rough || {});
+    if (rough.length && g.cell > 5) {
+      this.roughMarks(ctx, g, rough, X, Y, dm ? null : seen, known);
+    }
+
+    /* Lo que solo ve el DM: salas que se revelan al entrar, y lo que ha
+       decidido enseñar u ocultar a mano */
+    if (dm) this.dmLayers(ctx, g, map, X, Y);
+
     /* Alcance de movimiento mientras se arrastra */
     if (this.drag && this.drag.range) {
       ctx.fillStyle = COLORS.reach;
@@ -671,6 +808,8 @@ export class MapView {
       ctx.setLineDash(type === "doorOpen" ? [thick, thick * 1.6] : []);
       ctx.beginPath();
       if (dir === "v") { ctx.moveTo(X(cx), Y(cy)); ctx.lineTo(X(cx), Y(cy + 1)); }
+      else if (dir === "d") { ctx.moveTo(X(cx), Y(cy)); ctx.lineTo(X(cx + 1), Y(cy + 1)); }
+      else if (dir === "a") { ctx.moveTo(X(cx + 1), Y(cy)); ctx.lineTo(X(cx), Y(cy + 1)); }
       else { ctx.moveTo(X(cx), Y(cy)); ctx.lineTo(X(cx + 1), Y(cy)); }
       ctx.stroke();
       ctx.setLineDash([]);
@@ -698,6 +837,10 @@ export class MapView {
       if (!dm && !pin.party) continue;
       this.pinBadge(ctx, g, pin, X, Y);
     }
+
+    /* Dibujos a mano alzada, y el que se está haciendo ahora */
+    for (const d of map.drawings || []) this.stroke2d(ctx, g, d.points, d.color, d.width, X, Y, dm && !d.party);
+    if (this.stroke) this.stroke2d(ctx, g, this.stroke.points, this.drawColor || "#e0bd76", this.drawWidth || 0.08, X, Y, false);
 
     /* Fichas */
     const dragging = this.drag;
@@ -833,6 +976,71 @@ export class MapView {
     }
     this._base = { key, canvas: off };
     return off;
+  }
+
+  /* Rayas de terreno difícil, recortadas a cada casilla */
+  roughMarks(ctx, g, keys, X, Y, seen, known) {
+    ctx.save();
+    ctx.strokeStyle = "rgba(214,170,96,.42)";
+    ctx.lineWidth = Math.max(1, g.cell * 0.04);
+    for (const k of keys) {
+      if (seen && !seen.has(k) && !known.has(k)) continue;
+      const [x, y] = k.split(",").map(Number);
+      const px = X(x), py = Y(y), c = g.cell;
+      ctx.save();
+      ctx.beginPath(); ctx.rect(px, py, c, c); ctx.clip();
+      ctx.beginPath();
+      for (let i = -1; i <= 2; i++) { ctx.moveTo(px + c * (i * 0.34), py + c); ctx.lineTo(px + c * (i * 0.34 + 1), py); }
+      ctx.stroke();
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  dmLayers(ctx, g, map, X, Y) {
+    const tint = (keys, fill, stroke, dash) => {
+      if (!keys.length) return;
+      ctx.save();
+      ctx.fillStyle = fill;
+      for (const k of keys) {
+        const [x, y] = k.split(",").map(Number);
+        ctx.fillRect(X(x), Y(y), g.cell + 0.5, g.cell + 0.5);
+      }
+      /* borde exterior de la mancha, para ver la forma de la zona */
+      const set = new Set(keys);
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = Math.max(1.5, g.cell * 0.05);
+      if (dash) ctx.setLineDash([g.cell * 0.18, g.cell * 0.12]);
+      ctx.beginPath();
+      for (const k of keys) {
+        const [x, y] = k.split(",").map(Number);
+        if (!set.has(cellKey(x - 1, y))) { ctx.moveTo(X(x), Y(y)); ctx.lineTo(X(x), Y(y + 1)); }
+        if (!set.has(cellKey(x + 1, y))) { ctx.moveTo(X(x + 1), Y(y)); ctx.lineTo(X(x + 1), Y(y + 1)); }
+        if (!set.has(cellKey(x, y - 1))) { ctx.moveTo(X(x), Y(y)); ctx.lineTo(X(x + 1), Y(y)); }
+        if (!set.has(cellKey(x, y + 1))) { ctx.moveTo(X(x), Y(y + 1)); ctx.lineTo(X(x + 1), Y(y + 1)); }
+      }
+      ctx.stroke();
+      ctx.restore();
+    };
+    const vis = Object.entries(map.vis || {});
+    tint(Object.keys(map.rooms || {}), "rgba(217,154,43,.10)", "rgba(217,154,43,.75)", true);
+    tint(vis.filter(([, v]) => v === "show").map(([k]) => k), "rgba(79,157,93,.16)", "rgba(110,190,125,.8)", false);
+    tint(vis.filter(([, v]) => v === "hide").map(([k]) => k), "rgba(60,40,90,.45)", "rgba(136,120,216,.85)", true);
+  }
+
+  /* Un trazo a mano alzada; los del DM que la party no ve, a rayas */
+  stroke2d(ctx, g, points, color, width, X, Y, privateOne) {
+    if (!points || points.length < 2) return;
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = Math.max(1.5, width * g.cell);
+    ctx.lineCap = "round"; ctx.lineJoin = "round";
+    if (privateOne) { ctx.globalAlpha = 0.75; ctx.setLineDash([g.cell * 0.2, g.cell * 0.15]); }
+    ctx.beginPath();
+    ctx.moveTo(X(points[0][0]), Y(points[0][1]));
+    for (let i = 1; i < points.length; i++) ctx.lineTo(X(points[i][0]), Y(points[i][1]));
+    ctx.stroke();
+    ctx.restore();
   }
 
   tick() {
