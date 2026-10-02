@@ -1,5 +1,6 @@
 /* Vista del DM: todo a la vista y todo editable. */
 
+import { voiceWidget } from "./voice.js";
 import { $, el, on, esc, lines, sign, pct, hpTone, hpBar, tweenBars, initials, imgURL, toast, modal, confirmBox, shrinkImage, clamp } from "./util.js";
 import { CONDITIONS, conditionName, ABILITIES, SKILLS, PIN_KINDS, modOf, normalizeChar, normalizeBeast, normalizeMap, normalizePin, normalizePortal, uid, encounterDifficulty } from "./schema.js";
 import { openAttacks, attacksOf } from "./attacks.js";
@@ -8,6 +9,7 @@ import { store, onState, onPresence, onStatus, op, patchChar, patchSession, patc
 import { dicePanel, renderLog, throwDice, tellTable, currentMode, isSecret } from "./dice-panel.js";
 import { openCharEditor, openConditions } from "./char-editor.js";
 import { MapView } from "./map.js";
+import { openSpellbook } from "./spellbook.js";
 import { langPicker } from "./i18n.js";
 import { icon, withIcon } from "./icons.js";
 import { rollHitPoints } from "./dice.js";
@@ -22,6 +24,31 @@ let drawerOpen = false;
 let shapeSize = 20;
 let targetId = null;
 let lastAlert = null;   // null = todavía no se ha pintado nada
+let lastArea = null;    // la última plantilla colocada para un conjuro
+let afterArea = null;
+
+/* Lo que necesita la ventana de conjuros desde la vista del DM */
+function dmSpellCtx() {
+  return {
+    isDM: true,
+    getChar: byId,
+    targets: () => chars().filter(x => x.mapId === activeMap().id && x.mx !== null),
+    preselect: sp => {
+      if (sp.shape && lastArea && mapView) return mapView.covered(lastArea).map(x => x.id);
+      return targetId ? [targetId] : [];
+    },
+    previewArea: (sp, reopen) => {
+      tab = "mapa";
+      document.querySelectorAll("[data-tab]").forEach(x => x.setAttribute("aria-selected", String(x.dataset.tab === "mapa")));
+      render();
+      mapView.tool = "shape";
+      mapView.pending = { kind: sp.shape, size: sp.size, width: sp.width, angle: 0, x: 0, y: 0,
+        color: "#e56b6f", label: sp.name, party: true };
+      afterArea = reopen;
+      toast("Coloca el área: pulsa para dejarla y arrastra para girarla");
+    }
+  };
+}
 
 const doc = () => store.doc;
 const chars = () => doc().chars;
@@ -45,6 +72,7 @@ export function mountDM(root) {
           <button role="tab" data-tab="mapa" aria-selected="false">${withIcon("map", "Mapa")}</button>
         </nav>
         <span class="spacer"></span>
+        <span id="voiceSlot"></span>
         <button class="presence" id="presence" type="button" title="Quién está conectado"></button>
         <div class="top-actions">
           <button class="btn sm" id="bestiaryBtn" title="Bestiario">${withIcon("book", "Bestiario")}</button>
@@ -83,6 +111,7 @@ export function mountDM(root) {
   $("#undoBtn", root).addEventListener("click", () => { op("undo"); toast("Deshecho"); });
   $("#moreBtn", root).addEventListener("click", openMenu);
   $("#presence", root).addEventListener("click", openPresence);
+  $("#voiceSlot", root).replaceWith(voiceWidget());
 
   onStatus(ok => $("#offline", root).classList.toggle("hidden", ok));
   onPresence(list => { renderPresence(list); if (tab === "mesa" && doc()) renderTable(); });
@@ -362,6 +391,7 @@ function cardHTML(c) {
       <button class="btn sm" data-act="temp" title="Vida temporal">${withIcon("shieldPlus", "Temp", 16)}</button>
       <button class="btn sm" data-act="conditions" title="Estados">${withIcon("sparkle", "Estados", 16)}</button>
       <button class="btn sm" data-act="attack" title="Tirar un ataque">${withIcon("sword", "Atacar", 16)}</button>
+      ${!monster || c.spellbook.length ? `<button class="btn sm" data-act="spells" title="Conjuros">${withIcon("wand", "Conjuros", 16)}</button>` : ""}
       <button class="btn sm ${targetId === c.id ? "primary" : ""}" data-act="target" title="Apuntar con los ataques" aria-label="Apuntar con los ataques">${icon("target")}</button>
     </div>
 
@@ -493,6 +523,7 @@ function bindTable(root) {
         return who && attack(who);
       }
       case "attack": return attack(c);
+      case "spells": return openSpellbook(c, dmSpellCtx());
       case "target": {
         targetId = targetId === c.id ? null : c.id;
         if (mapView) mapView.target = targetId;
@@ -1016,6 +1047,8 @@ async function dropBeast(b) {
 }
 
 /* ---------- Mapa ---------- */
+export const DRAW_COLORS = ["#e0bd76", "#e56b6f", "#7fd0ff", "#8fd694", "#ffffff"];
+
 function renderMap() {
   const pane = $("#mapPane");
   const map = activeMap();
@@ -1026,19 +1059,34 @@ function renderMap() {
         <div class="map-bar">
           <select id="mapPick" aria-label="Mapa activo" style="max-width:200px"></select>
           <div class="tool-set" id="tools">
-            <button data-tool="token" aria-pressed="true" title="Mover y seleccionar fichas">Fichas</button>
-            <button data-tool="measure" aria-pressed="false" title="Medir distancias">Regla</button>
-            <button data-tool="wall" aria-pressed="false">Muro</button>
-            <button data-tool="door" aria-pressed="false">Puerta</button>
-            <button data-tool="erase" aria-pressed="false">Borrar</button>
-            <button data-tool="pin" aria-pressed="false" title="Clavar una nota">Nota</button>
-            <button data-tool="portal" aria-pressed="false" title="Escalera o acceso a otro mapa">Acceso</button>
+            <button data-tool="token" aria-pressed="true" title="Mover y seleccionar fichas">${icon("move", 15)}Fichas</button>
+            <button data-tool="measure" aria-pressed="false" title="Medir distancias">${icon("ruler", 15)}Regla</button>
+            <button data-tool="wall" aria-pressed="false" title="Muro por los bordes de las casillas">${icon("wall", 15)}Muro</button>
+            <button data-tool="diag" aria-pressed="false" title="Muro en diagonal, de esquina a esquina">${icon("diagonal", 15)}Diagonal</button>
+            <button data-tool="door" aria-pressed="false" title="Puerta: cerrada, abierta, sin puerta">${icon("door", 15)}Puerta</button>
+            <button data-tool="erase" aria-pressed="false" title="Quitar muros, diagonales y puertas">${icon("eraser", 15)}Borrar</button>
+            <button data-tool="pin" aria-pressed="false" title="Clavar una nota">${icon("note", 15)}Nota</button>
+            <button data-tool="portal" aria-pressed="false" title="Escalera o acceso a otro mapa">${icon("stairs", 15)}Acceso</button>
+            <button data-tool="draw" aria-pressed="false" title="Dibujar a mano alzada">${icon("scribble", 15)}Dibujar</button>
           </div>
-          <div class="tool-set" id="terrain">
-            <button data-brush="fog" title="Niebla: ver a través cuesta el triple">${icon("brush")} Niebla</button>
-            <button data-brush="dark" title="Oscuridad: no se ve a través">${icon("brush")} Oscuridad</button>
-            <button data-brush="lit" title="Luz fija: alumbra aunque el mapa esté a oscuras">${icon("brush")} Luz</button>
-            <button data-brush="none" title="Quitar el terreno pintado">${icon("eraser")}</button>
+          <div class="tool-set" id="terrain" aria-label="Terreno">
+            <button data-brush="fog" title="Niebla: ver a través cuesta el triple">${icon("brush", 15)}Niebla</button>
+            <button data-brush="dark" title="Oscuridad: no se ve a través">${icon("brush", 15)}Oscuridad</button>
+            <button data-brush="lit" title="Luz fija: alumbra aunque el mapa esté a oscuras">${icon("brush", 15)}Luz</button>
+            <button data-layer="rough" data-value="1" title="Terreno difícil: entrar cuesta el doble de movimiento">${icon("boot", 15)}Difícil</button>
+            <button data-brush="none" title="Quitar terreno pintado y terreno difícil">${icon("eraser", 15)}</button>
+          </div>
+          <div class="tool-set" id="zones" aria-label="Zonas">
+            <button data-layer="rooms" data-value="1" title="Sala: al entrar, la party ve la sala entera">${icon("room", 15)}Sala</button>
+            <button data-layer="vis" data-value="show" title="Revelar: la party lo ve siempre">${icon("eye", 15)}Revelar</button>
+            <button data-layer="vis" data-value="hide" title="Ocultar: la party no lo ve nunca">${icon("eyeOff", 15)}Ocultar</button>
+            <button data-layer="zones" data-value="" title="Quitar salas y zonas reveladas u ocultas">${icon("eraser", 15)}</button>
+          </div>
+          <div class="tool-set draw-opts hidden" id="drawOpts" aria-label="Dibujo">
+            ${DRAW_COLORS.map((c, i) => `<button class="swatch" data-color="${c}" aria-pressed="${i === 0}" title="Color" style="--sw:${c}"></button>`).join("")}
+            <label class="check mini" title="Si no, solo lo ves tú"><input type="checkbox" id="drawParty" checked> Lo ve la party</label>
+            <button data-draw="erase" title="Borrar un trazo">${icon("eraser", 15)}Trazo</button>
+            <button data-draw="clear" title="Borrar todos los dibujos de este mapa">${icon("trash", 15)}Todo</button>
           </div>
           <div class="tool-set" id="shapes">
             <button data-shape="circle" title="Esfera o ráfaga">${icon("circle")}</button>
@@ -1073,8 +1121,24 @@ function renderMap() {
         tokenMenu(id);
       },
       onEdge: (key, tool) => paintEdge(key, tool),
-      onPaintCell: (x, y, brush) => op("map.cells", { mapId: activeMap().id, patch: { [x + "," + y]: brush === "none" ? null : brush } }),
-      onShape: shape => op("shape.add", { mapId: activeMap().id, shape }),
+      onPaintCell: (x, y, brush) => {
+        const k = x + "," + y, mapId = activeMap().id;
+        op("map.cells", { mapId, patch: { [k]: brush === "none" ? null : brush } });
+        if (brush === "none") op("map.layer", { mapId, layer: "rough", patch: { [k]: null } });
+      },
+      onPaintLayer: (x, y, layer, value) => {
+        const k = x + "," + y, mapId = activeMap().id;
+        if (layer === "zones") {
+          op("map.layer", { mapId, layer: "rooms", patch: { [k]: null } });
+          op("map.layer", { mapId, layer: "vis", patch: { [k]: null } });
+        } else op("map.layer", { mapId, layer, patch: { [k]: value || null } });
+      },
+      onDrawing: points => op("drawing.add", { mapId: activeMap().id, drawing: { points, color: mapView.drawColor, width: mapView.drawWidth, party: $("#drawParty") ? $("#drawParty").checked : true } }),
+      onDrawingErase: id => op("drawing.remove", { mapId: activeMap().id, id }),
+      onShape: shape => {
+        op("shape.add", { mapId: activeMap().id, shape });
+        if (afterArea) { lastArea = shape; const go = afterArea; afterArea = null; setTimeout(go, 350); }
+      },
       onPin: (x, y) => editPin({ x, y }),
       onPortal: (x, y) => editPortal({ x, y }),
       onPing: (x, y) => op("ping", { x, y, mapId: activeMap().id }),
@@ -1082,16 +1146,21 @@ function renderMap() {
       onZoom: z => { const l = $("#zoomLabel"); if (l) l.textContent = Math.round(z * 100) + "%"; }
     });
 
+    mapView.drawColor = DRAW_COLORS[0];
+    mapView.drawWidth = 0.08;
+    const pressOnly = b => pane.querySelectorAll("[data-tool],[data-shape],[data-brush],[data-layer],[data-draw]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
     on(pane, "click", "[data-tool]", (e, b) => {
       mapTool = b.dataset.tool;
       mapView.tool = mapTool;
       mapView.pending = null;
-      pane.querySelectorAll("[data-tool]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
-      pane.querySelectorAll("[data-shape],[data-brush]").forEach(x => x.setAttribute("aria-pressed", "false"));
+      pressOnly(b);
+      $("#drawOpts", pane).classList.toggle("hidden", mapTool !== "draw");
       const hint = {
         token: "Arrastra para mover · recuadro para elegir varias · Alt+clic para señalar",
         measure: "Arrastra de una casilla a otra para medir",
         wall: "Arrastra por los bordes de las casillas",
+        diag: "Arrastra por las casillas: la diagonal (\\ o /) la marca dónde empiezas",
+        draw: "Dibuja con el ratón o el dedo; elige color y si lo ve la party",
         door: "Pulsa un borde: cerrada, abierta, sin puerta",
         erase: "Arrastra para quitar muros y puertas",
         pin: "Pulsa donde quieras clavar la nota",
@@ -1100,12 +1169,40 @@ function renderMap() {
       $("#mapHint", pane).textContent = hint;
     });
 
+    on(pane, "click", "[data-layer]", (e, b) => {
+      mapView.tool = "layer";
+      mapView.layer = b.dataset.layer;
+      mapView.layerValue = b.dataset.value === "1" ? 1 : b.dataset.value;
+      mapView.pending = null;
+      pressOnly(b);
+      $("#drawOpts", pane).classList.add("hidden");
+      $("#mapHint", pane).textContent = {
+        rough: "Pinta el terreno difícil: entrar en esas casillas cuesta el doble",
+        rooms: "Pinta la sala: al entrar alguien, la party la ve entera. Cada mancha separada es otra sala",
+        vis: b.dataset.value === "show" ? "Pinta lo que la party verá siempre" : "Pinta lo que la party no verá nunca, aunque lo tenga delante",
+        zones: "Arrastra para quitar salas y zonas"
+      }[mapView.layer] || "";
+    });
+    on(pane, "click", "[data-color]", (e, b) => {
+      mapView.drawColor = b.dataset.color;
+      pane.querySelectorAll("[data-color]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+    });
+    on(pane, "click", "[data-draw]", async (e, b) => {
+      if (b.dataset.draw === "erase") {
+        mapView.tool = mapView.tool === "drawErase" ? "draw" : "drawErase";
+        b.setAttribute("aria-pressed", String(mapView.tool === "drawErase"));
+        $("#mapHint", pane).textContent = mapView.tool === "drawErase" ? "Pulsa un trazo para borrarlo" : "Dibuja con el ratón o el dedo";
+      } else if (await confirmBox("¿Borrar todos los dibujos de este mapa?", { okLabel: "Borrar" })) {
+        op("drawing.clear", { mapId: activeMap().id });
+      }
+    });
+
     on(pane, "click", "[data-brush]", (e, b) => {
       mapView.tool = "cell";
       mapView.brush = b.dataset.brush;
       mapView.pending = null;
-      pane.querySelectorAll("[data-tool],[data-shape]").forEach(x => x.setAttribute("aria-pressed", "false"));
-      pane.querySelectorAll("[data-brush]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+      pressOnly(b);
+      $("#drawOpts", pane).classList.add("hidden");
       $("#mapHint", pane).textContent = b.dataset.brush === "none"
         ? "Arrastra para dejar las casillas limpias"
         : "Arrastra para pintar casillas; cambia lo que la party alcanza a ver";
@@ -1117,8 +1214,8 @@ function renderMap() {
       shapeSize = clamp(+$("#shapeSize", pane).value || 20, 5, 200);
       mapView.tool = "shape";
       mapView.pending = { kind, size: shapeSize, width: 5, angle: 0, x: 0, y: 0, color: "#8878d8", label: shapeSize + " pies", party: true };
-      pane.querySelectorAll("[data-shape]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
-      pane.querySelectorAll("[data-tool],[data-brush]").forEach(x => x.setAttribute("aria-pressed", "false"));
+      pressOnly(b);
+      $("#drawOpts", pane).classList.add("hidden");
       $("#mapHint", pane).textContent = "Pulsa para colocar; arrastra para girar";
     });
     on(pane, "click", "[data-map]", (e, b) => mapAction(b.dataset.map));
@@ -1250,11 +1347,10 @@ function editPortal(seed) {
 
 function paintEdge(key, tool) {
   const map = activeMap();
-  const edges = { ...map.edges };
-  if (tool === "erase") delete edges[key];
-  else if (tool === "wall") edges[key] = "wall";
-  else if (tool === "door") edges[key] = edges[key] === "door" ? "doorOpen" : "door";
-  patchMap(map.id, { edges });
+  const now = map.edges[key];
+  const value = tool === "erase" ? null : tool === "wall" ? "wall"
+    : tool === "door" ? (now === "door" ? "doorOpen" : now === "doorOpen" ? null : "door") : null;
+  op("map.edges", { mapId: map.id, patch: { [key]: value } });
 }
 
 function mapAction(what) {

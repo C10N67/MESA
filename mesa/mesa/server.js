@@ -279,6 +279,19 @@ const handler = async (req, res) => {
       return json(res, 200, { ok: true, charId: client.charId });
     }
 
+    /* Voz: los aparatos se presentan entre sí (oferta, respuesta, rutas de
+       red) a través de aquí. El audio no pasa por el servidor. Solo se
+       reenvía entre dos sesiones que tienen la voz abierta. */
+    if (p === "/api/rtc" && req.method === "POST") {
+      const body = JSON.parse((await readBody(req, 64 * 1024)).toString() || "{}");
+      const client = clients.get(body.token || "");
+      if (!client) return json(res, 401, { error: "sesión caducada" });
+      const target = [...clients.values()].find(c => c.id === body.to);
+      if (!client.voice || !target || !target.voice) return json(res, 409, { error: "Esa persona no está en la voz" });
+      send(target, "rtc", { from: client.id, data: body.data });
+      return json(res, 200, { ok: true });
+    }
+
     if (p === "/api/image" && req.method === "POST") {
       const client = clients.get(url.searchParams.get("token") || "");
       if (!client) return json(res, 401, { error: "sesión caducada" });

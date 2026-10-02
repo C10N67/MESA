@@ -5,6 +5,61 @@ import { cellKey, edgeKey, footprint } from "./schema.js";
 
 export const BLOCKS = { wall: true, door: true, doorOpen: false, window: false };
 
+/* ---------- Muros en diagonal ----------
+   Además de los bordes, un muro puede cruzar una casilla de esquina a
+   esquina: "x,y,d" va de arriba a la izquierda a abajo a la derecha (\) y
+   "x,y,a" de arriba a la derecha a abajo a la izquierda (/). Sirven para salas
+   en diagonal o redondas. La visión se corta con geometría de verdad: un rayo
+   que cruza el muro no pasa. La casilla que atraviesa queda como pared: se
+   ve, pero no se pisa. */
+export const isDiagonal = key => /,(d|a)$/.test(key);
+
+const diagCache = new WeakMap();
+function diagonals(map) {
+  const edges = map.edges || {};
+  let hit = diagCache.get(edges);
+  if (hit) return hit;
+  const segs = [], cells = new Set();
+  for (const [key, type] of Object.entries(edges)) {
+    if (!BLOCKS[type]) continue;
+    const [sx, sy, dir] = key.split(",");
+    if (dir !== "d" && dir !== "a") continue;
+    const x = Number(sx), y = Number(sy);
+    const seg = dir === "d" ? { x1: x, y1: y, x2: x + 1, y2: y + 1 } : { x1: x + 1, y1: y, x2: x, y2: y + 1 };
+    seg.minx = x; seg.maxx = x + 1; seg.miny = y; seg.maxy = y + 1;
+    segs.push(seg);
+    cells.add(cellKey(x, y));
+  }
+  hit = { segs, cells };
+  diagCache.set(edges, hit);
+  return hit;
+}
+
+/* Casillas que un muro diagonal deja sin suelo */
+export const wallCell = (map, x, y) => diagonals(map).cells.has(cellKey(x, y));
+
+/* ¿El segmento entre dos centros de casilla cruza algún muro diagonal?
+   Tocarlo en su extremo cuenta como cruzarlo (así no se cuela la vista por la
+   junta de dos tramos); que el rayo empiece o acabe sobre el muro, no. */
+export function crossesDiagonal(map, x0, y0, x1, y1) {
+  const { segs } = diagonals(map);
+  if (!segs.length) return false;
+  const ax = x0 + 0.5, ay = y0 + 0.5, bx = x1 + 0.5, by = y1 + 0.5;
+  const lx = Math.min(ax, bx), hx = Math.max(ax, bx), ly = Math.min(ay, by), hy = Math.max(ay, by);
+  const rx = bx - ax, ry = by - ay;
+  for (const w of segs) {
+    if (w.maxx < lx || w.minx > hx || w.maxy < ly || w.miny > hy) continue;
+    const sx = w.x2 - w.x1, sy = w.y2 - w.y1;
+    const den = rx * sy - ry * sx;
+    if (Math.abs(den) < 1e-9) continue;                  // paralelos
+    const qx = w.x1 - ax, qy = w.y1 - ay;
+    const t = (qx * sy - qy * sx) / den;                 // a lo largo del rayo
+    const u = (qx * ry - qy * rx) / den;                 // a lo largo del muro
+    if (t > 1e-6 && t < 1 - 1e-6 && u >= -1e-6 && u <= 1 + 1e-6) return true;
+  }
+  return false;
+}
+
 /* Un muro vive en el borde de una casilla: "x,y,v" es su lado izquierdo y
    "x,y,h" el de arriba, así las paredes quedan entre casillas. */
 export function blocksBetween(map, x1, y1, x2, y2) {
@@ -21,6 +76,7 @@ export function blocksBetween(map, x1, y1, x2, y2) {
    una esquina no corte la vista de forma antinatural. */
 export function hasSight(map, x0, y0, x1, y1) {
   if (x0 === x1 && y0 === y1) return true;
+  if (crossesDiagonal(map, x0, y0, x1, y1)) return false;
   const steps = (Math.abs(x1 - x0) + Math.abs(y1 - y0)) * 4 + 4;
   let cx = x0, cy = y0;
   for (let i = 1; i <= steps; i++) {
@@ -59,6 +115,7 @@ export function fits(map, chars, who, x, y) {
   for (let dy = 0; dy < n; dy++) {
     for (let dx = 0; dx < n; dx++) {
       const cx = x + dx, cy = y + dy;
+      if (wallCell(map, cx, cy)) return "Hay un muro por medio";
       if (dx && blocksBetween(map, cx - 1, cy, cx, cy)) return "Hay un muro por medio";
       if (dy && blocksBetween(map, cx, cy - 1, cx, cy)) return "Hay un muro por medio";
     }
@@ -94,44 +151,69 @@ export function feetChars(map, a, b) {
   return best * (map.feet || 5);
 }
 
-/* ---------- Alcance de movimiento ---------- */
-/* Recorrido por anchura respetando muros: sirve para pintar hasta dónde llega
-   una ficha con su velocidad, contando las diagonales como manda el mapa. */
-export function reachableCells(map, from, feet, { blocked = null } = {}) {
+/* ---------- Alcance de movimiento ----------
+   Hasta dónde llega una ficha con lo que le queda de velocidad, respetando
+   muros (rectos y diagonales) y el terreno difícil, que cuesta el doble: cada
+   casilla difícil en la que se entra gasta dos. Las diagonales cuentan como
+   manda el mapa (5e o la variante 5-10-5). Como los costes ya no son todos
+   iguales, se reparte por cubos de coste (Dijkstra con enteros pequeños). */
+export const roughCell = (map, x, y) => !!(map.rough && map.rough[cellKey(x, y)]);
+
+function canStep(map, x0, y0, x1, y1) {
+  if (x1 < 0 || y1 < 0 || x1 >= map.cols || y1 >= map.rows) return false;
+  if (wallCell(map, x1, y1)) return false;
+  const dx = x1 - x0, dy = y1 - y0;
+  if (dx && dy) {
+    const viaX = !blocksBetween(map, x0, y0, x1, y0) && !blocksBetween(map, x1, y0, x1, y1);
+    const viaY = !blocksBetween(map, x0, y0, x0, y1) && !blocksBetween(map, x0, y1, x1, y1);
+    if (!viaX && !viaY) return false;
+  } else if (blocksBetween(map, x0, y0, x1, y1)) return false;
+  return !crossesDiagonal(map, x0, y0, x1, y1);
+}
+
+export function reachableCells(map, from, feet, { blocked = null, budgetSquares = null } = {}) {
   const step = map.feet || 5;
-  const budget = Math.max(0, Math.floor(feet / step));
+  const budget = budgetSquares !== null ? budgetSquares : Math.max(0, Math.floor(feet / step));
   const out = new Map([[cellKey(from.x, from.y), 0]]);
   if (!budget) return out;
-  let edge = [{ x: from.x, y: from.y, cost: 0, diag: 0 }];
-  while (edge.length) {
-    const next = [];
-    for (const cur of edge) {
+  const alt = map.diagonals === "alt";
+  /* Estado: casilla y, con la variante 5-10-5, si la próxima diagonal es
+     de las caras. Se guarda el mejor coste de cada estado. */
+  const best = new Map([[cellKey(from.x, from.y) + "|0", 0]]);
+  const buckets = [[{ x: from.x, y: from.y, par: 0 }]];
+  for (let cost = 0; cost <= budget; cost++) {
+    const list = buckets[cost];
+    if (!list) continue;
+    for (const cur of list) {
+      if (best.get(cellKey(cur.x, cur.y) + "|" + cur.par) !== cost) continue;   // ya mejorado
       for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
         if (!dx && !dy) continue;
         const x = cur.x + dx, y = cur.y + dy;
-        if (x < 0 || y < 0 || x >= map.cols || y >= map.rows) continue;
         if (blocked && blocked(x, y)) continue;
-        if (dx && dy) {
-          const viaX = !blocksBetween(map, cur.x, cur.y, x, cur.y) && !blocksBetween(map, x, cur.y, x, y);
-          const viaY = !blocksBetween(map, cur.x, cur.y, cur.x, y) && !blocksBetween(map, cur.x, y, x, y);
-          if (!viaX && !viaY) continue;
-        } else if (blocksBetween(map, cur.x, cur.y, x, y)) continue;
-
-        let diag = cur.diag, cost = cur.cost + 1;
-        if (dx && dy) {
-          diag++;
-          if (map.diagonals === "alt" && diag % 2 === 0) cost++;
-        }
-        if (cost > budget) continue;
+        if (!canStep(map, cur.x, cur.y, x, y)) continue;
+        let c = cost + (roughCell(map, x, y) ? 2 : 1), par = cur.par;
+        if (dx && dy && alt) { if (par) c++; par = par ? 0 : 1; }
+        if (c > budget) continue;
+        const sk = cellKey(x, y) + "|" + par;
+        if (best.has(sk) && best.get(sk) <= c) continue;
+        best.set(sk, c);
+        (buckets[c] = buckets[c] || []).push({ x, y, par });
         const k = cellKey(x, y);
-        if (out.has(k) && out.get(k) <= cost) continue;
-        out.set(k, cost);
-        next.push({ x, y, cost, diag });
+        if (!out.has(k) || out.get(k) > c) out.set(k, c);
       }
     }
-    edge = next;
   }
   return out;   // casilla -> casillas gastadas
+}
+
+/* Lo que cuesta de verdad ir de una casilla a otra (en casillas), por el
+   camino más barato. Si no hay camino (un teletransporte del DM), la
+   distancia en línea recta. */
+export function pathCost(map, from, to, opts = {}) {
+  if (from.x === to.x && from.y === to.y) return 0;
+  const reach = reachableCells(map, from, 0, { ...opts, budgetSquares: (map.cols + map.rows) * 4 });
+  const c = reach.get(cellKey(to.x, to.y));
+  return c === undefined ? gridDistance(from.x, from.y, to.x, to.y, map.diagonals) : c;
 }
 
 /* ---------- Plantillas de área ---------- */
@@ -202,6 +284,7 @@ const cellKind = (map, x, y) => (map.cells || {})[cellKey(x, y)];
    la visión verdadera pasa por encima de ellas y la vista normal no. */
 function trace(map, x0, y0, x1, y1) {
   if (x0 === x1 && y0 === y1) return { steps: 0, fog: 0, darkThrough: 0, dark: false };
+  if (crossesDiagonal(map, x0, y0, x1, y1)) return null;
   const steps = (Math.abs(x1 - x0) + Math.abs(y1 - y0)) * 4 + 4;
   let cx = x0, cy = y0, hops = 0, fog = 0, darkThrough = 0;
   for (let i = 1; i <= steps; i++) {
@@ -267,8 +350,78 @@ export function litCells(doc, map) {
   return set;
 }
 
+/* ---------- Salas que se revelan al entrar ----------
+   El DM pinta salas sobre el plano. Cada mancha continua de casillas pintadas
+   es una sala distinta, y los muros y puertas las separan: así caben varias
+   en un mapa sin configurar nada. En cuanto un personaje pisa una casilla de
+   una sala, la party ve la sala entera (la del jefe, un pasillo largo). */
+const roomCache = new WeakMap();
+export function roomsOf(map) {
+  const painted = map.rooms || {};
+  let hit = roomCache.get(painted);
+  if (hit && hit.edges === map.edges) return hit.rooms;
+  const of = new Map();      // casilla -> índice de sala
+  const rooms = [];
+  for (const start of Object.keys(painted)) {
+    if (of.has(start)) continue;
+    const idx = rooms.length, cells = [];
+    const stack = [start];
+    of.set(start, idx);
+    while (stack.length) {
+      const k = stack.pop();
+      cells.push(k);
+      const [x, y] = k.split(",").map(Number);
+      for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+        const nk = cellKey(nx, ny);
+        if (!painted[nk] || of.has(nk)) continue;
+        if (edgeBetween(map, x, y, nx, ny)) continue;     // un muro o una puerta parte la sala
+        of.set(nk, idx);
+        stack.push(nk);
+      }
+    }
+    rooms.push(cells);
+  }
+  hit = { edges: map.edges, rooms: { of, list: rooms } };
+  roomCache.set(painted, hit);
+  return hit.rooms;
+}
+/* Cualquier borde dibujado, abierto o cerrado: separa salas */
+function edgeBetween(map, x1, y1, x2, y2) {
+  let key = null;
+  if (y1 === y2) key = edgeKey(Math.max(x1, x2), y1, "v");
+  else key = edgeKey(x1, Math.max(y1, y2), "h");
+  return !!(map.edges || {})[key];
+}
+
 /* Casillas que la party alcanza a ver ahora mismo. */
 export function visibleCells(doc, map) {
+  const set = sightCells(doc, map);
+  if (!map) return set;
+
+  /* Salas: quien está dentro ve la sala entera */
+  const rooms = roomsOf(map);
+  if (rooms.list.length) {
+    const lit = new Set();
+    for (const c of doc.chars) {
+      if (c.kind !== "pc" || c.hp <= 0 || !onMap(c, map)) continue;
+      for (const [x, y] of occupied(c)) {
+        const idx = rooms.of.get(cellKey(x, y));
+        if (idx !== undefined) lit.add(idx);
+      }
+    }
+    for (const idx of lit) for (const k of rooms.list[idx]) set.add(k);
+  }
+
+  /* Lo que el DM decide a mano manda sobre todo lo demás */
+  for (const [k, v] of Object.entries(map.vis || {})) {
+    if (v === "show") set.add(k);
+    else if (v === "hide") set.delete(k);
+  }
+  return set;
+}
+
+/* Lo que se ve por línea de visión, luz y terreno */
+function sightCells(doc, map) {
   const set = new Set();
   if (!map) return set;
 
@@ -303,7 +456,7 @@ export function edgesNear(map, seen, explored = []) {
   const out = {};
   for (const key of cells) {
     const [x, y] = key.split(",").map(Number);
-    for (const k of [edgeKey(x, y, "v"), edgeKey(x + 1, y, "v"), edgeKey(x, y, "h"), edgeKey(x, y + 1, "h")]) {
+    for (const k of [edgeKey(x, y, "v"), edgeKey(x + 1, y, "v"), edgeKey(x, y, "h"), edgeKey(x, y + 1, "h"), edgeKey(x, y, "d"), edgeKey(x, y, "a")]) {
       if (map.edges[k]) out[k] = map.edges[k];
     }
   }

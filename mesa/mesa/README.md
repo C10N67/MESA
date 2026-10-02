@@ -355,9 +355,24 @@ no salga deformado.
   Se ven en la mesa y en los móviles, y se quitan todas con la ✕.
 - **Niebla**, **Oscuridad** y **Luz** son pinceles de casilla. Ver más abajo.
 - **Muro** pinta paredes sobre los bordes; se puede arrastrar para trazar un tramo.
+- **Diagonal** pone muros a 45 grados, de esquina a esquina de la casilla, para
+  salas en diagonal, torres redondas o cuevas. Arrastra por las casillas: la
+  dirección del arrastre decide si es `\` o `/`, y el trazo se ajusta solo a
+  la diagonal aunque el pulso no sea perfecto. Cortan la visión y el paso
+  igual que un muro normal, y **la casilla que atraviesa un muro diagonal no
+  se puede pisar** (es medio muro: así nadie se cuela por la rendija).
 - **Puerta** pone una puerta cerrada; púlsala otra vez y queda abierta. Cerrada
   corta la visión, abierta la deja pasar.
-- **Borrar** quita muros y puertas.
+- **Borrar** quita muros, diagonales y puertas.
+- **Difícil** pinta terreno difícil (escombros, barro, maleza): **entrar en
+  esas casillas cuesta el doble**. Se ve con un rayado suave en todas las
+  pantallas, el alcance que se pinta al arrastrar ya lo descuenta, y el
+  contador de pies del turno también. Funciona con las dos reglas de
+  diagonales.
+- **Dibujar** es dibujo a mano alzada sobre el plano, con cinco colores. Lo
+  del DM puede verlo la party o solo él (va con el borde a rayas); lo de los
+  jugadores lo ve siempre toda la mesa. Cada jugador puede borrar sus trazos;
+  el DM, cualquiera, o todos de golpe.
 - **Nota** clava una chincheta con texto y tipo (nota, peligro, tesoro, algo
   raro). Por defecto solo la ves tú, y se dibuja en morado con el borde a
   rayas; las que ve la party van en ámbar. **Cuando un personaje pisa la
@@ -451,6 +466,29 @@ cada jugador puede mover su ficha desde el móvil, si puede acercarse y alejarse
 si se pinta el alcance al arrastrar, cuántos pies mide una casilla, cómo cuentan
 las diagonales y si la cámara enseña todo el plano o sigue al personaje.
 
+### Salas, zonas reveladas y zonas ocultas
+
+Tres pinceles más, en el grupo **Zonas**, que solo ve el DM (la party nunca
+recibe dónde están):
+
+- **Sala**: pinta la zona de una sala grande, la del jefe, o un pasillo largo.
+  **En cuanto un personaje entra, la party ve la sala entera**, aunque la luz
+  o el radio de visión no lleguen al fondo. Se pueden pintar todas las que
+  quieras en un mismo mapa: cada mancha separada, o cada trozo partido por un
+  muro o una puerta, es una sala distinta, así que dos salas pegadas no se
+  revelan juntas. Al salir, deja de verse (o se queda como recuerdo, si está
+  activado «recordar lo explorado»).
+- **Revelar**: la party ve esas casillas siempre, esté donde esté. Para un
+  patio a la luz del día o una sala que ya conocen.
+- **Ocultar**: la party **no** ve esas casillas nunca, aunque las tenga
+  delante, y se borran también de lo que recordaba. Para guardar una sorpresa
+  o tapar una parte del plano que aún no toca. Ni lo que haya dentro ni las
+  criaturas que estén ahí viajan a sus aparatos.
+- La goma de ese grupo quita salas y zonas.
+
+Si en los ajustes del mapa está «revelar entero», manda eso: se ve todo,
+también lo ocultado.
+
 ## Ver un área antes de lanzarla
 
 Un jugador con conjuros de área tiene en su mapa el botón **Mis áreas**. Elige
@@ -462,6 +500,67 @@ goblins antes de decidirse, sin tener que pedirle al DM que lo mida.
 Se distingue de las plantillas de la mesa porque va con el borde a rayas, y se
 quita con «Quitar áreas». Para lanzarlo de verdad se usa **Atacar** en la ficha,
 que es donde se gasta el espacio de conjuro.
+
+## Conjuros
+
+Cada personaje, y cada monstruo que los tenga, lleva su **lista de conjuros**
+(botón **Conjuros** en la ficha). Se añaden desde una **biblioteca de 39
+conjuros del SRD** ya preparados, de trucos a nivel 5: Rayo de fuego, Llama
+sagrada, Descarga sobrenatural, Proyectil mágico, Dormir, Curar heridas,
+Inmovilizar persona, Bola de fuego, Relámpago, Espíritus guardianes, Cono de
+frío… La característica de lanzamiento se adivina por la clase y se puede
+cambiar; la CD y el bonificador de ataque salen solos de la ficha, y el DM
+puede fijarlos a mano para un monstruo.
+
+Al **lanzar** se elige el espacio (también uno mayor, para potenciarlo), los
+objetivos y, si es de área, se puede **colocar el área en el mapa** y coger
+directamente a quien quede dentro. Después **el servidor lo resuelve todo**:
+
+- **Ataque de conjuro**: tira el ataque contra la CA de cada objetivo, con
+  ventaja o desventaja, críticos incluidos; los de varios rayos tiran uno por
+  rayo, y los trucos suben de daño con el nivel del personaje.
+- **Salvación**: tira la salvación de cada objetivo con su característica y
+  su competencia; quien falla recibe el daño entero y el estado (paralizado,
+  apresado, asustado…), y quien la supera, la mitad o nada, según el conjuro.
+- **Proyectil mágico**: los dardos impactan siempre y se reparten.
+- **Curas**: suman la característica de lanzamiento y levantan a quien
+  estaba en el suelo.
+- **Dormir**: tira la reserva y duerme de menos a más vida.
+- **Concentración**: si el conjuro la pide, el personaje queda concentrado; si
+  ya lo estaba en otro, ese se pierde y se dice en el registro. Los estados
+  que pone duran lo que dura el conjuro y se quitan solos.
+
+Gasta el espacio solo si el lanzamiento es válido (si no hay objetivos o no
+quedan espacios, avisa y no gasta nada). El DM puede lanzar en secreto. Un
+jugador solo puede lanzar los de su propio personaje.
+
+## Voz
+
+Botón **Voz** en la barra de arriba, para el DM y para cada jugador. Al
+pulsarlo, el navegador pide permiso para el micro y entras en la voz de la
+mesa: todos los que estén dentro se oyen entre sí. Se puede **silenciar el
+micro** sin salir, y un círculo con la inicial de cada uno se ilumina **cuando
+habla**. La tele no entra en la voz (para que no se acople).
+
+El audio va **directamente de aparato a aparato** (WebRTC): no pasa por el
+ordenador del DM, que solo hace de presentador para que se encuentren. Con una
+mesa de 4 o 5 personas va de sobra.
+
+Dos límites que conviene saber:
+
+- **Hace falta una conexión segura.** El navegador solo deja usar el micro en
+  https o en `localhost`. Funciona con el enlace de **Jugar por internet**
+  (también si estáis en la misma wifi: entrad todos por ese enlace) y en el
+  propio ordenador del DM. Con la dirección de la wifi (`http://192.168…`)
+  el navegador lo bloquea, y Mesa lo explica al pulsar el botón. Arrancar con
+  `--cert` y un certificado de confianza también lo resuelve.
+- **Algunas redes no dejan conectar aparato con aparato** (ciertos datos
+  móviles o redes de empresa muy cerradas). Ahí la voz de esa persona sale como
+  «no se ha podido conectar». Mesa no lleva un servidor de retransmisión
+  (TURN) propio; si os pasa a menudo, Discord sigue siendo la alternativa.
+
+En la versión de prueba (GitHub Pages) no hay voz: no hay servidor que presente
+a los aparatos.
 
 ## Dados y charla
 
@@ -610,6 +709,9 @@ public/
     schema.js          forma de los datos y migración (lo usan servidor y navegador)
     los.js             muros, luz, visión, distancias y plantillas (compartido)
     attacks.js         leer y lanzar ataques
+    spells.js          biblioteca de conjuros del SRD
+    spellbook.js       lista de conjuros de cada personaje y ventana de lanzar
+    voice.js           voz entre aparatos (WebRTC)
     attacks-core.js    el trozo de los ataques que también usa el servidor
     map.js             el tablero en canvas
     dm.js              vista del DM
@@ -632,6 +734,8 @@ data/                  la partida y las imágenes (se crea al arrancar)
   los susurros de otro.
 - Las tiradas de ataque y el reparto de puntos de vida se resuelven en el
   servidor. Nadie puede decidir desde su navegador que ha impactado.
+- La voz va de aparato a aparato. El servidor solo reenvía los mensajes para
+  que se encuentren, y únicamente entre dos personas que tengan la voz abierta.
 - El código del DM tiene seis cifras y, tras cinco intentos fallidos, ese
   aparato espera diez minutos antes de poder probar otro.
 - El DM puede **cerrar la mesa** (no entra nadie nuevo) y **expulsar** a
@@ -643,9 +747,13 @@ data/                  la partida y las imágenes (se crea al arrancar)
 
 ## Lo que aún no hace
 
-Terreno difícil que cueste el doble de movimiento, dibujo libre sobre el plano,
-listas de conjuros con sus efectos automáticos y voz. Son los siguientes de la
-lista.
+- Los conjuros de la biblioteca son los del SRD hasta nivel 5. Los que no
+  hacen daño ni ponen un estado (Escudo de fe, Bendecir, Revivificar…) se
+  anotan en el registro y el efecto lo aplicas tú.
+- La voz no tiene servidor de retransmisión: en redes que no dejan conectar
+  aparato con aparato, no llega.
+- Los muros diagonales van de esquina a esquina; curvas de otro ángulo se
+  aproximan con varios tramos.
 
 Del inglés, además: se traduce la interfaz, no la partida. Si escribes tus
 notas o el bestiario en español, en inglés seguirán en español.
