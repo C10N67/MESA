@@ -11,7 +11,7 @@
      absorbImages(d) saca las imágenes incrustadas de una copia antigua
      onPresence()    avisa de que ha cambiado quién está conectado */
 
-import { emptyDoc, migrate, cellKey, normalizeChar, normalizeMap, normalizeShape, normalizePin, normalizePortal, normalizeAttack, normalizeDrawing, modOf, addDice, scaleDice, cantripTier } from "./schema.js";
+import { emptyDoc, migrate, cellKey, normalizeChar, normalizeBeast, normalizeMap, normalizeShape, normalizePin, normalizePortal, normalizeAttack, normalizeDrawing, modOf, addDice, scaleDice, cantripTier } from "./schema.js";
 import { visibleCells, edgesNear, gridDistance, pathCost, occupied, fits } from "./los.js";
 import { roll, detail } from "./dice.js";
 import { critDamage } from "./attacks-core.js";
@@ -661,7 +661,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         break;
       case "bestiary.set":
         if (!dm) return "Solo el DM";
-        doc.bestiary = op.list;
+        doc.bestiary = (Array.isArray(op.list) ? op.list : []).map(normalizeBeast);
         break;
       case "log.add": {
         const entry = { ...op.entry, id: rid(6), ts: Date.now(), actor: client.name };
