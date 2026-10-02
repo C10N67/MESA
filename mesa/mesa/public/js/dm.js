@@ -1,5 +1,6 @@
 /* Vista del DM: todo a la vista y todo editable. */
 
+import { voiceWidget } from "./voice.js";
 import { $, el, on, esc, lines, sign, pct, hpTone, hpBar, tweenBars, initials, imgURL, toast, modal, confirmBox, shrinkImage, clamp } from "./util.js";
 import { CONDITIONS, conditionName, ABILITIES, SKILLS, PIN_KINDS, modOf, normalizeChar, normalizeBeast, normalizeMap, normalizePin, normalizePortal, uid, encounterDifficulty } from "./schema.js";
 import { openAttacks, attacksOf } from "./attacks.js";
@@ -71,6 +72,7 @@ export function mountDM(root) {
           <button role="tab" data-tab="mapa" aria-selected="false">${withIcon("map", "Mapa")}</button>
         </nav>
         <span class="spacer"></span>
+        <span id="voiceSlot"></span>
         <button class="presence" id="presence" type="button" title="Quién está conectado"></button>
         <div class="top-actions">
           <button class="btn sm" id="bestiaryBtn" title="Bestiario">${withIcon("book", "Bestiario")}</button>
@@ -109,6 +111,7 @@ export function mountDM(root) {
   $("#undoBtn", root).addEventListener("click", () => { op("undo"); toast("Deshecho"); });
   $("#moreBtn", root).addEventListener("click", openMenu);
   $("#presence", root).addEventListener("click", openPresence);
+  $("#voiceSlot", root).replaceWith(voiceWidget());
 
   onStatus(ok => $("#offline", root).classList.toggle("hidden", ok));
   onPresence(list => { renderPresence(list); if (tab === "mesa" && doc()) renderTable(); });

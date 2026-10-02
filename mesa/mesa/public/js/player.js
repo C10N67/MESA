@@ -1,6 +1,7 @@
 /* Vista del jugador. Manda su ficha y poco más: lo que el DM no enseña, no
    llega ni siquiera al navegador. */
 
+import { voiceWidget } from "./voice.js";
 import { $, el, on, esc, lines, sign, pct, hpTone, hpBar, tweenBars, initials, imgURL, toast, modal, clamp } from "./util.js";
 import { ABILITIES, SKILLS, CONDITIONS, conditionName, modOf } from "./schema.js";
 import { store, onState, onStatus, onPresence, op, patchChar, leave } from "./net.js";
@@ -57,6 +58,7 @@ export function mountPlayer(root) {
         <div class="brand"><h1>Mesa</h1></div>
         <span class="spacer"></span>
         <div class="who"><span class="dot" id="dot"></span><span class="pill" id="whoami"></span></div>
+        <span id="voiceSlot"></span>
         <span id="plang"></span>
         <button class="icon-btn" id="leaveBtn" title="Salir de la partida" aria-label="Salir de la partida">${icon("exit")}</button>
       </header>
@@ -77,6 +79,7 @@ export function mountPlayer(root) {
     render();
   });
   $("#plang", root).appendChild(langPicker());
+  $("#voiceSlot", root).replaceWith(voiceWidget());
   $("#leaveBtn", root).addEventListener("click", () => leave());
   onStatus(ok => {
     $("#offline", root).classList.toggle("hidden", ok);

@@ -399,7 +399,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         if (t.hp > left) { push({ kind: "event", secret, text: `${t.name} resiste el sueño` }); continue; }
         left -= t.hp;
         setCondition(t, sp.cond || "inconsciente", sp.condRounds || 10);
-        push({ kind: "event", secret, text: `${t.name} se queda dormido` });
+        push({ kind: "event", secret, text: `${t.name} se duerme` });
       }
     } else {
       head(`${sp.name} (${lvlText})${targets.length ? " sobre " + targets.map(t => t.name).join(", ") : ""}${sp.desc ? ": " + sp.desc : ""}`);
@@ -508,6 +508,14 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
     };
 
     switch (op.type) {
+      /* Voz: solo se apunta quién tiene el micro abierto. El audio va de
+         aparato a aparato; el servidor solo pasa los mensajes de arranque. */
+      case "voice.set": {
+        if (client.role === "screen") return "La pantalla no entra en la voz";
+        client.voice = !!op.on;
+        onPresence();
+        return "SKIP_HISTORY";
+      }
       case "char.patch": {
         const c = findChar(op.id);
         if (!c) return "No existe ese personaje";
@@ -965,6 +973,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
   /* La conexión de una sesión se abre o se cierra */
   function setOnline(client, value) {
     client.online = !!value;
+    if (!value) client.voice = false;
     client.seen = Date.now();
   }
 
@@ -986,7 +995,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
   /* Aplica un lote. Si una operación falla, las anteriores ya se aplicaron y
      hay que repartirlas igual: por eso se devuelve cuántas entraron. */
   async function run(client, ops) {
-    const worthRemembering = ops.some(o => o && !["ping", "chat", "log.add", "request.done", "undo"].includes(o.type));
+    const worthRemembering = ops.some(o => o && !["ping", "chat", "log.add", "request.done", "undo", "voice.set"].includes(o.type));
     if (worthRemembering) remember();
     let applied = 0;
     for (const op of ops) {
@@ -1015,7 +1024,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
 
   /* Quién está conectado ahora mismo */
   const presence = () => [...clients.values()].filter(online)
-    .map(c => ({ id: c.id, name: c.name, role: c.role, charId: c.charId }));
+    .map(c => ({ id: c.id, name: c.name, role: c.role, charId: c.charId, voice: !!c.voice }));
 
   return {
     get doc() { return doc; },

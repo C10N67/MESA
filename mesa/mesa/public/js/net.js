@@ -16,8 +16,9 @@ export const store = {
   online: false
 };
 
-const listeners = { state: [], presence: [], status: [] };
+const listeners = { state: [], presence: [], status: [], rtc: [] };
 export const onState = fn => listeners.state.push(fn);
+export const onRtc = fn => listeners.rtc.push(fn);
 export const onPresence = fn => listeners.presence.push(fn);
 export const onStatus = fn => listeners.status.push(fn);
 const emit = (kind, payload) => listeners[kind].forEach(fn => fn(payload));
@@ -88,6 +89,7 @@ const http = {
     const es = new EventSource("api/stream?token=" + encodeURIComponent(token));
     es.addEventListener("state", e => on.state(JSON.parse(e.data)));
     es.addEventListener("presence", e => on.presence(JSON.parse(e.data)));
+    es.addEventListener("rtc", e => on.rtc && on.rtc(JSON.parse(e.data)));
     es.onerror = () => { es.close(); on.error(); };
     return () => es.close();
   },
@@ -102,6 +104,10 @@ const http = {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "No se pudo subir la imagen");
     return data.imageId;
+  },
+  async rtc(token, to, data) {
+    const res = await fetch("api/rtc", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, to, data }) });
+    return res.ok;
   },
   leave() {}
 };
@@ -141,6 +147,7 @@ export async function connect() {
       if (store.session.role === "player") store.session.charId = payload.doc.you || null;
       emit("state", store.doc);
     },
+    rtc(msg) { emit("rtc", msg); },
     presence(list) {
       store.presence = list;
       emit("presence", store.presence);
@@ -186,6 +193,13 @@ async function flush() {
   } catch {
     toast("Sin conexión con la partida", "bad");
   }
+}
+
+/* Mensajes de arranque de la voz, directos a otra sesión */
+export async function sendRtc(to, data) {
+  const t = await transport();
+  if (!t.rtc || !store.session) return false;
+  try { return await t.rtc(store.session.token, to, data); } catch { return false; }
 }
 
 export async function uploadImage(blob) {
