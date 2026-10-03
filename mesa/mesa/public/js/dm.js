@@ -3,7 +3,7 @@
 import { afterMove } from "./portals.js";
 import { voiceWidget } from "./voice.js";
 import { $, el, on, esc, lines, sign, pct, hpTone, hpBar, tweenBars, initials, imgURL, toast, modal, confirmBox, shrinkImage, clamp } from "./util.js";
-import { CONDITIONS, conditionName, ABILITIES, SKILLS, PIN_KINDS, modOf, normalizeChar, normalizeBeast, normalizeMap, normalizePin, normalizePortal, uid, encounterDifficulty, MAX_COLS, MAX_ROWS } from "./schema.js";
+import { CONDITIONS, conditionName, ABILITIES, SKILLS, PIN_KINDS, modOf, normalizeChar, normalizeBeast, bestiaryOf, isBaseBeast, normalizeMap, normalizePin, normalizePortal, uid, encounterDifficulty, MAX_COLS, MAX_ROWS } from "./schema.js";
 import { openAttacks, attacksOf } from "./attacks.js";
 import { feetChars, nextRoomId } from "./los.js";
 import { store, onState, onPresence, onStatus, op, patchChar, patchSession, patchMap, uploadImage, leave, lobby } from "./net.js";
@@ -15,6 +15,7 @@ import { openGridFit, openWallFit } from "./gridfit.js";
 import { langPicker } from "./i18n.js";
 import { icon, withIcon } from "./icons.js";
 import { rollHitPoints } from "./dice.js";
+import { TYPE_NAMES, typeOf, crValue, CATALOG_BY_ID } from "./catalog.js";
 
 let tab = "mesa";
 let shownTab = null;
@@ -22,6 +23,10 @@ let openCards = new Set();
 let mapView = null;
 let mapTool = "token";
 let beastQuery = "";
+let beastType = "";         // filtro por tipo de criatura
+let beastBand = "";         // filtro por franja de VD
+const beastOpen = new Set();   // fichas desplegadas en el bestiario
+const beastDraft = new Map();  // cantidad y «PV al azar» de cada fila, para que no se pierdan al repintar
 let drawerOpen = false;
 let shapeSize = 20;
 let targetId = null;
@@ -897,18 +902,41 @@ function toggleDrawer(force) {
         <button class="btn sm" data-beast="new" title="Crear criatura">${withIcon("plus", "Crear", 16)}</button>
         <button class="icon-btn" data-beast="close" title="Cerrar" aria-label="Cerrar">${icon("close")}</button>
       </header>
-      <div class="drawer-search"><input type="search" id="beastSearch" placeholder="Buscar criatura" aria-label="Buscar criatura" value="${esc(beastQuery)}"></div>
+      <div class="drawer-search">
+        <input type="search" id="beastSearch" placeholder="Buscar criatura" aria-label="Buscar criatura" value="${esc(beastQuery)}">
+        <div class="beast-filters">
+          <select id="beastType" aria-label="Tipo de criatura">
+            <option value="">Todos los tipos</option>
+            ${TYPE_NAMES.map(t => `<option value="${esc(t)}" ${t === beastType ? "selected" : ""}>${esc(t)}</option>`).join("")}
+          </select>
+          <select id="beastBand" aria-label="Valor de desafío">
+            ${CR_BANDS.map(([v, l]) => `<option value="${v}" ${v === beastBand ? "selected" : ""}>${l}</option>`).join("")}
+          </select>
+        </div>
+      </div>
       <div class="body" id="beastList"></div>
     </aside>`);
   document.body.appendChild(node);
   const onEsc = e => { if (e.key === "Escape" && !document.querySelector(".modal-back")) { document.removeEventListener("keydown", onEsc); toggleDrawer(false); } };
   document.addEventListener("keydown", onEsc);
   node.querySelector("#beastSearch").addEventListener("input", e => { beastQuery = e.target.value; renderBestiary(); });
+  node.querySelector("#beastType").addEventListener("change", e => { beastType = e.target.value; renderBestiary(); });
+  node.querySelector("#beastBand").addEventListener("change", e => { beastBand = e.target.value; renderBestiary(); });
+  node.addEventListener("input", e => {
+    const row = e.target.closest(".beast[data-id]");
+    if (!row || !e.target.matches("[data-qty], [data-rollhp]")) return;
+    beastDraft.set(row.dataset.id, { qty: row.querySelector("[data-qty]").value, rollHp: row.querySelector("[data-rollhp]").checked });
+  });
+  node.addEventListener("toggle", e => {
+    const row = e.target.closest && e.target.closest(".beast[data-id]");
+    if (!row || e.target.tagName !== "DETAILS") return;
+    if (e.target.open) beastOpen.add(row.dataset.id); else beastOpen.delete(row.dataset.id);
+  }, true);
   on(node, "click", "[data-beast]", (e, b) => {
     const action = b.dataset.beast;
     if (action === "close") return toggleDrawer(false);
     if (action === "new") return openBeastEditor(null);
-    const beast = doc().bestiary.find(x => x.id === b.dataset.id);
+    const beast = bestiaryOf(doc()).find(x => x.id === b.dataset.id);
     if (action === "spawn") return spawn(beast, b.closest(".beast"));
     if (action === "edit") return openBeastEditor(beast);
     if (action === "drop") return dropBeast(beast);
@@ -916,31 +944,58 @@ function toggleDrawer(force) {
   renderBestiary();
 }
 
+/* Franjas de VD: lo que se busca al preparar un encuentro para un nivel */
+const CR_BANDS = [["", "Cualquier VD"], ["0-0.5", "VD 0 a 1/2"], ["1-2", "VD 1 a 2"], ["3-4", "VD 3 a 4"],
+  ["5-8", "VD 5 a 8"], ["9-16", "VD 9 a 16"], ["17-30", "VD 17 o más"]];
+
 function renderBestiary() {
   const host = $("#beastList");
   if (!host) return;
   const q = beastQuery.trim().toLowerCase();
-  const list = doc().bestiary.filter(b => !q || (b.name + " " + b.sizeType).toLowerCase().includes(q));
-  host.innerHTML = list.map(b => `
-    <div class="beast" style="--tone:${esc(b.color)}">
+  const [lo, hi] = beastBand ? beastBand.split("-").map(Number) : [0, Infinity];
+  /* Se busca también por el nombre en inglés: «owlbear» encuentra al oso lechuza */
+  const words = b => {
+    const en = CATALOG_BY_ID.get(b.id);
+    return (b.name + " " + b.sizeType + (en && !b.custom ? " " + en.en.name + " " + en.en.sizeType : "")).toLowerCase();
+  };
+  const list = bestiaryOf(doc())
+    .filter(b => !q || words(b).includes(q))
+    .filter(b => !beastType || typeOf(b.sizeType) === beastType)
+    .filter(b => { const v = crValue(b.cr); return v >= lo && v <= hi; })
+    .sort((a, b) => crValue(a.cr) - crValue(b.cr) || a.name.localeCompare(b.name, "es"));
+  const block = (title, text) => text ? `<div class="block"><h4>${title}</h4>${lines(text).map(l => `<p>${esc(l)}</p>`).join("")}</div>` : "";
+  const count = `<p class="beast-count">${list.length === 1 ? "1 criatura" : list.length + " criaturas"}</p>`;
+  host.innerHTML = (list.length ? count : "") + list.map(b => {
+    const draft = beastDraft.get(b.id) || { qty: 1, rollHp: true };
+    const base = isBaseBeast(b.id);
+    return `
+    <div class="beast" data-id="${esc(b.id)}" style="--tone:${esc(b.color)}">
       <div class="top">
         ${b.avatarId
-          ? `<img class="avatar" src="${imgURL(b.avatarId)}" alt="" style="--tone:${esc(b.color)};width:30px;height:30px">`
-          : `<div class="avatar" style="--tone:${esc(b.color)};width:30px;height:30px;font-size:11px">${initials(b.name)}</div>`}
-        <b>${esc(b.name)}</b>
+          ? `<img class="avatar" src="${imgURL(b.avatarId)}" alt="" loading="lazy" style="--tone:${esc(b.color)};width:40px;height:40px">`
+          : `<div class="avatar" style="--tone:${esc(b.color)};width:40px;height:40px;font-size:13px">${initials(b.name)}</div>`}
+        <div class="beast-id"><b>${esc(b.name)}</b><small>${esc(b.sizeType)} · CA ${b.ac} · ${b.hpAvg} PV${b.hpDice ? " (" + esc(b.hpDice) + ")" : ""}</small></div>
         <span class="spacer"></span>
-        <small>VD ${esc(b.cr)} · ${b.xp} PX</small>
+        <small class="cr">VD ${esc(b.cr)} · ${b.xp} PX</small>
       </div>
-      <small>${esc(b.sizeType)} · CA ${b.ac} · ${b.hpAvg} PV${b.hpDice ? " (" + esc(b.hpDice) + ")" : ""}</small>
+      <details ${beastOpen.has(b.id) ? "open" : ""}>
+        <summary>Ficha</summary>
+        <div class="detail">
+          <div class="abilities">${ABILITIES.map(([k, l]) => `<span class="abil"><span>${l}</span><b class="tnum">${b[k]}</b><small>${sign(modOf(b[k]))}</small></span>`).join("")}</div>
+          ${block("Velocidad", b.speed + " pies")}${block("Sentidos", b.senses)}${block("Idiomas", b.languages)}
+          ${block("Resistencias", b.resistances)}${block("Rasgos", b.traits)}${block("Acciones", b.actions)}
+        </div>
+      </details>
       <div class="go">
-        <input type="number" min="1" max="20" value="1" data-qty aria-label="Cantidad">
-        <label class="check" style="font-size:12px"><input type="checkbox" data-rollhp checked> PV al azar</label>
+        <input type="number" min="1" max="20" value="${esc(draft.qty)}" data-qty aria-label="Cantidad">
+        <label class="check" style="font-size:12px"><input type="checkbox" data-rollhp ${draft.rollHp ? "checked" : ""}> PV al azar</label>
         <span class="spacer"></span>
-        <button class="btn sm" data-beast="edit" data-id="${b.id}">${icon("pencil")}</button>
-        ${b.custom ? `<button class="icon-btn" data-beast="drop" data-id="${b.id}">${icon("close")}</button>` : ""}
-        <button class="btn sm primary" data-beast="spawn" data-id="${b.id}">Al combate</button>
+        <button class="btn sm" data-beast="edit" data-id="${esc(b.id)}" title="Editar">${icon("pencil")}</button>
+        ${b.custom ? `<button class="icon-btn" data-beast="drop" data-id="${esc(b.id)}" title="${base ? "Volver a la ficha de serie" : "Borrar"}">${icon("close")}</button>` : ""}
+        <button class="btn sm primary" data-beast="spawn" data-id="${esc(b.id)}">Al combate</button>
       </div>
-    </div>`).join("") || '<p class="prose">No hay ninguna criatura con ese nombre.</p>';
+    </div>`;
+  }).join("") || '<p class="prose">No hay ninguna criatura así.</p>';
 }
 
 function spawn(beast, row) {
@@ -1036,7 +1091,9 @@ function openBeastEditor(beast) {
           traits: v("traits"), actions: v("actions"), color: v("color"),
           ...Object.fromEntries(ABILITIES.map(([k]) => [k, +v(k)]))
         });
-        const list = isNew ? [...doc().bestiary, next] : doc().bestiary.map(x => x.id === b.id ? next : x);
+        /* Retocar una de serie la guarda en la partida con su mismo id */
+        const own = doc().bestiary || [];
+        const list = own.some(x => x.id === next.id) ? own.map(x => x.id === next.id ? next : x) : [...own, next];
         op("bestiary.set", { list });
       }
     }]
@@ -1044,8 +1101,9 @@ function openBeastEditor(beast) {
 }
 
 async function dropBeast(b) {
-  if (!await confirmBox(`¿Borrar ${b.name} del bestiario?`)) return;
-  op("bestiary.set", { list: doc().bestiary.filter(x => x.id !== b.id) });
+  const ask = isBaseBeast(b.id) ? `¿Devolver ${b.name} a su ficha de serie? Se pierden tus cambios.` : `¿Borrar ${b.name} del bestiario?`;
+  if (!await confirmBox(ask)) return;
+  op("bestiary.set", { list: (doc().bestiary || []).filter(x => x.id !== b.id) });
 }
 
 /* ---------- Mapa ---------- */

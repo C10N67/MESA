@@ -193,7 +193,7 @@ El inglés se aplica sobre la interfaz ya escrita en español, con un
 diccionario. Se traducen los botones, los rótulos, los avisos, las pistas de las
 herramientas, los dieciséis estados con su explicación, las dieciocho
 habilidades, lo que escribe el programa en el registro y **el bestiario que
-viene de fábrica**, con sus trece criaturas, sus fichas técnicas, sus rasgos y
+viene de fábrica**, con sus 115 criaturas, sus fichas técnicas, sus rasgos y
 sus ataques ("Cimitarra — +4 al ataque — 1d6+2 cortante" sale como "Scimitar —
 +4 to hit — 1d6+2 slashing"). Lo que escribís vosotros no se toca: los
 nombres de los personajes, la charla, tus notas y las criaturas que te inventes
@@ -323,19 +323,60 @@ medio, difícil o mortal antes de que empiece.
 
 ## Bestiario
 
-Cada criatura puede llevar **su retrato**, igual que un personaje: se sube una
-vez en el bestiario y todas las que invoques salen ya con esa cara, en la
-tarjeta y en su ficha del mapa. El tamaño también viaja, así que un ogro
-guardado como «Grande» ocupa 2×2 en cuanto lo pones en el tablero.
+Trae **115 criaturas listas**, de VD 0 a 30: del plebeyo y el goblin a la
+tarasca, pasando por necrófagos, oso lechuza, mantícora, trol, elementales,
+gigantes, dragones de cría a adulto, vampiro, liche, balor y kraken. Hay de los
+catorce tipos (humanoides, bestias, muertos vivientes, monstruosidades,
+infernales, hadas, dragones, gigantes, elementales, constructos, cienos,
+plantas, celestiales y aberraciones), con fichas completas: características,
+sentidos, idiomas, resistencias, rasgos y acciones, y sus ataques listos para
+tirar de un clic, alientos y conjuros con salvación incluidos.
 
-Trece criaturas listas (goblin, kobold, bandido, guardia, lobo, esqueleto,
-zombi, orco, trasgo, araña gigante, oso pardo, osgo y ogro), buscables, con
-cantidad y **PV al azar** para que dos goblins no aguanten lo mismo. Entran al
-encuentro numerados (Goblin 1, Goblin 2…) y con su iniciativa tirada.
+Arriba del bestiario se busca por nombre (también en inglés: «owlbear»
+encuentra al oso lechuza) y se filtra **por tipo** y **por VD** (0 a 1/2, 1 a
+2, 3 a 4, 5 a 8, 9 a 16, 17 o más). La lista sale ordenada por desafío, y
+cada criatura despliega su **ficha** sin salir de ella.
 
-Puedes editar cualquiera y crear las tuyas; las propias se pueden borrar y las
-básicas no. El ojo (👁) de cada ficha ya en la mesa la oculta por completo de
-las otras dos vistas, para emboscadas.
+**Todas tienen retrato y todas del mismo estilo**: una silueta en tinta sobre
+el color de su tipo, de modo que en el tablero se distingue de un vistazo un
+muerto viviente (hueso) de un infernal (carmesí) o un cieno (verde ácido), y
+la silueta dice cuál es. Dragones y elementales llevan el color de su
+elemento. Al ser siluetas se leen igual a 30 píxeles en el móvil que en la
+tele, que es donde un retrato pintado se convierte en una mancha.
+
+Cada criatura puede llevar **su propio retrato**: se sube una vez en el
+bestiario y todas las que invoques salen ya con esa cara, en la tarjeta y en
+su ficha del mapa. El tamaño también viaja, así que un ogro guardado como
+«Grande» ocupa 2×2 en cuanto lo pones en el tablero.
+
+Se elige cantidad y **PV al azar** para que dos goblins no aguanten lo mismo.
+Entran al encuentro numerados (Goblin 1, Goblin 2…) y con su iniciativa
+tirada.
+
+Puedes editar cualquiera y crear las tuyas. Las de serie no viven en la
+partida sino en la aplicación, así que no pesan en lo que viaja por la red y
+las nuevas llegan solas al actualizar Mesa. Si retocas una de serie, se guarda
+tu versión en la partida; la equis la devuelve a la ficha original. Las tuyas
+se borran con esa misma equis. El ojo (👁) de cada ficha ya en la mesa la oculta
+por completo de las otras dos vistas, para emboscadas.
+
+Las partidas de antes se ponen al día solas al abrirlas: conservan lo que
+editaste y los monstruos que ya estaban en la mesa estrenan retrato.
+
+### Créditos del bestiario
+
+Las fichas incluyen material del *System Reference Document 5.1* de Wizards
+of the Coast, publicado bajo [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/legalcode).
+Los retratos son iconos de [game-icons.net](https://game-icons.net) (Lorc,
+Delapouite y otros autores), bajo [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/),
+recoloreados para la mesa con `tools/retratos-bestiario.mjs`. El detalle está
+en `public/bestiario/LICENCIA.txt`.
+
+No se incluyen ilustraciones oficiales de los manuales: son de Wizards of the
+Coast, no tienen licencia libre y esta aplicación se publica en abierto (la
+versión de prueba está en GitHub Pages). Si las tienes por tus libros, súbelas
+como retrato de cada criatura y se quedan en tu partida, sin salir de tu
+ordenador.
 
 ## Mapa
 
