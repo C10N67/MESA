@@ -5,8 +5,10 @@ abre la suya en el móvil: su ficha, sus dados y el trozo de mazmorra que su
 personaje alcanza a ver. En la tele puedes poner una tercera pantalla con el
 mapa y los turnos.
 
-No necesita instalar nada más que Node.js, no tiene dependencias y funciona sin
-internet: basta con que todos estéis en el mismo wifi.
+No necesita instalar nada más que Node.js, no tiene dependencias obligatorias y
+funciona sin internet: basta con que todos estéis en el mismo wifi. (La ayuda
+de la IA para trazar los muros de un plano es opcional y esa sí necesita
+internet.)
 
 ## Probarla sin instalar nada
 
@@ -395,6 +397,37 @@ que una mesa dibujada junto a la pared no se lleva el muro. Las puertas van
 siempre por la cuadrícula. Si lo prefieres como antes, **Por los bordes de la
 cuadrícula** pone muros rectos y diagonales de casilla. En los dos casos se
 revisa sobre el plano antes de ponerlo.
+
+### Ayuda de la IA para los muros
+
+En planos con mucho detalle (mesas, alfombras con borde oscuro, estanterías,
+escombros, sombras) la detección automática se confunde: ve líneas oscuras y
+cree que son paredes. En la misma ventana de **Muros y puertas del plano**
+está **Pedir ayuda a Claude**, la IA de Anthropic: mira el plano y decide qué
+casillas son suelo y cuáles pared, roca o vacío, sabiendo que un mueble no es
+una pared; también señala los tabiques y las puertas. Después Mesa ajusta los
+muros a la tinta del dibujo igual que siempre.
+
+- **Cómo lo ve.** El plano se manda por partes de hasta 20 × 20 casillas, con
+  la cuadrícula y las coordenadas dibujadas encima, para que Claude diga
+  exactamente qué casilla es cuál. Un plano de 30 × 20 son dos partes.
+- **Hace falta una clave de la API de Claude**, que se saca en
+  <https://console.anthropic.com/settings/keys>. Se pega una vez en esa misma
+  ventana y se guarda **solo en el ordenador del DM** (`data/claude.json`);
+  no viaja a los navegadores ni a los móviles, y solo el DM puede usar la
+  ayuda. También vale la variable `ANTHROPIC_API_KEY`. **Olvidar la clave**
+  la borra.
+- **Cuesta dinero, poco.** Cada parte es una consulta a Claude Opus 5.5
+  pagada con tu clave: del orden de unos céntimos por parte. Solo se pregunta
+  cuando pulsas el botón.
+- **Lo que sale de tu ordenador** son las partes del plano, nada más: ni la
+  partida ni los personajes.
+- **Necesita internet y el módulo de Claude**, que «Abrir Mesa» y «Jugar por
+  internet» instalan solos la primera vez (o `npm install` en la carpeta).
+  Sin él, Mesa funciona igual y la ventana dice cómo instalarlo. En la
+  versión de prueba de GitHub Pages no está, porque no hay servidor.
+- Si una parte falla, ahí se usa la detección automática y se avisa.
+  **Volver a la detección automática** deshace la ayuda sin preguntar otra vez.
 
 - **Fichas** arrastra por las casillas. Al arrastrar se pinta **hasta dónde
   llega** con la velocidad que le quede, rodeando muros, y un contador dice
@@ -796,6 +829,7 @@ En la pantalla de la party, doble clic entra y sale de pantalla completa.
 
 ```
 server.js              servidor: red, disco y reparto a cada aparato
+claude.js              ayuda de la IA para los muros del plano (la clave se queda aquí)
 public/
   index.html           el documento; la interfaz la monta el JavaScript
   manifest.webmanifest lo que hace falta para instalarla como aplicación
@@ -825,7 +859,11 @@ public/
     dice-panel.js      panel de dados y registro
     char-editor.js     editor de fichas
     catalog.js         criaturas de partida
-data/                  la partida y las imágenes (se crea al arrancar)
+    gridfind.js        encontrar la cuadrícula dibujada en el plano
+    gridfit.js         ventanas de encajar la cuadrícula y de muros y puertas del plano
+    wallfind.js        proponer muros y puertas del plano y trazarlos sobre la tinta
+    aiwalls.js         ayuda de la IA: trocear el plano, la pregunta y juntar las respuestas
+data/                  la partida, las imágenes y la clave de la IA si la guardas (se crea al arrancar)
 ```
 
 ## Seguridad, con nombre y apellidos

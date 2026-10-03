@@ -1,6 +1,8 @@
 /* Mesa · servidor de partida
-   Node 18+, sin dependencias. Sirve la aplicación, guarda el estado en disco
-   y mantiene al día a todos los dispositivos conectados.
+   Node 18+, sin dependencias obligatorias. Sirve la aplicación, guarda el
+   estado en disco y mantiene al día a todos los dispositivos conectados. La
+   ayuda de la IA para los muros del plano (claude.js) usa el SDK de
+   Anthropic si está instalado; sin él, todo lo demás funciona igual.
 
    node server.js [--port 8080] [--pin 123456] [--data ./data] [--cert cert.pem --key key.pem] [--internet]
 
@@ -28,6 +30,7 @@ import { fileURLToPath } from "node:url";
 
 import { migrate } from "./public/js/schema.js";
 import { createEngine } from "./public/js/engine.js";
+import { createClaude } from "./claude.js";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC = path.join(HERE, "public");
@@ -55,12 +58,14 @@ const engine = createEngine({
   onKick: client => { if (client.res) { try { client.res.end(); } catch {} client.res = null; } }
 });
 const clients = engine.clients;   // testigo -> { id, name, role, charId, res }
+const claude = createClaude({ dataDir: DATA });
 
 const MAX_BODY = 24 * 1024 * 1024;   // 24 MB: cabe un plano grande
 const IMG_TYPES = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif" };
 
 async function boot() {
   await mkdir(IMAGES, { recursive: true });
+  await claude.init();
   try {
     const saved = JSON.parse(await readFile(STATE_FILE, "utf8"));
     engine.doc = await absorbLegacyImages(migrate(saved.doc || saved));
@@ -192,6 +197,21 @@ function serveStatic(req, res, file) {
   createReadStream(file).pipe(res);
 }
 
+/* Las partes del plano que manda el navegador para la IA: coordenadas
+   enteras y una imagen JPEG en base64 de tamaño razonable */
+function aiTiles(raw) {
+  if (!Array.isArray(raw) || !raw.length || raw.length > 40) return null;
+  const int = v => (Number.isInteger(v) && v >= 0 && v < 1000 ? v : null);
+  const out = [];
+  for (const t of raw) {
+    const tile = { x0: int(t && t.x0), y0: int(t && t.y0), x1: int(t && t.x1), y1: int(t && t.y1), image: t && t.image };
+    if ([tile.x0, tile.y0, tile.x1, tile.y1].includes(null) || tile.x1 < tile.x0 || tile.y1 < tile.y0) return null;
+    if (typeof tile.image !== "string" || tile.image.length > 6e6 || !/^[A-Za-z0-9+/]+={0,2}$/.test(tile.image)) return null;
+    out.push(tile);
+  }
+  return out;
+}
+
 /* Quién llama, para contar intentos fallidos. Detrás del túnel todo llega
    desde este mismo ordenador, así que se usa la cabecera que pone Cloudflare. */
 const pinFails = new Map();
@@ -290,6 +310,27 @@ const handler = async (req, res) => {
       if (!client.voice || !target || !target.voice) return json(res, 409, { error: "Esa persona no está en la voz" });
       send(target, "rtc", { from: client.id, data: body.data });
       return json(res, 200, { ok: true });
+    }
+
+    /* Ayuda de la IA (Claude) para los muros del plano. Solo el DM; la clave
+       se queda en este ordenador y no se le manda a nadie. */
+    if (p.startsWith("/api/ai/")) {
+      const body = req.method === "POST" ? JSON.parse((await readBody(req)).toString() || "{}") : {};
+      const client = clients.get(body.token || url.searchParams.get("token") || "");
+      if (!client) return json(res, 401, { error: "sesión caducada" });
+      if (client.role !== "dm") return json(res, 403, { error: "Solo el DM" });
+      try {
+        if (p === "/api/ai/status") return json(res, 200, await claude.status());
+        if (p === "/api/ai/key" && req.method === "POST") return json(res, 200, await claude.setKey(body.key));
+        if (p === "/api/ai/walls" && req.method === "POST") {
+          const tiles = aiTiles(body.tiles);
+          if (!tiles) return json(res, 400, { error: "Partes del plano no válidas" });
+          return json(res, 200, { tiles: await claude.walls(tiles) });
+        }
+      } catch (err) {
+        return json(res, err.status || 500, { error: err.message });
+      }
+      return json(res, 404, { error: "No está aquí" });
     }
 
     if (p === "/api/image" && req.method === "POST") {

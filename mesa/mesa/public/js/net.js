@@ -206,6 +206,22 @@ export async function uploadImage(blob) {
   return (await transport()).image(store.session.token, blob);
 }
 
+/* Ayuda de la IA (Claude) para los muros del plano. Habla con el servidor del
+   DM, que es quien tiene la clave; en la versión de prueba no hay servidor. */
+async function aiCall(path, body) {
+  if (DEMO) throw new Error("La ayuda de la IA necesita el servidor de Mesa: en la versión de prueba no está");
+  const token = store.session && store.session.token;
+  const res = body
+    ? await fetch("api/ai/" + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, ...body }) })
+    : await fetch("api/ai/" + path + "?token=" + encodeURIComponent(token || ""));
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw Object.assign(new Error(data.error || "No se pudo hablar con el servidor"), { status: res.status });
+  return data;
+}
+export const aiStatus = () => aiCall("status");
+export const aiSetKey = key => aiCall("key", { key });
+export const aiWalls = tiles => aiCall("walls", { tiles });
+
 /* Al cerrar la pestaña, en la versión de prueba se avisa para que no se quede
    como conectada (por HTTP lo nota el servidor solo). */
 addEventListener("pagehide", () => {

@@ -49,5 +49,10 @@ Instalarla como aplicación (icono propio, sin barra del navegador):
   en el ordenador del DM, el botón "Instalar Mesa como aplicación" de la entrada.
   En los móviles hace falta HTTPS: mira "Instalar como aplicación" en el README.
 
+Planos con mucho detalle: en Ajustes del mapa > Muros y puertas del plano,
+  "Pedir ayuda a Claude" (la IA de Anthropic) distingue paredes de muebles.
+  Necesita internet y una clave de la API de Claude, que se pega ahí mismo y
+  se queda solo en este ordenador. Cada consulta cuesta unos céntimos.
+
 Otro puerto:   node server.js --port 3000
 Parar:         cierra la ventana negra, o Ctrl+C dentro de ella.

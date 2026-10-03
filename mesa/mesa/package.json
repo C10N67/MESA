@@ -12,5 +12,10 @@
     "dev": "node --watch server.js",
     "test": "node --test \"test/*.test.mjs\""
   },
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  },
+  "optionalDependencies": {
+    "@anthropic-ai/sdk": "^0.131.0"
+  }
 }
