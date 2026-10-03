@@ -1321,3 +1321,15 @@ ul.plain b { color: var(--vellum); }
   .player-top:has(.voice.on) .who .pill { display: none; }
   .vchips { max-width: 51px; }
 }
+
+/* ---------- Encajar la cuadrícula con el plano ---------- */
+.gridfit-status { margin: 0 0 10px; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--edge);
+  background: var(--stone-2); font-size: 13px; line-height: 1.4; }
+.gridfit-status.good { border-color: #2f5c38; background: #12221a; color: #b9e2c1; }
+.gridfit-status.warn { border-color: #6b5320; background: #241d10; color: var(--gold-soft); }
+.gridfit-status.bad { border-color: #5a2528; background: #2a1416; color: #f0b6b7; }
+.gridfit-view { max-height: 52vh; overflow: auto; border: 1px solid var(--edge); border-radius: 10px;
+  background: #07090d; margin-bottom: 10px; }
+.gridfit-view canvas { display: block; cursor: move; touch-action: none; }
+.gridfit-tools { margin-bottom: 8px; }
+.gridfit-fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0 12px; }

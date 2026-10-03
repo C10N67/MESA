@@ -967,7 +967,7 @@ export class MapView {
     const img = image(map.imageId);
     const ready = !!(img && img.complete && img.naturalWidth);
     const key = [this.canvas.width, this.canvas.height, g.dpr, g.cell, g.originX, g.originY,
-      map.imageId, ready, map.grid, map.cols, map.rows].join("|");
+      map.imageId, ready, map.grid, map.cols, map.rows, JSON.stringify(map.imgGrid || null)].join("|");
     if (this._base && this._base.key === key) return this._base.canvas;
     const off = (this._base && this._base.canvas) || document.createElement("canvas");
     off.width = this.canvas.width;
@@ -978,7 +978,22 @@ export class MapView {
     ctx.fillRect(0, 0, g.W, g.H);
     const X = c => g.originX + c * g.cell;
     const Y = c => g.originY + c * g.cell;
-    if (ready) {
+    const ig = map.imgGrid;
+    if (ready && ig) {
+      /* La cuadrícula del plano ya está medida: la imagen se escala para que
+         sus casillas midan lo mismo que las nuestras y se recorta al tablero.
+         Lo que el tablero tenga fuera de la imagen queda de fondo. */
+      const sx = g.cell / ig.w, sy = g.cell / ig.h;
+      ctx.fillStyle = "#12151d";
+      ctx.fillRect(X(0), Y(0), map.cols * g.cell, map.rows * g.cell);
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(X(0), Y(0), map.cols * g.cell, map.rows * g.cell);
+      ctx.clip();
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(img, X(0) - ig.x * sx, Y(0) - ig.y * sy, img.naturalWidth * sx, img.naturalHeight * sy);
+      ctx.restore();
+    } else if (ready) {
       ctx.imageSmoothingQuality = "high";
       ctx.drawImage(img, X(0), Y(0), map.cols * g.cell, map.rows * g.cell);
     } else {

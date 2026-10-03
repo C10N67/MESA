@@ -147,6 +147,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
       const visibleList = doc.session.revealAll ? null : [...seen];
       maps.push({
         id: map.id, name: map.name, imageId: map.imageId, imageW: map.imageW, imageH: map.imageH,
+        imgGrid: map.imgGrid || null,
         cols: map.cols, rows: map.rows, radius: map.radius, remember: map.remember,
         camera: map.camera, followSpan: map.followSpan, partyZoom: map.partyZoom,
         grid: map.grid, revealAll: doc.session.revealAll,

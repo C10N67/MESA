@@ -3,7 +3,7 @@
 import { afterMove } from "./portals.js";
 import { voiceWidget } from "./voice.js";
 import { $, el, on, esc, lines, sign, pct, hpTone, hpBar, tweenBars, initials, imgURL, toast, modal, confirmBox, shrinkImage, clamp } from "./util.js";
-import { CONDITIONS, conditionName, ABILITIES, SKILLS, PIN_KINDS, modOf, normalizeChar, normalizeBeast, normalizeMap, normalizePin, normalizePortal, uid, encounterDifficulty } from "./schema.js";
+import { CONDITIONS, conditionName, ABILITIES, SKILLS, PIN_KINDS, modOf, normalizeChar, normalizeBeast, normalizeMap, normalizePin, normalizePortal, uid, encounterDifficulty, MAX_COLS, MAX_ROWS } from "./schema.js";
 import { openAttacks, attacksOf } from "./attacks.js";
 import { feetChars, nextRoomId } from "./los.js";
 import { store, onState, onPresence, onStatus, op, patchChar, patchSession, patchMap, uploadImage, leave, lobby } from "./net.js";
@@ -11,6 +11,7 @@ import { dicePanel, renderLog, throwDice, tellTable, currentMode, isSecret } fro
 import { openCharEditor, openConditions } from "./char-editor.js";
 import { MapView } from "./map.js";
 import { openSpellbook } from "./spellbook.js";
+import { openGridFit } from "./gridfit.js";
 import { langPicker } from "./i18n.js";
 import { icon, withIcon } from "./icons.js";
 import { rollHitPoints } from "./dice.js";
@@ -1409,12 +1410,12 @@ function openMapSettings(map) {
     <div class="cols2">
       <label class="field"><span>Nombre</span><input name="name" value="${esc(map.name)}"></label>
       <label class="field"><span>Radio de visión (casillas)</span><input name="radius" type="number" min="1" max="40" value="${map.radius}"></label>
-      <label class="field"><span>Columnas</span><input name="cols" type="number" min="5" max="90" value="${map.cols}"></label>
-      <label class="field"><span>Filas</span><input name="rows" type="number" min="5" max="70" value="${map.rows}"></label>
+      <label class="field"><span>Columnas</span><input name="cols" type="number" min="5" max="${MAX_COLS}" value="${map.cols}"></label>
+      <label class="field"><span>Filas</span><input name="rows" type="number" min="5" max="${MAX_ROWS}" value="${map.rows}"></label>
     </div>
     <div class="row" style="margin-bottom:12px">
       <button type="button" class="btn sm" id="imgBtn">Imagen de fondo</button>
-      <button type="button" class="btn sm" id="fitGrid">Cuadrar cuadrícula con la imagen</button>
+      <button type="button" class="btn sm" id="fitGrid">Encajar cuadrícula con el plano</button>
       <input type="file" id="imgFile" accept="image/*" hidden>
     </div>
     <fieldset>
@@ -1458,23 +1459,27 @@ function openMapSettings(map) {
   </div>`);
 
   const file = body.querySelector("#imgFile");
+  /* Si se encaja la cuadrícula con este formulario abierto, que «Guardar» no
+     devuelva las columnas y filas de antes */
+  const onApply = ({ cols, rows }) => {
+    body.querySelector('[name="cols"]').value = cols;
+    body.querySelector('[name="rows"]').value = rows;
+  };
   body.querySelector("#imgBtn").addEventListener("click", () => file.click());
   file.addEventListener("change", async () => {
     if (!file.files[0]) return;
     try {
       const { blob, w, h } = await shrinkImage(file.files[0], 2200);
       const imageId = await uploadImage(blob);
-      const cols = map.cols;
-      patchMap(map.id, { imageId, imageW: w, imageH: h, rows: clamp(Math.round(cols / (w / h)), 5, 70) });
+      const cols = map.cols, rows = clamp(Math.round(cols / (w / h)), 5, MAX_ROWS);
+      patchMap(map.id, { imageId, imageW: w, imageH: h, rows, imgGrid: null });
+      onApply({ cols, rows });
       toast("Plano cargado", "good");
+      /* Plano nuevo: se busca su cuadrícula y se enseña para confirmarla */
+      openGridFit({ ...map, imageId, imageW: w, imageH: h, imgGrid: null }, { onApply });
     } catch (err) { toast(err.message, "bad"); }
   });
-  body.querySelector("#fitGrid").addEventListener("click", () => {
-    const m = activeMap();
-    if (!m.imageW) return toast("Este mapa no tiene imagen de fondo", "bad");
-    patchMap(m.id, { rows: clamp(Math.round(m.cols / (m.imageW / m.imageH)), 5, 70) });
-    toast("Cuadrícula ajustada a la imagen");
-  });
+  body.querySelector("#fitGrid").addEventListener("click", () => openGridFit(activeMap(), { onApply }));
   body.querySelector("#resetFog").addEventListener("click", () => patchMap(map.id, { explored: [] }));
   body.querySelector("#clearWalls").addEventListener("click", () => patchMap(map.id, { edges: {} }));
   body.querySelector("#clearCells").addEventListener("click", () => patchMap(map.id, { cells: {} }));
@@ -1501,8 +1506,8 @@ function openMapSettings(map) {
         patchMap(map.id, {
           name: v("name").value || "Mapa",
           radius: +v("radius").value || 5,
-          cols: +v("cols").value || map.cols,
-          rows: +v("rows").value || map.rows,
+          cols: clamp(Math.trunc(+v("cols").value || map.cols), 5, MAX_COLS),
+          rows: clamp(Math.trunc(+v("rows").value || map.rows), 5, MAX_ROWS),
           remember: v("remember").checked,
           grid: v("grid").checked,
           camera: v("camera").value,
