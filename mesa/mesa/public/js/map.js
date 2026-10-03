@@ -6,7 +6,7 @@
    party solo recibe lo que su personaje alcanza a ver. */
 
 import { cellKey, edgeKey, clamp, footprint, conditionName } from "./schema.js";
-import { visibleCells, reachableCells, shapeCells, gridDistance, occupied, fits } from "./los.js";
+import { visibleCells, reachableCells, shapeCells, gridDistance, occupied, fits, nextRoomId } from "./los.js";
 import { initials, imgURL, pct, hpTone, reducedMotion } from "./util.js";
 import { drawGlyph } from "./icons.js";
 
@@ -259,7 +259,7 @@ export class MapView {
       { d: dy, key: edgeKey(x, y, "h") },
       { d: 1 - dy, key: edgeKey(x, y + 1, "h") }
     ];
-    /* Al borrar, también cuentan las diagonales que haya en la casilla */
+    /* La puerta y la goma también cogen las diagonales que haya en la casilla */
     if (withDiagonals) {
       const edges = (this.data.map && this.data.map.edges) || {};
       if (edges[edgeKey(x, y, "d")]) options.push({ d: Math.abs(dx - dy) / Math.SQRT2, key: edgeKey(x, y, "d") });
@@ -331,6 +331,14 @@ export class MapView {
       if (this.mode === "dm" && (this.tool === "cell" || this.tool === "layer")) {
         this.painting = this.tool;
         this.lastPaint = null;
+        /* Sala: se sigue pintando la sala en curso (la empieza el botón
+           «Sala»); si el trazo empieza dentro de otra, se pasa a esa */
+        if (this.tool === "layer" && this.layer === "rooms" && this.layerValue) {
+          const here = Number((map.rooms || {})[cellKey(p.x, p.y)]);
+          if (here) this.roomId = here;
+          else if (!this.roomId) this.roomId = nextRoomId(map);
+          this.opts.onRoom && this.opts.onRoom(this.roomId);
+        }
         this.paintAt(p);
         cv.setPointerCapture(e.pointerId);
         return;
@@ -345,7 +353,8 @@ export class MapView {
       }
       if (this.mode === "dm" && (this.tool === "wall" || this.tool === "door" || this.tool === "erase")) {
         this.painting = this.tool;
-        this.opts.onEdge && this.opts.onEdge(this.edgeAt(p.fx, p.fy, this.tool === "erase"), this.tool);
+        /* La puerta y la goma también valen para los muros diagonales */
+        this.opts.onEdge && this.opts.onEdge(this.edgeAt(p.fx, p.fy, this.tool !== "wall"), this.tool);
         cv.setPointerCapture(e.pointerId);
         return;
       }
@@ -586,7 +595,7 @@ export class MapView {
     if (this.lastPaint === key) return;
     this.lastPaint = key;
     if (this.painting === "cell") this.opts.onPaintCell && this.opts.onPaintCell(p.x, p.y, this.brush);
-    else if (this.painting === "layer") this.opts.onPaintLayer && this.opts.onPaintLayer(p.x, p.y, this.layer, this.layerValue);
+    else if (this.painting === "layer") this.opts.onPaintLayer && this.opts.onPaintLayer(p.x, p.y, this.layer, this.layer === "rooms" && this.layerValue ? this.roomId : this.layerValue);
     else if (this.painting === "diag") this.opts.onEdge && this.opts.onEdge(edgeKey(p.x, p.y, this.diagDir), "wall");
   }
 
@@ -820,6 +829,16 @@ export class MapView {
       if (!dm && seen && !seen.has(cellKey(p.x, p.y)) && !known.has(cellKey(p.x, p.y))) continue;
       const cx = X(p.x) + g.cell / 2, cy = Y(p.y) + g.cell / 2;
       ctx.save();
+      /* El DM ve adónde lleva un pasadizo dentro del mismo mapa */
+      if (dm && (!p.toMap || p.toMap === map.id) && p.toX !== null && p.toY !== null) {
+        const ax = X(p.toX) + g.cell / 2, ay = Y(p.toY) + g.cell / 2;
+        ctx.strokeStyle = "rgba(136,120,216,.7)";
+        ctx.lineWidth = Math.max(1.2, g.cell * 0.04);
+        ctx.setLineDash([g.cell * 0.15, g.cell * 0.12]);
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(ax, ay); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.beginPath(); ctx.arc(ax, ay, g.cell * 0.28, 0, Math.PI * 2); ctx.stroke();
+      }
       ctx.strokeStyle = "#8878d8";
       ctx.fillStyle = "rgba(136,120,216,.22)";
       ctx.lineWidth = Math.max(1.5, g.cell * 0.06);
@@ -1023,7 +1042,13 @@ export class MapView {
       ctx.restore();
     };
     const vis = Object.entries(map.vis || {});
-    tint(Object.keys(map.rooms || {}), "rgba(217,154,43,.10)", "rgba(217,154,43,.75)", true);
+    /* Cada sala con su color, para distinguir dos pegadas */
+    const byRoom = new Map();
+    for (const [k, v] of Object.entries(map.rooms || {})) (byRoom.get(v) || byRoom.set(v, []).get(v)).push(k);
+    for (const [id, keys] of byRoom) {
+      const [r, gg, b] = ROOM_TONES[(Number(id) || 1) % ROOM_TONES.length];
+      tint(keys, `rgba(${r},${gg},${b},.12)`, `rgba(${r},${gg},${b},.8)`, true);
+    }
     tint(vis.filter(([, v]) => v === "show").map(([k]) => k), "rgba(79,157,93,.16)", "rgba(110,190,125,.8)", false);
     tint(vis.filter(([, v]) => v === "hide").map(([k]) => k), "rgba(60,40,90,.45)", "rgba(136,120,216,.85)", true);
   }
@@ -1485,6 +1510,8 @@ const PIN_MARKS = {
     ctx.beginPath(); ctx.arc(cx, cy + r * 0.46, Math.max(1.1, r * 0.1), 0, Math.PI * 2); ctx.fillStyle = tone; ctx.fill();
   }
 };
+
+const ROOM_TONES = [[127, 208, 255], [217, 154, 43], [229, 107, 111], [143, 214, 148], [200, 160, 240], [240, 200, 120]];
 
 export const EDGE_CYCLE = { none: "wall", wall: "door", door: "doorOpen", doorOpen: null };
 export { cellKey, edgeKey };

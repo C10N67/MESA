@@ -366,7 +366,8 @@ export function normalizePortal(raw = {}) {
     toX: raw.toX === null || raw.toX === undefined ? null : Math.trunc(num(raw.toX)),
     toY: raw.toY === null || raw.toY === undefined ? null : Math.trunc(num(raw.toY)),
     label: String(raw.label || "Escalera").slice(0, 40),
-    auto: raw.auto !== false                 // llevar solo al pisarlo
+    auto: raw.auto !== false,                // llevar al pisarlo
+    ask: raw.ask !== false                   // y preguntar antes quién cruza
   };
 }
 

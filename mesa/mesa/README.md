@@ -362,7 +362,9 @@ no salga deformado.
   igual que un muro normal, y **la casilla que atraviesa un muro diagonal no
   se puede pisar** (es medio muro: así nadie se cuela por la rendija).
 - **Puerta** pone una puerta cerrada; púlsala otra vez y queda abierta. Cerrada
-  corta la visión, abierta la deja pasar.
+  corta la visión, abierta la deja pasar. Vale también para los **muros
+  diagonales**: pulsa encima de uno y se convierte en puerta. Abierta, su
+  casilla se puede pisar y cruzar; cerrada, es pared.
 - **Borrar** quita muros, diagonales y puertas.
 - **Difícil** pinta terreno difícil (escombros, barro, maleza): **entrar en
   esas casillas cuesta el doble**. Se ve con un rayado suave en todas las
@@ -381,8 +383,21 @@ no salga deformado.
   party no aparecen hasta que alguien las **tiene a la vista por primera vez**;
   a partir de ahí se quedan en el mapa si está activo «recordar lo explorado»,
   y si no, solo mientras las estén viendo. Tú las ves todas siempre.
-- **Acceso** pone una escalera o un portal a otro mapa: quien la pisa cruza, y
-  la mesa entera cambia de plano con él.
+- **Acceso** pone una escalera, una trampilla o un pasadizo. Puede llevar a
+  **otro mapa** o a **otro punto del mismo mapa**; la llegada se escribe o se
+  marca pulsando en el plano («Marcar la llegada en el mapa»), y el DM ve una
+  línea a rayas hasta ella. Al pisarlo puede pasar una de tres cosas:
+  - **Preguntar quién cruza** (lo normal): a quien ha movido la ficha, sea el
+    DM o un jugador, le sale una ventana con el resto de la party de ese mapa
+    (y a qué distancia está cada uno). Marca a quien va, o «Toda la party», y
+    cruzan juntos; se colocan alrededor de la llegada sin meter a nadie en un
+    muro ni al otro lado de una pared. «Quedarse aquí» no hace nada.
+  - **Cruza solo quien lo pisa**, sin preguntar.
+  - **Nada**: solo marca el sitio.
+
+  Si lleva a otro mapa, la mesa cambia de plano con quien cruce. Un jugador
+  solo puede usarlo con su personaje encima, y solo se lleva a personajes, no a
+  monstruos; el DM puede llevarse a cualquiera.
 - Pulsa una casilla vacía para **colocar** ahí a quien todavía no esté en el
   tablero; pulsa una ficha para su menú (apuntar, atacar, estados, sacarla).
 - `Alt` + clic **señala** un punto: sale un círculo animado en la pantalla de
@@ -473,11 +488,19 @@ recibe dónde están):
 
 - **Sala**: pinta la zona de una sala grande, la del jefe, o un pasillo largo.
   **En cuanto un personaje entra, la party ve la sala entera**, aunque la luz
-  o el radio de visión no lleguen al fondo. Se pueden pintar todas las que
-  quieras en un mismo mapa: cada mancha separada, o cada trozo partido por un
-  muro o una puerta, es una sala distinta, así que dos salas pegadas no se
-  revelan juntas. Al salir, deja de verse (o se queda como recuerdo, si está
-  activado «recordar lo explorado»).
+  o el radio de visión no lleguen al fondo. Al salir, deja de verse (o se
+  queda como recuerdo, si está activado «recordar lo explorado»).
+
+  Cada pulsación del botón **Sala empieza una sala nueva**, con su propio
+  color; todos los trazos que hagas después son de esa misma sala, así que se
+  puede pintar fila a fila. Para seguir pintando una que ya existe, empieza el
+  trazo dentro de ella. Por eso **dos salas pegadas, sin pared entre ellas,
+  se revelan por separado**: entrar en la primera no enseña la segunda.
+
+  Además, los muros y las puertas parten una sala, **también los diagonales**:
+  una sala cortada por un muro en diagonal de pared a pared son dos trozos, y
+  se revela solo el lado en el que estás. Un tramo diagonal suelto que no
+  cierra nada no parte la sala.
 - **Revelar**: la party ve esas casillas siempre, esté donde esté. Para un
   patio a la luz del día o una sala que ya conocen.
 - **Ocultar**: la party **no** ve esas casillas nunca, aunque las tenga
@@ -712,6 +735,7 @@ public/
     spells.js          biblioteca de conjuros del SRD
     spellbook.js       lista de conjuros de cada personaje y ventana de lanzar
     voice.js           voz entre aparatos (WebRTC)
+    portals.js         cruzar un acceso con varios a la vez
     attacks-core.js    el trozo de los ataques que también usa el servidor
     map.js             el tablero en canvas
     dm.js              vista del DM

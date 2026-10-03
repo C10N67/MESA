@@ -12,7 +12,7 @@
      onPresence()    avisa de que ha cambiado quién está conectado */
 
 import { emptyDoc, migrate, cellKey, normalizeChar, normalizeMap, normalizeShape, normalizePin, normalizePortal, normalizeAttack, normalizeDrawing, modOf, addDice, scaleDice, cantripTier } from "./schema.js";
-import { visibleCells, edgesNear, gridDistance, pathCost, occupied, fits } from "./los.js";
+import { visibleCells, edgesNear, gridDistance, pathCost, occupied, fits, reachableCells } from "./los.js";
 import { roll, detail } from "./dice.js";
 import { critDamage } from "./attacks-core.js";
 
@@ -276,6 +276,42 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
     if (!id) return;
     if (!c.conditions.includes(id)) c.conditions = [...c.conditions, id];
     if (rounds) c.condMeta = { ...(c.condMeta || {}), [id]: rounds };
+  }
+
+  /* Lleva a unas fichas al otro lado de un acceso (otro mapa o el mismo) y
+     las coloca juntas alrededor de la llegada, sin meter a nadie en un muro
+     ni al otro lado de una pared. Devuelve cuántas han cruzado. */
+  /* Un acceso lleva a algún sitio si apunta a otro mapa que exista, o a
+     otra casilla del mismo */
+  function portalLeads(map, p) {
+    if (p.toMap && p.toMap !== map.id) return doc.maps.some(m => m.id === p.toMap);
+    return p.toX !== null && p.toY !== null && (p.toX !== p.x || p.toY !== p.y);
+  }
+
+  function crossPortal(map, portal, list) {
+    const dest = doc.maps.find(m => m.id === (portal.toMap || map.id)) || map;
+    const tx = portal.toX === null ? portal.x : portal.toX;
+    const ty = portal.toY === null ? portal.y : portal.toY;
+    const spots = [...reachableCells(dest, { x: tx, y: ty }, 0, { budgetSquares: 8 }).entries()]
+      .sort((a, b) => a[1] - b[1]).map(([k]) => k.split(",").map(Number));
+    const gone = [];
+    for (const c of list) {
+      const prev = { mapId: c.mapId, mx: c.mx, my: c.my };
+      c.mx = null;                          // que no se estorbe a sí misma
+      const spot = spots.find(([x, y]) => !fits(dest, doc.chars, c, x, y));
+      if (!spot) { Object.assign(c, prev); continue; }
+      c.mapId = dest.id; c.mx = spot[0]; c.my = spot[1];
+      gone.push(c);
+    }
+    if (!gone.length) return 0;
+    const pcs = gone.filter(c => c.kind === "pc");
+    if (pcs.length && dest.id !== map.id) doc.session.activeMapId = dest.id;
+    if (pcs.length) doc.session.focusId = pcs[0].id;
+    const names = gone.map(c => c.name);
+    const list2 = names.length > 1 ? names.slice(0, -1).join(", ") + " y " + names[names.length - 1] : names[0];
+    doc.log.push({ id: rid(6), ts: Date.now(), actor: "Mesa", kind: "event",
+      text: `${list2} ${gone.length > 1 ? "cruzan" : "cruza"} por ${portal.label}` });
+    return gone.length;
   }
 
   function castSpell(client, op) {
@@ -620,18 +656,32 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
           }
         }
 
-        /* Accesos: al pisar una escalera se cruza al otro mapa */
-        const portal = map && (map.portals || []).find(p => p.auto && p.x === op.x && p.y === op.y && p.toMap);
-        if (portal && doc.maps.some(m => m.id === portal.toMap)) {
-          c.mapId = portal.toMap;
-          c.mx = portal.toX === null ? op.x : portal.toX;
-          c.my = portal.toY === null ? op.y : portal.toY;
-          if (c.kind === "pc") {
-            doc.session.activeMapId = portal.toMap;
-            doc.log.push({ id: rid(6), ts: Date.now(), actor: "Mesa", kind: "event",
-              text: `${c.name} cruza por ${portal.label}` });
-          }
-        }
+        /* Accesos: al pisar una escalera se cruza. Si el acceso pregunta
+           quién va, no se cruza aquí: quien ha movido la ficha elige en su
+           pantalla y manda «portal.cross». */
+        const portal = map && (map.portals || []).find(p => p.auto && !p.ask && p.x === op.x && p.y === op.y && portalLeads(map, p));
+        if (portal) crossPortal(map, portal, [c]);
+        break;
+      }
+
+      /* Cruzar un acceso con varios a la vez. Lo pide quien acaba de pisarlo:
+         el DM con cualquier ficha del mapa, un jugador con la suya y las de
+         sus compañeros (la party viaja junta si así lo decide la mesa). */
+      case "portal.cross": {
+        const map = doc.maps.find(m => m.id === op.mapId);
+        const portal = map && (map.portals || []).find(p => p.id === op.portalId);
+        if (!portal || !portalLeads(map, portal)) return "Ese acceso no lleva a ningún sitio";
+        if (!dm && !doc.session.allowPlayerMove) return "El DM ha desactivado el movimiento";
+        const ids = [...new Set(Array.isArray(op.ids) ? op.ids : [])];
+        const who = ids.map(findChar).filter(c => c && c.mapId === map.id && c.mx !== null && (dm || c.kind === "pc"));
+        if (!who.length) return "Elige quién cruza";
+        const onIt = c => occupied(c).some(([x, y]) => x === portal.x && y === portal.y);
+        if (!who.some(onIt)) return "Alguien tiene que estar sobre el acceso";
+        if (!dm && !who.some(c => c.id === client.charId && onIt(c))) return "Solo cruza quien lo pisa y quien elija ir con él";
+        /* primero quien está encima, luego el resto en el orden elegido */
+        who.sort((a, b) => onIt(b) - onIt(a));
+        const moved = crossPortal(map, portal, who);
+        if (!moved) return "No hay sitio al otro lado";
         break;
       }
       case "map.patch": {
@@ -770,6 +820,8 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
           if (!/^\d+,\d+$/.test(k)) continue;
           if (!v) delete layer[k];
           else if (allowed.includes(v)) layer[k] = v;
+          /* Las salas llevan su número: así dos pegadas no se revelan juntas */
+          else if (op.layer === "rooms" && Number.isInteger(v) && v > 0 && v < 100000) layer[k] = v;
         }
         mp[op.layer] = layer;
         break;

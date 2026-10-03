@@ -1,6 +1,7 @@
 /* Vista del jugador. Manda su ficha y poco más: lo que el DM no enseña, no
    llega ni siquiera al navegador. */
 
+import { afterMove } from "./portals.js";
 import { voiceWidget } from "./voice.js";
 import { $, el, on, esc, lines, sign, pct, hpTone, hpBar, tweenBars, initials, imgURL, toast, modal, clamp } from "./util.js";
 import { ABILITIES, SKILLS, CONDITIONS, conditionName, modOf } from "./schema.js";
@@ -397,6 +398,7 @@ function renderMap(pane, mine) {
       onMove: (id, x, y) => {
         if (mapView.tool === "ping") return op("ping", { x, y, mapId: map.id, color: mine.color });
         op("token.move", { id, x, y });
+        afterMove(id, x, y);
       },
       onPing: (x, y) => op("ping", { x, y, mapId: map.id, color: mine.color }),
       onDrawing: points => op("drawing.add", { mapId: map.id, drawing: { points, color: mine.color, width: 0.08 } }),
