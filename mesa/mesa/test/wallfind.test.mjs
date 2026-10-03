@@ -107,3 +107,72 @@ test("la sensibilidad mueve el número de muros en el sentido esperado", () => {
   const many = classifyWalls(m, { sensitivity: 1 }).stats.walls;
   assert.ok(many >= few, `${few} → ${many}`);
 });
+
+/* Segundo plano: una sala con la esquina de arriba a la derecha cortada en
+   diagonal (tres casillas), una alfombra con borde oscuro en medio de la sala
+   y un pasillo cerrado por una puerta dibujada como bloque blanco. */
+const C2 = 30, W2 = 22, H2 = 16;
+function plan2(seed = 4) {
+  const rand = rng(seed);
+  const W = W2 * C2, H = H2 * C2;
+  const data = new Uint8ClampedArray(W * H * 3);
+  const put = (x, y, v) => {
+    if (x < 0 || y < 0 || x >= W || y >= H) return;
+    const i = (y * W + x) * 3;
+    data[i] = v[0]; data[i + 1] = v[1]; data[i + 2] = v[2];
+  };
+  /* Suelo: sala 2..12 × 2..12 menos el triángulo de arriba a la derecha que
+     corta la diagonal de (10,2) a (13,5), y un pasillo 13..19 × 6..7 */
+  const inRoom = (x, y) => x >= 2 * C2 && x < 13 * C2 && y >= 2 * C2 && y < 13 * C2 && (x - 10 * C2) - (y - 2 * C2) <= 0;
+  const inHall = (x, y) => x >= 13 * C2 && x < 20 * C2 && y >= 6 * C2 && y < 8 * C2;
+  for (let y = 0; y < H; y++)
+    for (let x = 0; x < W; x++) {
+      if (inRoom(x, y) || inHall(x, y)) {
+        const v = x % C2 === 0 || y % C2 === 0 ? 150 : 228 + (rand() - 0.5) * 8;
+        put(x, y, [v, v - 4, v - 12]);
+      } else {
+        const v = 120 + (rand() - 0.5) * 70;
+        put(x, y, [v + 10, v, v - 30]);
+      }
+    }
+  /* Alfombra: rectángulo rojo con borde oscuro, de (4,8) a (8,11) */
+  for (let y = 8 * C2 + 4; y < 11 * C2 - 4; y++)
+    for (let x = 4 * C2 + 4; x < 8 * C2 - 4; x++) {
+      const border = y < 8 * C2 + 8 || y >= 11 * C2 - 8 || x < 4 * C2 + 8 || x >= 8 * C2 - 8;
+      put(x, y, border ? [40, 20, 20] : [150, 40, 40]);
+    }
+  /* Puerta: bloque blanco con borde negro sobre el borde x = 16 del pasillo */
+  for (let y = 6 * C2 + 3; y < 8 * C2 - 3; y++)
+    for (let x = 16 * C2 - 5; x <= 16 * C2 + 4; x++) {
+      const edge = x === 16 * C2 - 5 || x === 16 * C2 + 4 || y === 6 * C2 + 3 || y === 8 * C2 - 4;
+      put(x, y, edge ? [15, 15, 15] : [250, 250, 250]);
+    }
+  return { data, W, H };
+}
+const grid2 = { x: 0, y: 0, w: C2, h: C2, cols: W2, rows: H2 };
+
+test("la esquina cortada sale con muros en diagonal", () => {
+  const { data, W, H } = plan2();
+  const r = detectWalls(data, W, H, grid2, { channels: 3 });
+  const diag = ["10,2,d", "11,3,d", "12,4,d"].filter(k => r.edges[k] === "wall");
+  assert.ok(diag.length >= 2, `diagonales: ${Object.keys(r.edges).filter(k => /,d$/.test(k)).join(" ")}`);
+  /* Y sin el escalón recto encima */
+  assert.equal(r.edges["11,3,v"], undefined);
+});
+
+test("la alfombra en mitad de la sala no levanta muros", () => {
+  const { data, W, H } = plan2();
+  const r = detectWalls(data, W, H, grid2, { channels: 3 });
+  const inside = Object.keys(r.edges).filter(k => {
+    const [x, y] = k.split(",").map(Number);
+    return x >= 4 && x <= 8 && y >= 8 && y <= 11;
+  });
+  assert.deepEqual(inside, []);
+});
+
+test("un bloque blanco cruzando el pasillo es una puerta", () => {
+  const { data, W, H } = plan2();
+  const r = detectWalls(data, W, H, grid2, { channels: 3 });
+  assert.equal(r.edges["16,6,v"], "door");
+  assert.equal(r.edges["16,7,v"], "door");
+});

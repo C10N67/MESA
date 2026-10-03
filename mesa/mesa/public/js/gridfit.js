@@ -256,14 +256,12 @@ export function openGridFit(map, { onApply, walls = false } = {}) {
 
 /* ---------- Muros y puertas ---------- */
 
-const isDiagonal = key => /,(d|a)$/.test(key);
-
 /* map: el mapa con su cuadrícula ya encajada (imgGrid, cols, rows, edges) */
 export function openWallFit(map) {
   if (!map.imageId) return toast("Este mapa no tiene imagen de fondo", "bad");
   if (!map.imgGrid) return toast("Primero encaja la cuadrícula con el plano", "bad");
   const g = { ...map.imgGrid, cols: map.cols, rows: map.rows };
-  const existing = Object.keys(map.edges || {}).filter(k => !isDiagonal(k)).length;
+  const existing = Object.keys(map.edges || {}).length;
 
   const body = document.createElement("div");
   body.className = "gridfit";
@@ -272,7 +270,7 @@ export function openWallFit(map) {
     <div class="gridfit-view"><canvas></canvas></div>
     <div class="row gridfit-tools">
       <label class="check"><input type="checkbox" name="zoom"> Ver a tamaño real</label>
-      <span class="gridfit-legend"><i class="wall"></i>Muro <i class="door"></i>Puerta</span>
+      <span class="gridfit-legend"><i class="wall"></i>Muro <i class="diag"></i>Muro en diagonal <i class="door"></i>Puerta</span>
     </div>
     <label class="field gridfit-range"><span>Sensibilidad</span>
       <span class="gridfit-range-row"><small>Menos muros</small>
@@ -283,8 +281,8 @@ export function openWallFit(map) {
       <label class="check"><input type="radio" name="mode" value="replace" checked> Sustituirlos por los propuestos</label>
       <label class="check" style="margin-top:6px"><input type="radio" name="mode" value="add"> Añadir los propuestos y dejar los que hay</label>
     </fieldset>` : ""}
-    <p class="hint">Es una propuesta: después se corrige con las herramientas Muro, Puerta y Borrar del mapa.
-      Las puertas salen cerradas.</p>`;
+    <p class="hint">Es una propuesta: después se corrige con las herramientas Muro, Diagonal, Puerta y Borrar
+      del mapa. Las puertas salen cerradas.</p>`;
 
   const canvas = body.querySelector("canvas");
   const view = body.querySelector(".gridfit-view");
@@ -295,8 +293,8 @@ export function openWallFit(map) {
 
   function classify() {
     result = classifyWalls(measured, { sensitivity: +input("sens").value });
-    const { walls, doors, floorMask } = result.stats;
-    const what = `${walls} ${walls === 1 ? "muro" : "muros"} y ${doors} ${doors === 1 ? "puerta" : "puertas"}`;
+    const { walls, doors, diagonals, floorMask } = result.stats;
+    const what = `${walls} ${walls === 1 ? "muro" : "muros"}${diagonals ? ` (${diagonals} en diagonal)` : ""} y ${doors} ${doors === 1 ? "puerta" : "puertas"}`;
     if (!walls && !doors) setStatus("bad", "No encuentro muros claros en este plano. Prueba a subir la sensibilidad o ponlos a mano.");
     else if (floorMask) setStatus("good", `Propongo ${what}. Revísalos sobre el plano antes de ponerlos.`);
     else setStatus("warn", `Propongo ${what}. En este plano no distingo el suelo de lo que no lo es, así que solo
@@ -313,10 +311,12 @@ export function openWallFit(map) {
     for (const [key, type] of Object.entries(result.edges)) {
       const [cx, cy, dir] = key.split(",");
       const x = +cx, y = +cy;
-      ctx.strokeStyle = type === "door" ? "#3fd2ff" : "#ff3b3b";
+      ctx.strokeStyle = type === "door" ? "#3fd2ff" : dir === "d" || dir === "a" ? "#ffa31a" : "#ff3b3b";
       ctx.lineWidth = Math.max(2 / k, g.w * (type === "door" ? 0.22 : 0.14));
       ctx.beginPath();
       if (dir === "v") { ctx.moveTo(X(x), Y(y)); ctx.lineTo(X(x), Y(y + 1)); }
+      else if (dir === "d") { ctx.moveTo(X(x), Y(y)); ctx.lineTo(X(x + 1), Y(y + 1)); }
+      else if (dir === "a") { ctx.moveTo(X(x + 1), Y(y)); ctx.lineTo(X(x), Y(y + 1)); }
       else { ctx.moveTo(X(x), Y(y)); ctx.lineTo(X(x + 1), Y(y)); }
       ctx.stroke();
     }
@@ -338,9 +338,7 @@ export function openWallFit(map) {
           let edges;
           if (mode === "add") edges = { ...result.edges, ...now };
           else {
-            /* Al sustituir se conservan los muros en diagonal, que esto no propone */
             edges = { ...result.edges };
-            for (const [k, v] of Object.entries(now)) if (isDiagonal(k)) edges[k] = v;
           }
           patchMap(map.id, { edges });
           toast(`Puestos ${result.stats.walls} muros y ${result.stats.doors} puertas`, "good");

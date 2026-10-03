@@ -1336,6 +1336,7 @@ ul.plain b { color: var(--vellum); }
 .gridfit-legend { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--dim); }
 .gridfit-legend i { display: inline-block; width: 18px; height: 4px; border-radius: 2px; margin-left: 8px; }
 .gridfit-legend i.wall { background: #ff3b3b; }
+.gridfit-legend i.diag { background: #ffa31a; }
 .gridfit-legend i.door { background: #3fd2ff; height: 6px; }
 .gridfit-range-row { display: flex; align-items: center; gap: 10px; }
 .gridfit-range-row input { flex: 1; }
