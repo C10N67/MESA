@@ -395,17 +395,21 @@ no salga deformado.
   arrastras antes de soltar, la giras. Para moverla, vuelve a pulsar su botón.
   Se ven en la mesa y en los móviles, y se quitan todas con la ✕.
 - **Niebla**, **Oscuridad** y **Luz** son pinceles de casilla. Ver más abajo.
-- **Muro** pinta paredes sobre los bordes; se puede arrastrar para trazar un tramo.
-- **Diagonal** pone muros a 45 grados, de esquina a esquina de la casilla, para
-  salas en diagonal, torres redondas o cuevas. Arrastra por las casillas: la
+- **Muro**, recto o en diagonal con la misma herramienta. **Junto a un
+  borde** de casilla pinta una pared recta y se puede arrastrar para trazar un
+  tramo. **Empezando en el centro** de una casilla pone un muro a 45 grados,
+  de esquina a esquina, para salas en diagonal, torres redondas o cuevas: la
   dirección del arrastre decide si es `\` o `/`, y el trazo se ajusta solo a
   la diagonal aunque el pulso no sea perfecto. Cortan la visión y el paso
   igual que un muro normal, y **la casilla que atraviesa un muro diagonal no
   se puede pisar** (es medio muro: así nadie se cuela por la rendija).
-- **Puerta** pone una puerta cerrada; púlsala otra vez y queda abierta. Cerrada
-  corta la visión, abierta la deja pasar. Vale también para los **muros
-  diagonales**: pulsa encima de uno y se convierte en puerta. Abierta, su
-  casilla se puede pisar y cruzar; cerrada, es pared.
+- **Puerta**, también recta o en diagonal: pulsa **junto a un borde** para una
+  puerta recta o **en el centro de una casilla** para una en diagonal (no hace
+  falta muro debajo; si lo hay, se convierte en puerta). Cada pulsación la
+  **abre o la cierra**; para quitarla se usa **Borrar**. Cerrada corta la
+  visión y es pared; abierta deja ver y pasar, también por su casilla si es
+  diagonal. En el plano se ven como un bloque: macizo si está cerrada y hueco
+  si está abierta.
 - **Borrar** quita muros, diagonales y puertas.
 - **Difícil** pinta terreno difícil (escombros, barro, maleza): **entrar en
   esas casillas cuesta el doble**. Se ve con un rayado suave en todas las
@@ -452,6 +456,15 @@ explorado** activado, todo lo que la party ha llegado a ver se queda dibujado
 el resto de la partida, con un velo muy leve encima para distinguir lo que
 están viendo ahora de lo que solo recuerdan. El plano se va destapando solo a
 medida que caminan.
+
+En las pantallas de los jugadores y en la tele la niebla **no va a
+escalones**: el borde de lo que se ve sale redondeado y se apaga con un
+degradado suave, como la luz de una antorcha. Justo más allá de la vista hay
+una franja de **penumbra**: esas casillas no se ven, pero se adivinan tras una
+bruma. **Si en la penumbra hay una criatura, se ve una sombra con un
+interrogante**: la party sabe que hay algo y dónde (y si es grande), pero no
+qué es. Del servidor solo sale eso, la casilla y el tamaño: ni el nombre, ni
+el color, ni nada más. Lo que esté detrás de un muro no se intuye.
 
 La memoria vale también para los enemigos: una criatura que hayan visto se
 queda dibujada, apagada y con el borde a rayas, **en el sitio donde la vieron**.

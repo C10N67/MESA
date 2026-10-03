@@ -1121,9 +1121,8 @@ function renderMap() {
           <div class="tool-set" id="tools">
             <button data-tool="token" aria-pressed="true" title="Mover y seleccionar fichas">${icon("move", 15)}Fichas</button>
             <button data-tool="measure" aria-pressed="false" title="Medir distancias">${icon("ruler", 15)}Regla</button>
-            <button data-tool="wall" aria-pressed="false" title="Muro por los bordes de las casillas">${icon("wall", 15)}Muro</button>
-            <button data-tool="diag" aria-pressed="false" title="Muro en diagonal, de esquina a esquina">${icon("diagonal", 15)}Diagonal</button>
-            <button data-tool="door" aria-pressed="false" title="Puerta: cerrada, abierta, sin puerta">${icon("door", 15)}Puerta</button>
+            <button data-tool="wall" aria-pressed="false" title="Muro: por los bordes, recto; desde el centro de una casilla, en diagonal">${icon("wall", 15)}Muro</button>
+            <button data-tool="door" aria-pressed="false" title="Puerta, recta o en diagonal: se abre y se cierra">${icon("door", 15)}Puerta</button>
             <button data-tool="erase" aria-pressed="false" title="Quitar muros, diagonales y puertas">${icon("eraser", 15)}Borrar</button>
             <button data-tool="pin" aria-pressed="false" title="Clavar una nota">${icon("note", 15)}Nota</button>
             <button data-tool="portal" aria-pressed="false" title="Escalera o pasadizo: a otro mapa o a otro punto de este">${icon("stairs", 15)}Acceso</button>
@@ -1220,10 +1219,9 @@ function renderMap() {
       const hint = {
         token: "Arrastra para mover · recuadro para elegir varias · Alt+clic para señalar",
         measure: "Arrastra de una casilla a otra para medir",
-        wall: "Arrastra por los bordes de las casillas",
-        diag: "Arrastra por las casillas: la diagonal (\\ o /) la marca dónde empiezas",
+        wall: "Arrastra por los bordes para un muro recto, o empieza en el centro de una casilla para uno en diagonal",
         draw: "Dibuja con el ratón o el dedo; elige color y si lo ve la party",
-        door: "Pulsa un borde o un muro diagonal: cerrada, abierta, sin puerta",
+        door: "Pulsa un borde para una puerta recta, o el centro de una casilla para una en diagonal. Otra pulsación la abre o la cierra; para quitarla, Borrar",
         erase: "Arrastra para quitar muros y puertas",
         pin: "Pulsa donde quieras clavar la nota",
         portal: "Pulsa donde esté la escalera"
@@ -1451,7 +1449,7 @@ function paintEdge(key, tool) {
   const map = activeMap();
   const now = map.edges[key];
   const value = tool === "erase" ? null : tool === "wall" ? "wall"
-    : tool === "door" ? (now === "door" ? "doorOpen" : now === "doorOpen" ? null : "door") : null;
+    : tool === "door" ? (now === "door" ? "doorOpen" : "door") : null;   // una puerta solo se abre y se cierra; se quita con Borrar
   op("map.edges", { mapId: map.id, patch: { [key]: value } });
 }
 
@@ -1549,15 +1547,27 @@ function openMapSettings(map) {
     for (let y = 0; y < map.rows; y++) { edges[`0,${y},v`] = "wall"; edges[`${map.cols},${y},v`] = "wall"; }
     patchMap(map.id, { edges });
   });
+  /* Mapa nuevo: esta ventana es la del mapa de antes, así que se cierra y se
+     abren los ajustes del nuevo. Si no, la imagen de fondo (y «Guardar») iban
+     a parar al mapa en el que estabas. */
   body.querySelector("#newMap").addEventListener("click", () => {
-    op("map.add", { map: normalizeMap({ name: "Mapa " + (doc().maps.length + 1) }) });
+    const fresh = normalizeMap({ name: "Mapa " + (doc().maps.length + 1) });
+    op("map.add", { map: fresh });
+    win.close();
     toast("Mapa creado", "good");
+    let tries = 0;
+    const open = () => {
+      const made = doc().maps.find(m => m.id === fresh.id);
+      if (made) return openMapSettings(made);
+      if (++tries < 20) setTimeout(open, 100);
+    };
+    setTimeout(open, 100);
   });
   body.querySelector("#dropMap").addEventListener("click", async () => {
     if (await confirmBox("¿Borrar este mapa y todo lo que tiene dibujado?")) op("map.remove", { id: map.id });
   });
 
-  modal({
+  const win = modal({
     title: "Ajustes de " + map.name, body, wide: true,
     actions: [{ label: "Cerrar" }, {
       label: "Guardar", tone: "primary",

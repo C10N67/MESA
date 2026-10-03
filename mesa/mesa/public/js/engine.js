@@ -12,7 +12,7 @@
      onPresence()    avisa de que ha cambiado quién está conectado */
 
 import { emptyDoc, migrate, cellKey, normalizeChar, normalizeBeast, normalizeMap, normalizeShape, normalizePin, normalizePortal, normalizeAttack, normalizeDrawing, modOf, addDice, scaleDice, cantripTier } from "./schema.js";
-import { visibleCells, edgesNear, gridDistance, pathCost, occupied, fits, reachableCells } from "./los.js";
+import { visibleCells, fringeCells, edgesNear, gridDistance, pathCost, occupied, fits, reachableCells } from "./los.js";
 import { roll, detail } from "./dice.js";
 import { critDamage } from "./attacks-core.js";
 
@@ -99,6 +99,10 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
     const inCombat = new Set(doc.session.combat.on ? doc.session.combat.order : []);
     const occupiedCells = c => occupied(c);
     const chars = [];
+    /* Penumbra: lo que está justo más allá de la vista. De lo que haya ahí
+       solo viaja que hay algo y dónde: ni qué es, ni cómo se llama. */
+    const fringe = showMap && !doc.session.revealAll ? fringeCells(doc, map, seen) : new Set();
+    const hints = [];
     for (const c of doc.chars) {
       if (c.kind === "pc") {
         chars.push({ ...c });
@@ -116,6 +120,9 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
          recuerda es el sitio, no lo que la criatura esté haciendo ahora. */
       const memory = !shown && c.discovered && map && map.remember && !doc.session.revealAll
         && c.lastSeen && c.lastSeen.mapId === map.id;
+      if (!shown && placed && c.hp > 0 && occupiedCells(c).some(([x, y]) => fringe.has(cellKey(x, y)))) {
+        hints.push({ x: c.mx, y: c.my, n: occupiedCells(c).length > 1 ? Math.round(Math.sqrt(occupiedCells(c).length)) : 1 });
+      }
       if (!shown && !memory && !(c.discovered && inCombat.has(c.id))) continue;
       chars.push({
         id: c.id, kind: "monster", name: c.name, color: c.color, avatarId: c.avatarId,
@@ -153,6 +160,8 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         grid: map.grid, revealAll: doc.session.revealAll,
         explored: doc.session.revealAll ? [] : explored,
         visible: visibleList,
+        fringe: [...fringe],
+        hints,
         edges: doc.session.revealAll ? map.edges : edgesNear(map, seen, explored),
         dark: map.dark, feet: map.feet, diagonals: map.diagonals, playerZoom: map.playerZoom,
         cells: pickCells(map, seen, explored),
