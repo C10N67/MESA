@@ -57,7 +57,7 @@ async function gate(wanted) {
   app().className = "gate";
   app().innerHTML = `
     <div class="panel">
-      <div class="gate-logo">${icon("shield", 30)}</div>
+      <img class="gate-logo" src="icons/icon.svg" alt="" width="64" height="64">
       <h1>Mesa</h1>
       <p class="sub">${esc(info.title || "Partida de D&D")}</p>
       ${DEMO ? `<div class="demo-note">
