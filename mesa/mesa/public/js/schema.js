@@ -1,7 +1,7 @@
 /* Forma de los datos. Lo usan el servidor y el navegador, así que aquí no
    puede haber nada que dependa del DOM. */
 
-import { CATALOG } from "./catalog.js";
+import { CATALOG, CATALOG_BY_ID } from "./catalog.js";
 
 export const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 export const num = (v, d = 0) => (Number.isFinite(Number(v)) ? Number(v) : d);
@@ -235,7 +235,8 @@ const BEAST_DEFAULTS = {
   color: "#8a5a3b", custom: false, avatarId: "", size: "Mediano"
 };
 export function normalizeBeast(raw = {}) {
-  const b = { ...BEAST_DEFAULTS, ...raw };
+  const { en, ...rest } = raw;   // la traducción vive en el catálogo, no en la partida
+  const b = { ...BEAST_DEFAULTS, ...rest };
   b.id = raw.id || uid();
   b.size = sizeFromText(raw.size) || sizeFromText(b.sizeType) || "Mediano";
   ["xp", "ac", "hpAvg", "speed", "str", "dex", "con", "int", "wis", "cha"].forEach(k => { b[k] = num(b[k]); });
@@ -244,7 +245,33 @@ export function normalizeBeast(raw = {}) {
   return b;
 }
 
+/* La partida solo guarda las criaturas del DM: las que se ha inventado y las
+   de serie que ha retocado (con el mismo id). Las de serie viven en
+   catalog.js y no viajan con cada cambio: son más de cien fichas. */
+const BASE = CATALOG.map(normalizeBeast);
+export function bestiaryOf(doc) {
+  const own = new Map((doc && doc.bestiary || []).map(b => [b.id, b]));
+  return [...BASE.map(b => own.get(b.id) || b), ...[...own.values()].filter(b => !CATALOG_BY_ID.has(b.id))];
+}
+export const isBaseBeast = id => CATALOG_BY_ID.has(id);
+
+/* Las copias de antes guardaban el catálogo entero. Lo que está igual que de
+   serie se quita (ya lo pone bestiaryOf, y en su versión nueva); lo retocado
+   se queda, con el retrato de serie si no tenía otro. */
+function ownBeasts(list) {
+  return (Array.isArray(list) ? list : [])
+    .filter(b => b && (b.custom || !CATALOG_BY_ID.has(b.id)))
+    .map(b => {
+      const base = CATALOG_BY_ID.get(b.id);
+      return normalizeBeast(base && !b.avatarId ? { ...b, avatarId: base.avatarId } : b);
+    });
+}
+
 /* ---------- Mapas ---------- */
+/* Tope de casillas. Un plano bajado de internet con su cuadrícula fina puede
+   pasar de cien casillas por lado. */
+export const MAX_COLS = 150, MAX_ROWS = 150;
+
 const MAP_DEFAULTS = {
   id: "", name: "Mazmorra", imageId: "", imageW: 0, imageH: 0,
   lockRatio: true, cols: 28, rows: 18, grid: true,
@@ -259,20 +286,25 @@ const MAP_DEFAULTS = {
   shapes: [],           // plantillas de área puestas en el tablero
   pins: [],             // chinchetas con nota
   portals: [],          // accesos a otros mapas
-  playerZoom: true      // dejar que los jugadores se acerquen
+  playerZoom: true,     // dejar que los jugadores se acerquen
+  /* Dónde cae la cuadrícula dibujada en la imagen, en píxeles de la imagen:
+     la casilla (0,0) empieza en (x, y) y mide w × h. Sin esto (null), la
+     imagen se estira para llenar columnas × filas, como siempre. */
+  imgGrid: null
 };
 export function normalizeMap(raw = {}) {
   const m = { ...MAP_DEFAULTS, ...raw };
   m.id = raw.id || uid();
   m.name = String(m.name || "Mazmorra");
-  m.cols = clamp(Math.trunc(num(m.cols, 28)), 5, 90);
-  m.rows = clamp(Math.trunc(num(m.rows, 18)), 5, 70);
+  m.cols = clamp(Math.trunc(num(m.cols, 28)), 5, MAX_COLS);
+  m.rows = clamp(Math.trunc(num(m.rows, 18)), 5, MAX_ROWS);
   m.radius = clamp(Math.trunc(num(m.radius, 5)), 1, 40);
   m.followSpan = clamp(Math.trunc(num(m.followSpan, 14)), 4, 60);
   m.partyZoom = clamp(num(m.partyZoom, 1), 1, 8);
   m.imageW = Math.max(0, Math.trunc(num(m.imageW)));
   m.imageH = Math.max(0, Math.trunc(num(m.imageH)));
   m.lockRatio = m.lockRatio !== false;
+  m.imgGrid = normalizeImgGrid(m.imgGrid);
   m.grid = m.grid !== false;
   m.remember = m.remember !== false;
   m.camera = m.camera === "follow" ? "follow" : "full";
@@ -296,6 +328,14 @@ export function normalizeMap(raw = {}) {
   m.vis = layer(m.vis);
   m.drawings = Array.isArray(m.drawings) ? m.drawings.map(normalizeDrawing).filter(d => d.points.length > 1).slice(-150) : [];
   return m;
+}
+
+export function normalizeImgGrid(g) {
+  if (!g || typeof g !== "object") return null;
+  const w = num(g.w), h = num(g.h);
+  if (!(w >= 2 && h >= 2)) return null;
+  const r = v => Math.round(num(v) * 1000) / 1000;
+  return { x: r(g.x), y: r(g.y), w: r(w), h: r(h) };
 }
 
 /* Un trazo a mano alzada sobre el plano. Los puntos van en casillas (con
@@ -389,12 +429,12 @@ const SESSION_DEFAULTS = {
   autoSkipDown: true    // saltar en la iniciativa a los que están fuera de combate
 };
 
-export function emptyDoc(catalog = CATALOG) {
+export function emptyDoc() {
   const map = normalizeMap({ name: "Mazmorra" });
   return {
     version: 7,
     chars: [],
-    bestiary: catalog.map(normalizeBeast),
+    bestiary: [],
     maps: [map],
     session: { ...SESSION_DEFAULTS, combat: { ...SESSION_DEFAULTS.combat, order: [] }, activeMapId: map.id },
     log: []
@@ -417,6 +457,9 @@ export function migrate(raw) {
       }
     }
     if (old && old.resourceName) c.resources = [{ name: old.resourceName, uses: num(old.resourceUses), max: num(old.resourceMax || old.resourceUses) }];
+    /* Los monstruos de serie ya en la mesa estrenan retrato */
+    const base = old && old.kind === "monster" && CATALOG_BY_ID.get(old.monsterKey);
+    if (base && !c.avatarId) c.avatarId = base.avatarId;
     return normalizeChar(c);
   });
 
@@ -437,7 +480,7 @@ export function migrate(raw) {
   return {
     version: 7,
     chars,
-    bestiary: (Array.isArray(src.bestiary) && src.bestiary.length ? src.bestiary : CATALOG).map(normalizeBeast),
+    bestiary: ownBeasts(src.bestiary),
     maps,
     session,
     log: Array.isArray(src.log) ? src.log.slice(-150) : []
