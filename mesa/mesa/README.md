@@ -384,6 +384,18 @@ Cada mapa tiene su imagen de fondo, su cuadrícula, sus muros y su niebla. Al
 cargar una imagen, las filas se ajustan solas a su proporción para que el plano
 no salga deformado.
 
+Al cargarla, Mesa busca sola **la cuadrícula del plano** y la encaja con la del
+tablero; después propone **los muros y las puertas** que ve dibujados (también
+en **Ajustes del mapa → Muros y puertas del plano**). Por defecto los muros
+salen **a mano alzada, como los del Pincel, pegados a la pared del dibujo**:
+siguen la línea de tinta (o el borde entre el suelo y la roca) aunque no caiga
+en la cuadrícula, redondean las cuevas y dejan vivas las esquinas de las
+salas. Hacia el suelo nunca se meten más allá del centro de una casilla, así
+que una mesa dibujada junto a la pared no se lleva el muro. Las puertas van
+siempre por la cuadrícula. Si lo prefieres como antes, **Por los bordes de la
+cuadrícula** pone muros rectos y diagonales de casilla. En los dos casos se
+revisa sobre el plano antes de ponerlo.
+
 - **Fichas** arrastra por las casillas. Al arrastrar se pinta **hasta dónde
   llega** con la velocidad que le quede, rodeando muros, y un contador dice
   cuántos pies lleva. Un recuadro sobre el tablero **elige varias** y las mueve

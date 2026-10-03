@@ -1546,7 +1546,7 @@ function openMapSettings(map) {
   body.querySelector("#fitGrid").addEventListener("click", () => openGridFit(activeMap(), { onApply }));
   body.querySelector("#fitWalls").addEventListener("click", () => openWallFit(activeMap()));
   body.querySelector("#resetFog").addEventListener("click", () => patchMap(map.id, { explored: [] }));
-  body.querySelector("#clearWalls").addEventListener("click", () => patchMap(map.id, { edges: {} }));
+  body.querySelector("#clearWalls").addEventListener("click", () => patchMap(map.id, { edges: {}, walls: [] }));
   body.querySelector("#clearCells").addEventListener("click", () => patchMap(map.id, { cells: {} }));
   body.querySelector("#frameWalls").addEventListener("click", () => {
     const edges = { ...map.edges };

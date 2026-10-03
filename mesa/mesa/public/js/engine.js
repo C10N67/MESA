@@ -703,6 +703,9 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         const m = doc.maps.find(x => x.id === op.id);
         if (!m) return "No existe ese mapa";
         Object.assign(m, op.fields || {});
+        if (op.fields && "walls" in op.fields) {
+          m.walls = (Array.isArray(m.walls) ? m.walls : []).map(normalizeWall).filter(w => w.points.length > 1).slice(-MAX_WALLS);
+        }
         break;
       }
       case "map.add":

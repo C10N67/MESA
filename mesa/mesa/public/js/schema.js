@@ -341,7 +341,7 @@ export function normalizeImgGrid(g) {
 
 /* Un muro a mano alzada: una línea quebrada en casillas (con decimales) que
    corta la vista y el paso igual que un muro de la cuadrícula. */
-export const MAX_WALLS = 400;
+export const MAX_WALLS = 1500;
 export function normalizeWall(raw = {}) {
   const pts = Array.isArray(raw.points) ? raw.points : [];
   return {

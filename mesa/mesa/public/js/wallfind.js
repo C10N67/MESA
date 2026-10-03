@@ -696,3 +696,352 @@ export function classifyWalls(m, { sensitivity = 0.5 } = {}) {
 export function detectWalls(data, W, H, grid, opts = {}) {
   return classifyWalls(measureWalls(data, W, H, grid, opts.channels || 4), opts);
 }
+
+/* ---------- Muros a mano alzada que siguen el dibujo ----------
+   La propuesta de arriba va por los bordes de la cuadrícula, pero en el plano
+   la pared casi nunca cae justo en la línea: va un poco dentro o fuera, se
+   curva en las cuevas, hace ángulos que no son de 45°. Aquí cada tramo de
+   muros seguidos se convierte en un muro a mano alzada (como el del pincel)
+   que se pega a lo dibujado:
+
+   1. Los muros propuestos se encadenan de esquina a esquina. Una cadena se
+      corta donde se cruzan muros, donde gira 90° o más, y junto a las
+      puertas, que siguen en la cuadrícula.
+   2. A lo largo de cada cadena, cada cuarto de casilla se mira de través
+      (hasta casi media casilla a cada lado) dónde está la pared: la línea de
+      tinta más oscura si la hay, y si no, el cambio de color más marcado
+      entre suelo y lo de fuera. Donde no se ve nada claro, se queda en la
+      cuadrícula. Hacia el suelo nunca pasa del centro de la casilla, así que
+      el suelo sigue donde estaba; hacia fuera puede llegar casi a la casilla
+      siguiente (una pared curva suele dejar casillas medio suelo que la
+      cuadrícula dio por fuera). Sin saber dónde está el suelo (un tabique
+      entre dos salas), lo mismo a los dos lados.
+   3. Los desplazamientos se suavizan a lo largo de la cadena, para que una
+      mancha suelta no haga un pico, y las esquinas se mueven a la vez en
+      todas las cadenas que llegan a ellas: los tramos siguen unidos.
+
+   Devuelve los muros a mano alzada (en casillas, con decimales) y las
+   puertas, que se quedan como bordes de la cuadrícula. */
+
+const cornersOf = key => {
+  const [sx, sy, dir] = key.split(","), x = +sx, y = +sy;
+  if (dir === "v") return [[x, y], [x, y + 1]];
+  if (dir === "h") return [[x, y], [x + 1, y]];
+  if (dir === "d") return [[x, y], [x + 1, y + 1]];
+  return [[x + 1, y], [x, y + 1]];
+};
+
+/* Ramer-Douglas-Peucker */
+function rdp(points, eps) {
+  if (points.length < 3) return points;
+  const [ax, ay] = points[0], [bx, by] = points[points.length - 1];
+  const vx = bx - ax, vy = by - ay, len = Math.hypot(vx, vy);
+  let idx = 0, max = 0;
+  for (let i = 1; i < points.length - 1; i++) {
+    const [px, py] = points[i];
+    const d = len ? Math.abs((px - ax) * vy - (py - ay) * vx) / len : Math.hypot(px - ax, py - ay);
+    if (d > max) { max = d; idx = i; }
+  }
+  if (max <= eps) return [points[0], points[points.length - 1]];
+  return [...rdp(points.slice(0, idx + 1), eps).slice(0, -1), ...rdp(points.slice(idx), eps)];
+}
+
+/* Esquinas vivas: dos tramos rectos largos (casilla y media o más) unidos
+   por trocitos cortos (tres casillas como mucho) y con un ángulo
+   marcado son una esquina de sala que
+   el trazo ha redondeado. El trocito se cambia por el punto donde se cruzan
+   las dos rectas. Una curva de cueva no tiene tramos rectos tan largos y se
+   queda como está. En casillas. */
+function sharpen(pts) {
+  const d = (a, b) => Math.hypot(b[0] - a[0], b[1] - a[1]);
+  const out = pts.slice();
+  for (let i = 1; i < out.length - 1; i++) {
+    const a0 = out[i - 1], a1 = out[i];
+    if (d(a0, a1) < 1.5) continue;
+    let j = i, short = 0;
+    while (j + 1 < out.length && d(out[j], out[j + 1]) < 1.5) { short += d(out[j], out[j + 1]); j++; }
+    if (j === i || j + 1 >= out.length || short > 3) continue;
+    const b0 = out[j], b1 = out[j + 1];
+    if (d(b0, b1) < 1.5) continue;
+    const ua = [(a1[0] - a0[0]) / d(a0, a1), (a1[1] - a0[1]) / d(a0, a1)];
+    const ub = [(b1[0] - b0[0]) / d(b0, b1), (b1[1] - b0[1]) / d(b0, b1)];
+    if (ua[0] * ub[0] + ua[1] * ub[1] > 0.5) continue;          // menos de 60°: es una curva
+    const den = ua[0] * ub[1] - ua[1] * ub[0];
+    if (Math.abs(den) < 1e-6) continue;
+    const t = ((b0[0] - a0[0]) * ub[1] - (b0[1] - a0[1]) * ub[0]) / den;
+    const x = [a0[0] + ua[0] * t, a0[1] + ua[1] * t];
+    if (d(x, a1) > 2 || d(x, b0) > 2) continue;
+    out.splice(i, j - i + 1, x);
+  }
+  return out;
+}
+
+export function traceWalls(data, W, H, grid, edges, { channels = 4, reach = 0.45, outReach = 0.95, floor = null } = {}) {
+  const px = reader(data, W, H, channels);
+  const toPx = (x, y) => [grid.x + x * grid.w, grid.y + y * grid.h];
+  const toCell = (x, y) => [(x - grid.x) / grid.w, (y - grid.y) / grid.h];
+  const cellPx = Math.min(grid.w, grid.h);
+
+  /* 1. Grafo de esquinas */
+  const ck = p => p[0] + "," + p[1];
+  const adj = new Map(), anchors = new Set(), doors = {};
+  const link = (a, b) => {
+    (adj.get(ck(a)) || adj.set(ck(a), []).get(ck(a))).push(b);
+    (adj.get(ck(b)) || adj.set(ck(b), []).get(ck(b))).push(a);
+  };
+  for (const [key, type] of Object.entries(edges || {})) {
+    const [a, b] = cornersOf(key);
+    if (type === "wall") link(a, b);
+    else { doors[key] = type; anchors.add(ck(a)); anchors.add(ck(b)); }
+  }
+  const seg = (a, b) => (ck(a) < ck(b) ? ck(a) + "|" + ck(b) : ck(b) + "|" + ck(a));
+  const used = new Set();
+  /* Bordes seguidos en línea recta desde a hacia b (como mucho 3) */
+  const run = (a, b) => {
+    const d = [b[0] - a[0], b[1] - a[1]];
+    let n = 1, prev = a, cur = b;
+    while (n < 3) {
+      const nb = adj.get(ck(cur)) || [];
+      if (nb.length !== 2 || anchors.has(ck(cur))) break;
+      const next = ck(nb[0]) === ck(prev) ? nb[1] : nb[0];
+      if (next[0] - cur[0] !== d[0] || next[1] - cur[1] !== d[1]) break;
+      n++; prev = cur; cur = next;
+    }
+    return n;
+  };
+  /* ¿La cadena se corta en esta esquina? Sí en un cruce, junto a una puerta
+     y en una esquina de verdad: un giro de 90° con dos bordes rectos o más a
+     cada lado. Los escalones de una escalera (una pared curva o torcida
+     pasada a la cuadrícula) siguen en la misma cadena. */
+  const stop = (prev, cur) => {
+    const nb = adj.get(ck(cur)) || [];
+    if (nb.length !== 2 || anchors.has(ck(cur))) return true;
+    const next = ck(nb[0]) === ck(prev) ? nb[1] : nb[0];
+    const d1 = [cur[0] - prev[0], cur[1] - prev[1]], d2 = [next[0] - cur[0], next[1] - cur[1]];
+    const dot = d1[0] * d2[0] + d1[1] * d2[1];
+    if (dot < 0) return true;                                   // vuelve hacia atrás
+    return dot === 0 && run(cur, prev) >= 2 && run(cur, next) >= 2;
+  };
+  const walk = (start, first) => {
+    const path = [start, first];
+    used.add(seg(start, first));
+    let prev = start, cur = first;
+    while (!stop(prev, cur)) {
+      const nb = adj.get(ck(cur));
+      const next = ck(nb[0]) === ck(prev) ? nb[1] : nb[0];
+      if (used.has(seg(cur, next))) break;
+      used.add(seg(cur, next));
+      path.push(next);
+      prev = cur; cur = next;
+    }
+    return path;
+  };
+  const chains = [];
+  const starts = [...adj.keys()].map(k => k.split(",").map(Number));
+  for (const s of starts) {
+    for (const nb of adj.get(ck(s))) {
+      if (used.has(seg(s, nb))) continue;
+      /* Se empieza solo en un extremo de verdad; los anillos, después */
+      const nbs = adj.get(ck(s));
+      const isEnd = nbs.length !== 2 || anchors.has(ck(s)) || stop(nbs[0] === nb ? nbs[1] : nbs[0], s);
+      if (isEnd) chains.push({ path: walk(s, nb), closed: false });
+    }
+  }
+  /* Lo que queda son anillos sin esquinas: una sala redonda, por ejemplo */
+  for (const s of starts) for (const nb of adj.get(ck(s))) if (!used.has(seg(s, nb))) chains.push({ path: walk(s, nb), closed: true });
+
+  /* 2. De través: dónde está la pared en el plano */
+  const R = reach * cellPx, Rout = Math.max(reach, outReach) * cellPx, win = cellPx * 0.15;
+  const gk = Math.max(1, Math.round(cellPx * 0.04));
+  const isFloor = q => {
+    if (!floor) return null;
+    const [x, y] = toCell(q[0], q[1]), cx = Math.floor(x), cy = Math.floor(y);
+    if (cx < 0 || cy < 0 || cx >= grid.cols || cy >= grid.rows) return false;
+    return !!floor[cy * grid.cols + cx];
+  };
+  function offsetAt(p, t) {
+    const n = [-t[1], t[0]];
+    /* Hasta dónde se busca a cada lado: poco hacia el suelo, más hacia fuera */
+    const fPlus = isFloor([p[0] + n[0] * cellPx * 0.5, p[1] + n[1] * cellPx * 0.5]);
+    const fMinus = isFloor([p[0] - n[0] * cellPx * 0.5, p[1] - n[1] * cellPx * 0.5]);
+    const lo = fPlus && !fMinus ? -Rout : -R, hi = fMinus && !fPlus ? Rout : R;
+    const steps = Math.max(8, Math.round(hi - lo));
+    const L = [], C = [];
+    for (let i = 0; i <= steps; i++) {
+      const o = lo + (hi - lo) * i / steps;
+      const acc = [0, 0, 0];
+      let cnt = 0;
+      for (let j = -2; j <= 2; j++) {
+        const c = px(p[0] + n[0] * o + t[0] * win * j / 2, p[1] + n[1] * o + t[1] * win * j / 2);
+        acc[0] += c[0]; acc[1] += c[1]; acc[2] += c[2]; cnt++;
+      }
+      const c = [acc[0] / cnt, acc[1] / cnt, acc[2] / cnt];
+      C.push(c); L.push(lum(c));
+    }
+    const N = L.length, off = i => lo + (hi - lo) * i / steps;
+    const edge = Math.max(1, Math.round(N * 0.15));
+    const mean = (a, b) => { let s = 0; for (let i = a; i < b; i++) s += L[i]; return s / (b - a); };
+    const sideRef = Math.min(mean(0, edge), mean(N - edge, N));
+    /* Línea de tinta: lo más oscuro, sin irse lejos sin motivo */
+    const mid = Math.round(-lo / (hi - lo) * steps);
+    let bestDark = -Infinity, iDark = mid;
+    for (let i = 0; i < N; i++) {
+      const s = sideRef - L[i] - 12 * Math.abs(off(i)) / R;
+      if (s > bestDark) { bestDark = s; iDark = i; }
+    }
+    if (bestDark >= 30) return { o: off(iDark), n, lo, hi, ink: L[iDark] };
+    /* Si no, el cambio de color más marcado */
+    let bestG = -Infinity, iG = mid;
+    for (let i = gk; i < N - gk; i++) {
+      const s = dist3(C[i + gk], C[i - gk]) - 12 * Math.abs(off(i)) / R;
+      if (s > bestG) { bestG = s; iG = i; }
+    }
+    if (bestG >= 30) return { o: off(iG), n, lo, hi };
+    return { o: null, n, lo, hi };
+  }
+
+  const smooth = arr => {
+    /* Huecos sin pista: se rellenan con lo de al lado */
+    const known = arr.map((v, i) => (v === null ? -1 : i)).filter(i => i >= 0);
+    if (!known.length) return arr.map(() => 0);
+    const filled = arr.map((v, i) => {
+      if (v !== null) return v;
+      let lo = -1, hi = -1;
+      for (const k of known) { if (k < i) lo = k; else { hi = k; break; } }
+      if (lo < 0) return arr[hi];
+      if (hi < 0) return arr[lo];
+      return arr[lo] + (arr[hi] - arr[lo]) * (i - lo) / (hi - lo);
+    });
+    const med = filled.map((_, i) => median(filled.slice(Math.max(0, i - 2), i + 3)));
+    return med.map((_, i) => {
+      const w = med.slice(Math.max(0, i - 1), i + 2);
+      return clamp(w.reduce((a, b) => a + b, 0) / w.length, -Rout, Rout);
+    });
+  };
+
+  const traced = chains.map(({ path, closed }) => {
+    const P = path.map(c => toPx(c[0], c[1]));
+    const lens = [];
+    let total = 0;
+    for (let i = 1; i < P.length; i++) { const l = Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]); lens.push(l); total += l; }
+    /* El punto a una distancia u a lo largo de la cadena */
+    const at = u => {
+      u = closed ? ((u % total) + total) % total : clamp(u, 0, total);
+      let i = 0;
+      while (i < lens.length - 1 && u > lens[i]) { u -= lens[i]; i++; }
+      const a = P[i], b = P[i + 1], l = lens[i] || 1;
+      return [a[0] + (b[0] - a[0]) * u / l, a[1] + (b[1] - a[1]) * u / l];
+    };
+    /* Cada muestra parte de la cadena suavizada (media de ±0,6 casillas) y
+       mira de través a esa dirección media: en una escalera, eso es la
+       pared que la escalera aproxima, no cada escalón. */
+    const n = Math.max(1, Math.round(total / (cellPx * 0.25)));
+    const half = cellPx * 0.6;
+    const samples = [];
+    for (let k = 0; k < n; k++) {
+      const u = (k + 0.5) / n * total;
+      const p = [0, 0];
+      for (let j = -3; j <= 3; j++) { const q = at(u + half * j / 3); p[0] += q[0] / 7; p[1] += q[1] / 7; }
+      const a = at(u - half), b = at(u + half), l = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+      const t = [(b[0] - a[0]) / l, (b[1] - a[1]) / l];
+      samples.push({ p, ...offsetAt(p, t) });
+    }
+    /* Junto a una esquina, de través se ve también la otra pared: esas
+       medidas no valen y se toman de las de al lado */
+    if (!closed && n > 4) samples.forEach((s, k) => {
+      const u = (k + 0.5) / n * total;
+      if (Math.min(u, total - u) < cellPx * 0.35) s.o = null;
+    });
+    const raw = samples.map(s => s.o);
+    /* En un anillo, el suavizado da la vuelta: el principio sigue al final */
+    const offs = closed && raw.length > 4 ? smooth([...raw.slice(-3), ...raw, ...raw.slice(0, 3)]).slice(3, -3) : smooth(raw);
+    samples.forEach((s, i) => { s.o = offs[i]; });
+    return { path, samples, closed };
+  });
+
+  /* 3. Esquinas: cuánto se mueven para que les cuadre a todas las cadenas.
+     Mínimos cuadrados con la normal y el desplazamiento de cada extremo. */
+  const ends = new Map();
+  /* La muestra se midió desde la cadena suavizada, no desde la esquina:
+     se pasa a cuánto tiene que moverse la esquina para quedar en la pared */
+  const addEnd = (corner, s) => {
+    const k = ck(corner), c = toPx(corner[0], corner[1]);
+    const o = s.o + s.n[0] * (s.p[0] - c[0]) + s.n[1] * (s.p[1] - c[1]);
+    (ends.get(k) || ends.set(k, []).get(k)).push({ n: s.n, o });
+  };
+  for (const c of traced) {
+    if (c.closed) continue;
+    addEnd(c.path[0], c.samples[0]);
+    addEnd(c.path[c.path.length - 1], c.samples[c.samples.length - 1]);
+  }
+  const moved = new Map();
+  for (const [k, list] of ends) {
+    if (anchors.has(k)) { moved.set(k, [0, 0]); continue; }
+    let a = 0.05, b = 0, d = 0.05, ex = 0, ey = 0;          // un poco de freno: sin pistas, no se mueve
+    for (const s of list) {
+      a += s.n[0] * s.n[0]; b += s.n[0] * s.n[1]; d += s.n[1] * s.n[1];
+      ex += s.n[0] * s.o; ey += s.n[1] * s.o;
+    }
+    const det = a * d - b * b;
+    let mx = (d * ex - b * ey) / det, my = (a * ey - b * ex) / det;
+    const len = Math.hypot(mx, my), most = Rout;
+    if (len > most) { mx *= most / len; my *= most / len; }
+    moved.set(k, [mx, my]);
+  }
+
+  /* Donde la pared es una línea de tinta, cada punto se pega al centro de la
+     tinta más cercana (a menos de media casilla, o algo más si de través no
+     se vio nada). Así las uniones que la
+     cuadrícula dejó en escalera (una sala con su pasillo) siguen la tinta y
+     no la recortan. */
+  function snapInk(q, inkLum, reachCells) {
+    const thr = inkLum + 25, r = cellPx * reachCells, step = Math.max(1, cellPx / 40);
+    const isInk = (x, y) => lum(px(x, y)) <= thr;
+    let best = null, bd = r * r;
+    for (let dy = -r; dy <= r; dy += step)
+      for (let dx = -r; dx <= r; dx += step) {
+        const dd = dx * dx + dy * dy;
+        if (dd <= bd && isInk(q[0] + dx, q[1] + dy)) { bd = dd; best = [q[0] + dx, q[1] + dy]; }
+      }
+    if (!best) return q;
+    /* Al centro de la línea: media de la tinta alrededor, dos veces */
+    const rr = Math.max(2, cellPx * 0.15);
+    for (let it = 0; it < 2; it++) {
+      let sx = 0, sy = 0, k = 0;
+      for (let dy = -rr; dy <= rr; dy += step)
+        for (let dx = -rr; dx <= rr; dx += step) {
+          if (dx * dx + dy * dy > rr * rr || !isInk(best[0] + dx, best[1] + dy)) continue;
+          sx += best[0] + dx; sy += best[1] + dy; k++;
+        }
+      if (k) best = [sx / k, sy / k];
+    }
+    return best;
+  }
+
+  const round = v => Math.round(v * 100) / 100;
+  const walls = [];
+  for (const { path, samples, closed } of traced) {
+    const end = c => {
+      const p = toPx(c[0], c[1]), m = moved.get(ck(c)) || [0, 0];
+      return toCell(p[0] + m[0], p[1] + m[1]);
+    };
+    /* Las muestras que no vieron tinta de través, en una cadena que sí la
+       tiene, la buscan con el tono de las demás y algo más lejos */
+    const inks = samples.filter(s => s.ink !== undefined).map(s => s.ink);
+    const chainInk = inks.length >= samples.length / 3 ? median(inks) : null;
+    const mid = samples.map(s => {
+      const q = [s.p[0] + s.n[0] * s.o, s.p[1] + s.n[1] * s.o];
+      const level = s.ink !== undefined ? s.ink : chainInk;
+      if (level === null) return toCell(...q);
+      const to = snapInk(q, level, s.ink !== undefined ? 0.5 : 0.8);
+      /* Sin meterse en el suelo más de lo que deja la búsqueda de través
+         (una mesa dibujada con tinta no se lleva el muro) */
+      const dn = (to[0] - s.p[0]) * s.n[0] + (to[1] - s.p[1]) * s.n[1];
+      return toCell(...(dn >= s.lo - 1 && dn <= s.hi + 1 ? to : q));
+    });
+    const pts = closed ? [...mid, mid[0]] : [end(path[0]), ...mid, end(path[path.length - 1])];
+    const simple = sharpen(rdp(pts, 0.03)).map(([x, y]) => [round(x), round(y)]);
+    for (let i = 0; i < simple.length - 1; i += 300) walls.push({ points: simple.slice(i, i + 301) });
+  }
+  return { walls, doors };
+}

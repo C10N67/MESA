@@ -7,13 +7,15 @@
       cae la cuadrícula en la imagen (imgGrid) y el tablero la dibuja a esa
       escala, sin recortar ni estirar la imagen a mano.
    2. Con la cuadrícula ya puesta, propone muros y puertas (wallfind.js) y
-      los enseña sobre el plano para revisarlos antes de ponerlos. */
+      los enseña sobre el plano para revisarlos antes de ponerlos. Por
+      defecto los muros salen a mano alzada, como los del pincel, pegados a
+      la pared dibujada; también se pueden poner por la cuadrícula. */
 
 import { modal, toast, imgURL } from "./util.js";
 import { patchMap } from "./net.js";
 import { MAX_COLS, MAX_ROWS } from "./schema.js";
 import { toGray, detectGrid, fitCount } from "./gridfind.js";
-import { measureWalls, classifyWalls } from "./wallfind.js";
+import { measureWalls, classifyWalls, traceWalls } from "./wallfind.js";
 
 const mod = (a, b) => ((a % b) + b) % b;
 const fmt = (v, d = 2) => String(Math.round(v * 10 ** d) / 10 ** d).replace(".", ",");
@@ -261,7 +263,7 @@ export function openWallFit(map) {
   if (!map.imageId) return toast("Este mapa no tiene imagen de fondo", "bad");
   if (!map.imgGrid) return toast("Primero encaja la cuadrícula con el plano", "bad");
   const g = { ...map.imgGrid, cols: map.cols, rows: map.rows };
-  const existing = Object.keys(map.edges || {}).length;
+  const existing = Object.keys(map.edges || {}).length + (map.walls || []).length;
 
   const body = document.createElement("div");
   body.className = "gridfit";
@@ -272,6 +274,11 @@ export function openWallFit(map) {
       <label class="check"><input type="checkbox" name="zoom"> Ver a tamaño real</label>
       <span class="gridfit-legend"><i class="wall"></i>Muro <i class="diag"></i>Muro en diagonal <i class="door"></i>Puerta</span>
     </div>
+    <fieldset>
+      <legend>Cómo se ponen los muros</legend>
+      <label class="check"><input type="radio" name="fit" value="brush" checked> Siguiendo la pared del plano, a mano alzada (como el pincel)</label>
+      <label class="check" style="margin-top:6px"><input type="radio" name="fit" value="grid"> Por los bordes de la cuadrícula</label>
+    </fieldset>
     <label class="field gridfit-range"><span>Sensibilidad</span>
       <span class="gridfit-range-row"><small>Menos muros</small>
       <input name="sens" type="range" min="0" max="1" step="0.05" value="0.5">
@@ -281,20 +288,24 @@ export function openWallFit(map) {
       <label class="check"><input type="radio" name="mode" value="replace" checked> Sustituirlos por los propuestos</label>
       <label class="check" style="margin-top:6px"><input type="radio" name="mode" value="add"> Añadir los propuestos y dejar los que hay</label>
     </fieldset>` : ""}
-    <p class="hint">Es una propuesta: después se corrige con las herramientas Muro, Diagonal, Puerta y Borrar
-      del mapa. Las puertas salen cerradas.</p>`;
+    <p class="hint">Es una propuesta: después se corrige con las herramientas Muro, Pincel, Puerta y Borrar
+      del mapa. Las puertas salen cerradas y van siempre por la cuadrícula.</p>`;
 
   const canvas = body.querySelector("canvas");
   const view = body.querySelector(".gridfit-view");
   const status = body.querySelector(".gridfit-status");
   const input = n => body.querySelector(`[name="${n}"]`);
   const setStatus = (tone, text) => { status.className = "gridfit-status " + tone; status.textContent = text; };
-  let img = null, measured = null, result = null;
+  let img = null, pixels = null, measured = null, result = null, traced = null;
+  const brush = () => body.querySelector('[name="fit"]:checked').value === "brush";
 
   function classify() {
     result = classifyWalls(measured, { sensitivity: +input("sens").value });
+    traced = brush() ? traceWalls(pixels, img.naturalWidth, img.naturalHeight, g, result.edges, { floor: result.floor }) : null;
     const { walls, doors, diagonals, floorMask } = result.stats;
-    const what = `${walls} ${walls === 1 ? "muro" : "muros"}${diagonals ? ` (${diagonals} en diagonal)` : ""} y ${doors} ${doors === 1 ? "puerta" : "puertas"}`;
+    const what = traced
+      ? `${traced.walls.length} ${traced.walls.length === 1 ? "muro" : "muros"} a mano alzada y ${doors} ${doors === 1 ? "puerta" : "puertas"}`
+      : `${walls} ${walls === 1 ? "muro" : "muros"}${diagonals ? ` (${diagonals} en diagonal)` : ""} y ${doors} ${doors === 1 ? "puerta" : "puertas"}`;
     if (!walls && !doors) setStatus("bad", "No encuentro muros claros en este plano. Prueba a subir la sensibilidad o ponlos a mano.");
     else if (floorMask) setStatus("good", `Propongo ${what}. Revísalos sobre el plano antes de ponerlos.`);
     else setStatus("warn", `Propongo ${what}. En este plano no distingo el suelo de lo que no lo es, así que solo
@@ -308,7 +319,18 @@ export function openWallFit(map) {
     if (!result) return;
     const X = c => g.x + c * g.w, Y = r => g.y + r * g.h;
     ctx.lineCap = "round";
-    for (const [key, type] of Object.entries(result.edges)) {
+    ctx.lineJoin = "round";
+    if (traced) {
+      ctx.strokeStyle = "#ff3b3b";
+      ctx.lineWidth = Math.max(2 / k, g.w * 0.1);
+      ctx.beginPath();
+      for (const w of traced.walls) {
+        ctx.moveTo(X(w.points[0][0]), Y(w.points[0][1]));
+        for (const [x, y] of w.points.slice(1)) ctx.lineTo(X(x), Y(y));
+      }
+      ctx.stroke();
+    }
+    for (const [key, type] of Object.entries(traced ? traced.doors : result.edges)) {
       const [cx, cy, dir] = key.split(",");
       const x = +cx, y = +cy;
       ctx.strokeStyle = type === "door" ? "#3fd2ff" : dir === "d" || dir === "a" ? "#ffa31a" : "#ff3b3b";
@@ -323,6 +345,7 @@ export function openWallFit(map) {
   }
 
   input("sens").addEventListener("input", () => { if (measured) classify(); });
+  body.querySelectorAll('[name="fit"]').forEach(r => r.addEventListener("change", () => { if (measured) classify(); }));
   input("zoom").addEventListener("change", draw);
 
   const dialog = modal({
@@ -334,14 +357,19 @@ export function openWallFit(map) {
         run: host => {
           if (!result) return false;
           const now = map.edges || {};
-          const mode = existing ? host.querySelector('[name="mode"]:checked').value : "replace";
-          let edges;
-          if (mode === "add") edges = { ...result.edges, ...now };
-          else {
-            edges = { ...result.edges };
+          const add = existing && host.querySelector('[name="mode"]:checked').value === "add";
+          if (traced) {
+            /* Muros a mano alzada; las puertas, por la cuadrícula */
+            patchMap(map.id, {
+              edges: add ? { ...traced.doors, ...now } : { ...traced.doors },
+              walls: add ? [...(map.walls || []), ...traced.walls] : traced.walls
+            });
+            const nw = traced.walls.length, nd = result.stats.doors;
+            toast(`${nw === 1 ? "Puesto 1 muro" : `Puestos ${nw} muros`} a mano alzada y ${nd} ${nd === 1 ? "puerta" : "puertas"}`, "good");
+          } else {
+            patchMap(map.id, add ? { edges: { ...result.edges, ...now } } : { edges: { ...result.edges }, walls: [] });
+            toast(`Puestos ${result.stats.walls} muros y ${result.stats.doors} puertas`, "good");
           }
-          patchMap(map.id, { edges });
-          toast(`Puestos ${result.stats.walls} muros y ${result.stats.doors} puertas`, "good");
         }
       }
     ]
@@ -354,7 +382,8 @@ export function openWallFit(map) {
     draw();
     setTimeout(() => {
       try {
-        measured = measureWalls(rgba(img), img.naturalWidth, img.naturalHeight, g);
+        pixels = rgba(img);
+        measured = measureWalls(pixels, img.naturalWidth, img.naturalHeight, g);
         classify();
       } catch (err) {
         setStatus("bad", "No se pudo analizar la imagen: " + err.message);
