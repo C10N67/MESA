@@ -426,6 +426,8 @@ const SESSION_DEFAULTS = {
   requests: [],         // tiradas pedidas a los jugadores
   showFoeHP: false,     // ¿enseñar a la party la vida de los enemigos?
   showMoveRange: true,  // pintar el alcance al arrastrar
+  allowPlayerDraw: true,   // ¿los jugadores pueden dibujar en el mapa?
+  showWallsToParty: true,  // ¿la party ve los muros y las puertas dibujados?
   autoSkipDown: true    // saltar en la iniciativa a los que están fuera de combate
 };
 

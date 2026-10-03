@@ -653,6 +653,9 @@ const EN = {
   "Alguien tiene que estar sobre el acceso": "Someone has to be standing on the passage",
   "Solo cruza quien lo pisa y quien elija ir con él": "Only whoever steps on it, and those they choose, go through",
   "No hay sitio al otro lado": "There's no room on the other side",
+  "Dejar que los jugadores dibujen en el mapa": "Let players draw on the map",
+  "Enseñar los muros y las puertas a la party": "Show walls and doors to the party",
+  "El DM ha desactivado el dibujo": "The DM has turned off drawing",
   "Entendido": "Got it", "La pantalla no entra en la voz": "The screen doesn't join voice",
   "Esa persona no está en la voz": "That person isn't in voice chat",
 

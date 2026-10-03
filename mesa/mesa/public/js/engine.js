@@ -162,7 +162,9 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         visible: visibleList,
         fringe: [...fringe],
         hints,
-        edges: doc.session.revealAll ? map.edges : edgesNear(map, seen, explored),
+        /* Los muros siguen cortando la vista y el paso aunque no se enseñen:
+           solo deja de viajar el dibujo */
+        edges: doc.session.showWallsToParty === false ? {} : doc.session.revealAll ? map.edges : edgesNear(map, seen, explored),
         dark: map.dark, feet: map.feet, diagonals: map.diagonals, playerZoom: map.playerZoom,
         cells: pickCells(map, seen, explored),
         shapes: (map.shapes || []).filter(sh => sh.party),
@@ -841,6 +843,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
          del DM, según decida. Cada uno borra lo suyo, el DM borra todo. */
       case "drawing.add": {
         if (client.role === "screen") return "La pantalla no dibuja";
+        if (!dm && doc.session.allowPlayerDraw === false) return "El DM ha desactivado el dibujo";
         const mp = doc.maps.find(x => x.id === (op.mapId || doc.session.activeMapId));
         if (!mp) return "No existe ese mapa";
         const d = normalizeDrawing({ ...op.drawing, party: dm ? op.drawing && op.drawing.party !== false : true, by: client.name, byId: client.id });
