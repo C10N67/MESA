@@ -11,15 +11,25 @@ export const BLOCKS = { wall: true, door: true, doorOpen: false, window: false }
    "x,y,a" de arriba a la derecha a abajo a la izquierda (/). Sirven para salas
    en diagonal o redondas. La visión se corta con geometría de verdad: un rayo
    que cruza el muro no pasa. La casilla que atraviesa queda como pared: se
-   ve, pero no se pisa. */
+   ve, pero no se pisa.
+
+   Los muros a mano alzada (map.walls) entran en la misma cuenta: cada tramo
+   de la línea es un segmento que corta rayos y pasos. Esos no dejan casillas
+   sin suelo: el muro pasa por donde lo dibujaste y a cada lado se pisa. */
 export const isDiagonal = key => /,(d|a)$/.test(key);
 
 const diagCache = new WeakMap();
 function diagonals(map) {
-  const edges = map.edges || {};
+  const edges = map.edges || {}, walls = map.walls || [];
   let hit = diagCache.get(edges);
-  if (hit) return hit;
+  if (hit && hit.walls === walls) return hit;
   const segs = [], cells = new Set();
+  for (const w of walls) {
+    for (let i = 1; i < w.points.length; i++) {
+      const [x1, y1] = w.points[i - 1], [x2, y2] = w.points[i];
+      segs.push({ x1, y1, x2, y2, minx: Math.min(x1, x2), maxx: Math.max(x1, x2), miny: Math.min(y1, y2), maxy: Math.max(y1, y2) });
+    }
+  }
   for (const [key, type] of Object.entries(edges)) {
     if (!BLOCKS[type]) continue;
     const [sx, sy, dir] = key.split(",");
@@ -30,7 +40,7 @@ function diagonals(map) {
     segs.push(seg);
     cells.add(cellKey(x, y));
   }
-  hit = { segs, cells };
+  hit = { segs, cells, walls };
   diagCache.set(edges, hit);
   return hit;
 }
@@ -38,7 +48,8 @@ function diagonals(map) {
 /* Casillas que un muro diagonal deja sin suelo */
 export const wallCell = (map, x, y) => diagonals(map).cells.has(cellKey(x, y));
 
-/* ¿El segmento entre dos centros de casilla cruza algún muro diagonal?
+/* ¿El segmento entre dos centros de casilla cruza algún muro diagonal o a
+   mano alzada?
    Tocarlo en su extremo cuenta como cruzarlo (así no se cuela la vista por la
    junta de dos tramos); que el rayo empiece o acabe sobre el muro, no. */
 export function crossesDiagonal(map, x0, y0, x1, y1) {
@@ -116,8 +127,8 @@ export function fits(map, chars, who, x, y) {
     for (let dx = 0; dx < n; dx++) {
       const cx = x + dx, cy = y + dy;
       if (wallCell(map, cx, cy)) return "Hay un muro por medio";
-      if (dx && blocksBetween(map, cx - 1, cy, cx, cy)) return "Hay un muro por medio";
-      if (dy && blocksBetween(map, cx, cy - 1, cx, cy)) return "Hay un muro por medio";
+      if (dx && (blocksBetween(map, cx - 1, cy, cx, cy) || crossesDiagonal(map, cx - 1, cy, cx, cy))) return "Hay un muro por medio";
+      if (dy && (blocksBetween(map, cx, cy - 1, cx, cy) || crossesDiagonal(map, cx, cy - 1, cx, cy))) return "Hay un muro por medio";
     }
   }
   const mine = new Set();
@@ -533,6 +544,30 @@ export function fringeCells(doc, map, seen) {
 
 /* Solo se mandan los muros que tocan lo que ya se ha visto: el plano completo
    no sale del servidor mientras la party no lo haya explorado. */
+/* Lo mismo con los muros a mano alzada: de cada uno viajan solo los tramos
+   que pasan por una casilla vista o explorada (o pegada a ella). Un muro largo
+   no enseña por dónde sigue más allá de lo que se ha visto. */
+export function wallsNear(map, seen, explored = []) {
+  const cells = new Set([...(seen || []), ...explored]);
+  const near = (x, y) => {
+    const cx = Math.floor(x), cy = Math.floor(y);
+    for (let oy = -1; oy <= 1; oy++) for (let ox = -1; ox <= 1; ox++) if (cells.has(cellKey(cx + ox, cy + oy))) return true;
+    return false;
+  };
+  const out = [];
+  for (const w of map.walls || []) {
+    let run = null;
+    for (let i = 1; i < w.points.length; i++) {
+      const a = w.points[i - 1], b = w.points[i];
+      if (near(a[0], a[1]) || near(b[0], b[1]) || near((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)) {
+        if (!run) { run = { id: w.id + ":" + out.length, points: [a] }; out.push(run); }
+        run.points.push(b);
+      } else run = null;
+    }
+  }
+  return out;
+}
+
 export function edgesNear(map, seen, explored = []) {
   const cells = new Set([...(seen || []), ...explored]);
   const out = {};

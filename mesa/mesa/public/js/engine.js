@@ -11,8 +11,8 @@
      absorbImages(d) saca las imágenes incrustadas de una copia antigua
      onPresence()    avisa de que ha cambiado quién está conectado */
 
-import { emptyDoc, migrate, cellKey, normalizeChar, normalizeBeast, normalizeMap, normalizeShape, normalizePin, normalizePortal, normalizeAttack, normalizeDrawing, modOf, addDice, scaleDice, cantripTier } from "./schema.js";
-import { visibleCells, fringeCells, edgesNear, gridDistance, pathCost, occupied, fits, reachableCells } from "./los.js";
+import { emptyDoc, migrate, cellKey, normalizeChar, normalizeBeast, normalizeMap, normalizeShape, normalizePin, normalizePortal, normalizeAttack, normalizeDrawing, normalizeWall, MAX_WALLS, modOf, addDice, scaleDice, cantripTier } from "./schema.js";
+import { visibleCells, fringeCells, edgesNear, wallsNear, gridDistance, pathCost, occupied, fits, reachableCells } from "./los.js";
 import { roll, detail } from "./dice.js";
 import { critDamage } from "./attacks-core.js";
 
@@ -165,6 +165,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         /* Los muros siguen cortando la vista y el paso aunque no se enseñen:
            solo deja de viajar el dibujo */
         edges: doc.session.showWallsToParty === false ? {} : doc.session.revealAll ? map.edges : edgesNear(map, seen, explored),
+        walls: doc.session.showWallsToParty === false ? [] : doc.session.revealAll ? map.walls || [] : wallsNear(map, seen, explored),
         dark: map.dark, feet: map.feet, diagonals: map.diagonals, playerZoom: map.playerZoom,
         cells: pickCells(map, seen, explored),
         shapes: (map.shapes || []).filter(sh => sh.party),
@@ -817,6 +818,25 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
           else if (["wall", "door", "doorOpen", "window"].includes(v)) edges[k] = v;
         }
         mp.edges = edges;
+        break;
+      }
+
+      /* Muros a mano alzada: un trazo entero por operación */
+      case "wall.add": {
+        if (!dm) return "Solo el DM";
+        const mp = doc.maps.find(x => x.id === (op.mapId || doc.session.activeMapId));
+        if (!mp) return "No existe ese mapa";
+        const w = normalizeWall(op.wall);
+        if (w.points.length < 2) return null;
+        mp.walls = [...(mp.walls || []), w].slice(-MAX_WALLS);
+        break;
+      }
+      case "wall.remove": {
+        if (!dm) return "Solo el DM";
+        const mp = doc.maps.find(x => x.id === (op.mapId || doc.session.activeMapId));
+        if (!mp) return "No existe ese mapa";
+        if (!(mp.walls || []).some(w => w.id === op.id)) return null;
+        mp.walls = mp.walls.filter(w => w.id !== op.id);
         break;
       }
 

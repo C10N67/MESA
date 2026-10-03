@@ -403,13 +403,16 @@ no salga deformado.
   la diagonal aunque el pulso no sea perfecto. Cortan la visión y el paso
   igual que un muro normal, y **la casilla que atraviesa un muro diagonal no
   se puede pisar** (es medio muro: así nadie se cuela por la rendija).
-- **Pincel** dibuja muros a mano alzada, como el pincel de Paint: pintas
-  el contorno de la sala de un trazo y el muro sigue tu mano de esquina en
-  esquina de la cuadrícula, en recto o a 45 grados. Cruzar una casilla por
-  el medio no deja escalones, y si el ratón va deprisa se rellena lo que se
-  haya saltado. Mientras dibujas se ve el trazo y el muro que va a quedar;
-  al soltar se pone entero, así que **↶** lo deshace de una vez. Si pasas
-  por encima de una puerta, la puerta se queda.
+- **Pincel** dibuja muros **a mano alzada**, igual que **Dibujar**: curvos,
+  torcidos o como los quieras, sin pegarse a la cuadrícula. Lo que sale es un
+  muro de verdad: **corta la vista y el paso** por donde pasa el trazo, para
+  los jugadores y para el alcance de movimiento. Sirve para cuevas, torres
+  redondas o paredes que no van por las líneas del plano. Los extremos se
+  enganchan al muro que tengan al lado (recto o a mano alzada) y, si acabas
+  el trazo donde lo empezaste, se cierra solo: así no queda rendija por la que
+  se cuele la vista. Cada trazo es un muro: **↶** lo deshace de una vez y
+  **Borrar** lo quita entero. A la party solo le llega el trozo que tiene
+  cerca de lo que ha visto.
 - **Puerta**, también recta o en diagonal: pulsa **junto a un borde** para una
   puerta recta o **en el centro de una casilla** para una en diagonal (no hace
   falta muro debajo; si lo hay, se convierte en puerta). Cada pulsación la
@@ -841,8 +844,10 @@ data/                  la partida y las imágenes (se crea al arrancar)
   anotan en el registro y el efecto lo aplicas tú.
 - La voz no tiene servidor de retransmisión: en redes que no dejan conectar
   aparato con aparato, no llega.
-- Los muros diagonales van de esquina a esquina; curvas de otro ángulo se
-  aproximan con varios tramos.
+- Los muros diagonales de la herramienta **Muro** van de esquina a esquina;
+  para curvas u otros ángulos está el **Pincel**. Los muros a mano alzada no
+  llevan puertas ni parten las salas pintadas: para eso, muros y puertas de la
+  cuadrícula.
 
 Del inglés, además: se traduce la interfaz, no la partida. Si escribes tus
 notas o el bestiario en español, en inglés seguirán en español.

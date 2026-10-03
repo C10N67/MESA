@@ -1122,7 +1122,7 @@ function renderMap() {
             <button data-tool="token" aria-pressed="true" title="Mover y seleccionar fichas">${icon("move", 15)}Fichas</button>
             <button data-tool="measure" aria-pressed="false" title="Medir distancias">${icon("ruler", 15)}Regla</button>
             <button data-tool="wall" aria-pressed="false" title="Muro: por los bordes, recto; desde el centro de una casilla, en diagonal">${icon("wall", 15)}Muro</button>
-            <button data-tool="wallBrush" aria-pressed="false" title="Pincel de muros: dibuja a mano alzada, como en Paint, y el muro sigue tu trazo">${icon("wallBrush", 15)}Pincel</button>
+            <button data-tool="wallBrush" aria-pressed="false" title="Muro a mano alzada: dibújalo como con «Dibujar», curvo o como quieras, y corta la vista y el paso">${icon("wallBrush", 15)}Pincel</button>
             <button data-tool="door" aria-pressed="false" title="Puerta, recta o en diagonal: se abre y se cierra">${icon("door", 15)}Puerta</button>
             <button data-tool="erase" aria-pressed="false" title="Quitar muros, diagonales y puertas">${icon("eraser", 15)}Borrar</button>
             <button data-tool="pin" aria-pressed="false" title="Clavar una nota">${icon("note", 15)}Nota</button>
@@ -1181,7 +1181,8 @@ function renderMap() {
         tokenMenu(id);
       },
       onEdge: (key, tool) => paintEdge(key, tool),
-      onEdges: patch => op("map.edges", { mapId: activeMap().id, patch }),
+      onWall: points => op("wall.add", { mapId: activeMap().id, wall: { points } }),
+      onWallErase: id => op("wall.remove", { mapId: activeMap().id, id }),
       onPaintCell: (x, y, brush) => {
         const k = x + "," + y, mapId = activeMap().id;
         op("map.cells", { mapId, patch: { [k]: brush === "none" ? null : brush } });
@@ -1222,10 +1223,10 @@ function renderMap() {
         token: "Arrastra para mover · recuadro para elegir varias · Alt+clic para señalar",
         measure: "Arrastra de una casilla a otra para medir",
         wall: "Arrastra por los bordes para un muro recto, o empieza en el centro de una casilla para uno en diagonal",
-        wallBrush: "Dibuja el muro a mano alzada, como con el pincel de Paint: sigue tu trazo por la cuadrícula, en recto o en diagonal",
+        wallBrush: "Dibuja el muro a mano alzada, curvo o como quieras: corta la vista y el paso por donde pase. Para quitarlo, Borrar",
         draw: "Dibuja con el ratón o el dedo; elige color y si lo ve la party",
         door: "Pulsa un borde para una puerta recta, o el centro de una casilla para una en diagonal. Otra pulsación la abre o la cierra; para quitarla, Borrar",
-        erase: "Arrastra para quitar muros y puertas",
+        erase: "Arrastra para quitar muros y puertas; un muro a mano alzada se quita entero",
         pin: "Pulsa donde quieras clavar la nota",
         portal: "Pulsa donde esté la escalera"
       }[mapTool] || "";
@@ -1451,6 +1452,7 @@ const roomHint = id => `Sala ${id}: pinta a trazos, todo es la misma sala. Empie
 function paintEdge(key, tool) {
   const map = activeMap();
   const now = map.edges[key];
+  if (tool === "erase" && !now) return;   // nada que borrar: sin esto, cada pasada de la goma gastaba un «deshacer»
   const value = tool === "erase" ? null : tool === "wall" ? "wall"
     : tool === "door" ? (now === "door" ? "doorOpen" : "door") : null;   // una puerta solo se abre y se cierra; se quita con Borrar
   op("map.edges", { mapId: map.id, patch: { [key]: value } });

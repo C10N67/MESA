@@ -327,6 +327,7 @@ export function normalizeMap(raw = {}) {
   m.rooms = layer(m.rooms);
   m.vis = layer(m.vis);
   m.drawings = Array.isArray(m.drawings) ? m.drawings.map(normalizeDrawing).filter(d => d.points.length > 1).slice(-150) : [];
+  m.walls = Array.isArray(m.walls) ? m.walls.map(normalizeWall).filter(w => w.points.length > 1).slice(-MAX_WALLS) : [];
   return m;
 }
 
@@ -336,6 +337,19 @@ export function normalizeImgGrid(g) {
   if (!(w >= 2 && h >= 2)) return null;
   const r = v => Math.round(num(v) * 1000) / 1000;
   return { x: r(g.x), y: r(g.y), w: r(w), h: r(h) };
+}
+
+/* Un muro a mano alzada: una línea quebrada en casillas (con decimales) que
+   corta la vista y el paso igual que un muro de la cuadrícula. */
+export const MAX_WALLS = 400;
+export function normalizeWall(raw = {}) {
+  const pts = Array.isArray(raw.points) ? raw.points : [];
+  return {
+    id: raw.id || uid(),
+    points: pts.slice(0, 400)
+      .filter(p => Array.isArray(p) && Number.isFinite(+p[0]) && Number.isFinite(+p[1]))
+      .map(p => [Math.round(+p[0] * 100) / 100, Math.round(+p[1] * 100) / 100])
+  };
 }
 
 /* Un trazo a mano alzada sobre el plano. Los puntos van en casillas (con
