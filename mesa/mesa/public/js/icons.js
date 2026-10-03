@@ -21,6 +21,7 @@ const P = {
   target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3"/>',
   ruler: '<rect x="2.6" y="8.2" width="18.8" height="7.6" rx="1.6" transform="rotate(-20 12 12)"/><path d="M7.2 8.4l1 2.4M11 6.9l1.4 3.2M14.8 5.4l1 2.4"/>',
   wall: '<path d="M3 6h18M3 12h18M3 18h18"/><path d="M9 6v6M15 12v6M6 12V6M18 6v6"/>',
+  wallBrush: '<path d="M3 20.5c2.5 0 3.5-3 6-3s2.5 2 5 2"/><path d="M13 13.5 20 6.5a1.8 1.8 0 0 0-2.5-2.5L10.5 11l-.8 3.3 3.3-.8Z"/>',
   door: '<path d="M6 20V4.8L15.5 3v18L6 20Z"/><circle cx="12.8" cy="12" r=".9" fill="currentColor" stroke="none"/><path d="M15.5 20.4H19V3.6h-3.5"/>',
   eraser: '<path d="M8.4 20.5 3.6 15.7a1.7 1.7 0 0 1 0-2.4l8-8a1.7 1.7 0 0 1 2.4 0l5.1 5.1a1.7 1.7 0 0 1 0 2.4l-7.7 7.7H8.4Z"/><path d="M8 9.5 15.5 17"/>',
   note: '<path d="M6 3.5h8.5L19 8v12.5H6V3.5Z"/><path d="M14 3.5V8h5"/><path d="M9 12h7M9 16h5"/>',

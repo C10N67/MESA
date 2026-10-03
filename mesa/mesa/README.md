@@ -403,6 +403,13 @@ no salga deformado.
   la diagonal aunque el pulso no sea perfecto. Cortan la visión y el paso
   igual que un muro normal, y **la casilla que atraviesa un muro diagonal no
   se puede pisar** (es medio muro: así nadie se cuela por la rendija).
+- **Pincel** dibuja muros a mano alzada, como el pincel de Paint: pintas
+  el contorno de la sala de un trazo y el muro sigue tu mano de esquina en
+  esquina de la cuadrícula, en recto o a 45 grados. Cruzar una casilla por
+  el medio no deja escalones, y si el ratón va deprisa se rellena lo que se
+  haya saltado. Mientras dibujas se ve el trazo y el muro que va a quedar;
+  al soltar se pone entero, así que **↶** lo deshace de una vez. Si pasas
+  por encima de una puerta, la puerta se queda.
 - **Puerta**, también recta o en diagonal: pulsa **junto a un borde** para una
   puerta recta o **en el centro de una casilla** para una en diagonal (no hace
   falta muro debajo; si lo hay, se convierte en puerta). Cada pulsación la

@@ -356,6 +356,14 @@ export class MapView {
         cv.setPointerCapture(e.pointerId);
         return;
       }
+      /* Pincel de muros: a mano alzada, como en Paint. El muro sigue el trazo
+         de esquina en esquina de la cuadrícula, en recto o en diagonal */
+      if (this.mode === "dm" && this.tool === "wallBrush") {
+        this.painting = "wallBrush";
+        this.wallBrush = { at: this.cornerAt(p.fx, p.fy), trail: [[p.fx, p.fy]], edges: new Set() };
+        cv.setPointerCapture(e.pointerId);
+        return this.draw();
+      }
       /* Muro: cerca de un borde, recto; desde el centro de una casilla, en
          diagonal. La herramienta «diag» de antes sigue valiendo. */
       if (this.mode === "dm" && (this.tool === "diag" || (this.tool === "wall" && this.nearCenter(p.fx, p.fy)))) {
@@ -456,6 +464,7 @@ export class MapView {
         return this.draw();
       }
       if (this.painting === "diag") { this.diagonalTo(p); return; }
+      if (this.painting === "wallBrush") { this.brushTo(p); return; }
       if (this.painting === "cell" || this.painting === "layer") {
         this.paintAt(p);
         return;
@@ -530,6 +539,16 @@ export class MapView {
         const d = this.diag;
         this.opts.onEdge && this.opts.onEdge(edgeKey(d.sx, d.sy, this.diagonalAt(d.fx, d.fy)), "wall");
       }
+      if (this.painting === "wallBrush") {
+        /* El trazo entero va de una vez: se deshace de un golpe */
+        const edges = (this.data.map && this.data.map.edges) || {};
+        const patch = {};
+        for (const key of this.wallBrush.edges) if (!edges[key]) patch[key] = "wall";   // las puertas que pise se quedan
+        this.painting = null;
+        this.wallBrush = null;
+        if (Object.keys(patch).length && this.opts.onEdges) this.opts.onEdges(patch);
+        return this.draw();
+      }
       if (this.painting) { this.painting = null; this.lastPaint = null; this.diag = null; return; }
       if (this.stroke) {
         const pts = simplify(this.stroke.points, 0.04);
@@ -585,7 +604,7 @@ export class MapView {
     cv.addEventListener("pointerup", release);
     cv.addEventListener("pointercancel", e => {
       this.touches.delete(e.pointerId);
-      this.pan = this.painting = this.drag = this.band = this.measure = this.tap = this.stroke = null;
+      this.pan = this.painting = this.drag = this.band = this.measure = this.tap = this.stroke = this.wallBrush = null;
       this.placing = false;
       this.draw();
     });
@@ -638,6 +657,42 @@ export class MapView {
       d.done.add(key);
       this.opts.onEdge && this.opts.onEdge(key, "wall");
     }
+  }
+
+  /* La esquina de la cuadrícula más cercana, dentro del mapa */
+  cornerAt(fx, fy) {
+    const map = this.data.map;
+    return { x: Math.max(0, Math.min(map.cols, Math.round(fx))), y: Math.max(0, Math.min(map.rows, Math.round(fy))) };
+  }
+
+  /* Pincel de muros: se pasa a otra esquina solo al acercarse a ella, así
+     que cruzar una casilla por el medio no deja escalones. Un paso a 45° solo
+     vale si la mano también iba en diagonal: un trazo recto que tiembla entre
+     dos líneas no sale en zigzag. Si el puntero va deprisa y se salta
+     esquinas, se rellenan en línea, en recto o a 45°. */
+  brushTo(p) {
+    const b = this.wallBrush;
+    if (!b || !this.data.map) return;
+    const last = b.trail[b.trail.length - 1];
+    if (Math.hypot(p.fx - last[0], p.fy - last[1]) > 0.05) b.trail.push([p.fx, p.fy]);
+    const to = this.cornerAt(p.fx, p.fy);
+    if ((to.x !== b.at.x || to.y !== b.at.y) && Math.hypot(p.fx - to.x, p.fy - to.y) < 0.42) {
+      const n = Math.max(Math.abs(to.x - b.at.x), Math.abs(to.y - b.at.y));
+      if (n === 1 && to.x !== b.at.x && to.y !== b.at.y) {
+        const [hx, hy] = b.from || b.trail[0];
+        const mx = Math.abs(p.fx - hx), my = Math.abs(p.fy - hy);
+        if (Math.min(mx, my) < Math.max(mx, my) * Math.tan(Math.PI / 8)) return this.draw();
+      }
+      let prev = b.at;
+      for (let i = 1; i <= n; i++) {
+        const q = { x: Math.round(b.at.x + (to.x - b.at.x) * i / n), y: Math.round(b.at.y + (to.y - b.at.y) * i / n) };
+        b.edges.add(cornerEdge(prev, q));
+        prev = q;
+      }
+      b.at = to;
+      b.from = [p.fx, p.fy];
+    }
+    this.draw();
   }
 
   /* El trazo más cercano al puntero, si está a menos de un tercio de casilla */
@@ -847,6 +902,26 @@ export class MapView {
       ctx.setLineDash(type === "window" ? [thick, thick * 1.6] : []);
       ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
       ctx.setLineDash([]);
+    }
+
+    /* Pincel de muros en curso: el trazo a mano y los muros que dejará */
+    if (this.wallBrush) {
+      const b = this.wallBrush;
+      this.stroke2d(ctx, g, b.trail, "rgba(226,211,174,.35)", 0.06, X, Y, false);
+      ctx.save();
+      ctx.lineWidth = thick;
+      ctx.lineCap = "round";
+      ctx.strokeStyle = COLORS.wall;
+      ctx.beginPath();
+      for (const key of b.edges) {
+        const [x, y, dir] = key.split(","), cx = Number(x), cy = Number(y);
+        ctx.moveTo(X(dir === "a" ? cx + 1 : cx), Y(cy));
+        ctx.lineTo(X(dir === "h" || dir === "d" ? cx + 1 : cx), Y(dir === "h" ? cy : cy + 1));
+      }
+      ctx.stroke();
+      ctx.fillStyle = COLORS.wall;
+      ctx.beginPath(); ctx.arc(X(b.at.x), Y(b.at.y), Math.max(3, g.cell * 0.1), 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
     }
 
     /* Accesos a otros mapas */
@@ -1619,6 +1694,14 @@ const PIN_MARKS = {
 };
 
 const ROOM_TONES = [[127, 208, 255], [217, 154, 43], [229, 107, 111], [143, 214, 148], [200, 160, 240], [240, 200, 120]];
+
+/* El borde o la diagonal que une dos esquinas vecinas de la cuadrícula */
+function cornerEdge(a, b) {
+  const x = Math.min(a.x, b.x), y = Math.min(a.y, b.y);
+  if (a.y === b.y) return edgeKey(x, y, "h");
+  if (a.x === b.x) return edgeKey(x, y, "v");
+  return edgeKey(x, y, (b.x - a.x) * (b.y - a.y) > 0 ? "d" : "a");
+}
 
 export const EDGE_CYCLE = { none: "wall", wall: "door", door: "doorOpen", doorOpen: "door" };
 export { cellKey, edgeKey };
