@@ -531,7 +531,11 @@ la casilla de destino se marca en rojo cuando no cabe. Un ogro de 2×2 no pasa
 por una puerta de una casilla, que es justo lo que se quiere que se note.
 
 En **Ajustes del mapa** decides si la party ve el mapa, si se revela entero, si
-cada jugador puede mover su ficha desde el móvil, si puede acercarse y alejarse,
+cada jugador puede mover su ficha desde el móvil, si los jugadores pueden
+**dibujar** en el mapa (quitado, desaparece su botón y el servidor rechaza
+cualquier trazo; tú sigues dibujando), si la party ve **los muros y las
+puertas** dibujados (quitado, no les llega ni el trazo: siguen cortando la
+vista y el paso igual, solo deja de verse la línea), si puede acercarse y alejarse,
 si se pinta el alcance al arrastrar, cuántos pies mide una casilla, cómo cuentan
 las diagonales y si la cámara enseña todo el plano o sigue al personaje.
 

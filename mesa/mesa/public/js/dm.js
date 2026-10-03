@@ -1482,6 +1482,8 @@ function openMapSettings(map) {
       <label class="check" style="margin-top:8px"><input type="checkbox" name="remember" ${map.remember ? "checked" : ""}> Recordar lo explorado</label>
       <label class="check" style="margin-top:8px"><input type="checkbox" name="grid" ${map.grid ? "checked" : ""}> Dibujar la cuadrícula</label>
       <label class="check" style="margin-top:8px"><input type="checkbox" name="move" ${session().allowPlayerMove ? "checked" : ""}> Dejar que cada jugador mueva su ficha</label>
+      <label class="check" style="margin-top:8px"><input type="checkbox" name="draw" ${session().allowPlayerDraw !== false ? "checked" : ""}> Dejar que los jugadores dibujen en el mapa</label>
+      <label class="check" style="margin-top:8px"><input type="checkbox" name="walls" ${session().showWallsToParty !== false ? "checked" : ""}> Enseñar los muros y las puertas a la party</label>
       <label class="check" style="margin-top:8px"><input type="checkbox" name="dark" ${map.dark ? "checked" : ""}> Mapa a oscuras (solo se ve con antorchas o visión en la oscuridad)</label>
       <label class="check" style="margin-top:8px"><input type="checkbox" name="playerZoom" ${map.playerZoom ? "checked" : ""}> Dejar que los jugadores se acerquen y alejen</label>
       <label class="check" style="margin-top:8px"><input type="checkbox" name="range" ${session().showMoveRange !== false ? "checked" : ""}> Pintar el alcance al arrastrar una ficha</label>
@@ -1591,6 +1593,8 @@ function openMapSettings(map) {
           showMapToParty: v("show").checked,
           revealAll: v("reveal").checked,
           allowPlayerMove: v("move").checked,
+          allowPlayerDraw: v("draw").checked,
+          showWallsToParty: v("walls").checked,
           showMoveRange: v("range").checked,
           showFoeHP: v("foehp").checked
         });
