@@ -1,10 +1,11 @@
 /* Vista del DM: todo a la vista y todo editable. */
 
+import { afterMove } from "./portals.js";
 import { voiceWidget } from "./voice.js";
 import { $, el, on, esc, lines, sign, pct, hpTone, hpBar, tweenBars, initials, imgURL, toast, modal, confirmBox, shrinkImage, clamp } from "./util.js";
 import { CONDITIONS, conditionName, ABILITIES, SKILLS, PIN_KINDS, modOf, normalizeChar, normalizeBeast, normalizeMap, normalizePin, normalizePortal, uid, encounterDifficulty } from "./schema.js";
 import { openAttacks, attacksOf } from "./attacks.js";
-import { feetChars } from "./los.js";
+import { feetChars, nextRoomId } from "./los.js";
 import { store, onState, onPresence, onStatus, op, patchChar, patchSession, patchMap, uploadImage, leave, lobby } from "./net.js";
 import { dicePanel, renderLog, throwDice, tellTable, currentMode, isSecret } from "./dice-panel.js";
 import { openCharEditor, openConditions } from "./char-editor.js";
@@ -1066,7 +1067,7 @@ function renderMap() {
             <button data-tool="door" aria-pressed="false" title="Puerta: cerrada, abierta, sin puerta">${icon("door", 15)}Puerta</button>
             <button data-tool="erase" aria-pressed="false" title="Quitar muros, diagonales y puertas">${icon("eraser", 15)}Borrar</button>
             <button data-tool="pin" aria-pressed="false" title="Clavar una nota">${icon("note", 15)}Nota</button>
-            <button data-tool="portal" aria-pressed="false" title="Escalera o acceso a otro mapa">${icon("stairs", 15)}Acceso</button>
+            <button data-tool="portal" aria-pressed="false" title="Escalera o pasadizo: a otro mapa o a otro punto de este">${icon("stairs", 15)}Acceso</button>
             <button data-tool="draw" aria-pressed="false" title="Dibujar a mano alzada">${icon("scribble", 15)}Dibujar</button>
           </div>
           <div class="tool-set" id="terrain" aria-label="Terreno">
@@ -1109,7 +1110,7 @@ function renderMap() {
 
     mapView = new MapView($("#canvas", pane), {
       mode: "dm",
-      onMove: (id, x, y) => op("token.move", { id, x, y, mapId: activeMap().id }),
+      onMove: (id, x, y) => { op("token.move", { id, x, y, mapId: activeMap().id }); afterMove(id, x, y, { isDM: true }); },
       onMoveMany: moves => op("token.moveMany", { moves: moves.map(m => ({ ...m, mapId: activeMap().id })) }),
       onCell: (x, y) => placeHere(x, y),
       onToken: (id, e) => {
@@ -1141,6 +1142,7 @@ function renderMap() {
       },
       onPin: (x, y) => editPin({ x, y }),
       onPortal: (x, y) => editPortal({ x, y }),
+      onRoom: id => { const h = $("#mapHint"); if (h) h.textContent = roomHint(id); },
       onPing: (x, y) => op("ping", { x, y, mapId: activeMap().id }),
       onSelect: ids => { const h = $("#mapHint"); if (h) h.textContent = ids.length ? ids.length + " fichas elegidas" : ""; },
       onZoom: z => { const l = $("#zoomLabel"); if (l) l.textContent = Math.round(z * 100) + "%"; }
@@ -1151,6 +1153,7 @@ function renderMap() {
     const pressOnly = b => pane.querySelectorAll("[data-tool],[data-shape],[data-brush],[data-layer],[data-draw]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
     on(pane, "click", "[data-tool]", (e, b) => {
       mapTool = b.dataset.tool;
+      arrivalFor = null;
       mapView.tool = mapTool;
       mapView.pending = null;
       pressOnly(b);
@@ -1161,7 +1164,7 @@ function renderMap() {
         wall: "Arrastra por los bordes de las casillas",
         diag: "Arrastra por las casillas: la diagonal (\\ o /) la marca dónde empiezas",
         draw: "Dibuja con el ratón o el dedo; elige color y si lo ve la party",
-        door: "Pulsa un borde: cerrada, abierta, sin puerta",
+        door: "Pulsa un borde o un muro diagonal: cerrada, abierta, sin puerta",
         erase: "Arrastra para quitar muros y puertas",
         pin: "Pulsa donde quieras clavar la nota",
         portal: "Pulsa donde esté la escalera"
@@ -1172,13 +1175,15 @@ function renderMap() {
     on(pane, "click", "[data-layer]", (e, b) => {
       mapView.tool = "layer";
       mapView.layer = b.dataset.layer;
+      /* Cada pulsación de «Sala» empieza una sala nueva */
+      if (b.dataset.layer === "rooms" && b.dataset.value === "1") mapView.roomId = nextRoomId(activeMap());
       mapView.layerValue = b.dataset.value === "1" ? 1 : b.dataset.value;
       mapView.pending = null;
       pressOnly(b);
       $("#drawOpts", pane).classList.add("hidden");
       $("#mapHint", pane).textContent = {
         rough: "Pinta el terreno difícil: entrar en esas casillas cuesta el doble",
-        rooms: "Pinta la sala: al entrar alguien, la party la ve entera. Cada mancha separada es otra sala",
+        rooms: roomHint(mapView.roomId),
         vis: b.dataset.value === "show" ? "Pinta lo que la party verá siempre" : "Pinta lo que la party no verá nunca, aunque lo tenga delante",
         zones: "Arrastra para quitar salas y zonas"
       }[mapView.layer] || "";
@@ -1308,42 +1313,80 @@ function editPin(seed) {
   });
 }
 
+/* Accesos: a otro mapa o a otro punto del mismo (un pasadizo, una
+   trampilla, un círculo de teletransporte). Al pisarlo puede preguntar quién
+   cruza, llevar solo a quien lo pisa o no hacer nada (solo marca). */
+let arrivalFor = null;     // acceso a medio editar mientras se elige la llegada en el mapa
 function editPortal(seed) {
   const map = activeMap();
-  const existing = (map.portals || []).find(p => p.x === seed.x && p.y === seed.y);
-  const portal = normalizePortal(existing || seed);
-  const others = doc().maps.filter(m => m.id !== map.id);
-  if (!others.length && !existing) return toast("Crea antes otro mapa al que llevar", "bad");
+  if (arrivalFor) {
+    const draft = { ...arrivalFor, toX: seed.x, toY: seed.y };
+    arrivalFor = null;
+    $("#mapHint") && ($("#mapHint").textContent = "");
+    return editPortal({ draft });
+  }
+  const existing = seed.draft ? null : (map.portals || []).find(p => p.x === seed.x && p.y === seed.y);
+  const portal = normalizePortal(seed.draft || existing || { ...seed, toMap: map.id });
+  const isNew = !existing && !(seed.draft && (map.portals || []).some(p => p.id === seed.draft.id));
+  const mode = !portal.auto ? "none" : portal.ask ? "ask" : "one";
   const body = el(`<div>
     <div class="cols2">
       <label class="field"><span>Nombre</span><input name="label" value="${esc(portal.label)}"></label>
       <label class="field"><span>Lleva a</span><select name="toMap">
-        ${others.map(m => `<option value="${m.id}" ${m.id === portal.toMap ? "selected" : ""}>${esc(m.name)}</option>`).join("")}
+        <option value="${map.id}" ${!portal.toMap || portal.toMap === map.id ? "selected" : ""}>Este mismo mapa</option>
+        ${doc().maps.filter(m => m.id !== map.id).map(m => `<option value="${m.id}" ${m.id === portal.toMap ? "selected" : ""}>${esc(m.name)}</option>`).join("")}
       </select></label>
-      <label class="field"><span>Casilla de llegada X</span><input name="toX" type="number" value="${portal.toX ?? ""}" placeholder="misma"></label>
-      <label class="field"><span>Casilla de llegada Y</span><input name="toY" type="number" value="${portal.toY ?? ""}" placeholder="misma"></label>
+      <label class="field"><span>Casilla de llegada X</span><input name="toX" type="number" min="0" value="${portal.toX ?? ""}" placeholder="misma"></label>
+      <label class="field"><span>Casilla de llegada Y</span><input name="toY" type="number" min="0" value="${portal.toY ?? ""}" placeholder="misma"></label>
     </div>
-    <label class="check"><input type="checkbox" name="auto" ${portal.auto ? "checked" : ""}> Cruzar solo al pisarlo</label>
-    <p class="prose" style="font-size:12px">Cuando un personaje lo pisa se le lleva al otro mapa y la mesa cambia de plano.</p>
+    <button type="button" class="btn sm" data-pick-arrival>${withIcon("target", "Marcar la llegada en el mapa", 15)}</button>
+    <label class="field" style="margin-top:12px"><span>Al pisarlo</span><select name="mode">
+      <option value="ask" ${mode === "ask" ? "selected" : ""}>Preguntar quién cruza (puede ir la party entera)</option>
+      <option value="one" ${mode === "one" ? "selected" : ""}>Cruza solo quien lo pisa</option>
+      <option value="none" ${mode === "none" ? "selected" : ""}>Nada: solo lo marca</option>
+    </select></label>
+    <p class="prose small"><span>Si lleva a otro mapa, la mesa cambia de plano con quien cruce.</span></p>
   </div>`);
-  modal({
-    title: existing ? "Acceso" : "Nuevo acceso",
+  const pickBtn = body.querySelector("[data-pick-arrival]");
+  const syncPick = () => { pickBtn.disabled = body.querySelector('[name="toMap"]').value !== map.id; };
+  body.querySelector('[name="toMap"]').addEventListener("change", syncPick);
+  syncPick();
+  const read = host => {
+    const v = n => host.querySelector(`[name="${n}"]`);
+    const m = v("mode").value;
+    return {
+      ...portal, label: v("label").value || "Escalera", toMap: v("toMap").value,
+      toX: v("toX").value === "" ? null : +v("toX").value,
+      toY: v("toY").value === "" ? null : +v("toY").value,
+      auto: m !== "none", ask: m === "ask"
+    };
+  };
+  const win = modal({
+    title: isNew ? "Nuevo acceso" : "Acceso",
     body,
     actions: [
-      ...(existing ? [{ label: "Quitar", tone: "danger", run: () => op("portal.set", { mapId: map.id, portal, remove: true }) }] : []),
+      ...(!isNew ? [{ label: "Quitar", tone: "danger", run: () => op("portal.set", { mapId: map.id, portal, remove: true }) }] : []),
       { label: "Cancelar" },
       { label: "Guardar", tone: "primary", run: host => {
-        const v = n => host.querySelector(`[name="${n}"]`);
-        op("portal.set", { mapId: map.id, portal: {
-          ...portal, label: v("label").value || "Escalera", toMap: v("toMap").value,
-          toX: v("toX").value === "" ? null : +v("toX").value,
-          toY: v("toY").value === "" ? null : +v("toY").value,
-          auto: v("auto").checked
-        } });
+        const out = read(host);
+        if (out.toMap === map.id && (out.toX === null || out.toY === null || (out.toX === out.x && out.toY === out.y))) {
+          toast("Marca a qué casilla de este mapa lleva", "bad");
+          return false;
+        }
+        op("portal.set", { mapId: map.id, portal: out });
       } }
     ]
   });
+  pickBtn.addEventListener("click", () => {
+    arrivalFor = read(body);
+    win.close();
+    const h = $("#mapHint");
+    if (h) h.textContent = "Pulsa la casilla de llegada";
+    toast("Pulsa en el mapa la casilla de llegada");
+  });
 }
+
+const roomHint = id => `Sala ${id}: pinta a trazos, todo es la misma sala. Empieza dentro de otra para seguirla, o pulsa «Sala» otra vez para una nueva`;
 
 function paintEdge(key, tool) {
   const map = activeMap();

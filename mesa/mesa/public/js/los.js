@@ -351,35 +351,79 @@ export function litCells(doc, map) {
 }
 
 /* ---------- Salas que se revelan al entrar ----------
-   El DM pinta salas sobre el plano. Cada mancha continua de casillas pintadas
-   es una sala distinta, y los muros y puertas las separan: así caben varias
-   en un mapa sin configurar nada. En cuanto un personaje pisa una casilla de
-   una sala, la party ve la sala entera (la del jefe, un pasillo largo). */
+   El DM pinta salas sobre el plano. Cada casilla lleva el número de su sala:
+   dos salas pegadas son distintas aunque no haya pared entre ellas, porque
+   tienen número distinto. Dentro de un mismo número, los muros y las puertas
+   (rectos o en diagonal) la parten en trozos que se revelan por separado. En
+   cuanto un personaje pisa una casilla de una sala, la party ve la sala
+   entera (la del jefe, un pasillo largo).
+
+   Un muro diagonal parte su casilla en dos triángulos, y cada uno solo toca
+   dos lados: el de arriba a la derecha de un «\» toca el norte y el este.
+   Por eso el recorrido va por mitades de casilla y no por casillas: así un
+   muro diagonal corta la sala igual que uno recto. */
+const N = 0, E = 1, S = 2, W = 3;
+const STEP = [[0, -1], [1, 0], [0, 1], [-1, 0]];
 const roomCache = new WeakMap();
+
+function diagOf(map, x, y) {
+  const edges = map.edges || {};
+  return { d: !!edges[edgeKey(x, y, "d")], a: !!edges[edgeKey(x, y, "a")] };
+}
+/* Trozo de la casilla que da a un lado */
+function partFacing(map, x, y, dir) {
+  const { d, a } = diagOf(map, x, y);
+  if (d && a) return String(dir);
+  if (d) return dir === N || dir === E ? "0" : "1";
+  if (a) return dir === N || dir === W ? "0" : "1";
+  return "";
+}
+/* Lados que toca un trozo */
+function partSides(map, x, y, part) {
+  const { d, a } = diagOf(map, x, y);
+  if (d && a) return [Number(part)];
+  if (d) return part === "0" ? [N, E] : [S, W];
+  if (a) return part === "0" ? [N, W] : [S, E];
+  return [N, E, S, W];
+}
+function cellParts(map, x, y) {
+  const { d, a } = diagOf(map, x, y);
+  if (d && a) return ["0", "1", "2", "3"];
+  return d || a ? ["0", "1"] : [""];
+}
+
 export function roomsOf(map) {
   const painted = map.rooms || {};
   let hit = roomCache.get(painted);
   if (hit && hit.edges === map.edges) return hit.rooms;
-  const of = new Map();      // casilla -> índice de sala
+  const of = new Map();      // casilla -> salas que la tocan
   const rooms = [];
+  const seen = new Set();    // "x,y#trozo"
   for (const start of Object.keys(painted)) {
-    if (of.has(start)) continue;
-    const idx = rooms.length, cells = [];
-    const stack = [start];
-    of.set(start, idx);
-    while (stack.length) {
-      const k = stack.pop();
-      cells.push(k);
-      const [x, y] = k.split(",").map(Number);
-      for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
-        const nk = cellKey(nx, ny);
-        if (!painted[nk] || of.has(nk)) continue;
-        if (edgeBetween(map, x, y, nx, ny)) continue;     // un muro o una puerta parte la sala
-        of.set(nk, idx);
-        stack.push(nk);
+    const [sx, sy] = start.split(",").map(Number);
+    for (const sp of cellParts(map, sx, sy)) {
+      if (seen.has(start + "#" + sp)) continue;
+      const idx = rooms.length, cells = new Set();
+      const id = String(painted[start]);
+      const stack = [[sx, sy, sp]];
+      seen.add(start + "#" + sp);
+      while (stack.length) {
+        const [x, y, part] = stack.pop();
+        cells.add(cellKey(x, y));
+        for (const dir of partSides(map, x, y, part)) {
+          const nx = x + STEP[dir][0], ny = y + STEP[dir][1];
+          const nk = cellKey(nx, ny);
+          if (!painted[nk] || String(painted[nk]) !== id) continue;     // otra sala, u otra cosa
+          if (edgeBetween(map, x, y, nx, ny)) continue;                   // un muro o una puerta la parte
+          const np = partFacing(map, nx, ny, (dir + 2) % 4);
+          if (seen.has(nk + "#" + np)) continue;
+          seen.add(nk + "#" + np);
+          stack.push([nx, ny, np]);
+        }
       }
+      for (const k of cells) (of.get(k) || of.set(k, []).get(k)).push(idx);
+      rooms.push([...cells]);
     }
-    rooms.push(cells);
   }
   hit = { edges: map.edges, rooms: { of, list: rooms } };
   roomCache.set(painted, hit);
@@ -391,6 +435,13 @@ function edgeBetween(map, x1, y1, x2, y2) {
   if (y1 === y2) key = edgeKey(Math.max(x1, x2), y1, "v");
   else key = edgeKey(x1, Math.max(y1, y2), "h");
   return !!(map.edges || {})[key];
+}
+
+/* Número para una sala nueva: uno más que el mayor que haya */
+export function nextRoomId(map) {
+  let max = 0;
+  for (const v of Object.values(map.rooms || {})) max = Math.max(max, Number(v) || 0);
+  return max + 1;
 }
 
 /* Casillas que la party alcanza a ver ahora mismo. */
@@ -405,8 +456,7 @@ export function visibleCells(doc, map) {
     for (const c of doc.chars) {
       if (c.kind !== "pc" || c.hp <= 0 || !onMap(c, map)) continue;
       for (const [x, y] of occupied(c)) {
-        const idx = rooms.of.get(cellKey(x, y));
-        if (idx !== undefined) lit.add(idx);
+        for (const idx of rooms.of.get(cellKey(x, y)) || []) lit.add(idx);
       }
     }
     for (const idx of lit) for (const k of rooms.list[idx]) set.add(k);
