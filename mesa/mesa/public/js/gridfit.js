@@ -1,15 +1,19 @@
-/* Encajar la cuadrícula de Mesa con la que trae dibujada el plano.
+/* Encajar la cuadrícula de Mesa con la que trae dibujada el plano, y
+   después proponer sus muros y puertas.
 
-   Busca sola la cuadrícula (gridfind.js), la pinta encima del plano y deja
-   corregirla: tamaño de casilla, dónde empieza (también arrastrando sobre la
-   imagen), columnas y filas. Al guardar, el mapa recuerda dónde cae la
-   cuadrícula en la imagen (imgGrid) y el tablero la dibuja a esa escala, sin
-   recortar ni estirar la imagen a mano. */
+   1. Busca sola la cuadrícula (gridfind.js), la pinta encima del plano y
+      deja corregirla: tamaño de casilla, dónde empieza (también arrastrando
+      sobre la imagen), columnas y filas. Al guardar, el mapa recuerda dónde
+      cae la cuadrícula en la imagen (imgGrid) y el tablero la dibuja a esa
+      escala, sin recortar ni estirar la imagen a mano.
+   2. Con la cuadrícula ya puesta, propone muros y puertas (wallfind.js) y
+      los enseña sobre el plano para revisarlos antes de ponerlos. */
 
 import { modal, toast, imgURL } from "./util.js";
 import { patchMap } from "./net.js";
 import { MAX_COLS, MAX_ROWS } from "./schema.js";
 import { toGray, detectGrid, fitCount } from "./gridfind.js";
+import { measureWalls, classifyWalls } from "./wallfind.js";
 
 const mod = (a, b) => ((a % b) + b) % b;
 const fmt = (v, d = 2) => String(Math.round(v * 10 ** d) / 10 ** d).replace(".", ",");
@@ -21,13 +25,46 @@ async function loadImage(imageId) {
   return img;
 }
 
-function pixels(img) {
+/* Los píxeles RGBA de la imagen */
+function rgba(img) {
   const w = img.naturalWidth, h = img.naturalHeight;
   const c = document.createElement("canvas");
   c.width = w; c.height = h;
   const ctx = c.getContext("2d", { willReadFrequently: true });
   ctx.drawImage(img, 0, 0);
-  return toGray(ctx.getImageData(0, 0, w, h).data, w, h);
+  return ctx.getImageData(0, 0, w, h).data;
+}
+
+/* Lienzo de vista previa: la imagen entera (o a tamaño real), con lo que
+   queda fuera del tablero en sombra. Devuelve el contexto ya escalado a
+   píxeles de la imagen y el factor de escala. */
+function paintBase(canvas, view, img, g, real) {
+  const W = img.naturalWidth, H = img.naturalHeight;
+  const scale = real ? 1 : Math.min(1, (view.clientWidth || 800) / W);
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  canvas.width = Math.round(W * scale * dpr);
+  canvas.height = Math.round(H * scale * dpr);
+  canvas.style.width = Math.round(W * scale) + "px";
+  canvas.style.height = Math.round(H * scale) + "px";
+  const ctx = canvas.getContext("2d");
+  const k = scale * dpr;
+  ctx.setTransform(k, 0, 0, k, 0, 0);
+  ctx.drawImage(img, 0, 0, W, H);
+  const bx = g.x, by = g.y, bw = g.cols * g.w, bh = g.rows * g.h;
+  ctx.fillStyle = "rgba(0,0,0,.55)";
+  ctx.beginPath();
+  ctx.rect(0, 0, W, H);
+  ctx.rect(bx, by, bw, bh);   // agujero: el tablero
+  ctx.fill("evenodd");
+  return { ctx, k };
+}
+
+/* Quitar el diálogo de la escucha de «resize» cuando se cierre */
+function onResizeWhileOpen(body, fn) {
+  addEventListener("resize", fn, { passive: true });
+  new MutationObserver((_, obs) => {
+    if (!body.isConnected) { removeEventListener("resize", fn); obs.disconnect(); }
+  }).observe(document.body, { childList: true });
 }
 
 /* Columnas y filas que caben con este tamaño y este punto de partida */
@@ -45,9 +82,10 @@ function verdict(found) {
   return ["bad", `No veo una cuadrícula clara en este plano. Te dejo la mejor apuesta (${size}): ajústala a mano o arrástrala sobre la imagen.`];
 }
 
-/* map: el mapa (id, imageId, cols, rows, imgGrid).
-   onApply: avisa de las columnas y filas nuevas (para refrescar otros formularios). */
-export function openGridFit(map, { onApply } = {}) {
+/* map: el mapa (id, imageId, cols, rows, imgGrid, edges).
+   onApply: avisa de las columnas y filas nuevas (para refrescar otros formularios).
+   walls: al guardar, pasar a proponer muros y puertas. */
+export function openGridFit(map, { onApply, walls = false } = {}) {
   if (!map.imageId) return toast("Este mapa no tiene imagen de fondo", "bad");
 
   const body = document.createElement("div");
@@ -102,25 +140,9 @@ export function openGridFit(map, { onApply } = {}) {
 
   function draw() {
     if (!img || !g) return;
-    const real = input("zoom").checked;
-    const scale = real ? 1 : Math.min(1, (view.clientWidth || 800) / W);
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
-    canvas.width = Math.round(W * scale * dpr);
-    canvas.height = Math.round(H * scale * dpr);
-    canvas.style.width = Math.round(W * scale) + "px";
-    canvas.style.height = Math.round(H * scale) + "px";
-    const ctx = canvas.getContext("2d");
-    const k = scale * dpr;
-    ctx.setTransform(k, 0, 0, k, 0, 0);
-    ctx.drawImage(img, 0, 0, W, H);
-    /* Lo que queda fuera del tablero, en sombra */
-    const bx = g.x, by = g.y, bw = g.cols * g.w, bh = g.rows * g.h;
-    ctx.fillStyle = "rgba(0,0,0,.55)";
-    ctx.beginPath();
-    ctx.rect(0, 0, W, H);
-    ctx.rect(bx, by, bw, bh);   // agujero: el tablero
-    ctx.fill("evenodd");
+    const { ctx, k } = paintBase(canvas, view, img, g, input("zoom").checked);
     /* Líneas de la cuadrícula de Mesa */
+    const bx = g.x, by = g.y, bw = g.cols * g.w, bh = g.rows * g.h;
     ctx.strokeStyle = "rgba(255, 61, 200, .85)";
     ctx.lineWidth = 1 / k;
     ctx.beginPath();
@@ -134,7 +156,7 @@ export function openGridFit(map, { onApply } = {}) {
     /* Un respiro para que se pinte el aviso antes del cálculo */
     setTimeout(() => {
       try {
-        gray = gray || pixels(img);
+        gray = gray || toGray(rgba(img), W, H);
         found = detectGrid(gray, W, H);
         g = { x: found.x, y: found.y, w: found.cellW, h: found.cellH, cols: found.cols, rows: found.rows };
         if (input("square").checked && Math.abs(g.w - g.h) / g.w > 0.01) input("square").checked = false;
@@ -207,15 +229,13 @@ export function openGridFit(map, { onApply } = {}) {
             toast(`Mesa admite hasta ${MAX_COLS} × ${MAX_ROWS} casillas: el tablero se queda en ${cols} × ${rows}`, "bad");
           else toast(`Cuadrícula encajada: ${cols} × ${rows}`, "good");
           if (onApply) onApply({ cols, rows });
+          if (walls) openWallFit({ ...map, imgGrid: { x: g.x, y: g.y, w: g.w, h: g.h }, cols, rows });
         }
       }
     ]
   });
 
-  addEventListener("resize", draw, { passive: true });
-  const stop = () => removeEventListener("resize", draw);
-  new MutationObserver((_, obs) => { if (!body.isConnected) { stop(); obs.disconnect(); } })
-    .observe(document.body, { childList: true });
+  onResizeWhileOpen(body, draw);
 
   loadImage(map.imageId).then(loaded => {
     img = loaded; W = img.naturalWidth; H = img.naturalHeight;
@@ -230,6 +250,119 @@ export function openGridFit(map, { onApply } = {}) {
   }).catch(() => {
     setStatus("bad", "No se pudo cargar la imagen del plano.");
   });
+
+  return dialog;
+}
+
+/* ---------- Muros y puertas ---------- */
+
+const isDiagonal = key => /,(d|a)$/.test(key);
+
+/* map: el mapa con su cuadrícula ya encajada (imgGrid, cols, rows, edges) */
+export function openWallFit(map) {
+  if (!map.imageId) return toast("Este mapa no tiene imagen de fondo", "bad");
+  if (!map.imgGrid) return toast("Primero encaja la cuadrícula con el plano", "bad");
+  const g = { ...map.imgGrid, cols: map.cols, rows: map.rows };
+  const existing = Object.keys(map.edges || {}).filter(k => !isDiagonal(k)).length;
+
+  const body = document.createElement("div");
+  body.className = "gridfit";
+  body.innerHTML = `
+    <p class="gridfit-status">Buscando muros y puertas en el plano…</p>
+    <div class="gridfit-view"><canvas></canvas></div>
+    <div class="row gridfit-tools">
+      <label class="check"><input type="checkbox" name="zoom"> Ver a tamaño real</label>
+      <span class="gridfit-legend"><i class="wall"></i>Muro <i class="door"></i>Puerta</span>
+    </div>
+    <label class="field gridfit-range"><span>Sensibilidad</span>
+      <span class="gridfit-range-row"><small>Menos muros</small>
+      <input name="sens" type="range" min="0" max="1" step="0.05" value="0.5">
+      <small>Más muros</small></span></label>
+    ${existing ? `<fieldset>
+      <legend>Este mapa ya tiene ${existing} muros o puertas</legend>
+      <label class="check"><input type="radio" name="mode" value="replace" checked> Sustituirlos por los propuestos</label>
+      <label class="check" style="margin-top:6px"><input type="radio" name="mode" value="add"> Añadir los propuestos y dejar los que hay</label>
+    </fieldset>` : ""}
+    <p class="hint">Es una propuesta: después se corrige con las herramientas Muro, Puerta y Borrar del mapa.
+      Las puertas salen cerradas.</p>`;
+
+  const canvas = body.querySelector("canvas");
+  const view = body.querySelector(".gridfit-view");
+  const status = body.querySelector(".gridfit-status");
+  const input = n => body.querySelector(`[name="${n}"]`);
+  const setStatus = (tone, text) => { status.className = "gridfit-status " + tone; status.textContent = text; };
+  let img = null, measured = null, result = null;
+
+  function classify() {
+    result = classifyWalls(measured, { sensitivity: +input("sens").value });
+    const { walls, doors, floorMask } = result.stats;
+    const what = `${walls} ${walls === 1 ? "muro" : "muros"} y ${doors} ${doors === 1 ? "puerta" : "puertas"}`;
+    if (!walls && !doors) setStatus("bad", "No encuentro muros claros en este plano. Prueba a subir la sensibilidad o ponlos a mano.");
+    else if (floorMask) setStatus("good", `Propongo ${what}. Revísalos sobre el plano antes de ponerlos.`);
+    else setStatus("warn", `Propongo ${what}. En este plano no distingo el suelo de lo que no lo es, así que solo
+      salen muros dibujados como líneas largas: seguramente falten algunos.`);
+    draw();
+  }
+
+  function draw() {
+    if (!img) return;
+    const { ctx, k } = paintBase(canvas, view, img, g, input("zoom").checked);
+    if (!result) return;
+    const X = c => g.x + c * g.w, Y = r => g.y + r * g.h;
+    ctx.lineCap = "round";
+    for (const [key, type] of Object.entries(result.edges)) {
+      const [cx, cy, dir] = key.split(",");
+      const x = +cx, y = +cy;
+      ctx.strokeStyle = type === "door" ? "#3fd2ff" : "#ff3b3b";
+      ctx.lineWidth = Math.max(2 / k, g.w * (type === "door" ? 0.22 : 0.14));
+      ctx.beginPath();
+      if (dir === "v") { ctx.moveTo(X(x), Y(y)); ctx.lineTo(X(x), Y(y + 1)); }
+      else { ctx.moveTo(X(x), Y(y)); ctx.lineTo(X(x + 1), Y(y)); }
+      ctx.stroke();
+    }
+  }
+
+  input("sens").addEventListener("input", () => { if (measured) classify(); });
+  input("zoom").addEventListener("change", draw);
+
+  const dialog = modal({
+    title: "Muros y puertas del plano", body, wide: true,
+    actions: [
+      { label: "Ahora no" },
+      {
+        label: "Poner muros y puertas", tone: "primary",
+        run: host => {
+          if (!result) return false;
+          const now = map.edges || {};
+          const mode = existing ? host.querySelector('[name="mode"]:checked').value : "replace";
+          let edges;
+          if (mode === "add") edges = { ...result.edges, ...now };
+          else {
+            /* Al sustituir se conservan los muros en diagonal, que esto no propone */
+            edges = { ...result.edges };
+            for (const [k, v] of Object.entries(now)) if (isDiagonal(k)) edges[k] = v;
+          }
+          patchMap(map.id, { edges });
+          toast(`Puestos ${result.stats.walls} muros y ${result.stats.doors} puertas`, "good");
+        }
+      }
+    ]
+  });
+
+  onResizeWhileOpen(body, draw);
+
+  loadImage(map.imageId).then(loaded => {
+    img = loaded;
+    draw();
+    setTimeout(() => {
+      try {
+        measured = measureWalls(rgba(img), img.naturalWidth, img.naturalHeight, g);
+        classify();
+      } catch (err) {
+        setStatus("bad", "No se pudo analizar la imagen: " + err.message);
+      }
+    }, 30);
+  }).catch(() => setStatus("bad", "No se pudo cargar la imagen del plano."));
 
   return dialog;
 }

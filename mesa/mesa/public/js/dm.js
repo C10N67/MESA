@@ -11,7 +11,7 @@ import { dicePanel, renderLog, throwDice, tellTable, currentMode, isSecret } fro
 import { openCharEditor, openConditions } from "./char-editor.js";
 import { MapView } from "./map.js";
 import { openSpellbook } from "./spellbook.js";
-import { openGridFit } from "./gridfit.js";
+import { openGridFit, openWallFit } from "./gridfit.js";
 import { langPicker } from "./i18n.js";
 import { icon, withIcon } from "./icons.js";
 import { rollHitPoints } from "./dice.js";
@@ -1416,6 +1416,7 @@ function openMapSettings(map) {
     <div class="row" style="margin-bottom:12px">
       <button type="button" class="btn sm" id="imgBtn">Imagen de fondo</button>
       <button type="button" class="btn sm" id="fitGrid">Encajar cuadrícula con el plano</button>
+      <button type="button" class="btn sm" id="fitWalls">Muros y puertas del plano</button>
       <input type="file" id="imgFile" accept="image/*" hidden>
     </div>
     <fieldset>
@@ -1476,10 +1477,11 @@ function openMapSettings(map) {
       onApply({ cols, rows });
       toast("Plano cargado", "good");
       /* Plano nuevo: se busca su cuadrícula y se enseña para confirmarla */
-      openGridFit({ ...map, imageId, imageW: w, imageH: h, imgGrid: null }, { onApply });
+      openGridFit({ ...map, imageId, imageW: w, imageH: h, imgGrid: null }, { onApply, walls: true });
     } catch (err) { toast(err.message, "bad"); }
   });
   body.querySelector("#fitGrid").addEventListener("click", () => openGridFit(activeMap(), { onApply }));
+  body.querySelector("#fitWalls").addEventListener("click", () => openWallFit(activeMap()));
   body.querySelector("#resetFog").addEventListener("click", () => patchMap(map.id, { explored: [] }));
   body.querySelector("#clearWalls").addEventListener("click", () => patchMap(map.id, { edges: {} }));
   body.querySelector("#clearCells").addEventListener("click", () => patchMap(map.id, { cells: {} }));
