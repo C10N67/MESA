@@ -953,6 +953,27 @@ viaja a cada cambio.
 
 En la pantalla de la party, doble clic entra y sale de pantalla completa.
 
+## Fuentes
+
+En `public/fonts/` hay tres fuentes propias de Mesa, en `.woff2` (para la web)
+y `.ttf` (para instalarlas en el ordenador), inspiradas en el rótulo de Mesa:
+capitales romanas de inscripción, con el trazo grueso en las verticales y en
+las diagonales que bajan a la derecha, filetes finos y remates largos.
+
+- **Mesa Lapidaria**: la más parecida al rótulo, con remates y su curva de
+  unión.
+- **Mesa Cincelada**: sin remates; los trazos se abren en las puntas, como
+  tallados a cincel.
+- **Mesa Grabada**: más gruesa y con una línea incisa dentro de los trazos
+  gruesos, para títulos grandes.
+
+Son de mayúsculas: las minúsculas salen como versalitas. Llevan las letras
+del castellano (Ñ y acentos), cifras y los signos habituales. Las genera
+`tools/fuentes/mesa_fuentes.py` (Python, con `fonttools` y `shapely`): cada
+letra se dibuja como un trazo de pluma ancha, así que el grosor, el contraste
+o el tamaño de los remates se cambian en unos pocos números y se vuelven a
+generar. Hay una muestra en `tools/fuentes/muestra.png`.
+
 ## Estructura
 
 ```
@@ -999,6 +1020,7 @@ public/
     wand.js            varita mágica: pinchar en el suelo y rellenar por color
   retratos/            retratos de serie de cada especie, de hombre y de mujer
 tools/retratos.mjs     genera esos retratos
+tools/fuentes/         genera las fuentes de public/fonts/ (y su muestra)
 data/                  la partida y las imágenes (se crea al arrancar)
 ```
 
