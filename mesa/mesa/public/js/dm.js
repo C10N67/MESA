@@ -1366,11 +1366,14 @@ function tokenMenu(id) {
   const c = byId(id);
   closeBubble();
   if (!c) return;
-  const a = mapView && mapView.tokenAnchor(id);
+  /* Seleccionar a un personaje en el mapa lo hace «oír» la pantalla */
+  const sounds = (activeMap().sounds || []).length > 0;
+  if (c.kind === "pc" && session().listenerId !== id) op("listener.set", { id });
   const el2 = el(`<div class="bubble" role="dialog" aria-label="${esc(c.name)}">
     <header>
       <b>${esc(c.name)}</b>
       <small>${icon("heart", 12)} ${c.hp}/${c.maxHp}${c.tempHp ? ` +${c.tempHp}` : ""} · ${icon("shield", 12)} ${c.ac}${c.hidden ? " · oculto" : ""}</small>
+      ${c.kind === "pc" && sounds ? `<small class="bubble-ear">${icon("sound", 12)} La pantalla oye lo que oye</small>` : ""}
       ${c.conditions.length ? `<span class="bubble-conds">${c.conditions.map(x => `<i>${esc(conditionName(x))}</i>`).join("")}</span>` : ""}
     </header>
     <div class="bubble-actions">
@@ -1540,10 +1543,10 @@ function editPortal(seed) {
 
 /* ---------- Sonidos del mapa ----------
    Una fuente de sonido en una casilla: uno de los de serie o un archivo
-   tuyo. La oye la vista de la party (la pantalla de la tele), más fuerte
-   cuanto más cerca esté el personaje que mejor la oye, y más floja y
-   apagada detrás de muros y puertas cerradas. Tú no la oyes en la mesa:
-   para eso está «Escuchar». */
+   tuyo. La oye la vista de la party (la pantalla de la tele) tal como la
+   oye el último personaje que se ha movido o que el DM ha seleccionado:
+   más fuerte cuanto más cerca, y más floja y apagada detrás de muros y
+   puertas cerradas. Tú no la oyes en la mesa: para eso está «Escuchar». */
 const PRESET_NAME = Object.fromEntries(SOUND_PRESETS);
 const soundLabel = s => s.name || (s.audioId ? s.fileName || "Archivo propio" : PRESET_NAME[s.preset] || "Sonido");
 
@@ -1588,7 +1591,7 @@ function editSound(seed) {
       <label class="field"><span>Casilla Y</span><input name="y" type="number" min="0" max="${map.rows - 1}" value="${sound.y}"></label>
     </div>
     <label class="check"><input type="checkbox" name="on" ${sound.on ? "checked" : ""}> Sonando</label>
-    <p class="prose small" style="margin-top:10px"><span>Lo oye la pantalla de la party: más fuerte cuanto más cerca esté alguien de la party, y más flojo y apagado detrás de muros y puertas cerradas. Por una puerta abierta llega rodeando. Tú no lo oyes en la mesa.</span></p>
+    <p class="prose small" style="margin-top:10px"><span>Lo oye la pantalla de la party, tal como lo oye el último personaje que se ha movido o que has seleccionado en el mapa: más fuerte cuanto más cerca esté, y más flojo y apagado detrás de muros y puertas cerradas. Por una puerta abierta llega rodeando. Tú no lo oyes en la mesa.</span></p>
   </div>`);
 
   let lastSource = current();

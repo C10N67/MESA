@@ -174,3 +174,36 @@ test("una fuente de sonido se normaliza", () => {
   assert.equal(s.audioId, "");
   assert.equal(normalizeSound({ audioId: "0123456789abcdef.mp3" }).audioId, "0123456789abcdef.mp3");
 });
+
+test("la pantalla oye solo al último que se movió o que eligió el DM", async () => {
+  let n = 0;
+  const engine = createEngine({ rid: k => (++n).toString(16).padStart(k * 2, "0") });
+  const doc = emptyDoc();
+  const map = doc.maps[0];
+  doc.chars = [
+    normalizeChar({ id: "a", kind: "pc", name: "Aria", mapId: map.id, mx: 2, my: 2 }),
+    normalizeChar({ id: "b", kind: "pc", name: "Borin", mapId: map.id, mx: 20, my: 15 })
+  ];
+  engine.doc = doc;
+  const dm = engine.join({ role: "dm", name: "DM" }, { checkPin: false }).client;
+  const screen = engine.join({ role: "screen" }).client;
+  await engine.run(dm, [{ type: "sound.set", mapId: map.id, sound: { id: "s", x: 3, y: 2, radius: 6, preset: "fuego" } }]);
+  const tv = () => { engine.advance(); return engine.snapshot(screen).audio.sources; };
+
+  /* Sin nadie elegido todavía: lo que oiga mejor cualquiera (Aria, al lado) */
+  assert.equal(tv().length, 1);
+  /* Borin se mueve, lejos del fuego: la pantalla deja de oírlo */
+  await engine.run(dm, [{ type: "token.move", id: "b", x: 21, y: 15, mapId: map.id }]);
+  assert.deepEqual(tv(), []);
+  /* El DM selecciona a Aria: vuelve a oírse, a su volumen */
+  await engine.run(dm, [{ type: "listener.set", id: "a" }]);
+  const near = tv();
+  assert.equal(near.length, 1);
+  /* Aria se aleja un poco: más flojo */
+  await engine.run(dm, [{ type: "token.move", id: "a", x: 6, y: 2, mapId: map.id }]);
+  assert.ok(tv()[0].gain < near[0].gain);
+  /* Elegir a una criatura no cambia quién oye */
+  doc.chars.push(normalizeChar({ id: "g", kind: "monster", name: "Goblin", mapId: map.id, mx: 21, my: 14 }));
+  await engine.run(dm, [{ type: "listener.set", id: "g" }]);
+  assert.equal(tv().length, 1);
+});

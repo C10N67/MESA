@@ -499,7 +499,10 @@ const SESSION_DEFAULTS = {
   /* Vista de sala: la sala que la cámara de la party encuadra entera ahora
      mismo ({ mapId, key, x0, y0, x1, y1 } o null), y las que el DM ha soltado */
   roomView: null,
-  roomViewOff: []
+  roomViewOff: [],
+  /* Quién oye la pantalla: el último personaje que se ha movido o que el DM
+     ha seleccionado */
+  listenerId: ""
 };
 
 export function emptyDoc() {

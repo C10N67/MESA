@@ -255,6 +255,15 @@ export class MapView {
     return { x, y, r: (g.cell * n) / 2, box };
   }
 
+  /* El personaje cuyo oído manda en la pantalla (lo mismo que decide el
+     motor en audioFor): el último que se movió o se eligió; si no vale, el
+     que sigue la cámara */
+  listenerOf(map) {
+    const { chars, session } = this.data;
+    const ok = id => { const c = id && chars.find(x => x.id === id); return c && c.kind === "pc" && c.hp > 0 && c.mx !== null && c.mapId === map.id ? c.id : null; };
+    return session ? ok(session.listenerId) || ok(session.focusId) : null;
+  }
+
   /* La sala que la party tiene encuadrada, si es de este mapa */
   roomFrame(map) {
     const rv = this.data.session && this.data.session.roomView;
@@ -1067,6 +1076,7 @@ export class MapView {
     const dragging = this.drag;
     const order = session && session.combat && session.combat.on ? session.combat.order : [];
     const nowId = order.length ? order[session.combat.index] : null;
+    const listener = dm && (map.sounds || []).length ? this.listenerOf(map) : null;
     const t = performance.now();
     for (const c of chars) {
       if (c.mapId !== map.id || c.mx === null) continue;
@@ -1099,6 +1109,15 @@ export class MapView {
         now: c.id === nowId, selected: this.selection.has(c.id), target: this.target === c.id, memory: !!c.memory,
         mark: this._marks.get(c.id), pulse: this._pulse && this._pulse.id === c.id ? this._pulse : null, t
       });
+      /* El DM ve quién «oye» la pantalla: un altavoz junto a su ficha */
+      if (dm && listener === c.id) {
+        const n = footprint(c), cx = X(pos.x + n) - g.cell * 0.12, cy = Y(pos.y) + g.cell * 0.12, r = Math.max(6, g.cell * 0.2);
+        ctx.save();
+        ctx.fillStyle = "rgba(18,44,50,.95)"; ctx.strokeStyle = "rgb(94,184,196)"; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+        if (r > 7) drawGlyph(ctx, "sound", cx, cy, r * 1.35, "rgb(94,184,196)");
+        ctx.restore();
+      }
     }
 
     /* Recuadro de selección */

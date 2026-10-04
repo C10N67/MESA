@@ -1557,3 +1557,4 @@ ul.plain b { color: var(--vellum); }
 .bubble-actions button.danger .ico { color: #9a2a26; }
 @keyframes bubbleIn { from { opacity: 0; transform: scale(.6); } }
 @media (prefers-reduced-motion: reduce) { .bubble { animation: none; } }
+.bubble header .bubble-ear { display: flex; margin-top: 4px; color: #2f6a72; font-weight: 600; }

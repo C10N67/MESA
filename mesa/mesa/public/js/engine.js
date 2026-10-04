@@ -90,7 +90,16 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
 
   /* El sonido del mapa. Suena en la pantalla de la party y, si el DM quiere,
      también en los móviles: cada uno, lo que oye su personaje. Solo viaja a
-     qué volumen llega cada sonido, no dónde está. */
+     qué volumen llega cada sonido, no dónde está.
+
+     La pantalla oye únicamente lo que oye el último personaje que se ha
+     movido o que el DM ha seleccionado («listenerId»). Si ese no está en el
+     mapa o está fuera de combate, el último al que siguió la cámara; y si
+     tampoco, lo más fuerte que oiga cualquiera de la party. */
+  const hearsHere = (id, map) => {
+    const c = id && doc.chars.find(x => x.id === id);
+    return c && c.kind === "pc" && c.hp > 0 && c.mx !== null && c.mapId === map.id ? c.id : null;
+  };
   function audioFor(client) {
     const s = doc.session;
     const phone = client.role === "player";
@@ -98,8 +107,8 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
     const map = doc.maps.find(m => m.id === s.activeMapId) || null;
     if (!map || !(map.sounds || []).length) return { volume: 0, sources: [] };
     if (!partyCache.hearing) partyCache.hearing = partyHearing(doc, map);
-    const mine = phone && client.charId ? doc.chars.find(c => c.id === client.charId) : null;
-    const own = mine && mine.hp > 0 && mine.mx !== null && mine.mapId === map.id ? mine.id : null;
+    const own = phone ? hearsHere(client.charId, map)
+      : hearsHere(s.listenerId, map) || hearsHere(s.focusId, map);
     return {
       volume: s.soundMuted ? 0 : Math.max(0, Math.min(1, Number(s.soundVolume ?? 0.8))),
       sources: mixFor(partyCache.hearing, own)
@@ -430,7 +439,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
     if (!gone.length) return 0;
     const pcs = gone.filter(c => c.kind === "pc");
     if (pcs.length && dest.id !== map.id) doc.session.activeMapId = dest.id;
-    if (pcs.length) doc.session.focusId = pcs[0].id;
+    if (pcs.length) { doc.session.focusId = pcs[0].id; doc.session.listenerId = pcs[0].id; }
     const names = gone.map(c => c.name);
     const list2 = names.length > 1 ? names.slice(0, -1).join(", ") + " y " + names[names.length - 1] : names[0];
     doc.log.push({ id: rid(6), ts: Date.now(), actor: "Mesa", kind: "event",
@@ -768,7 +777,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         }
         c.mapId = map ? map.id : (op.mapId || c.mapId || doc.session.activeMapId);
         c.mx = op.x; c.my = op.y;
-        if (c.kind === "pc") doc.session.focusId = c.id;
+        if (c.kind === "pc") { doc.session.focusId = c.id; doc.session.listenerId = c.id; }
 
         /* Notas del mapa: si alguien las pisa, al DM le salta el aviso */
         if (c.kind === "pc" && map) {
@@ -886,6 +895,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
           if (mp && fits(mp, doc.chars, c, mv.x, mv.y)) continue;   // el que no cabe se queda donde está
           c.mapId = mp ? mp.id : (mv.mapId || c.mapId);
           c.mx = mv.x; c.my = mv.y;
+          if (c.kind === "pc") doc.session.listenerId = c.id;
         }
         break;
       }
@@ -1024,6 +1034,15 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         const list = (m.sounds || []).filter(x => x.id !== sound.id);
         if (!op.remove && list.length >= MAX_SOUNDS) return `Caben ${MAX_SOUNDS} sonidos por mapa`;
         m.sounds = op.remove ? list : [...list, sound];
+        break;
+      }
+      /* Quién oye la pantalla: el DM elige un personaje (al pulsar su ficha
+         en el mapa). Moverse también lo elige. */
+      case "listener.set": {
+        if (!dm) return "Solo el DM";
+        const c = findChar(op.id);
+        if (!c || c.kind !== "pc") return null;
+        doc.session.listenerId = c.id;
         break;
       }
       /* Vista de sala: soltarla (esa sala deja de encuadrarse) o recuperarla */

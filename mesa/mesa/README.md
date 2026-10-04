@@ -683,8 +683,14 @@ casilla para una nueva, o una que ya esté para cambiarla. Cada una tiene:
 - Si está **sonando** o no. Con **Escuchar** lo oyes tú en tu aparato antes
   de ponerlo.
 
-Lo oye **la vista de la party**, la pantalla de la tele, no tú. Suena más fuerte
-cuanto más cerca está el personaje que mejor lo oye, y las paredes cuentan: a
+Lo oye **la vista de la party**, la pantalla de la tele, no tú, y oye
+**únicamente lo que oye un personaje**: el último de la party que se ha movido
+(solo, en grupo o cruzando un acceso) o el que has seleccionado pulsando su
+ficha en el mapa. En tu mapa lleva un pequeño altavoz junto a la ficha, y su
+bocadillo lo dice. Si ese personaje cae o sale del mapa, manda el último al
+que siguió la cámara; y si no hay ninguno, lo que mejor oiga la party.
+
+Suena más fuerte cuanto más cerca está ese personaje, y las paredes cuentan: a
 través de un muro o una puerta cerrada llega mucho más flojo y apagado (se
 pierden los agudos, como la música de una taberna oída desde la calle). Por
 una puerta abierta o un hueco, el sonido llega **rodeando**, sin apagarse,
