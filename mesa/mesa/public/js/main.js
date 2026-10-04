@@ -37,16 +37,34 @@ async function boot() {
 }
 
 async function start(role) {
-  let mount;
-  if (role === "dm") mount = (await import("./dm.js")).mountDM;
-  else if (role === "screen") mount = (await import("./screen.js")).mountScreen;
-  else mount = (await import("./player.js")).mountPlayer;
+  const mount = await loadView(role);
 
   const once = new Promise(resolve => onState(resolve));
   connect();
   await once;                       // no se pinta nada hasta tener el estado
   app().className = "";
   mount(app());
+}
+
+/* La vista se carga al entrar. Si Mesa se ha actualizado con esta pestaña
+   abierta, el código nuevo de la vista no encaja con el que la entrada ya
+   tenía cargado («does not provide an export named…»). Entonces se recarga
+   la página una vez: la sesión ya está guardada y se entra sola. */
+async function loadView(role) {
+  try {
+    if (role === "dm") return (await import("./dm.js")).mountDM;
+    if (role === "screen") return (await import("./screen.js")).mountScreen;
+    return (await import("./player.js")).mountPlayer;
+  } catch (err) {
+    let last = 0;
+    try { last = Number(sessionStorage.getItem("mesa.reloaded")) || 0; } catch {}
+    if (Date.now() - last > 30000) {
+      try { sessionStorage.setItem("mesa.reloaded", String(Date.now())); } catch {}
+      location.reload();
+      return new Promise(() => {});      // la página se va
+    }
+    throw new Error("Mesa se ha actualizado: recarga la página (Ctrl+Mayús+R, o Cmd+Mayús+R en Mac). " + err.message);
+  }
 }
 
 async function gate(wanted) {
