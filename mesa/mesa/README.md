@@ -548,7 +548,9 @@ detección automática, y las demás se ponen con **Puerta**.
   solo puede usarlo con su personaje encima, y solo se lleva a personajes, no a
   monstruos; el DM puede llevarse a cualquiera.
 - Pulsa una casilla vacía para **colocar** ahí a quien todavía no esté en el
-  tablero; pulsa una ficha para su menú (apuntar, atacar, estados, sacarla).
+  tablero; pulsa una ficha para su menú (apuntar, atacar, estados, sacarla), que sale de
+  la propia ficha como un bocadillo, con su vida, su CA y sus estados, sin tapar
+  el resto de la pantalla; se cierra pulsando fuera o con Escape.
 - `Alt` + clic **señala** un punto: sale un círculo animado en la pantalla de
   todos. Los jugadores tienen su propio botón «Señalar».
 - Botón derecho (o `Mayús` + arrastrar) mueve la vista; `Ctrl` + rueda hace

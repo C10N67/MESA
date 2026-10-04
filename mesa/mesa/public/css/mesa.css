@@ -1517,3 +1517,43 @@ ul.plain b { color: var(--vellum); }
 .bld-card.face span { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .bld-inline { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .bld-inline > * { flex: 0 0 auto; }
+
+/* ---------- Bocadillo de una ficha del mapa (DM) ----------
+   Sale de la ficha como un bocadillo de cómic: papel claro, borde de tinta y
+   un rabito que apunta a quien se ha pulsado. No oscurece la pantalla. */
+.bubble {
+  --ink: #1b1712; --paper: #f4ecda;
+  position: fixed; z-index: 55; width: 248px; padding: 10px 8px 8px;
+  background: var(--paper); color: var(--ink);
+  border: 2.5px solid var(--ink); border-radius: 20px;
+  box-shadow: 4px 5px 0 rgba(0, 0, 0, .45), 0 12px 30px rgba(0, 0, 0, .35);
+  transform-origin: var(--tail, 50%) calc(100% + 14px);
+  animation: bubbleIn .16s cubic-bezier(.22, 1.4, .36, 1) both;
+}
+.bubble.below { transform-origin: var(--tail, 50%) -14px; }
+/* El rabito: un triángulo con su borde (el de fuera) y su relleno (el de dentro) */
+.bubble::before, .bubble::after {
+  content: ""; position: absolute; left: var(--tail, 50%); width: 0; height: 0;
+  border-style: solid; transform: translateX(-50%);
+}
+.bubble::before { top: 100%; border-width: 15px 10px 0 10px; border-color: var(--ink) transparent transparent transparent; }
+.bubble::after { top: calc(100% - 1px); border-width: 11px 7px 0 7px; border-color: var(--paper) transparent transparent transparent; }
+.bubble.below::before { top: auto; bottom: 100%; border-width: 0 10px 15px 10px; border-color: transparent transparent var(--ink) transparent; }
+.bubble.below::after { top: auto; bottom: calc(100% - 1px); border-width: 0 7px 11px 7px; border-color: transparent transparent var(--paper) transparent; }
+.bubble header { padding: 0 6px 8px; border-bottom: 1.5px dashed rgba(27, 23, 18, .35); margin-bottom: 4px; }
+.bubble header b { display: block; font: 700 17px/1.2 var(--serif); }
+.bubble header small { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; color: #4a4033; }
+.bubble-conds { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
+.bubble-conds i { font-style: normal; font-size: 11px; padding: 1px 7px; border-radius: 99px; background: #e2d2f2; color: #3a2a55; }
+.bubble-actions { display: grid; }
+.bubble-actions button {
+  display: flex; align-items: center; gap: 8px; width: 100%; text-align: left;
+  padding: 7px 8px; border: 0; border-radius: 10px; background: none;
+  color: var(--ink); font: 600 13.5px/1.25 var(--sans); cursor: pointer;
+}
+.bubble-actions button:hover, .bubble-actions button:focus-visible { background: rgba(27, 23, 18, .09); outline: none; }
+.bubble-actions button .ico { flex: 0 0 auto; color: #6a5530; }
+.bubble-actions button.danger { color: #9a2a26; }
+.bubble-actions button.danger .ico { color: #9a2a26; }
+@keyframes bubbleIn { from { opacity: 0; transform: scale(.6); } }
+@media (prefers-reduced-motion: reduce) { .bubble { animation: none; } }

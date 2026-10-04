@@ -241,6 +241,20 @@ export class MapView {
     return { W, H, dpr, cell, originX: W / 2 - cx * cell, originY: H / 2 - cy * cell, cols: map.cols, rows: map.rows };
   }
 
+  /* Dónde está una ficha en la pantalla (centro y radio, en píxeles de la
+     ventana): para que el menú de la ficha salga de ella como un bocadillo */
+  tokenAnchor(id) {
+    const { map, chars } = this.data;
+    const c = (chars || []).find(x => x.id === id);
+    const g = this._geom || this.geometry();
+    if (!c || !g || !map || c.mapId !== map.id || c.mx === null) return null;
+    const n = footprint(c);
+    const box = this.canvas.getBoundingClientRect();
+    const x = box.left + g.originX + (c.mx + n / 2) * g.cell;
+    const y = box.top + g.originY + (c.my + n / 2) * g.cell;
+    return { x, y, r: (g.cell * n) / 2, box };
+  }
+
   /* La sala que la party tiene encuadrada, si es de este mapa */
   roomFrame(map) {
     const rv = this.data.session && this.data.session.roomView;

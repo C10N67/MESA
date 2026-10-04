@@ -1306,6 +1306,8 @@ function renderMap() {
   pick.innerHTML = doc().maps.map(m => `<option value="${m.id}" ${m.id === map.id ? "selected" : ""}>${esc(m.name)}</option>`).join("");
   mapView.set({ map, chars: chars(), session: session(), you: null });
   paintRoomView(map);
+  /* El bocadillo de una ficha la sigue si se mueve; si ya no está, se va */
+  if (bubble) { if (mapView.tokenAnchor(bubble.id)) bubble.place(); else closeBubble(); }
 }
 
 /* Vista de sala: mientras la party tiene una sala encuadrada, el DM puede
@@ -1349,23 +1351,81 @@ function placeHere(x, y) {
   });
 }
 
-/* Menú de una ficha del tablero */
+/* Menú de una ficha del tablero: un bocadillo de cómic que sale de la
+   ficha, en vez de una ventana que tapa la pantalla. Se cierra pulsando
+   fuera, con Escape, al mover el mapa o al elegir algo. */
+let bubble = null;
+function closeBubble() {
+  if (!bubble) return;
+  bubble.cleanup();
+  bubble.el.remove();
+  bubble = null;
+}
+
 function tokenMenu(id) {
   const c = byId(id);
+  closeBubble();
   if (!c) return;
-  const body = el(`<div class="row" style="flex-direction:column">
-    <button class="btn" data-tk="target">${targetId === id ? "Dejar de apuntarle" : "Apuntar con los ataques"}</button>
-    <button class="btn" data-tk="attack">Atacar con ${esc(c.name)}</button>
-    <button class="btn" data-tk="focus">Centrar la cámara de la party aquí</button>
-    <button class="btn" data-tk="conditions">Estados</button>
-    <button class="btn" data-tk="edit">Abrir la ficha</button>
-    ${c.kind === "monster" ? `<button class="btn" data-tk="hide">${c.hidden ? "Enseñar a la party" : "Ocultar a la party"}</button>` : ""}
-    <button class="btn danger" data-tk="off">Sacar del mapa</button>
+  const a = mapView && mapView.tokenAnchor(id);
+  const el2 = el(`<div class="bubble" role="dialog" aria-label="${esc(c.name)}">
+    <header>
+      <b>${esc(c.name)}</b>
+      <small>${icon("heart", 12)} ${c.hp}/${c.maxHp}${c.tempHp ? ` +${c.tempHp}` : ""} · ${icon("shield", 12)} ${c.ac}${c.hidden ? " · oculto" : ""}</small>
+      ${c.conditions.length ? `<span class="bubble-conds">${c.conditions.map(x => `<i>${esc(conditionName(x))}</i>`).join("")}</span>` : ""}
+    </header>
+    <div class="bubble-actions">
+      <button data-tk="target">${icon("target", 15)}${targetId === id ? "Dejar de apuntarle" : "Apuntar con los ataques"}</button>
+      <button data-tk="attack">${icon("sword", 15)}Atacar con ${esc(c.name)}</button>
+      <button data-tk="focus">${icon("screen", 15)}Centrar la cámara de la party aquí</button>
+      <button data-tk="conditions">${icon("sparkle", 15)}Estados</button>
+      <button data-tk="edit">${icon("pencil", 15)}Abrir la ficha</button>
+      ${c.kind === "monster" ? `<button data-tk="hide">${icon(c.hidden ? "eye" : "eyeOff", 15)}${c.hidden ? "Enseñar a la party" : "Ocultar a la party"}</button>` : ""}
+      <button data-tk="off" class="danger">${icon("exit", 15)}Sacar del mapa</button>
+    </div>
   </div>`);
-  const m = modal({ title: c.name, body, actions: [{ label: "Cerrar" }] });
-  on(body, "click", "[data-tk]", (e, b) => {
+  document.body.appendChild(el2);
+
+  /* Encima de la ficha si cabe; si no, debajo. El rabito apunta a la ficha. */
+  const place = () => {
+    const at = mapView && mapView.tokenAnchor(id);
+    const w = el2.offsetWidth, h = el2.offsetHeight, pad = 10, gap = 14;
+    const ax = at ? at.x : innerWidth / 2, ay = at ? at.y : innerHeight / 2, r = at ? at.r : 0;
+    const roomAbove = ay - r - gap - pad, roomBelow = innerHeight - (ay + r + gap) - pad;
+    const below = roomAbove < h && roomBelow > roomAbove;
+    const top = below ? Math.min(innerHeight - h - pad, ay + r + gap) : Math.max(pad, ay - r - gap - h);
+    const left = Math.max(pad, Math.min(innerWidth - w - pad, ax - w / 2));
+    el2.style.left = left + "px";
+    el2.style.top = top + "px";
+    el2.style.setProperty("--tail", Math.max(22, Math.min(w - 22, ax - left)) + "px");
+    el2.classList.toggle("below", below);
+  };
+  place();
+
+  const onDown = e => { if (!el2.contains(e.target)) closeBubble(); };
+  const onKey = e => { if (e.key === "Escape") closeBubble(); };
+  const onMove = () => closeBubble();
+  const board = $("#board");
+  /* Se escucha un momento después: el propio clic que lo abre no lo cierra */
+  const timer = setTimeout(() => {
+    document.addEventListener("pointerdown", onDown, true);
+    if (board) board.addEventListener("wheel", onMove, { passive: true });
+  }, 0);
+  document.addEventListener("keydown", onKey);
+  addEventListener("resize", onMove);
+  bubble = {
+    id, el: el2, place,
+    cleanup() {
+      clearTimeout(timer);
+      document.removeEventListener("pointerdown", onDown, true);
+      document.removeEventListener("keydown", onKey);
+      removeEventListener("resize", onMove);
+      if (board) board.removeEventListener("wheel", onMove);
+    }
+  };
+
+  on(el2, "click", "[data-tk]", (e, b) => {
     const what = b.dataset.tk;
-    m.close();
+    closeBubble();
     if (what === "target") { targetId = targetId === id ? null : id; mapView.target = targetId; return render(); }
     if (what === "attack") return attack(c);
     if (what === "focus") { patchSession({ focusId: id }); return toast("La cámara sigue a " + c.name); }
