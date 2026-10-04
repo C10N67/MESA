@@ -11,7 +11,7 @@
    lejos) y la del sistema para el resto de la interfaz. */
 
 :root {
-  --mesa-version: "2.23.1";   /* igual que js/version.js y sw.js */
+  --mesa-version: "2.24.0";   /* igual que js/version.js y sw.js */
   --pitch: #0a0c11;
   --stone: #141821;
   --stone-2: #1b202b;
@@ -2034,4 +2034,186 @@ details.srd > summary b { color: var(--vellum); font-family: var(--serif); font-
   .grimoire .man { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
   .grimoire .man-nav { padding: 10px; background: #ecdfbf; border-bottom: 1px solid rgba(98, 66, 30, .3); }
   .grimoire .man-page { padding: 14px 16px 24px; }
+}
+
+/* ============================================================
+   El bestiario: un libro de invocaciones. Mismo libro que el
+   grimorio, pero de cuero morado casi negro con herrajes de hueso,
+   un ojo verde por cierre, páginas manchadas y tostadas en los
+   bordes, tinta de sangre seca, un círculo de invocación al fondo
+   de la ficha y niebla que se escapa por debajo.
+   ============================================================ */
+.grimoire.necro {
+  --leather: #261a33; --leather-dark: #0b0710; --gilt: #b8b39c; --ghost: #7be0a4; --ink: #2a1a12; --blood: #7c1414;
+  box-shadow:
+    inset 0 0 0 2px rgba(184, 179, 156, .5), inset 0 0 0 7px var(--leather-dark), inset 0 0 0 8px rgba(123, 224, 164, .22),
+    0 30px 80px rgba(0, 0, 0, .7), 0 0 34px rgba(123, 224, 164, .14);
+  animation: grimIn .45s cubic-bezier(.22, 1, .36, 1) both, necroGlow 5s 1s ease-in-out infinite;
+}
+.grimoire.necro.closing { animation: necroOut .3s ease-in both; }
+.grimoire.necro.nudge { animation: grimNudge .45s ease; }
+.grimoire.necro::before, .grimoire.necro::after { border-color: var(--gilt); border-style: dotted; opacity: .6; }
+.necro .grim-clasp {
+  position: relative; background: radial-gradient(circle at 50% 50%, #c8ffd9, var(--ghost) 35%, #1d5a3a 70%, #071a10);
+  box-shadow: 0 0 0 2px #0b0710, 0 0 0 3px rgba(184, 179, 156, .6), 0 0 14px rgba(123, 224, 164, .55);
+  animation: necroEye 7s ease-in-out infinite;
+}
+.necro .grim-clasp::after { content: ""; position: absolute; left: 50%; top: 3px; bottom: 3px; width: 3px; margin-left: -1.5px; border-radius: 3px; background: #050307; }
+.necro .grim-title { color: #e3dcc4; letter-spacing: .2em; text-shadow: 0 1px 0 #000, 0 0 10px rgba(123, 224, 164, .45); animation: necroFlicker 6s steps(1) infinite; }
+.necro .grim-hint { color: rgba(184, 179, 156, .5); }
+.necro .grim-close { color: #e3dcc4; border-color: rgba(184, 179, 156, .45); }
+.necro .grim-close:hover, .necro .grim-close:focus-visible { background: rgba(123, 224, 164, .14); }
+.necro .grim-grip { background: linear-gradient(135deg, transparent 45%, rgba(184, 179, 156, .7) 45% 52%, transparent 52% 64%, rgba(184, 179, 156, .7) 64% 71%, transparent 71%); }
+.necro .grim-pages { box-shadow: 0 0 0 1px rgba(0, 0, 0, .6), 0 3px 0 #a99a7c, 0 5px 0 #8f8064, 0 7px 0 #75684f, 0 9px 12px rgba(0, 0, 0, .5); }
+
+/* La tapa: un sello que se enciende antes de abrirse */
+.necro .grim-cover {
+  background: radial-gradient(70% 60% at 50% 45%, rgba(123, 224, 164, .12), transparent 70%), linear-gradient(160deg, var(--leather), var(--leather-dark));
+  box-shadow: inset 0 0 0 3px rgba(184, 179, 156, .5), inset 0 0 0 9px var(--leather-dark), inset 0 0 0 10px rgba(123, 224, 164, .3);
+  animation-duration: .95s; animation-delay: .25s;
+}
+.necro-cover { display: grid; justify-items: center; gap: 8px; }
+.necro-cover .sigil { width: min(180px, 60%); color: var(--ghost); filter: drop-shadow(0 0 8px rgba(123, 224, 164, .8)); animation: necroSpin 1.2s ease-out both; }
+.necro-cover span { font-family: var(--title); color: #e3dcc4; font-size: 28px; letter-spacing: .2em; text-transform: uppercase; text-shadow: 0 0 12px rgba(123, 224, 164, .5); }
+.necro-cover small { color: rgba(184, 179, 156, .75); font-style: italic; letter-spacing: .08em; }
+
+/* Niebla que se escapa por debajo del libro */
+.necro-mist {
+  position: absolute; left: -40px; right: -40px; bottom: -50px; height: 96px; z-index: 4; pointer-events: none; filter: blur(12px);
+  background:
+    radial-gradient(40% 60% at 20% 60%, rgba(123, 224, 164, .42), transparent 70%),
+    radial-gradient(35% 55% at 55% 70%, rgba(150, 120, 220, .38), transparent 70%),
+    radial-gradient(30% 50% at 88% 55%, rgba(123, 224, 164, .34), transparent 70%);
+  animation: necroMist 9s ease-in-out infinite alternate;
+}
+
+/* Las páginas */
+.tome {
+  position: relative; flex: 1; min-width: 0; display: grid; grid-template-columns: minmax(200px, 30%) minmax(0, 1fr);
+  color: var(--ink); font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+}
+.tome-index, .tome-page { position: relative; min-height: 0; overflow: auto; scrollbar-color: rgba(70, 40, 20, .45) transparent; }
+.tome-index {
+  display: flex; flex-direction: column; padding: 14px 14px 14px 16px; overflow: hidden;
+  background:
+    radial-gradient(ellipse 78% 72% at 50% 50%, transparent 62%, rgba(36, 18, 6, .32) 88%, rgba(20, 8, 2, .62) 100%),
+    radial-gradient(9% 6% at 78% 86%, rgba(110, 14, 14, .28), transparent 70%),
+    radial-gradient(4% 3% at 84% 82%, rgba(110, 14, 14, .3), transparent 70%),
+    radial-gradient(18% 12% at 30% 60%, rgba(90, 70, 30, .16), transparent 70%),
+    linear-gradient(to right, transparent 82%, rgba(60, 35, 12, .3) 96%, rgba(20, 10, 2, .6)),
+    linear-gradient(170deg, #d2c49f, #b9a67c);
+}
+.tome-page {
+  display: flex; flex-direction: column; padding: 18px 26px 0 30px;
+  background:
+    radial-gradient(ellipse 80% 74% at 50% 46%, transparent 62%, rgba(36, 18, 6, .3) 88%, rgba(20, 8, 2, .6) 100%),
+    radial-gradient(7% 5% at 12% 92%, rgba(110, 14, 14, .26), transparent 70%),
+    radial-gradient(3% 2% at 17% 88%, rgba(110, 14, 14, .3), transparent 70%),
+    radial-gradient(22% 14% at 80% 70%, rgba(90, 70, 30, .15), transparent 70%),
+    radial-gradient(30% 20% at 40% 20%, rgba(70, 90, 60, .08), transparent 70%),
+    linear-gradient(to left, transparent 90%, rgba(60, 35, 12, .28) 97%, rgba(20, 10, 2, .55)),
+    linear-gradient(190deg, #d8cba7, #bfac82);
+}
+/* Luz de vela: tiembla un poco sobre las dos páginas */
+.tome::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: soft-light;
+  background: radial-gradient(60% 50% at 62% 30%, rgba(255, 196, 120, .35), transparent 70%);
+  animation: necroCandle 3.2s ease-in-out infinite;
+}
+.tome-tools { display: grid; gap: 8px; }
+.tome-tools .beast-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.necro .tome input:not([type=checkbox]):not([type=radio]), .necro .tome select {
+  background: rgba(250, 242, 220, .6) !important; color: var(--ink) !important; border-color: rgba(70, 40, 20, .4) !important; font-family: inherit;
+}
+.necro .tome input::placeholder { color: #7d6a4c; }
+.necro .tome input:focus, .necro .tome select:focus { border-color: var(--blood) !important; }
+.tome input[type=checkbox] { accent-color: var(--blood); }
+.tome-new {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 10px; border-radius: 8px; cursor: pointer;
+  border: 1px dashed rgba(124, 20, 20, .5); background: transparent; color: var(--blood); font: italic 13.5px Georgia, serif;
+}
+.tome-new:hover, .tome-new:focus-visible { background: rgba(124, 20, 20, .08); outline: none; }
+.tome-count { margin: 10px 0 4px; font-size: 12px; color: #6f5a3c; font-style: italic; }
+.tome-list { list-style: none; margin: 0 -6px 0 -4px; padding: 0 6px 10px 0; overflow: auto; flex: 1; min-height: 0; }
+.tome-row {
+  width: 100%; display: flex; align-items: baseline; gap: 8px; padding: 5px 8px; border: 0; border-left: 2px solid transparent;
+  background: none; color: #3b2a1a; font: 14.5px/1.3 Georgia, serif; text-align: left; cursor: pointer; border-radius: 0 6px 6px 0;
+}
+.tome-row:hover { background: rgba(80, 40, 15, .08); color: #1c120a; }
+.tome-row:focus-visible { outline: 1px dotted var(--blood); }
+.tome-row[aria-current="true"] { border-left-color: var(--blood); background: rgba(124, 20, 20, .09); color: var(--blood); }
+.tome-row small { margin-left: auto; color: #7d6a4c; font-size: 11.5px; white-space: nowrap; }
+.tome-dot { width: 7px; height: 7px; flex: none; border-radius: 50%; background: var(--tone, #888); box-shadow: 0 0 0 1px rgba(0, 0, 0, .35); transform: translateY(-1px); }
+.tome-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tome-none { padding: 8px; color: #6f5a3c; font-style: italic; }
+
+/* La ficha */
+.tome-page > * { flex: none; }
+.tome-sigil { position: absolute; top: 40px; right: -60px; width: 340px; color: rgba(110, 16, 16, .15); pointer-events: none; }
+.tome-sigil .sigil { width: 100%; animation: necroTurn 120s linear infinite; }
+.tome-page.summoning .tome-sigil { color: rgba(40, 170, 100, .55); filter: drop-shadow(0 0 10px rgba(123, 224, 164, .9)); }
+.tome-page.summoning .tome-sigil .sigil { animation: necroSummon 1.3s cubic-bezier(.2, .8, .3, 1) both; }
+.tome-head { position: relative; display: flex; align-items: center; gap: 14px; padding-bottom: 10px; border-bottom: 1px solid rgba(124, 20, 20, .35); }
+.tome-head .avatar { width: 64px; height: 64px; font-size: 20px; border-radius: 50%; object-fit: cover; flex: none;
+  box-shadow: 0 0 0 2px #d8c9a4, 0 0 0 4px rgba(124, 20, 20, .6), 0 4px 10px rgba(0, 0, 0, .35); }
+.tome-head h3 { margin: 0; font-family: var(--title); font-weight: 400; font-size: 27px; letter-spacing: .05em; color: var(--blood); line-height: 1.1; }
+.tome-kind { margin: 3px 0 0; font-style: italic; color: #5d4a30; font-size: 14px; }
+.tome-stats { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 4px 14px; margin: 12px 0; }
+.tome-stats dt { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: #7d6a4c; }
+.tome-stats dd { margin: 0; font-size: 17px; color: var(--ink); font-weight: 700; }
+.tome-stats small { font-weight: 400; color: #6f5a3c; font-size: 12.5px; }
+.tome-abil { position: relative; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; margin: 4px 0 14px; }
+.tome-abil span { display: grid; justify-items: center; padding: 6px 2px; border: 1px solid rgba(70, 40, 20, .3); border-radius: 8px 8px 50% 50% / 8px 8px 22% 22%; background: rgba(250, 242, 220, .35); }
+.tome-abil small { font-size: 10.5px; letter-spacing: .08em; color: var(--blood); }
+.tome-abil b { font-size: 18px; color: var(--ink); line-height: 1.2; }
+.tome-abil i { font-style: normal; font-size: 12px; color: #6f5a3c; }
+.tome-block { position: relative; margin: 0 0 12px; }
+.tome-block h4 { margin: 0 0 4px; font: 400 15px Georgia, serif; font-variant: small-caps; letter-spacing: .06em; color: var(--blood); border-bottom: 1px dotted rgba(124, 20, 20, .35); }
+.tome-block p { margin: 0 0 5px; font-size: 14.5px; line-height: 1.5; color: #2f2116; }
+.tome-block h4 { clear: both; }
+.tome-block:first-of-type p:first-of-type::first-letter { float: left; font-family: var(--title); font-size: 2.4em; line-height: .85; padding: 3px 6px 0 0; color: var(--blood); }
+.tome-summon {
+  position: sticky; bottom: 0; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  margin: auto -26px 0 -30px; padding: 10px 26px 12px 30px;
+  background: linear-gradient(to bottom, rgba(196, 180, 140, .88), #b9a67c 40%); border-top: 1px solid rgba(124, 20, 20, .35);
+  font-size: 13.5px; color: #3b2a1a;
+}
+.tome-qty { display: inline-flex; align-items: center; gap: 6px; }
+.tome-qty input { width: 64px; }
+.tome-summon .icon-btn { color: #4a3420; border-color: rgba(70, 40, 20, .35); background: rgba(250, 242, 220, .45); }
+.tome-summon .icon-btn:hover { color: var(--blood); }
+.tome-invoke {
+  display: inline-flex; align-items: center; gap: 7px; padding: 8px 15px; border-radius: 999px; cursor: pointer;
+  border: 1px solid #2f8a5a; color: #d8ffe6; font: 600 14px/1 var(--sans);
+  background: radial-gradient(120% 140% at 50% 0%, #2b6b4a, #10261b 70%);
+  box-shadow: 0 0 0 1px #071a10, 0 0 14px rgba(123, 224, 164, .45), inset 0 0 10px rgba(123, 224, 164, .25);
+  text-shadow: 0 0 6px rgba(123, 224, 164, .8);
+}
+.tome-invoke:hover, .tome-invoke:focus-visible { outline: none; box-shadow: 0 0 0 1px #071a10, 0 0 24px rgba(123, 224, 164, .8), inset 0 0 14px rgba(123, 224, 164, .4); }
+.tome-invoke .ico { color: #b4ffd0; }
+.tome-empty { position: relative; display: grid; justify-items: center; text-align: center; padding: 40px 20px; color: #5d4a30; }
+.tome-empty .sigil { width: 180px; color: rgba(124, 20, 20, .35); animation: necroTurn 60s linear infinite; }
+.tome-empty h3 { font-family: var(--title); font-weight: 400; color: var(--blood); letter-spacing: .05em; margin: 14px 0 4px; }
+
+@keyframes necroGlow { 50% { box-shadow: inset 0 0 0 2px rgba(184, 179, 156, .5), inset 0 0 0 7px var(--leather-dark), inset 0 0 0 8px rgba(123, 224, 164, .4), 0 30px 80px rgba(0, 0, 0, .7), 0 0 48px rgba(123, 224, 164, .28); } }
+@keyframes necroOut { to { opacity: 0; transform: scale(.94); filter: blur(4px) brightness(1.6); } }
+@keyframes necroEye { 0%, 46%, 50%, 100% { transform: scaleY(1); } 48% { transform: scaleY(.1); } }
+@keyframes necroFlicker { 0%, 100% { opacity: 1; } 41% { opacity: .82; } 42% { opacity: 1; } 77% { opacity: .9; } 78% { opacity: 1; } }
+@keyframes necroSpin { from { transform: rotate(-90deg) scale(.85); opacity: 0; } to { transform: rotate(0) scale(1); opacity: 1; } }
+@keyframes necroSummon { 0% { transform: scale(.6) rotate(0); opacity: 0; } 40% { opacity: 1; } 100% { transform: scale(1.08) rotate(160deg); opacity: 1; } }
+@keyframes necroMist { from { transform: translateX(-16px); opacity: .7; } to { transform: translateX(16px); opacity: 1; } }
+@keyframes necroCandle { 0%, 100% { opacity: .85; } 30% { opacity: 1; } 55% { opacity: .7; } 70% { opacity: .95; } }
+@keyframes necroTurn { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .grimoire.necro, .grimoire.necro.closing, .necro .grim-clasp, .necro .grim-title, .necro-mist, .tome::after,
+  .tome-sigil .sigil, .tome-empty .sigil, .necro-cover .sigil, .tome-page.summoning .tome-sigil .sigil { animation: none; }
+}
+@media (max-width: 700px) {
+  .tome { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .tome-index { max-height: 40vh; border-bottom: 1px solid rgba(70, 40, 20, .4); }
+  .tome-page { padding: 14px 16px 0; }
+  .tome::after { display: none; }
+  .tome-summon { margin: auto -16px 0; padding: 10px 16px max(12px, env(safe-area-inset-bottom)); }
+  .tome-abil { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .necro-mist { display: none; }
 }

@@ -689,6 +689,12 @@ const EN = {
   "Esa persona no está en la voz": "That person isn't in voice chat",
 
   /* Bestiario: filtros y ficha desplegable */
+  /* El bestiario como libro de invocaciones */
+  "Cerrar el bestiario": "Close the bestiary", "Libro de invocaciones": "Book of summonings",
+  "libro de invocaciones · arrastra por aquí para moverlo": "book of summonings · drag here to move it",
+  "Nadie responde a la llamada": "Nobody answers the call",
+  "No hay ninguna criatura así. Prueba con otro nombre o crea la tuya.": "No creature matches. Try another name or create your own.",
+  "Cuántas": "How many", "Invocar al combate": "Summon to combat", "Arrastra para mover el libro": "Drag to move the book",
   "Ficha": "Stat block", "Todos los tipos": "All types", "Tipo de criatura": "Creature type",
   "Cualquier VD": "Any CR", "Valor de desafío": "Challenge rating",
   "VD 0 a 1/2": "CR 0 to 1/2", "VD 1 a 2": "CR 1 to 2", "VD 3 a 4": "CR 3 to 4", "VD 5 a 8": "CR 5 to 8",

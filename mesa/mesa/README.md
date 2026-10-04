@@ -429,10 +429,21 @@ plantas, celestiales y aberraciones), con fichas completas: características,
 sentidos, idiomas, resistencias, rasgos y acciones, y sus ataques listos para
 tirar de un clic, alientos y conjuros con salvación incluidos.
 
-Arriba del bestiario se busca por nombre (también en inglés: «owlbear»
-encuentra al oso lechuza) y se filtra **por tipo** y **por VD** (0 a 1/2, 1 a
-2, 3 a 4, 5 a 8, 9 a 16, 17 o más). La lista sale ordenada por desafío, y
-cada criatura despliega su **ficha** sin salir de ella.
+El bestiario se abre como un **libro de invocaciones**: un tomo de cuero
+morado casi negro con herrajes de hueso, un ojo verde por cierre que
+parpadea, páginas viejas y tostadas en los bordes con manchas de tinta roja,
+un círculo de invocación al fondo de cada ficha y niebla que se escapa por
+debajo. Como el manual, flota sobre la partida: se arrastra por el lomo de
+arriba, se agranda por la esquina y recuerda dónde lo dejaste, así que puedes
+tenerlo abierto (incluso junto al manual) mientras juegas. En el teléfono
+ocupa la pantalla entera.
+
+En la página de la izquierda está el **índice**: se busca por nombre (también
+en inglés: «owlbear» encuentra al oso lechuza) y se filtra **por tipo** y
+**por VD** (0 a 1/2, 1 a 2, 3 a 4, 5 a 8, 9 a 16, 17 o más). La lista sale
+ordenada por desafío y se recorre con las flechas. En la de la derecha, la
+**ficha** completa de la criatura elegida y, abajo, el botón **Invocar al
+combate**, que enciende el círculo al llamarla.
 
 **Todas tienen retrato y todas del mismo estilo**: una silueta en tinta sobre
 el color de su tipo, de modo que en el tablero se distingue de un vistazo un
@@ -994,7 +1005,7 @@ enseñaría por dónde ha venido.
 ## Qué versión tengo
 
 La versión de Mesa sale en la pantalla de entrada y al final del menú **···**
-del DM («Mesa 2.23.1»). Si el navegador trae una versión distinta de la del
+del DM («Mesa 2.24.0»). Si el navegador trae una versión distinta de la del
 servidor, Mesa vacía sus copias guardadas y recarga sola; si no lo consigue,
 lo dice en la pantalla de entrada.
 

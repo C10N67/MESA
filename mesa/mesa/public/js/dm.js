@@ -11,7 +11,7 @@ import { previewSound } from "./soundscape.js";
 import { dicePanel, renderLog, throwDice, tellTable, currentMode, isSecret } from "./dice-panel.js";
 import { openCharEditor, openConditions } from "./char-editor.js";
 import { openBuilder } from "./builder.js";
-import { openManual } from "./manual.js";
+import { openManual, floatingBook } from "./manual.js";
 import { MapView } from "./map.js";
 import { openSpellbook } from "./spellbook.js";
 import { openGridFit, openWallFit } from "./gridfit.js";
@@ -30,8 +30,7 @@ let mapTool = "token";
 let beastQuery = "";
 let beastType = "";         // filtro por tipo de criatura
 let beastBand = "";         // filtro por franja de VD
-const beastOpen = new Set();   // fichas desplegadas en el bestiario
-const beastDraft = new Map();  // cantidad y «PV al azar» de cada fila, para que no se pierdan al repintar
+const beastDraft = new Map();  // cantidad y «PV al azar» de cada criatura, para que no se pierdan al repintar
 let drawerOpen = false;
 let shapeSize = 20;
 let targetId = null;
@@ -901,19 +900,22 @@ function openMonsterInstance(c) {
 }
 
 /* ---------- Bestiario ---------- */
+/* ---------- Bestiario: el libro de invocaciones ----------
+   Se abre como el grimorio del manual (flota, se arrastra, se agranda y
+   recuerda dónde se dejó), pero vestido de tomo prohibido: a la izquierda
+   el índice de criaturas con su buscador y sus filtros, a la derecha la
+   ficha de la elegida y el círculo para invocarla al combate. */
+let tome = null;
+let beastPick = "";            // la criatura abierta en la página de la derecha
+
 function toggleDrawer(force) {
-  drawerOpen = force === undefined ? !drawerOpen : force;
-  let node = $("#drawer");
-  if (!drawerOpen) { if (node) node.remove(); return; }
-  node = el(`
-    <aside class="drawer" id="drawer">
-      <header>
-        <h2>${icon("book", 20)}<span>Bestiario</span></h2>
-        <span class="spacer"></span>
-        <button class="btn sm" data-beast="new" title="Crear criatura">${withIcon("plus", "Crear", 16)}</button>
-        <button class="icon-btn" data-beast="close" title="Cerrar" aria-label="Cerrar">${icon("close")}</button>
-      </header>
-      <div class="drawer-search">
+  const want = force === undefined ? !tome : force;
+  if (!want) { if (tome) tome.close(); return; }
+  if (tome) { tome.front(); return; }
+  drawerOpen = true;
+  const body = el(`<div class="tome">
+    <aside class="tome-index">
+      <div class="tome-tools">
         <input type="search" id="beastSearch" placeholder="Buscar criatura" aria-label="Buscar criatura" value="${esc(beastQuery)}">
         <div class="beast-filters">
           <select id="beastType" aria-label="Tipo de criatura">
@@ -924,44 +926,105 @@ function toggleDrawer(force) {
             ${CR_BANDS.map(([v, l]) => `<option value="${v}" ${v === beastBand ? "selected" : ""}>${l}</option>`).join("")}
           </select>
         </div>
+        <button type="button" class="tome-new" data-beast="new">${icon("plus", 15)}<span>Crear criatura</span></button>
       </div>
-      <div class="body" id="beastList"></div>
-    </aside>`);
-  document.body.appendChild(node);
-  const onEsc = e => { if (e.key === "Escape" && !document.querySelector(".modal-back")) { document.removeEventListener("keydown", onEsc); toggleDrawer(false); } };
-  document.addEventListener("keydown", onEsc);
-  node.querySelector("#beastSearch").addEventListener("input", e => { beastQuery = e.target.value; renderBestiary(); });
-  node.querySelector("#beastType").addEventListener("change", e => { beastType = e.target.value; renderBestiary(); });
-  node.querySelector("#beastBand").addEventListener("change", e => { beastBand = e.target.value; renderBestiary(); });
-  node.addEventListener("input", e => {
-    const row = e.target.closest(".beast[data-id]");
-    if (!row || !e.target.matches("[data-qty], [data-rollhp]")) return;
-    beastDraft.set(row.dataset.id, { qty: row.querySelector("[data-qty]").value, rollHp: row.querySelector("[data-rollhp]").checked });
+      <p class="tome-count" id="beastCount"></p>
+      <ol class="tome-list" id="beastList"></ol>
+    </aside>
+    <article class="tome-page" id="beastPage"></article>
+  </div>`);
+  tome = floatingBook(body, {
+    key: "mesa.bestiario", label: "Bestiario", closeLabel: "Cerrar el bestiario", cls: "necro",
+    title: "Bestiario", hint: "libro de invocaciones · arrastra por aquí para moverlo",
+    cover: `<div class="necro-cover">${sigil()}<span>Bestiario</span><small>Libro de invocaciones</small></div>`,
+    extra: '<div class="necro-mist" aria-hidden="true"></div>',
+    onClose: () => { tome = null; drawerOpen = false; }
   });
-  node.addEventListener("toggle", e => {
-    const row = e.target.closest && e.target.closest(".beast[data-id]");
-    if (!row || e.target.tagName !== "DETAILS") return;
-    if (e.target.open) beastOpen.add(row.dataset.id); else beastOpen.delete(row.dataset.id);
-  }, true);
-  on(node, "click", "[data-beast]", (e, b) => {
+  const page = body.querySelector("#beastPage");
+  body.querySelector("#beastSearch").addEventListener("input", e => { beastQuery = e.target.value; renderBestiary(); });
+  body.querySelector("#beastType").addEventListener("change", e => { beastType = e.target.value; renderBestiary(); });
+  body.querySelector("#beastBand").addEventListener("change", e => { beastBand = e.target.value; renderBestiary(); });
+  page.addEventListener("input", e => {
+    if (!beastPick || !e.target.matches("[data-qty], [data-rollhp]")) return;
+    beastDraft.set(beastPick, { qty: page.querySelector("[data-qty]").value, rollHp: page.querySelector("[data-rollhp]").checked });
+  });
+  const pick = id => {
+    beastPick = id;
+    renderBestiary();
+    page.scrollTop = 0;
+  };
+  on(body, "click", "[data-pick]", (e, b) => pick(b.dataset.pick));
+  /* Con las flechas se pasa de criatura sin soltar el índice */
+  body.querySelector("#beastList").addEventListener("keydown", e => {
+    if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+    const rows = [...body.querySelectorAll("[data-pick]")];
+    const i = rows.findIndex(r => r.dataset.pick === beastPick);
+    const next = rows[Math.min(rows.length - 1, Math.max(0, i + (e.key === "ArrowDown" ? 1 : -1)))];
+    if (!next) return;
+    e.preventDefault();
+    pick(next.dataset.pick);
+    const row = body.querySelector(`[data-pick="${CSS.escape(next.dataset.pick)}"]`);
+    if (row) { row.focus(); row.scrollIntoView({ block: "nearest" }); }
+  });
+  on(body, "click", "[data-beast]", (e, b) => {
     const action = b.dataset.beast;
-    if (action === "close") return toggleDrawer(false);
     if (action === "new") return openBeastEditor(null);
     const beast = bestiaryOf(doc()).find(x => x.id === b.dataset.id);
-    if (action === "spawn") return spawn(beast, b.closest(".beast"));
+    if (!beast) return;
+    if (action === "spawn") {
+      spawn(beast, page);
+      page.classList.remove("summoning"); void page.offsetWidth; page.classList.add("summoning");
+      setTimeout(() => page.classList.remove("summoning"), 1400);
+      return;
+    }
     if (action === "edit") return openBeastEditor(beast);
     if (action === "drop") return dropBeast(beast);
   });
   renderBestiary();
+  body.querySelector("#beastSearch").focus({ preventScroll: true });
+}
+
+/* El círculo de invocación: dos anillos con runas, una estrella de siete
+   puntas y un ojo en el centro. Las runas salen siempre iguales. */
+let sigilSVG = "";
+function sigil() {
+  if (sigilSVG) return sigilSVG;
+  let seed = 7;
+  const rand = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  const runes = Array.from({ length: 28 }, (_, i) => {
+    const a = i / 28 * Math.PI * 2, cx = 100 + Math.cos(a) * 87.5, cy = 100 + Math.sin(a) * 87.5;
+    const deg = a * 180 / Math.PI + 90;
+    const strokes = [`M0 -4.5 V4.5`];
+    for (let k = 0; k < 2; k++) {
+      const y = (rand() * 7 - 3.5).toFixed(1), x = rand() > .5 ? 3 : -3, y2 = (+y + (rand() > .5 ? 3 : -3)).toFixed(1);
+      strokes.push(`M0 ${y} L${x} ${y2}`);
+    }
+    return `<path d="${strokes.join(" ")}" transform="translate(${cx.toFixed(1)} ${cy.toFixed(1)}) rotate(${deg.toFixed(0)})"/>`;
+  }).join("");
+  const star = Array.from({ length: 7 }, (_, i) => {
+    const a = (i * 3 / 7) * Math.PI * 2 - Math.PI / 2;
+    return `${(100 + Math.cos(a) * 74).toFixed(1)},${(100 + Math.sin(a) * 74).toFixed(1)}`;
+  }).join(" ");
+  sigilSVG = `<svg class="sigil" viewBox="0 0 200 200" aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="100" cy="100" r="96" stroke-width="2.2"/><circle cx="100" cy="100" r="79" stroke-width="1.4"/>
+    <g stroke-width="1.3">${runes}</g>
+    <polygon points="${star}" stroke-width="1.6"/>
+    <circle cx="100" cy="100" r="30" stroke-width="1.4"/>
+    <path d="M78 100 Q100 84 122 100 Q100 116 78 100 Z" stroke-width="1.6"/><circle cx="100" cy="100" r="5.5" fill="currentColor" stroke="none"/>
+  </svg>`;
+  return sigilSVG;
 }
 
 /* Franjas de VD: lo que se busca al preparar un encuentro para un nivel */
 const CR_BANDS = [["", "Cualquier VD"], ["0-0.5", "VD 0 a 1/2"], ["1-2", "VD 1 a 2"], ["3-4", "VD 3 a 4"],
   ["5-8", "VD 5 a 8"], ["9-16", "VD 9 a 16"], ["17-30", "VD 17 o más"]];
 
+/* Solo se toca lo que cambia: así no se pierde el foco ni lo que se escribe */
+const paintIf = (node, html) => { if (node && node._html !== html) { node._html = html; node.innerHTML = html; } };
+
 function renderBestiary() {
-  const host = $("#beastList");
-  if (!host) return;
+  const host = $("#beastList"), page = $("#beastPage");
+  if (!host || !page) return;
   const q = beastQuery.trim().toLowerCase();
   const [lo, hi] = beastBand ? beastBand.split("-").map(Number) : [0, Infinity];
   /* Se busca también por el nombre en inglés: «owlbear» encuentra al oso lechuza */
@@ -974,39 +1037,46 @@ function renderBestiary() {
     .filter(b => !beastType || typeOf(b.sizeType) === beastType)
     .filter(b => { const v = crValue(b.cr); return v >= lo && v <= hi; })
     .sort((a, b) => crValue(a.cr) - crValue(b.cr) || a.name.localeCompare(b.name, "es"));
-  const block = (title, text) => text ? `<div class="block"><h4>${title}</h4>${lines(text).map(l => `<p>${esc(l)}</p>`).join("")}</div>` : "";
-  const count = `<p class="beast-count">${list.length === 1 ? "1 criatura" : list.length + " criaturas"}</p>`;
-  host.innerHTML = (list.length ? count : "") + list.map(b => {
-    const draft = beastDraft.get(b.id) || { qty: 1, rollHp: true };
-    const base = isBaseBeast(b.id);
-    return `
-    <div class="beast" data-id="${esc(b.id)}" style="--tone:${esc(b.color)}">
-      <div class="top">
-        ${b.avatarId
-          ? `<img class="avatar" src="${imgURL(b.avatarId)}" alt="" loading="lazy" style="--tone:${esc(b.color)};width:40px;height:40px">`
-          : `<div class="avatar" style="--tone:${esc(b.color)};width:40px;height:40px;font-size:13px">${initials(b.name)}</div>`}
-        <div class="beast-id"><b>${esc(b.name)}</b><small>${esc(b.sizeType)} · CA ${b.ac} · ${b.hpAvg} PV${b.hpDice ? " (" + esc(b.hpDice) + ")" : ""}</small></div>
-        <span class="spacer"></span>
-        <small class="cr">VD ${esc(b.cr)} · ${b.xp} PX</small>
-      </div>
-      <details ${beastOpen.has(b.id) ? "open" : ""}>
-        <summary>Ficha</summary>
-        <div class="detail">
-          <div class="abilities">${ABILITIES.map(([k, l]) => `<span class="abil"><span>${l}</span><b class="tnum">${b[k]}</b><small>${sign(modOf(b[k]))}</small></span>`).join("")}</div>
-          ${block("Velocidad", b.speed + " pies")}${block("Sentidos", b.senses)}${block("Idiomas", b.languages)}
-          ${block("Resistencias", b.resistances)}${block("Rasgos", b.traits)}${block("Acciones", b.actions)}
-        </div>
-      </details>
-      <div class="go">
-        <input type="number" min="1" max="20" value="${esc(draft.qty)}" data-qty aria-label="Cantidad">
-        <label class="check" style="font-size:12px"><input type="checkbox" data-rollhp ${draft.rollHp ? "checked" : ""}> PV al azar</label>
-        <span class="spacer"></span>
-        <button class="btn sm" data-beast="edit" data-id="${esc(b.id)}" title="Editar">${icon("pencil")}</button>
-        ${b.custom ? `<button class="icon-btn" data-beast="drop" data-id="${esc(b.id)}" title="${base ? "Volver a la ficha de serie" : "Borrar"}">${icon("close")}</button>` : ""}
-        <button class="btn sm primary" data-beast="spawn" data-id="${esc(b.id)}">Al combate</button>
-      </div>
-    </div>`;
-  }).join("") || '<p class="prose">No hay ninguna criatura así.</p>';
+  if (!list.some(b => b.id === beastPick)) beastPick = list[0] ? list[0].id : "";
+  paintIf($("#beastCount"), list.length ? (list.length === 1 ? "1 criatura" : list.length + " criaturas") : "");
+  paintIf(host, list.map(b => `<li><button type="button" class="tome-row" data-pick="${esc(b.id)}"
+      aria-current="${b.id === beastPick}" tabindex="${b.id === beastPick ? 0 : -1}" style="--tone:${esc(b.color)}">
+      <span class="tome-dot"></span><span class="tome-name">${esc(b.name)}</span><small>VD ${esc(b.cr)}</small></button></li>`).join("")
+    || '<li class="tome-none">No hay ninguna criatura así.</li>');
+  const beast = list.find(b => b.id === beastPick);
+  paintIf(page, beast ? beastSheet(beast) : `<div class="tome-empty">${sigil()}
+      <h3>Nadie responde a la llamada</h3>
+      <p>No hay ninguna criatura así. Prueba con otro nombre o crea la tuya.</p></div>`);
+}
+
+function beastSheet(b) {
+  const draft = beastDraft.get(b.id) || { qty: 1, rollHp: true };
+  const base = isBaseBeast(b.id);
+  const block = (title, text) => text ? `<section class="tome-block"><h4>${title}</h4>${lines(text).map(l => `<p>${esc(l)}</p>`).join("")}</section>` : "";
+  return `<div class="tome-sigil">${sigil()}</div>
+    <header class="tome-head">
+      ${b.avatarId
+        ? `<img class="avatar" src="${imgURL(b.avatarId)}" alt="" style="--tone:${esc(b.color)}">`
+        : `<div class="avatar" style="--tone:${esc(b.color)}">${initials(b.name)}</div>`}
+      <div><h3>${esc(b.name)}</h3><p class="tome-kind">${esc(b.sizeType)}</p></div>
+    </header>
+    <dl class="tome-stats">
+      <div><dt>Clase de armadura</dt><dd>${b.ac}</dd></div>
+      <div><dt>Puntos de vida</dt><dd>${b.hpAvg}${b.hpDice ? ` <small>(${esc(b.hpDice)})</small>` : ""}</dd></div>
+      <div><dt>Velocidad</dt><dd>${b.speed} pies</dd></div>
+      <div><dt>Desafío</dt><dd>${esc(b.cr)} <small>(${b.xp} PX)</small></dd></div>
+    </dl>
+    <div class="tome-abil">${ABILITIES.map(([k, l]) => `<span><small>${l}</small><b class="tnum">${b[k]}</b><i>${sign(modOf(b[k]))}</i></span>`).join("")}</div>
+    ${block("Sentidos", b.senses)}${block("Idiomas", b.languages)}${block("Resistencias", b.resistances)}
+    ${block("Rasgos", b.traits)}${block("Acciones", b.actions)}
+    <footer class="tome-summon">
+      <label class="tome-qty"><span>Cuántas</span><input type="number" min="1" max="20" value="${esc(draft.qty)}" data-qty aria-label="Cantidad"></label>
+      <label class="check"><input type="checkbox" data-rollhp ${draft.rollHp ? "checked" : ""}> PV al azar</label>
+      <span class="spacer"></span>
+      <button type="button" class="icon-btn" data-beast="edit" data-id="${esc(b.id)}" title="Editar" aria-label="Editar">${icon("pencil")}</button>
+      ${b.custom ? `<button type="button" class="icon-btn" data-beast="drop" data-id="${esc(b.id)}" title="${base ? "Volver a la ficha de serie" : "Borrar"}" aria-label="${base ? "Volver a la ficha de serie" : "Borrar"}">${icon("close")}</button>` : ""}
+      <button type="button" class="tome-invoke" data-beast="spawn" data-id="${esc(b.id)}">${icon("sparkle", 16)}<span>Invocar al combate</span></button>
+    </footer>`;
 }
 
 function spawn(beast, row) {

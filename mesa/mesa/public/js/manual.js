@@ -389,7 +389,7 @@ export function openManual(start) {
   });
 
   paint();
-  book = grimoire(body, {
+  book = floatingBook(body, {
     onGo: next => { ed = next; query = ""; body.querySelector(".man-search").value = ""; remember(); paint(); },
     onClose: () => { book = null; }
   });
@@ -403,20 +403,29 @@ export function openManual(start) {
    partida, se arrastra por el lomo de arriba y se agranda por la esquina,
    así que se puede consultar mientras se juega. Recuerda dónde se dejó. En el
    móvil ocupa la pantalla entera. */
-const BOOK_KEY = "mesa.grimoire";
 const MIN_W = 560, MIN_H = 380;
+const GRIMOIRE = {
+  key: "mesa.grimoire", label: "Manual de D&D 5.5", closeLabel: "Cerrar el grimorio",
+  title: 'Manual de D<span class="amp">&amp;</span>D 5.5',
+  cover: '<span>Manual<br>de D<span class="amp">&amp;</span>D</span>'
+};
 
-function grimoire(content, { onGo, onClose }) {
-  const node = el(`<section class="grimoire" role="dialog" aria-label="Manual de D&D 5.5" tabindex="-1">
-    <header class="grim-head" title="Arrastra para mover el grimorio">
+/* El mismo libro sirve para otros tomos (el bestiario es uno): cada uno
+   trae su título, su tapa, una clase para vestirlo y dónde recordar su
+   sitio. */
+export function floatingBook(content, opts) {
+  const { key, label, title, cover, closeLabel, cls = "", hint = "arrastra por aquí para moverlo",
+    extra = "", onGo = () => {}, onClose = () => {} } = { ...GRIMOIRE, ...opts };
+  const node = el(`<section class="grimoire ${cls}" role="dialog" aria-label="${esc(label)}" tabindex="-1">
+    <header class="grim-head" title="Arrastra para mover el libro">
       <span class="grim-clasp" aria-hidden="true"></span>
-      <h2 class="grim-title">Manual de D<span class="amp">&amp;</span>D 5.5</h2>
-      <span class="grim-hint">arrastra por aquí para moverlo</span>
-      <button type="button" class="grim-close" data-close aria-label="Cerrar el grimorio" title="Cerrar el grimorio">×</button>
+      <h2 class="grim-title">${title}</h2>
+      <span class="grim-hint">${esc(hint)}</span>
+      <button type="button" class="grim-close" data-close aria-label="${esc(closeLabel)}" title="${esc(closeLabel)}">×</button>
     </header>
     <div class="grim-pages"></div>
     <span class="grim-grip" title="Arrastra para cambiar el tamaño" aria-hidden="true"></span>
-    <div class="grim-cover" aria-hidden="true"><span>Manual<br>de D<span class="amp">&amp;</span>D</span></div>
+    <div class="grim-cover" aria-hidden="true">${cover}</div>${extra}
   </section>`);
   node.querySelector(".grim-pages").appendChild(content);
   document.body.appendChild(node);
@@ -424,7 +433,7 @@ function grimoire(content, { onGo, onClose }) {
   /* Dónde y de qué tamaño: lo último que eligió el DM, o centrado */
   const small = () => innerWidth <= 700;
   let box = null;
-  try { box = JSON.parse(localStorage.getItem(BOOK_KEY) || "null"); } catch {}
+  try { box = JSON.parse(localStorage.getItem(key) || "null"); } catch {}
   const fit = b => {
     const w = Math.min(Math.max(MIN_W, b.w), innerWidth - 16), h = Math.min(Math.max(MIN_H, b.h), innerHeight - 16);
     return { w, h, x: Math.min(Math.max(8 - w + 120, b.x), innerWidth - 120), y: Math.min(Math.max(8, b.y), innerHeight - 60) };
@@ -438,7 +447,7 @@ function grimoire(content, { onGo, onClose }) {
     box = fit(box);
     Object.assign(node.style, { left: box.x + "px", top: box.y + "px", width: box.w + "px", height: box.h + "px" });
   };
-  const save = () => { try { localStorage.setItem(BOOK_KEY, JSON.stringify(box)); } catch {} };
+  const save = () => { try { localStorage.setItem(key, JSON.stringify(box)); } catch {} };
   place();
 
   /* Arrastrar por el lomo, y agrandar por la esquina */
@@ -466,7 +475,12 @@ function grimoire(content, { onGo, onClose }) {
   addEventListener("resize", onResize);
 
   /* Al frente si se pulsa encima (por si hay otra cosa flotando) */
-  node.addEventListener("pointerdown", () => node.classList.add("front"));
+  node.addEventListener("pointerdown", e => {
+    document.querySelectorAll(".grimoire.front").forEach(n => n !== node && n.classList.remove("front"));
+    node.classList.add("front");
+    /* Que Escape lo cierre aunque se haya pulsado en el lomo o en el papel */
+    if (!e.target.closest("input, select, textarea, button, a, [tabindex]:not(.grimoire)")) node.focus({ preventScroll: true });
+  });
 
   let closed = false;
   const close = () => {
