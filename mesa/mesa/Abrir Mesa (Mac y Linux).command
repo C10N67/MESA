@@ -22,5 +22,4 @@ if ! command -v node >/dev/null 2>&1; then
 fi
 
 echo "  Abriendo Mesa. No cierres esta ventana mientras juegas."
-( sleep 1; (open http://localhost:8080 2>/dev/null || xdg-open http://localhost:8080 2>/dev/null) ) &
-node server.js
+node server.js --open

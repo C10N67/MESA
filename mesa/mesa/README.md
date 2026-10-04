@@ -993,7 +993,18 @@ enseñaría por dónde ha venido.
 
 ## Qué versión tengo
 
-La versión de Mesa sale al final del menú **···** del DM («Mesa 2.20.0»). Si
+La versión de Mesa sale en la pantalla de entrada y al final del menú **···**
+del DM («Mesa 2.21.0»). Si el navegador trae una versión distinta de la del
+servidor, Mesa vacía sus copias guardadas y recarga sola; si no lo consigue,
+lo dice en la pantalla de entrada.
+
+Los lanzadores abren el navegador cuando el servidor ya ha arrancado, no
+antes. Si queda abierta la ventana negra de otro Mesa (por ejemplo, de una
+copia anterior), el nuevo no puede usar el puerto: lo avisa en su ventana y
+se cierra, en vez de dejarte jugando con la versión vieja sin saberlo. Cierra
+todas las ventanas negras de Mesa y vuelve a abrirlo.
+
+Si
 el navegador se quedara con una hoja de estilos de otra versión (lo nuevo
 aparece pero no hace nada, como un botón que no esconde nada), Mesa lo nota
 al entrar, vacía sus copias guardadas y la vuelve a pedir. Si aun así algo

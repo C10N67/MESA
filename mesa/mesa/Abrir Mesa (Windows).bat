@@ -31,6 +31,5 @@ if errorlevel 1 (
 )
 
 echo  Abriendo Mesa. No cierres esta ventana mientras juegas.
-start "" http://localhost:8080
-node server.js
+node server.js --open
 pause

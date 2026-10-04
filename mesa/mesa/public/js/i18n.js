@@ -847,6 +847,7 @@ const SPELL_PARTS = [
   [/^(\d+) puntos de sueño$/, "$1 points of sleep"]
 ];
 const PATTERNS = [
+  [/^Este navegador tiene Mesa (\S+) y el servidor la (\S+): recarga con Ctrl\+Mayús\+R$/, "This browser has Mesa $1 and the server has $2: reload with Ctrl+Shift+R"],
   [/^Sonido: (.+)$/, "Sound: $1"],
   [/^Caben (\d+) sonidos por mapa$/, "Up to $1 sounds per map"],
   [/^(\d+), (\d+) · (\d+) casillas · (\d+)%$/, "$1, $2 · $3 squares · $4%"],

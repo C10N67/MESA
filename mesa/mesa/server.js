@@ -45,6 +45,11 @@ const STATE_FILE = path.join(DATA, "mesa.json");
 const CERT = process.env.MESA_CERT || arg("cert", "");
 const KEY = process.env.MESA_KEY || arg("key", "");
 const INTERNET = argv.includes("--internet") || process.env.MESA_INTERNET === "1";
+/* --open: abrir el navegador cuando el servidor ya escucha (lo usan los
+   lanzadores; así nunca se abre contra otro Mesa que siguiera en marcha) */
+const OPEN = argv.includes("--open");
+/* La versión de esta copia de Mesa, la misma que ve el navegador */
+const VERSION = (readFileSync(path.join(HERE, "public", "js", "version.js"), "utf8").match(/VERSION = "([^"]+)"/) || [])[1] || "?";
 
 /* ---------- Estado ----------
    Las reglas viven en public/js/engine.js; aquí solo hay red y disco. */
@@ -215,6 +220,7 @@ const handler = async (req, res) => {
 
   try {
     /* Con las direcciones de red del DM: «localhost» no le sirve a nadie más */
+    if (p === "/api/version") return json(res, 200, { version: VERSION });
     if (p === "/api/hello") return json(res, 200, { ...engine.hello(), addresses: lanAddresses(), publicUrl, tunnel });
 
     if (p === "/api/ping") {
@@ -526,11 +532,36 @@ function tunnelMissing() {
 
 await boot();
 setInterval(() => engine.purge(), 3600 * 1000).unref();
+/* El puerto ya lo usa otro programa: casi siempre, otro Mesa que se quedó
+   abierto (quizá una versión anterior). Se dice claro en vez de cascar. */
+server.on("error", async err => {
+  if (err.code !== "EADDRINUSE") throw err;
+  let other = "";
+  try {
+    const res = await fetch(`http://localhost:${PORT}/api/version`, { signal: AbortSignal.timeout(2000) });
+    other = res.ok ? (await res.json()).version || "" : "";
+    /* Los Mesa de antes de la 2.21 no dicen su versión, pero sí responden */
+    if (!other && (await fetch(`http://localhost:${PORT}/api/hello`, { signal: AbortSignal.timeout(2000) })).ok) other = "anterior";
+  } catch {}
+  console.log(other ? `
+  Ya hay otro Mesa abierto en el puerto ${PORT}: ${other === "anterior" ? "una versión anterior" : `la versión ${other}`}${other !== VERSION ? `, y esta es la ${VERSION}` : ""}.
+
+  Cierra la otra ventana negra de Mesa (o pulsa Ctrl+C en ella) y vuelve a
+  abrir este archivo. Si no, el navegador seguirá viendo el Mesa de antes.
+` : `
+  El puerto ${PORT} ya lo está usando otro programa.
+
+  Cierra lo que lo use, o arranca Mesa en otro puerto: node server.js --port 8081
+`);
+  process.exit(1);
+});
+
 server.listen(PORT, "0.0.0.0", () => {
   const ip = lanIP();
   const scheme = secure ? "https" : "http";
+  if (OPEN) openBrowser(`${scheme}://localhost:${PORT}`);
   console.log(`
-  Mesa está en marcha${secure ? " (HTTPS)" : ""}.
+  Mesa ${VERSION} está en marcha${secure ? " (HTTPS)" : ""}.
 
   Tú (DM)        ${scheme}://localhost:${PORT}
   Tus jugadores  ${ip ? `${scheme}://${ip}:${PORT}` : "(este ordenador no está conectado a ninguna red)"}
@@ -541,6 +572,12 @@ server.listen(PORT, "0.0.0.0", () => {
 `);
   if (INTERNET) openTunnel();
 });
+
+function openBrowser(url) {
+  const [cmd, args] = process.platform === "win32" ? ["cmd", ["/c", "start", "", url]]
+    : process.platform === "darwin" ? ["open", [url]] : ["xdg-open", [url]];
+  try { spawn(cmd, args, { detached: true, stdio: "ignore" }).on("error", () => {}).unref(); } catch {}
+}
 
 /* Al cerrar (Ctrl+C, o el sistema parando el proceso) se guarda lo último */
 for (const sig of ["SIGINT", "SIGTERM"]) {

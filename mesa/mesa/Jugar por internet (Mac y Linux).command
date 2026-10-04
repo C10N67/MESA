@@ -37,5 +37,4 @@ if ! command -v cloudflared >/dev/null 2>&1 && [ ! -x ./cloudflared ]; then
 fi
 
 echo "  Abriendo Mesa para jugar por internet. No cierres esta ventana mientras jugáis."
-( sleep 1; (open http://localhost:8080 2>/dev/null || xdg-open http://localhost:8080 2>/dev/null) ) &
-node server.js --internet
+node server.js --internet --open

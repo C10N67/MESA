@@ -54,6 +54,5 @@ if errorlevel 1 if not exist "%~dp0cloudflared.exe" (
 )
 
 echo  Abriendo Mesa para jugar por internet. No cierres esta ventana mientras jugais.
-start "" http://localhost:8080
-node server.js --internet
+node server.js --internet --open
 pause

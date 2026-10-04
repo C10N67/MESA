@@ -30,8 +30,32 @@ function checkStyles() {
   if (link) link.href = `css/mesa.css?v=${VERSION}&t=${Date.now()}`;
 }
 
+/* ¿El código que ha llegado es el que tiene el servidor? Si no (una copia
+   guardada de otra versión), se vacían las copias y se recarga una vez. */
+let serverVersion = "";
+async function checkVersion() {
+  if (DEMO) return true;
+  let server = "";
+  try { server = (await (await fetch("api/version", { cache: "no-store" })).json()).version || ""; } catch { return true; }
+  serverVersion = server;
+  if (!server || server === VERSION) return true;
+  console.warn(`Mesa: el navegador tiene la ${VERSION} y el servidor la ${server}. Se recarga.`);
+  let last = 0;
+  try { last = Number(sessionStorage.getItem("mesa.versionReload")) || 0; } catch {}
+  if (Date.now() - last < 60000) return true;      // ya se intentó: no entrar en bucle
+  try { sessionStorage.setItem("mesa.versionReload", String(Date.now())); } catch {}
+  try {
+    if ("caches" in window) await Promise.all((await caches.keys()).map(k => caches.delete(k)));
+    const regs = navigator.serviceWorker ? await navigator.serviceWorker.getRegistrations() : [];
+    await Promise.all(regs.map(r => r.update().catch(() => {})));
+  } catch {}
+  location.reload();
+  return false;
+}
+
 async function boot() {
   checkStyles();
+  if (!await checkVersion()) return;
   const wanted = askedRole();
   const saved = savedSession(wanted);
   if (saved && (!wanted || saved.role === wanted)) {
@@ -119,6 +143,9 @@ async function gate(wanted) {
       <p class="prose hint" id="hint"></p>
       <div class="install hidden" id="install"></div>
       <div class="gate-lang" id="gateLang"></div>
+      <p class="gate-version ${serverVersion && serverVersion !== VERSION ? "bad" : ""}">${serverVersion && serverVersion !== VERSION
+        ? `Este navegador tiene Mesa ${VERSION} y el servidor la ${esc(serverVersion)}: recarga con Ctrl+Mayús+R`
+        : `Mesa ${VERSION}`}</p>
     </div>`;
 
   $("#gateLang").appendChild(langPicker());
