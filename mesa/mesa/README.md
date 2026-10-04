@@ -979,16 +979,20 @@ generar. Hay una muestra en `tools/fuentes/muestra.png`.
 
 ## Fondo de la entrada
 
-La pantalla de entrada lleva de fondo una forja en sepia
-(`public/fondos/forja.svg`): un ventanal enorme que deja entrar haces de luz,
-un yunque con el hierro al rojo y chispas a la izquierda, un brazo mecánico a
-la derecha, cadenas, poleas y engranajes. El ventanal queda justo detrás del
-panel, que es translúcido y desenfoca lo que tiene detrás. Es un SVG de unos
-50 KB: se ve nítido en cualquier pantalla, las chispas, la brasa y el polvo se
-mueven (salvo si el sistema pide reducir el movimiento) y se guarda con el
-resto de la aplicación para abrir sin red. Lo dibuja
-`tools/fondo-forja.mjs` (`node tools/fondo-forja.mjs`), así que la luz, los
-colores o dónde va cada cosa se cambian ahí y se vuelve a generar.
+La pantalla de entrada lleva de fondo una forja dibujada a lápiz sobre papel
+tostado: un ventanal enorme, un yunque a la izquierda, un brazo mecánico a la
+derecha, cadenas, poleas y engranajes, con el sombreado a base de rayas
+cruzadas y las líneas de encaje del boceto a la vista. Lo único en color es
+el hierro al rojo y sus chispas, que se mueven (salvo si el sistema pide
+reducir el movimiento). El ventanal queda justo detrás del panel, que es
+translúcido y desenfoca lo que tiene detrás.
+
+Son dos ficheros en `public/fondos/`: `forja.webp` (el dibujo, ~430 KB) y
+`forja-brasas.svg` (la brasa y las chispas). Se guardan con el resto de la
+aplicación para abrir sin red. Los genera `tools/fondo-forja.mjs`, que monta
+la escena en vectores y la pasa a lápiz en un navegador (necesita Playwright:
+`PWROOT=$(npm root -g) node tools/fondo-forja.mjs`); la composición, el
+rayado o el color del papel se cambian ahí y se vuelve a generar.
 
 ## Estructura
 
@@ -1035,7 +1039,7 @@ public/
     wallfind.js        proponer muros y puertas del plano y trazarlos sobre la tinta
     wand.js            varita mágica: pinchar en el suelo y rellenar por color
   retratos/            retratos de serie de cada especie, de hombre y de mujer
-  fondos/forja.svg     el fondo de la pantalla de entrada
+  fondos/              el fondo de la pantalla de entrada (forja a lápiz y sus chispas)
 tools/retratos.mjs     genera esos retratos
 tools/fuentes/         genera las fuentes de public/fonts/ (y su muestra)
 tools/fondo-forja.mjs  genera el fondo de la entrada

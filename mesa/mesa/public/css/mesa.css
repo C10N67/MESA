@@ -1089,14 +1089,16 @@ body.screen { background: #05060a; overflow: hidden; }
 
 /* ---------- Entrada ---------- */
 .gate .panel { padding: 28px 26px 22px; }
-/* Fondo de la entrada: la forja (public/fondos/forja.svg), oscurecida por los
-   bordes para que el panel se lea; fija aunque el panel haga scroll */
+/* Fondo de la entrada: la forja dibujada a lápiz (public/fondos/forja.webp)
+   con la brasa y las chispas encima (forja-brasas.svg, animadas), tostada
+   por los bordes para que el panel se lea; fija aunque el panel haga scroll */
 .gate::before {
   content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background:
-    radial-gradient(ellipse 60% 70% at 50% 48%, rgba(8, 6, 4, .25), rgba(8, 6, 4, .7)),
-    url("../fondos/forja.svg") center / cover no-repeat,
-    #0b0907;
+    url("../fondos/forja-brasas.svg") center / cover no-repeat,
+    radial-gradient(ellipse 60% 70% at 50% 48%, rgba(20, 13, 6, .2), rgba(20, 13, 6, .62)),
+    url("../fondos/forja.webp") center / cover no-repeat,
+    #2a2219;
 }
 .gate .panel {
   background: rgba(17, 18, 22, .8);
