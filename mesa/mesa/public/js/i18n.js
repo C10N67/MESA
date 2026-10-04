@@ -778,7 +778,16 @@ const EN = {
   "Retrato de serie:": "Default portrait:",
   "Subir": "Upload",
   "De serie": "Default",
-  "Volver al retrato de serie de su especie": "Go back to the species' default portrait"
+  "Volver al retrato de serie de su especie": "Go back to the species' default portrait",
+  "Vista de sala": "Room view",
+  "Soltar": "Release",
+  "Recuperar vista de sala": "Restore room view",
+  "Encuadrar la sala entera al entrar en ella": "Frame the whole room when someone enters it",
+  "La party deja de encuadrar esta sala": "The party stops framing this room",
+  "La party vuelve a encuadrar las salas": "The party frames rooms again",
+  "La cámara de la party deja de encuadrar esta sala (hasta que la recuperes)": "The party camera stops framing this room (until you restore it)",
+  "Vuelve a encuadrar las salas que soltaste en este mapa": "Frames again the rooms you released on this map",
+  "Cuando alguien entra en una sala pintada con «Sala», la cámara de la party la encuadra entera hasta que alguien se mueve fuera": "When someone enters a room painted with «Room», the party camera frames all of it until someone moves out"
 };
 
 /* Las criaturas de serie traen su inglés en el catálogo: nombre, tipo, sentidos

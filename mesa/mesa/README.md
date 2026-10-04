@@ -750,6 +750,19 @@ recibe dónde están):
   una sala cortada por un muro en diagonal de pared a pared son dos trozos, y
   se revela solo el lado en el que estás. Un tramo diagonal suelto que no
   cierra nada no parte la sala.
+  **Vista de sala.** Cuando alguien entra en una sala y se revela, la cámara
+  de la party (la tele y los móviles) se ajusta para encuadrarla entera, con
+  una casilla de margen, y se queda ahí aunque se muevan dentro de ella. Se
+  suelta en cuanto **cualquiera de la party se mueve fuera de la sala**, y
+  vuelve a encuadrarla en cuanto alguien se mueve dentro otra vez. El paso de
+  una vista a otra es un deslizamiento, no un salto.
+
+  Mientras dura, en tu mapa sale recuadrada con una línea discontinua, y en
+  la barra aparece **Vista de sala · Soltar**: esa sala deja de encuadrarse
+  aunque vuelvan a entrar, hasta que pulses **Recuperar vista de sala**. En
+  los ajustes del mapa se quita del todo con «Encuadrar la sala entera al
+  entrar en ella». Si un jugador se ha acercado a mano en su móvil, manda su
+  zoom.
 - **Revelar**: la party ve esas casillas siempre, esté donde esté. Para un
   patio a la luz del día o una sala que ya conocen.
 - **Ocultar**: la party **no** ve esas casillas nunca, aunque las tenga

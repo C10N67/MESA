@@ -1168,6 +1168,7 @@ function renderMap() {
           <button class="btn sm" data-map="zoomIn">+</button>
           <span class="spacer"></span>
           <span class="pill" id="mapHint"></span>
+          <span id="roomViewSlot"></span>
           <button class="btn sm" data-map="settings">Ajustes del mapa</button>
         </div>
         <div class="board" id="board"><canvas id="canvas"></canvas><div class="coords" id="coords"></div></div>
@@ -1304,7 +1305,28 @@ function renderMap() {
   const pick = $("#mapPick", pane);
   pick.innerHTML = doc().maps.map(m => `<option value="${m.id}" ${m.id === map.id ? "selected" : ""}>${esc(m.name)}</option>`).join("");
   mapView.set({ map, chars: chars(), session: session(), you: null });
+  paintRoomView(map);
 }
+
+/* Vista de sala: mientras la party tiene una sala encuadrada, el DM puede
+   soltarla; si ha soltado alguna en este mapa, puede recuperarlas */
+function paintRoomView(map) {
+  const slot = $("#roomViewSlot");
+  if (!slot) return;
+  const rv = session().roomView;
+  const framed = rv && rv.mapId === map.id;
+  const released = (session().roomViewOff || []).some(k => k.startsWith(map.id + "|"));
+  const html = map.roomCam === false ? "" : framed
+    ? `<button class="btn sm" data-roomview="off" title="La cámara de la party deja de encuadrar esta sala (hasta que la recuperes)">${icon("room", 15)} Vista de sala · Soltar</button>`
+    : released ? `<button class="btn sm" data-roomview="on" title="Vuelve a encuadrar las salas que soltaste en este mapa">${icon("room", 15)} Recuperar vista de sala</button>` : "";
+  if (slot.dataset.html !== html) { slot.dataset.html = html; slot.innerHTML = html; }
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-roomview]");
+  if (!b) return;
+  op("roomview.set", { off: b.dataset.roomview === "off" });
+  toast(b.dataset.roomview === "off" ? "La party deja de encuadrar esta sala" : "La party vuelve a encuadrar las salas");
+});
 
 /* Poner una ficha en el tablero: al pulsar en una casilla vacía se ofrece a
    quien todavía no esté puesto en este mapa. */
@@ -1632,6 +1654,7 @@ function openMapSettings(map) {
       <label class="check"><input type="checkbox" name="show" ${session().showMapToParty ? "checked" : ""}> Enseñar este mapa en la pantalla de la party</label>
       <label class="check" style="margin-top:8px"><input type="checkbox" name="reveal" ${session().revealAll ? "checked" : ""}> Revelar el mapa entero</label>
       <label class="check" style="margin-top:8px"><input type="checkbox" name="remember" ${map.remember ? "checked" : ""}> Recordar lo explorado</label>
+      <label class="check" style="margin-top:8px" title="Cuando alguien entra en una sala pintada con «Sala», la cámara de la party la encuadra entera hasta que alguien se mueve fuera"><input type="checkbox" name="roomCam" ${map.roomCam !== false ? "checked" : ""}> Encuadrar la sala entera al entrar en ella</label>
       <label class="check" style="margin-top:8px"><input type="checkbox" name="grid" ${map.grid ? "checked" : ""}> Dibujar la cuadrícula</label>
       <label class="check" style="margin-top:8px"><input type="checkbox" name="move" ${session().allowPlayerMove ? "checked" : ""}> Dejar que cada jugador mueva su ficha</label>
       <label class="check" style="margin-top:8px"><input type="checkbox" name="draw" ${session().allowPlayerDraw !== false ? "checked" : ""}> Dejar que los jugadores dibujen en el mapa</label>
@@ -1775,6 +1798,7 @@ function openMapSettings(map) {
           cols: clamp(Math.trunc(+v("cols").value || map.cols), 5, MAX_COLS),
           rows: clamp(Math.trunc(+v("rows").value || map.rows), 5, MAX_ROWS),
           remember: v("remember").checked,
+          roomCam: v("roomCam").checked,
           grid: v("grid").checked,
           camera: v("camera").value,
           followSpan: +v("followSpan").value || 14,

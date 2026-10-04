@@ -12,7 +12,7 @@
      onPresence()    avisa de que ha cambiado quién está conectado */
 
 import { emptyDoc, migrate, cellKey, normalizeChar, normalizeBeast, normalizeMap, normalizeShape, normalizePin, normalizePortal, normalizeSound, MAX_SOUNDS, normalizeAttack, normalizeDrawing, normalizeWall, MAX_WALLS, modOf, addDice, scaleDice, cantripTier } from "./schema.js";
-import { visibleCells, fringeCells, edgesNear, wallsNear, gridDistance, pathCost, occupied, fits, reachableCells } from "./los.js";
+import { visibleCells, fringeCells, edgesNear, wallsNear, gridDistance, pathCost, occupied, fits, reachableCells, roomsOf } from "./los.js";
 import { roll, detail } from "./dice.js";
 import { partyHearing, mixFor } from "./hearing.js";
 import { critDamage } from "./attacks-core.js";
@@ -214,7 +214,8 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
       chars,
       bestiary: [],
       maps,
-      session: { ...doc.session, notes: "", alert: null, activeMapId: showMap ? map.id : "" }
+      session: { ...doc.session, notes: "", alert: null, roomViewOff: [], activeMapId: showMap ? map.id : "",
+        roomView: showMap && doc.session.roomView && doc.session.roomView.mapId === map.id ? doc.session.roomView : null }
     };
   }
 
@@ -223,6 +224,82 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
     for (const [k, v] of Object.entries(edges)) if (v === "wall" || v === "door") out[k] = v;
     return out;
   };
+
+  /* ---------- Vista de sala ----------
+     Cuando alguien de la party entra en una sala pintada (y se revela
+     entera), la cámara de la party la encuadra completa y se queda ahí. Se
+     suelta cuando alguien se mueve fuera de ella, y vuelve en cuanto alguien
+     se mueve dentro otra vez. El DM puede soltarla: esa sala ya no se
+     encuadra hasta que la recupere.
+
+     Lo deciden los movimientos, no las posiciones: se compara dónde estaba
+     cada personaje en la difusión anterior. Así, si uno sale y otro se queda
+     dentro, la vista se suelta igualmente, que es lo que se pide. */
+  let lastPos = null, lastMapId = null;
+
+  const roomIndexOf = (map, c) => {
+    const rooms = roomsOf(map);
+    for (const [x, y] of occupied(c)) {
+      const list = rooms.of.get(cellKey(x, y));
+      if (list && list.length) return list[0];
+    }
+    return -1;
+  };
+  /* La sala como rectángulo de casillas, con una clave estable: su casilla
+     «menor». Cambia si el DM la repinta, y entonces se vuelve a buscar. */
+  function roomBox(map, idx) {
+    const cells = roomsOf(map).list[idx];
+    if (!cells || !cells.length) return null;
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity, key = cells[0];
+    for (const k of cells) {
+      const [x, y] = k.split(",").map(Number);
+      x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y);
+      if (k < key) key = k;
+    }
+    return { mapId: map.id, key, x0, y0, x1, y1 };
+  }
+  const offKey = (map, key) => map.id + "|" + key;
+
+  /* La sala donde hay más personajes de la lista, sin contar las soltadas */
+  function busiestRoom(map, list) {
+    const off = new Set(doc.session.roomViewOff || []);
+    const counts = new Map();
+    for (const c of list) {
+      const idx = roomIndexOf(map, c);
+      if (idx < 0) continue;
+      const box = roomBox(map, idx);
+      if (!box || off.has(offKey(map, box.key))) continue;
+      const hit = counts.get(box.key) || { box, n: 0 };
+      hit.n++;
+      counts.set(box.key, hit);
+    }
+    let best = null;
+    for (const hit of counts.values()) if (!best || hit.n > best.n) best = hit;
+    return best ? best.box : null;
+  }
+
+  const heroesOn = map => doc.chars.filter(c => c.kind === "pc" && c.hp > 0 && c.mx !== null && c.mapId === map.id);
+
+  function frameRooms(map) {
+    const s = doc.session;
+    if (!map || map.roomCam === false) { s.roomView = null; lastPos = null; lastMapId = map && map.id; return; }
+    if (lastMapId !== map.id) { lastMapId = map.id; lastPos = null; if (s.roomView && s.roomView.mapId !== map.id) s.roomView = null; }
+    const heroes = heroesOn(map);
+
+    /* La sala encuadrada sigue existiendo (el DM puede haberla repintado) */
+    if (s.roomView) {
+      const rooms = roomsOf(map);
+      const idx = rooms.list.findIndex(cells => cells.includes(s.roomView.key));
+      s.roomView = idx >= 0 ? roomBox(map, idx) : null;
+    }
+
+    const now = new Map(heroes.map(c => [c.id, c.mx + "," + c.my]));
+    if (lastPos) {
+      const moved = heroes.filter(c => lastPos.get(c.id) !== now.get(c.id));
+      if (moved.length) s.roomView = busiestRoom(map, moved);
+    }
+    lastPos = now;
+  }
 
   /* ---------- Lo que la party ha llegado a ver ----------
      Se calcula una vez por difusión, antes de repartir. Aquí es donde el mapa
@@ -233,6 +310,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
 
   function observe() {
     const map = doc.maps.find(m => m.id === doc.session.activeMapId);
+    frameRooms(map || null);
     if (!map) { seenCache = { mapId: null, seen: null }; return; }
     const seen = visibleCells(doc, map);
     seenCache = { mapId: map.id, seen };
@@ -946,6 +1024,23 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         const list = (m.sounds || []).filter(x => x.id !== sound.id);
         if (!op.remove && list.length >= MAX_SOUNDS) return `Caben ${MAX_SOUNDS} sonidos por mapa`;
         m.sounds = op.remove ? list : [...list, sound];
+        break;
+      }
+      /* Vista de sala: soltarla (esa sala deja de encuadrarse) o recuperarla */
+      case "roomview.set": {
+        if (!dm) return "Solo el DM";
+        const m = doc.maps.find(x => x.id === doc.session.activeMapId);
+        if (!m) return "No hay mapa activo";
+        const off = (doc.session.roomViewOff || []).filter(k => typeof k === "string");
+        if (op.off) {
+          const rv = doc.session.roomView;
+          if (rv && rv.mapId === m.id) off.push(offKey(m, rv.key));
+          doc.session.roomViewOff = [...new Set(off)].slice(-200);
+          doc.session.roomView = null;
+        } else {
+          doc.session.roomViewOff = off.filter(k => !k.startsWith(m.id + "|"));
+          doc.session.roomView = m.roomCam === false ? null : busiestRoom(m, heroesOn(m));
+        }
         break;
       }
       case "portal.set": {

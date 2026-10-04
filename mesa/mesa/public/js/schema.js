@@ -301,6 +301,7 @@ const MAP_DEFAULTS = {
      que esa vista se apaga del todo: 0 corta en seco, 1 deja el difuminado de
      siempre sin recortar. */
   wallFade: 1,
+  roomCam: true,        // encuadrar la sala entera en cuanto alguien entra
   sounds: [],           // fuentes de sonido que oye la party
   /* Dónde cae la cuadrícula dibujada en la imagen, en píxeles de la imagen:
      la casilla (0,0) empieza en (x, y) y mide w × h. Sin esto (null), la
@@ -333,6 +334,7 @@ export function normalizeMap(raw = {}) {
   m.pins = Array.isArray(m.pins) ? m.pins.map(normalizePin).slice(0, 60) : [];
   m.portals = Array.isArray(m.portals) ? m.portals.map(normalizePortal).slice(0, 40) : [];
   m.sounds = Array.isArray(m.sounds) ? m.sounds.map(normalizeSound).slice(0, MAX_SOUNDS) : [];
+  m.roomCam = m.roomCam !== false;
   m.wallFade = clamp(Math.round(num(m.wallFade, 1) * 100) / 100, 0, 1);
   m.edges = m.edges && typeof m.edges === "object" && !Array.isArray(m.edges) ? { ...m.edges } : {};
   /* Capas por casilla que pinta el DM:
@@ -493,7 +495,11 @@ const SESSION_DEFAULTS = {
   /* Sonido del mapa */
   soundVolume: 0.8,     // volumen general
   soundMuted: false,    // todo en silencio de golpe
-  soundOnPlayers: false // que suene también en los móviles (para jugar cada uno en su casa)
+  soundOnPlayers: false, // que suene también en los móviles (para jugar cada uno en su casa)
+  /* Vista de sala: la sala que la cámara de la party encuadra entera ahora
+     mismo ({ mapId, key, x0, y0, x1, y1 } o null), y las que el DM ha soltado */
+  roomView: null,
+  roomViewOff: []
 };
 
 export function emptyDoc() {
@@ -539,6 +545,8 @@ export function migrate(raw) {
   session.combat = { on: false, round: 1, index: 0, order: [], ...session.combat };
   session.combat.order = Array.isArray(session.combat.order) ? session.combat.order : [];
   session.requests = Array.isArray(session.requests) ? session.requests : [];
+  session.roomViewOff = Array.isArray(session.roomViewOff) ? session.roomViewOff.filter(k => typeof k === "string").slice(-200) : [];
+  session.roomView = session.roomView && typeof session.roomView === "object" && typeof session.roomView.key === "string" ? session.roomView : null;
   session.ping = null;
   if (!maps.some(m => m.id === session.activeMapId)) session.activeMapId = maps[0].id;
   if (src.activeMapId && maps.some(m => m.id === src.activeMapId)) session.activeMapId = src.activeMapId;

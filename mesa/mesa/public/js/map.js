@@ -199,6 +199,13 @@ export class MapView {
       cropW = map.cols / this.zoom;
       focus = this.center || { x: map.cols / 2, y: map.rows / 2 };
       fill = true;
+    } else if (this.roomFrame(map)) {
+      /* Vista de sala: la sala entera, con una casilla de margen alrededor */
+      const rv = this.roomFrame(map);
+      const w = rv.x1 - rv.x0 + 3, h = rv.y1 - rv.y0 + 3;
+      cropW = Math.max(w, h * aspect);
+      focus = { x: (rv.x0 + rv.x1 + 1) / 2, y: (rv.y0 + rv.y1 + 1) / 2 };
+      fill = true;
     } else if (map.camera === "follow") {
       cropW = Math.min(map.cols, map.followSpan) / (map.partyZoom || 1);
       const f = this.data.chars.find(c => c.id === (this.data.session && this.data.session.focusId));
@@ -222,10 +229,47 @@ export class MapView {
       cropH = cropW * (map.rows / map.cols);
     }
 
-    const cx = clamp(focus.x, cropW / 2, Math.max(cropW / 2, map.cols - cropW / 2));
-    const cy = clamp(focus.y, cropH / 2, Math.max(cropH / 2, map.rows - cropH / 2));
+    let cx = clamp(focus.x, cropW / 2, Math.max(cropW / 2, map.cols - cropW / 2));
+    let cy = clamp(focus.y, cropH / 2, Math.max(cropH / 2, map.rows - cropH / 2));
+    /* Al entrar o salir de la vista de sala, el encuadre viaja en vez de
+       saltar: se acerca o se aleja y se desplaza a la vez */
+    if (this.mode !== "dm" && !(this.zoom > 1 && free)) {
+      const v = this.smoothView({ x: cx, y: cy, w: cropW, h: cropH, room: !!this.roomFrame(map), map: map.id });
+      cx = v.x; cy = v.y; cropW = v.w; cropH = v.h;
+    }
     const cell = Math.min(W / cropW, H / cropH);
     return { W, H, dpr, cell, originX: W / 2 - cx * cell, originY: H / 2 - cy * cell, cols: map.cols, rows: map.rows };
+  }
+
+  /* La sala que la party tiene encuadrada, si es de este mapa */
+  roomFrame(map) {
+    const rv = this.data.session && this.data.session.roomView;
+    return rv && map && rv.mapId === map.id ? rv : null;
+  }
+
+  /* Suaviza los cambios de encuadre que no vienen de seguir a alguien: entrar
+     en una sala, salir de ella o cambiar de sala. Seguir a un personaje ya
+     tiene su propio deslizamiento (smoothCam). */
+  smoothView(to) {
+    const t = performance.now(), DUR = 650;
+    const v = this._view;
+    const changed = !v || v.room !== to.room || (to.room && (v.tx !== to.x || v.ty !== to.y || v.tw !== to.w));
+    if (!v || v.map !== to.map || this.still()) {
+      this._view = { map: to.map, room: to.room, from: to, tx: to.x, ty: to.y, tw: to.w, t0: t - DUR };
+      this._viewNow = to;
+      return to;
+    }
+    if (changed) {
+      const cur = this._viewNow || to;
+      Object.assign(v, { room: to.room, from: cur, tx: to.x, ty: to.y, tw: to.w, t0: t });
+    }
+    const k = Math.min(1, (t - v.t0) / DUR);
+    if (k >= 1) { this._viewNow = to; return to; }
+    const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+    const f = v.from, mix = (a, b) => a + (b - a) * e;
+    this._moving = true;
+    this._viewNow = { x: mix(f.x, to.x), y: mix(f.y, to.y), w: mix(f.w, to.w), h: mix(f.h, to.h) };
+    return this._viewNow;
   }
 
   /* La cámara que sigue a un personaje lo acompaña en vez de dar saltos */
@@ -877,6 +921,17 @@ export class MapView {
     /* Lo que solo ve el DM: salas que se revelan al entrar, y lo que ha
        decidido enseñar u ocultar a mano */
     if (dm) this.dmLayers(ctx, g, map, X, Y);
+
+    /* La sala que la party tiene encuadrada ahora mismo */
+    const rv = dm && this.roomFrame(map);
+    if (rv) {
+      ctx.save();
+      ctx.strokeStyle = "rgba(224,189,118,.9)";
+      ctx.lineWidth = Math.max(2, g.cell * 0.06);
+      ctx.setLineDash([g.cell * 0.3, g.cell * 0.18]);
+      ctx.strokeRect(X(rv.x0 - 1), Y(rv.y0 - 1), (rv.x1 - rv.x0 + 3) * g.cell, (rv.y1 - rv.y0 + 3) * g.cell);
+      ctx.restore();
+    }
 
     /* Alcance de movimiento mientras se arrastra */
     if (this.drag && this.drag.range) {

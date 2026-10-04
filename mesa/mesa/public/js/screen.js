@@ -130,8 +130,10 @@ function render() {
        quedan franjas negras ni arriba ni a los lados. Siguiendo a alguien, el
        hueco manda y el encuadre se adapta. */
     const board = $(".board");
-    board.style.aspectRatio = map.camera === "follow" ? "" : `${map.cols} / ${map.rows}`;
-    board.classList.toggle("free", map.camera === "follow");
+    /* Con la vista de sala, igual: el hueco entero para la sala */
+    const free = map.camera === "follow" || !!(session.roomView && session.roomView.mapId === map.id);
+    board.style.aspectRatio = free ? "" : `${map.cols} / ${map.rows}`;
+    board.classList.toggle("free", free);
   }
   wrap.classList.toggle("hidden", !map);
 
