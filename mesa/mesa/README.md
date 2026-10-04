@@ -965,7 +965,10 @@ las diagonales que bajan a la derecha, filetes finos y remates largos.
 - **Mesa Cincelada**: sin remates; los trazos se abren en las puntas, como
   tallados a cincel.
 - **Mesa Grabada**: más gruesa y con una línea incisa dentro de los trazos
-  gruesos, para títulos grandes.
+  gruesos, para títulos grandes. **Es la que usa Mesa**: en su nombre (en la
+  entrada y en la barra del DM y del móvil) y, en la tele, en el título de la
+  campaña, en los rótulos de la party y los enemigos y en el nombre de quien
+  tiene el turno.
 
 Son de mayúsculas: las minúsculas salen como versalitas. Llevan las letras
 del castellano (Ñ y acentos), cifras y los signos habituales. Las genera

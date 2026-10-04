@@ -1,3 +1,10 @@
+/* La letra del título de Mesa: capitales romanas grabadas, dibujadas para
+   Mesa (tools/fuentes). Solo para el nombre y los rótulos grandes. */
+@font-face {
+  font-family: "Mesa Grabada";
+  src: url("../fonts/mesa-grabada.woff2") format("woff2"), url("../fonts/mesa-grabada.ttf") format("truetype");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
 /* Mesa · piel de la aplicación
    Negro de sótano y latón de candelabro, que es la mesa donde se juega.
    Tipografía: una serif con solera para nombres y números (lo que se mira de
@@ -19,6 +26,7 @@
   --arcane: #8878d8;
 
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --title: "Mesa Grabada", var(--serif);
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --r: 12px;
   --shadow: 0 18px 44px rgba(0, 0, 0, .55);
@@ -1558,3 +1566,18 @@ ul.plain b { color: var(--vellum); }
 @keyframes bubbleIn { from { opacity: 0; transform: scale(.6); } }
 @media (prefers-reduced-motion: reduce) { .bubble { animation: none; } }
 .bubble header .bubble-ear { display: flex; margin-top: 4px; color: #2f6a72; font-weight: 600; }
+
+/* ---------- La letra del título ----------
+   Mesa Grabada en el nombre de Mesa y en los rótulos grandes de la tele. Solo
+   tiene un peso: sin negrita inventada por el navegador. */
+.gate h1, .brand h1, .screen-tools #stitle, .side h3, .tb-name b {
+  font-family: var(--title); font-weight: 400; font-synthesis: none;
+}
+/* El nombre, en capitales enteras como el rótulo; los demás rótulos, con
+   versalitas en las minúsculas */
+.gate h1 { font-size: 46px; letter-spacing: .14em; line-height: 1.1; text-transform: uppercase; }
+.brand h1 { font-size: 22px; letter-spacing: .12em; line-height: 1; text-transform: uppercase; }
+.screen-tools #stitle { font-size: 16px; letter-spacing: .08em; color: var(--vellum); }
+.side h3 { font-size: 17px; letter-spacing: .06em; text-transform: none; }
+.tb-name b { letter-spacing: .04em; }
+@media (max-width: 760px) { .brand h1 { font-size: 19px; } }
