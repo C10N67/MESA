@@ -90,6 +90,24 @@ const P = {
   sound: '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4v-5Z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/>',
   soundOff: '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4v-5Z"/><path d="m16 9.5 5 5M21 9.5l-5 5"/>',
   wand: '<path d="M4 20 15 9"/><path d="m14 4 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2Z"/><path d="m19 11 .6 1.2 1.2.6-1.2.6-.6 1.2-.6-1.2-1.2-.6 1.2-.6.6-1.2Z"/>',
+  /* Estados: uno por cada uno, para reconocerlos de un vistazo. Repiten la
+     idea de las chapitas que pinta el mapa sobre las fichas. */
+  c_agarrado: '<path d="M7.5 11.5V7a1.5 1.5 0 0 1 3 0v4"/><path d="M10.5 10V5.5a1.5 1.5 0 0 1 3 0V10"/><path d="M13.5 10V6.5a1.5 1.5 0 0 1 3 0v5"/><path d="M16.5 10a1.5 1.5 0 0 1 3 0v4a7 7 0 0 1-7 7h-.8a6 6 0 0 1-4.9-2.6l-3-4.4a1.6 1.6 0 0 1 2.5-2l1.2 1.5"/>',
+  c_apresado: '<circle cx="6.5" cy="15.5" r="3.8"/><circle cx="17.5" cy="15.5" r="3.8"/><path d="M8.5 12.3 9.8 9"/><ellipse cx="12" cy="7.6" rx="2.3" ry="1.5"/><path d="M15.5 12.3 14.2 9"/>',
+  c_asustado: '<circle cx="12" cy="12" r="8.8"/><circle cx="9" cy="10" r="1.4"/><circle cx="15" cy="10" r="1.4"/><path d="M7.8 16.4l1.4-1.2 1.4 1.2 1.4-1.2 1.4 1.2 1.4-1.2 1.4 1.2"/>',
+  c_aturdido: '<path d="M12 12a1.5 1.5 0 0 1 3 0 3 3 0 0 1-6 0 4.5 4.5 0 0 1 9 0 6 6 0 0 1-12 0"/><path d="M19.5 3.5v3M18 5h3"/>',
+  c_cegado: '<path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.6"/><path d="M4 4l16 16"/>',
+  c_derribado: '<circle cx="4.8" cy="13" r="2.3"/><path d="M7.6 13.5H15l5 -1.5M15 13.5l5 1.5"/><path d="M10 13.5l2.5-3.5"/><path d="M2.5 18.5h19"/>',
+  c_encantado: '<path d="M12 20s-7.5-4.4-7.5-9.4A4.1 4.1 0 0 1 12 8.2a4.1 4.1 0 0 1 7.5 2.4c0 5-7.5 9.4-7.5 9.4Z"/><path d="M19 2.5v3.5M17.25 4.25h3.5"/>',
+  c_ensordecido: '<path d="M7.5 9.5a5 5 0 0 1 10 0c0 3-3 4-3 6.5a2.8 2.8 0 0 1-5.2 1.4"/><path d="M10.5 10a2 2 0 0 1 4 0"/><path d="M4 4l16 16"/>',
+  c_envenenado: '<path d="M9.5 3h5"/><path d="M10.5 3v4.8L5.8 15.5A4 4 0 0 0 9.3 21.5h5.4a4 4 0 0 0 3.5-6L13.5 7.8V3"/><path d="M7.5 14h9"/><circle cx="11" cy="17.5" r="1" fill="currentColor" stroke="none"/><circle cx="14" cy="16" r=".8" fill="currentColor" stroke="none"/>',
+  c_incapacitado: '<circle cx="12" cy="12" r="8.5"/><path d="m6 6 12 12"/>',
+  c_invisible: '<path d="M5 20.5V11a7 7 0 0 1 14 0v9.5l-2.3-1.6-2.4 1.6-2.3-1.6-2.3 1.6-2.4-1.6Z" stroke-dasharray="2.6 2.2"/><circle cx="9.5" cy="11" r="1" fill="currentColor" stroke="none"/><circle cx="14.5" cy="11" r="1" fill="currentColor" stroke="none"/>',
+  c_paralizado: '<path d="M13 2.5 4.5 13.5H11l-1 8 8.5-11H12l1-8Z"/>',
+  c_petrificado: '<path d="M3.5 19 5.5 10l5-5 6.5 2 3.5 6.5-2 5.5Z"/><path d="M10.5 5l1 5.5-3 3.5M11.5 10.5l5.5 2"/>',
+  c_inconsciente: '<path d="M3.5 9h6l-6 8h6"/><path d="M12.5 4h4.5l-4.5 6h4.5"/><path d="M17.5 14h3.5l-3.5 4.5h3.5"/>',
+  c_agotamiento: '<rect x="2.5" y="7.5" width="16.5" height="9" rx="2"/><path d="M21.5 10.5v3"/><path d="M5.5 10.5v3"/>',
+  c_concentrado: '<circle cx="12" cy="12" r="8.8"/><circle cx="12" cy="12" r="4.8"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/>',
 };
 
 /* Botón con icono y texto: el texto se puede esconder en pantallas estrechas
@@ -103,6 +121,17 @@ export function icon(name, size = 18) {
     stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"
     aria-hidden="true" focusable="false">${body}</svg>`;
 }
+
+/* El icono y el color de cada estado: el color agrupa lo que se parece
+   (verde el veneno, amarillo lo que deja grogui, azul lo que no se ve...) */
+export const CONDITION_TONES = {
+  agarrado: "#b5672a", apresado: "#7a5c34", asustado: "#7c3fa3", aturdido: "#b98714",
+  cegado: "#3f3a33", derribado: "#8c5a2b", encantado: "#c23b6e", ensordecido: "#456b8f",
+  envenenado: "#3f8a2a", incapacitado: "#a82c28", invisible: "#3a8ea8", paralizado: "#c49a12",
+  petrificado: "#6b6862", inconsciente: "#3b4f8a", agotamiento: "#a0522d", concentrado: "#2f6a72"
+};
+export const conditionTone = id => CONDITION_TONES[id] || "#6a5530";
+export const conditionIcon = (id, size = 16) => icon("c_" + id, size) || icon("sparkle", size);
 
 /* Los mismos trazos, dibujados a mano en el lienzo del mapa */
 export function drawGlyph(ctx, name, cx, cy, size, color) {

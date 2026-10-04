@@ -184,7 +184,7 @@ const EN = {
   "Cruzar solo al pisarlo": "Cross automatically when stepped on", "Escalera": "Stairs",
   "Crea antes otro mapa al que llevar": "Create another map to lead to first",
   "Nuevo acceso": "New passage", "Nota del mapa": "Map note", "Quitar": "Remove",
-  "Sacar del mapa": "Take off the map", "Centrar la cámara de la party aquí": "Centre the party camera here",
+  "Sacar del mapa": "Take off the map", "Pulsa para poner o quitar": "Tap to add or remove", "Volver": "Back", "Rondas, agotamiento y concentración…": "Rounds, exhaustion and concentration…", "Centrar la cámara de la party aquí": "Centre the party camera here",
   "Abrir la ficha": "Open the sheet", "Enseñar a la party": "Show to the party",
   "Ocultar a la party": "Hide from the party",
   "Ya están todos colocados en este mapa": "Everyone is already placed on this map",

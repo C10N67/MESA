@@ -555,6 +555,13 @@ detección automática, y las demás se ponen con **Puerta**.
   tablero; pulsa una ficha para su menú (apuntar, atacar, estados, sacarla), que sale de
   la propia ficha como un bocadillo, con su vida, su CA y sus estados, sin tapar
   el resto de la pantalla; se cierra pulsando fuera o con Escape.
+  **Estados** abre al lado otro bocadillo con los dieciséis estados, cada uno
+  con su icono y su color (el ojo tachado de cegado, la gota de veneno, el
+  rayo de paralizado, las zetas de inconsciente…). Cada pulsación pone o
+  quita el estado al momento y el menú se queda abierto para poner varios
+  seguidos; los puestos salen rellenos. Abajo, «Rondas, agotamiento y
+  concentración…» abre la ventana completa. Si no cabe al lado (pantalla
+  estrecha), se pone encima, con una flecha para volver.
 - `Alt` + clic **señala** un punto: sale un círculo animado en la pantalla de
   todos. Los jugadores tienen su propio botón «Señalar».
 - Botón derecho (o `Mayús` + arrastrar) mueve la vista; `Ctrl` + rueda hace

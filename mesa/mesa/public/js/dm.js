@@ -16,7 +16,7 @@ import { MapView } from "./map.js";
 import { openSpellbook } from "./spellbook.js";
 import { openGridFit, openWallFit } from "./gridfit.js";
 import { langPicker } from "./i18n.js";
-import { icon, withIcon } from "./icons.js";
+import { icon, withIcon, conditionIcon, conditionTone } from "./icons.js";
 import { rollHitPoints } from "./dice.js";
 import { TYPE_NAMES, typeOf, crValue, CATALOG_BY_ID } from "./catalog.js";
 
@@ -1307,7 +1307,7 @@ function renderMap() {
   mapView.set({ map, chars: chars(), session: session(), you: null });
   paintRoomView(map);
   /* El bocadillo de una ficha la sigue si se mueve; si ya no está, se va */
-  if (bubble) { if (mapView.tokenAnchor(bubble.id)) bubble.place(); else closeBubble(); }
+  if (bubble) { if (mapView.tokenAnchor(bubble.id)) { bubble.refresh(); bubble.place(); } else closeBubble(); }
 }
 
 /* Vista de sala: mientras la party tiene una sala encuadrada, el DM puede
@@ -1374,13 +1374,13 @@ function tokenMenu(id) {
       <b>${esc(c.name)}</b>
       <small>${icon("heart", 12)} ${c.hp}/${c.maxHp}${c.tempHp ? ` +${c.tempHp}` : ""} · ${icon("shield", 12)} ${c.ac}${c.hidden ? " · oculto" : ""}</small>
       ${c.kind === "pc" && sounds ? `<small class="bubble-ear">${icon("sound", 12)} La pantalla oye lo que oye</small>` : ""}
-      ${c.conditions.length ? `<span class="bubble-conds">${c.conditions.map(x => `<i>${esc(conditionName(x))}</i>`).join("")}</span>` : ""}
+      <span class="bubble-conds"></span>
     </header>
     <div class="bubble-actions">
       <button data-tk="target">${icon("target", 15)}${targetId === id ? "Dejar de apuntarle" : "Apuntar con los ataques"}</button>
       <button data-tk="attack">${icon("sword", 15)}Atacar con ${esc(c.name)}</button>
       <button data-tk="focus">${icon("screen", 15)}Centrar la cámara de la party aquí</button>
-      <button data-tk="conditions">${icon("sparkle", 15)}Estados</button>
+      <button data-tk="conditions" aria-haspopup="menu" aria-expanded="false">${icon("sparkle", 15)}<span class="grow">Estados</span><span class="bubble-count"></span>${icon("next", 14)}</button>
       <button data-tk="edit">${icon("pencil", 15)}Abrir la ficha</button>
       ${c.kind === "monster" ? `<button data-tk="hide">${icon(c.hidden ? "eye" : "eyeOff", 15)}${c.hidden ? "Enseñar a la party" : "Ocultar a la party"}</button>` : ""}
       <button data-tk="off" class="danger">${icon("exit", 15)}Sacar del mapa</button>
@@ -1401,8 +1401,72 @@ function tokenMenu(id) {
     el2.style.top = top + "px";
     el2.style.setProperty("--tail", Math.max(22, Math.min(w - 22, ax - left)) + "px");
     el2.classList.toggle("below", below);
+    if (sub) placeSub();
   };
+
+  /* Submenú de estados: otro bocadillo al lado, con un icono y un color por
+     estado. Cada pulsación pone o quita el estado al momento y el menú se
+     queda abierto, para poner varios seguidos. */
+  let sub = null;
+  const conds = () => (byId(id) || c).conditions || [];
+  const chip = x => `<i style="--tone:${conditionTone(x)}" title="${esc((CONDITIONS.find(k => k.id === x) || {}).hint || "")}">${conditionIcon(x, 12)}${esc(conditionName(x))}</i>`;
+  const paintState = (list = conds()) => {
+    const box = el2.querySelector(".bubble-conds");
+    box.innerHTML = list.map(chip).join("");
+    box.hidden = !list.length;
+    el2.querySelector(".bubble-count").textContent = list.length ? list.length : "";
+    if (sub) for (const b of sub.querySelectorAll("[data-cond]")) {
+      const on = list.includes(b.dataset.cond);
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-checked", on);
+    }
+  };
+  const placeSub = () => {
+    const r = el2.getBoundingClientRect(), w = sub.offsetWidth, h = sub.offsetHeight, gap = 14, pad = 8;
+    const btn = el2.querySelector('[data-tk="conditions"]');
+    let side = r.right + gap + w <= innerWidth - pad ? "right" : r.left - gap - w >= pad ? "left" : "over";
+    sub.className = "bubble bubble-sub side-" + side;
+    sub.style.left = side === "right" ? `calc(100% + ${gap}px)` : side === "left" ? `${-w - gap}px` : `${Math.min(0, innerWidth - pad - r.left - w)}px`;
+    const want = side === "over" ? 0 : btn.offsetTop + btn.offsetHeight / 2 - 40;
+    const top = Math.max(pad - r.top, Math.min(innerHeight - pad - r.top - h, want));
+    sub.style.top = top + "px";
+    sub.style.setProperty("--tail-y", Math.max(18, Math.min(h - 18, btn.offsetTop + btn.offsetHeight / 2 - top)) + "px");
+  };
+  const toggleSub = () => {
+    const btn = el2.querySelector('[data-tk="conditions"]');
+    if (sub) { sub.remove(); sub = null; btn.setAttribute("aria-expanded", "false"); btn.classList.remove("open"); return; }
+    sub = el(`<div class="bubble bubble-sub" role="menu" aria-label="Estados">
+      <header><button class="sub-back" data-sub-back aria-label="Volver">${icon("prev", 16)}</button><b>Estados</b><small>Pulsa para poner o quitar</small></header>
+      <div class="cond-grid">
+        ${CONDITIONS.map(k => `<button role="menuitemcheckbox" aria-checked="false" data-cond="${k.id}" title="${esc(k.hint)}" style="--tone:${conditionTone(k.id)}">
+          <span class="cond-ico">${conditionIcon(k.id, 17)}</span><span class="cond-name">${esc(k.name)}</span></button>`).join("")}
+      </div>
+      <button class="cond-more" data-cond-more>${icon("hourglass", 14)}Rondas, agotamiento y concentración…</button>
+    </div>`);
+    el2.appendChild(sub);
+    btn.setAttribute("aria-expanded", "true");
+    btn.classList.add("open");
+    paintState();
+    placeSub();
+    on(sub, "click", "[data-cond]", (e, b) => {
+      const cur = byId(id);
+      if (!cur) return closeBubble();
+      const k = b.dataset.cond, had = cur.conditions.includes(k);
+      const list = had ? cur.conditions.filter(x => x !== k) : [...cur.conditions, k];
+      const meta = { ...(cur.condMeta || {}) };
+      if (had) delete meta[k];
+      const fields = { conditions: list, condMeta: meta };
+      /* El agotamiento lleva su nivel: ponerlo empieza en 1 y quitarlo lo deja a 0 */
+      if (k === "agotamiento") fields.exhaustion = had ? 0 : Math.max(1, cur.exhaustion || 0);
+      patchChar(id, fields);
+      paintState(list);
+    });
+    on(sub, "click", "[data-sub-back]", () => toggleSub());
+    on(sub, "click", "[data-cond-more]", () => { const cur = byId(id) || c; closeBubble(); openConditions(cur); });
+  };
+
   place();
+  paintState();
 
   const onDown = e => { if (!el2.contains(e.target)) closeBubble(); };
   const onKey = e => { if (e.key === "Escape") closeBubble(); };
@@ -1416,7 +1480,7 @@ function tokenMenu(id) {
   document.addEventListener("keydown", onKey);
   addEventListener("resize", onMove);
   bubble = {
-    id, el: el2, place,
+    id, el: el2, place, refresh: () => paintState(),
     cleanup() {
       clearTimeout(timer);
       document.removeEventListener("pointerdown", onDown, true);
@@ -1428,11 +1492,11 @@ function tokenMenu(id) {
 
   on(el2, "click", "[data-tk]", (e, b) => {
     const what = b.dataset.tk;
+    if (what === "conditions") return toggleSub();
     closeBubble();
     if (what === "target") { targetId = targetId === id ? null : id; mapView.target = targetId; return render(); }
     if (what === "attack") return attack(c);
     if (what === "focus") { patchSession({ focusId: id }); return toast("La cámara sigue a " + c.name); }
-    if (what === "conditions") return openConditions(c);
     if (what === "edit") return c.kind === "monster" ? openMonsterInstance(c) : openCharEditor(c, {});
     if (what === "hide") return patchChar(c.id, { hidden: !c.hidden });
     if (what === "off") return patchChar(c.id, { mapId: "", mx: null, my: null });
