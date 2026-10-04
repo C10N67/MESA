@@ -470,6 +470,17 @@ ordenador.
 
 ## Mapa
 
+En la pestaña **Mapa** del DM, el tablero es el fondo de toda la vista: ocupa
+de borde a borde lo que queda bajo la barra de arriba, y las herramientas
+(mapa activo, fichas, regla, muros, puertas, notas, accesos, sonido, dibujo,
+terreno, salas, plantillas y zoom) flotan encima, translúcidas. El botón
+**Guardar** del final de esa barra las guarda todas: el mapa queda limpio y
+cuelga arriba a la izquierda un **marcapáginas verde** con el icono de la
+herramienta elegida, que sigue funcionando (se pueden seguir trazando muros
+con el mapa despejado). Pulsarlo las vuelve a sacar. Con el panel de dados
+guardado también, solo quedan los dos marcapáginas sobre el mapa. Las dos
+cosas se recuerdan en el navegador.
+
 Cada mapa tiene su imagen de fondo, su cuadrícula, sus muros y su niebla. Al
 cargar una imagen, las filas se ajustan solas a su proporción para que el plano
 no salga deformado.

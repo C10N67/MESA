@@ -112,7 +112,7 @@ const EN = {
   "Apunta tus dados de golpe en la ficha (por ejemplo 5d8)": "Write your hit dice on your sheet (5d8, for instance)",
 
   /* Dados y charla */
-  "Dados y mesa": "Dice and table", "Guardar en el marcapáginas": "Tuck into the bookmark", "Guardar el panel en el marcapáginas": "Tuck the panel into the bookmark", "Abrir dados y mesa": "Open dice and table", "Tirar": "Roll", "Decir": "Say", "Todo": "All",
+  "Dados y mesa": "Dice and table", "Guardar en el marcapáginas": "Tuck into the bookmark", "Guardar el panel en el marcapáginas": "Tuck the panel into the bookmark", "Abrir dados y mesa": "Open dice and table", "Sacar las herramientas del mapa": "Bring back the map tools", "Útiles": "Tools", "Guardar las herramientas: el mapa queda limpio y un marcapáginas las vuelve a sacar": "Tuck the tools away: the map stays clear and a bookmark brings them back", "Tirar": "Roll", "Decir": "Say", "Todo": "All",
   "Tiradas": "Rolls", "Charla": "Chat", "Mensaje": "Message", "Escribe a la mesa…": "Say something to the table…",
   "Fórmula de dados": "Dice formula", "Vaciar el registro": "Clear the log", "Abrir o cerrar": "Open or close",
   "Susurrar a alguien en concreto": "Whisper to someone in particular", "Susurrar": "Whisper",

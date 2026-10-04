@@ -236,6 +236,8 @@ function render() {
   $("#combatBtn").classList.toggle("on", session().combat.on);
   $("#tableView").classList.toggle("hidden", tab !== "mesa");
   $("#mapPane").classList.toggle("hidden", tab !== "mapa");
+  /* En el mapa, el tablero es el fondo de toda la vista */
+  $(".layout").classList.toggle("map-mode", tab === "mapa");
 
   noticeStep();
 
@@ -1170,9 +1172,15 @@ function renderMap() {
           <span class="pill" id="mapHint"></span>
           <span id="roomViewSlot"></span>
           <button class="btn sm" data-map="settings">Ajustes del mapa</button>
+          <button class="btn sm map-stow" data-map="stowTools" title="Guardar las herramientas: el mapa queda limpio y un marcapáginas las vuelve a sacar">${withIcon("bookmark", "Guardar", 15)}</button>
         </div>
         <div class="board" id="board"><canvas id="canvas"></canvas><div class="coords" id="coords"></div></div>
+        <button type="button" class="tools-mark" data-map="unstowTools" title="Sacar las herramientas del mapa" aria-label="Sacar las herramientas del mapa">
+          <span class="tools-mark-ribbon"></span></button>
       </div>`;
+    fitMapPane();
+    addEventListener("resize", fitMapPane);
+    if (toolsStowed()) stowTools(true);
 
     mapView = new MapView($("#canvas", pane), {
       mode: "dm",
@@ -1302,6 +1310,7 @@ function renderMap() {
     });
   }
 
+  fitMapPane();
   const pick = $("#mapPick", pane);
   pick.innerHTML = doc().maps.map(m => `<option value="${m.id}" ${m.id === map.id ? "selected" : ""}>${esc(m.name)}</option>`).join("");
   mapView.set({ map, chars: chars(), session: session(), you: null });
@@ -1756,6 +1765,42 @@ function mapAction(what) {
   if (what === "zoomOut") return mapView.setZoom(mapView.zoom / 1.25);
   if (what === "fit") return mapView.setZoom(1);
   if (what === "settings") return openMapSettings(map);
+  if (what === "stowTools") return stowTools(true);
+  if (what === "unstowTools") return stowTools(false);
+}
+
+/* El tablero ocupa todo lo que queda de pantalla bajo la barra de arriba (y
+   bajo la tira del combate, si la hay): se mide, porque esas barras cambian
+   de alto según el ancho y lo que enseñen. */
+function fitMapPane() {
+  const pane = $("#mapPane");
+  if (!pane || pane.classList.contains("hidden")) return;
+  const top = pane.getBoundingClientRect().top + scrollY;
+  /* En .layout, para que el panel de dados mida lo mismo */
+  $(".layout").style.setProperty("--map-h", Math.max(320, Math.round(innerHeight - top)) + "px");
+}
+
+/* Guardar las herramientas del mapa: desaparece la barra entera (muros,
+   puertas, sonido, terreno, zonas, plantillas, zoom…) y queda un
+   marcapáginas colgando arriba a la izquierda, con el icono de la
+   herramienta que esté elegida. Pulsarlo las vuelve a sacar. La
+   herramienta sigue puesta: se puede seguir trazando muros con el mapa
+   despejado. Se recuerda en este navegador. */
+const TOOLS_KEY = "mesa.mapToolsStowed";
+function toolsStowed() { try { return localStorage.getItem(TOOLS_KEY) === "1"; } catch { return false; } }
+function stowTools(on) {
+  const wrap = $("#mapPane .map-wrap");
+  if (!wrap) return;
+  wrap.classList.toggle("tools-stowed", on);
+  try { on ? localStorage.setItem(TOOLS_KEY, "1") : localStorage.removeItem(TOOLS_KEY); } catch {}
+  if (on) {
+    const current = wrap.querySelector("#tools [aria-pressed=true]") || wrap.querySelector("[aria-pressed=true]");
+    const glyph = current && current.querySelector("svg") ? current.querySelector("svg").outerHTML : icon("wall", 22);
+    const ribbon = wrap.querySelector(".tools-mark-ribbon");
+    ribbon.innerHTML = glyph + '<span class="tools-mark-label">Útiles</span>';
+    const name = current ? current.textContent.trim() : "";
+    wrap.querySelector(".tools-mark").title = "Sacar las herramientas del mapa" + (name ? ` (ahora: ${name})` : "");
+  }
 }
 
 /* Cómo se pierde la vista tras un muro, en palabras */

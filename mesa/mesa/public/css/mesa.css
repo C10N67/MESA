@@ -304,6 +304,64 @@ main { padding: 18px max(14px, 2.2vw) 60px; min-width: 0; }
 .coords { position: absolute; left: 10px; bottom: 10px; background: rgba(12, 15, 22, .9); border: 1px solid var(--edge);
   border-radius: 8px; padding: 4px 9px; font-size: 12px; color: var(--dim); }
 
+/* ---------- El mapa como fondo ----------
+   En la pestaña del mapa el tablero llena toda la vista bajo la barra de
+   arriba, de borde a borde, y las herramientas flotan encima, translúcidas. */
+.layout.map-mode > main, .layout.map-mode.dock-stowed > main { padding: 0; }
+.layout.map-mode #mapPane .map-wrap { display: block; position: relative; height: var(--map-h, calc(100vh - 57px)); }
+.layout.map-mode #mapPane .board { position: absolute; inset: 0; border: 0; border-radius: 0; }
+@media (min-width: 1081px) { .layout.map-mode > .dock { height: var(--map-h, calc(100vh - 57px)); } }
+.layout.map-mode #mapPane .map-bar {
+  position: absolute; z-index: 4; top: 10px; left: 12px; right: 12px;
+  pointer-events: none; align-items: flex-start;
+}
+.layout.map-mode #mapPane .map-bar > * { pointer-events: auto; }
+.layout.map-mode #mapPane .map-bar > .spacer { pointer-events: none; }
+.layout.map-mode #mapPane .tool-set,
+.layout.map-mode #mapPane .map-bar > select,
+.layout.map-mode #mapPane .map-bar > .btn,
+.layout.map-mode #mapPane .map-bar > .pill:not(:empty) {
+  background: rgba(13, 16, 23, .82); border-color: rgba(255, 255, 255, .09);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
+}
+.layout.map-mode #mapPane .map-bar > .pill:empty { display: none; }
+.layout.map-mode #mapPane .coords { background: rgba(13, 16, 23, .8); }
+#mapPane .coords:empty { display: none; }
+/* Con el panel de dados guardado, su marcapáginas cuelga a la derecha: la barra le deja sitio */
+.layout.map-mode.dock-stowed #mapPane .map-bar { right: 84px; }
+.map-stow .ico { color: var(--gold-soft); }
+
+/* Herramientas guardadas: solo queda su marcapáginas, arriba a la izquierda */
+.tools-mark { display: none; }
+#mapPane .map-wrap.tools-stowed .map-bar { display: none; }
+#mapPane .map-wrap.tools-stowed .tools-mark {
+  display: block; position: absolute; z-index: 4; top: 0; left: 18px;
+  padding: 0; border: 0; background: none; cursor: pointer;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .5));
+  animation: toolsDrop .35s cubic-bezier(.22, 1.3, .36, 1) both;
+}
+/* Cinta verde azulada con ribete dorado: la de los dados es granate */
+.tools-mark-ribbon {
+  display: grid; justify-items: center; align-content: start; gap: 3px;
+  width: 46px; height: 80px; padding-top: 12px; color: #f2d48c;
+  background:
+    linear-gradient(90deg, transparent 4px, rgba(242, 212, 140, .55) 4px 5.5px, transparent 5.5px calc(100% - 5.5px), rgba(242, 212, 140, .55) calc(100% - 5.5px) calc(100% - 4px), transparent calc(100% - 4px)),
+    linear-gradient(180deg, #13353b, #1f5560 40%, #184650);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+  transition: height .18s ease, padding-top .18s ease;
+}
+.tools-mark-ribbon .ico { width: 22px; height: 22px; opacity: 1; }
+.tools-mark-label { font: 700 8.5px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; }
+.tools-mark:hover .tools-mark-ribbon, .tools-mark:focus-visible .tools-mark-ribbon { height: 90px; padding-top: 20px; }
+.tools-mark:focus-visible { outline: none; }
+@keyframes toolsDrop { from { transform: translateY(-100%); } }
+@media (prefers-reduced-motion: reduce) { #mapPane .map-wrap.tools-stowed .tools-mark { animation: none; } .tools-mark-ribbon { transition: none; } }
+@media (max-width: 700px) {
+  /* En el móvil la barra rueda de lado: tiene que poder tocarse entera */
+  .layout.map-mode #mapPane .map-bar { pointer-events: auto; left: 8px; right: 8px; }
+}
+
 /* ---------- Ventanas ---------- */
 .modal-back { position: fixed; inset: 0; background: rgba(4, 5, 8, .72); z-index: 60; display: grid; place-items: center; padding: 16px; }
 .modal { width: min(560px, 100%); max-height: 90vh; display: flex; flex-direction: column;
