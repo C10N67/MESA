@@ -61,7 +61,7 @@ export function dicePanel({ isDM = false, stowable = isDM } = {}) {
         <h2>${icon("dice", 18)}<span>Dados y mesa</span></h2>
         <span class="spacer"></span>
         ${isDM ? `<button class="icon-btn" data-clear title="Vaciar el registro">${icon("trash")}</button>` : ""}
-        ${stowable ? `<button class="icon-btn" data-stow title="Guardar en el marcapáginas" aria-label="Guardar el panel en el marcapáginas">${icon("bookmark")}</button>` : ""}
+        ${stowable ? `<button class="btn sm dock-stow" data-stow title="Guardar el panel en el marcapáginas del d20">${withIcon("bookmark", "Guardar", 15)}</button>` : ""}
         <button class="icon-btn" data-toggle title="Abrir o cerrar">${icon("up")}</button>
       </header>
       <div class="dice-pad">
@@ -185,7 +185,8 @@ function stowing(node) {
   };
   const stow = on => {
     node.classList.toggle("stowed", on);
-    node.classList.remove("open");
+    /* En el móvil vuelve ya desplegado: para eso se ha pulsado el marcapáginas */
+    node.classList.toggle("open", !on && window.innerWidth <= 1080);
     if (node.parentElement) node.parentElement.classList.toggle("dock-stowed", on);
     seen = on && store.doc ? lastTs() : on ? null : 0;
     try { on ? localStorage.setItem(STOW_KEY, "1") : localStorage.removeItem(STOW_KEY); } catch {}

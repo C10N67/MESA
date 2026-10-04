@@ -878,7 +878,7 @@ nadie, lo lee toda la mesa.
 El registro se filtra por **Todo**, **Tiradas** o **Charla**, y en el móvil sale
 un punto en la pestaña cuando hay algo sin leer.
 
-El DM puede **guardar el panel** con el botón del marcapáginas de su cabecera:
+El DM puede **guardar el panel** con el botón **Guardar** de su cabecera:
 desaparece, el mapa y la mesa ganan todo su ancho y queda un **marcapáginas
 granate con un d20** colgando del borde de arriba (en el móvil, asomando por
 abajo). Pulsarlo vuelve a abrir el panel tal como estaba. Mientras está
