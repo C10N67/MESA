@@ -479,7 +479,9 @@ cuelga arriba a la izquierda un **marcapáginas verde** con el icono de la
 herramienta elegida, que sigue funcionando (se pueden seguir trazando muros
 con el mapa despejado). Pulsarlo las vuelve a sacar. Con el panel de dados
 guardado también, solo quedan los dos marcapáginas sobre el mapa. Las dos
-cosas se recuerdan en el navegador.
+cosas se recuerdan en el navegador. El mapa se puede arrastrar (botón
+derecho) un poco más allá de sus bordes, para que ni las herramientas ni los
+marcapáginas tapen la esquina en la que estés trabajando.
 
 Cada mapa tiene su imagen de fondo, su cuadrícula, sus muros y su niebla. Al
 cargar una imagen, las filas se ajustan solas a su proporción para que el plano
@@ -914,6 +916,14 @@ entrada igual que en las otras dos vistas.
 
 ### Lo que se ve en la tele
 
+En una tele apaisada, **el mapa es el fondo de toda la pantalla** y lo demás
+flota encima: las cartas de la party en una columna a la izquierda, algo
+transparentes y con el **retrato grande** para reconocer a cada uno desde el
+sofá; en combate, los enemigos a la derecha y la franja del turno y la
+iniciativa arriba. Mesa mide lo que tapan y centra el mapa en el hueco que
+queda libre, así que no se esconde ninguna ficha detrás de una carta. En una
+pantalla vertical o estrecha, todo va apilado como siempre:
+
 Fuera de combate, las cartas de la party ocupan la fila entera, con su retrato,
 su clase, su barra de vida, su CA y sus estados como etiquetas.
 
@@ -976,7 +986,7 @@ enseñaría por dónde ha venido.
 
 ## Qué versión tengo
 
-La versión de Mesa sale al final del menú **···** del DM («Mesa 2.18.0»). Si
+La versión de Mesa sale al final del menú **···** del DM («Mesa 2.19.0»). Si
 el navegador se quedara con una hoja de estilos de otra versión (lo nuevo
 aparece pero no hace nada, como un botón que no esconde nada), Mesa lo nota
 al entrar, vacía sus copias guardadas y la vuelve a pedir. Si aun así algo

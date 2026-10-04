@@ -232,16 +232,20 @@ function stowing(node) {
     return (store.doc.log || []).filter(e => e.ts > seen && ["roll", "attack", "chat"].includes(e.kind) && e.actor !== me).length;
   };
   const paintCount = () => {
+    if (node.classList.contains("stowed")) hang();
     const n = node.classList.contains("stowed") ? unread() : 0;
     const badge = mark.querySelector(".dock-mark-count");
     badge.hidden = !n;
     badge.textContent = n > 99 ? "99+" : String(n);
     mark.setAttribute("aria-label", n ? `Abrir dados y mesa (${n} nuevos)` : "Abrir dados y mesa");
   };
-  /* Cuelga justo debajo de la barra de arriba, mida lo que mida */
+  /* Cuelga justo debajo de lo de arriba (la barra y, si las hay, la tira del
+     combate o la imagen que se enseña), mida lo que mida: es donde empieza
+     la vista en la que va el panel */
   const hang = () => {
-    const bar = document.querySelector(".topbar");
-    mark.style.setProperty("--bm-top", Math.round(bar ? bar.getBoundingClientRect().bottom : 57) + "px");
+    const host = node.parentElement, bar = document.querySelector(".topbar");
+    const top = host ? host.getBoundingClientRect().top : bar ? bar.getBoundingClientRect().bottom : 57;
+    mark.style.setProperty("--bm-top", Math.max(0, Math.round(top)) + "px");
   };
   const stow = on => {
     node.classList.toggle("stowed", on);

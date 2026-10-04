@@ -41,6 +41,13 @@ export function mountScreen(root) {
     </div>`;
 
   mapView = new MapView($("#scanvas", root), { mode: "party" });
+  /* Las cartas cambian de alto y de ancho (combate, turno, enemigos): el hueco
+     libre del mapa se vuelve a medir cada vez */
+  new ResizeObserver(() => fitInset()).observe($("#stage", root));
+  /* Al entrar o salir del combate las cartas viajan y la franja del turno
+     aparece: se vuelve a medir cuando terminan */
+  for (const ev of ["animationend", "transitionend"]) $("#stage", root).addEventListener(ev, () => fitInset());
+  WIDE.addEventListener("change", () => render());
   onState(render);
   onStatus(ok => $("#sdot", root).classList.toggle("off", !ok));
   $("#slang", root).appendChild(langPicker());
@@ -51,11 +58,40 @@ export function mountScreen(root) {
   document.addEventListener("dblclick", e => { if (!e.target.closest("button")) fullscreen(); });
 }
 
+/* En una tele apaisada el mapa es el fondo y las cartas flotan encima; en
+   vertical o en algo estrecho, todo va apilado como antes */
+const WIDE = matchMedia("(min-width: 901px) and (min-aspect-ratio: 1/1)");
+
+/* Qué parte del mapa queda a la vista: lo que no tapan la party (izquierda),
+   los enemigos (derecha) y las barras de arriba. El mapa se pinta en toda la
+   pantalla, pero el encuadre se centra en ese hueco. */
+function fitInset() {
+  const stage = $("#stage");
+  if (!stage || !mapView) return;
+  let inset = null;
+  if (WIDE.matches) {
+    const box = stage.getBoundingClientRect(), gap = 16;
+    const shown = e => e && !e.classList.contains("hidden") && e.offsetHeight > 0 && getComputedStyle(e).display !== "none";
+    const heroes = stage.querySelector(".side.heroes"), foes = stage.querySelector(".side.foes");
+    const tops = [".screen-tools", ".turnbar", ".init-strip"].map(q => stage.querySelector(q)).filter(shown);
+    inset = {
+      l: shown(heroes) && heroes.querySelector(".who-card") ? Math.round(heroes.getBoundingClientRect().right - box.left + gap) : 0,
+      r: shown(foes) && foes.querySelector(".who-card") ? Math.round(box.right - foes.getBoundingClientRect().left + gap) : 0,
+      t: tops.length ? Math.round(Math.max(...tops.map(e => e.getBoundingClientRect().bottom)) - box.top + gap / 2) : 0,
+      b: 0
+    };
+  }
+  if (JSON.stringify(inset) === JSON.stringify(mapView.inset || null)) return;
+  mapView.inset = inset;
+  mapView.draw();
+}
+
 function fullscreen() {
   if (document.fullscreenElement) document.exitFullscreen();
   else document.documentElement.requestFullscreen().catch(() => {});
 }
 
+let insetLater = 0;
 let lastTurnId = null;
 let lastRound = null;
 
@@ -130,12 +166,16 @@ function render() {
        quedan franjas negras ni arriba ni a los lados. Siguiendo a alguien, el
        hueco manda y el encuadre se adapta. */
     const board = $(".board");
-    /* Con la vista de sala, igual: el hueco entero para la sala */
-    const free = map.camera === "follow" || !!(session.roomView && session.roomView.mapId === map.id);
+    /* Con la vista de sala, igual: el hueco entero para la sala. En pantalla
+       ancha el mapa es el fondo de toda la tele: siempre ocupa todo. */
+    const free = WIDE.matches || map.camera === "follow" || !!(session.roomView && session.roomView.mapId === map.id);
     board.style.aspectRatio = free ? "" : `${map.cols} / ${map.rows}`;
     board.classList.toggle("free", free);
   }
   wrap.classList.toggle("hidden", !map);
+  fitInset();
+  clearTimeout(insetLater);
+  insetLater = setTimeout(fitInset, 700);
 
   /* Toda la iniciativa a la vista, que es lo que la mesa mira desde lejos */
   const strip = $("#initStrip");

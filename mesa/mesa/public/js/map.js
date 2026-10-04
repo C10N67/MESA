@@ -189,7 +189,12 @@ export class MapView {
 
     const W = box.width, H = box.height;
     const free = this.mode === "dm" || map.playerZoom !== false;
-    const aspect = W / H;
+    /* La parte del lienzo que de verdad se ve: en la tele el mapa es el fondo
+       y las cartas lo tapan por los lados; el encuadre se centra en lo que
+       queda libre (inset, en píxeles), pero se pinta en todo el lienzo. */
+    const ins = this.inset || { l: 0, t: 0, r: 0, b: 0 };
+    const VW = Math.max(80, W - ins.l - ins.r), VH = Math.max(80, H - ins.t - ins.b);
+    const aspect = VW / VH;
     let cropW, focus, fill = false;
     if (this.mode === "dm") {
       cropW = map.cols / this.zoom;
@@ -229,16 +234,20 @@ export class MapView {
       cropH = cropW * (map.rows / map.cols);
     }
 
-    let cx = clamp(focus.x, cropW / 2, Math.max(cropW / 2, map.cols - cropW / 2));
-    let cy = clamp(focus.y, cropH / 2, Math.max(cropH / 2, map.rows - cropH / 2));
+    /* El DM puede llevar el mapa algo más allá de sus bordes (overscroll, en
+       píxeles), para que las herramientas y los marcapáginas no tapen nada */
+    const slack = this.mode === "dm" && this.overscroll ? this.overscroll / Math.min(VW / cropW, VH / cropH) : 0;
+    let cx = clamp(focus.x, cropW / 2 - slack, Math.max(cropW / 2, map.cols - cropW / 2) + slack);
+    let cy = clamp(focus.y, cropH / 2 - slack, Math.max(cropH / 2, map.rows - cropH / 2) + slack);
+    if (this.mode === "dm" && this.center) this.center = { x: cx, y: cy };
     /* Al entrar o salir de la vista de sala, el encuadre viaja en vez de
        saltar: se acerca o se aleja y se desplaza a la vez */
     if (this.mode !== "dm" && !(this.zoom > 1 && free)) {
       const v = this.smoothView({ x: cx, y: cy, w: cropW, h: cropH, room: !!this.roomFrame(map), map: map.id });
       cx = v.x; cy = v.y; cropW = v.w; cropH = v.h;
     }
-    const cell = Math.min(W / cropW, H / cropH);
-    return { W, H, dpr, cell, originX: W / 2 - cx * cell, originY: H / 2 - cy * cell, cols: map.cols, rows: map.rows };
+    const cell = Math.min(VW / cropW, VH / cropH);
+    return { W, H, dpr, cell, originX: ins.l + VW / 2 - cx * cell, originY: ins.t + VH / 2 - cy * cell, cols: map.cols, rows: map.rows };
   }
 
   /* Dónde está una ficha en la pantalla (centro y radio, en píxeles de la
@@ -848,10 +857,10 @@ export class MapView {
     else if (z > 1 && !this.center && map) this.center = { x: map.cols / 2, y: map.rows / 2 };
     this.zoom = z;
     if (z <= 1) { this.zoom = 1; this.center = null; }
-    else if (this.center && map) {
+    else if (this.center && map && this.mode !== "dm") {
       const w = map.cols / this.zoom, h = w * (map.rows / map.cols);
       this.center = { x: clamp(this.center.x, w / 2, map.cols - w / 2), y: clamp(this.center.y, h / 2, map.rows - h / 2) };
-    }
+    }   /* al DM se lo ajusta geometry(), con su margen */
     this.draw();
     this.opts.onZoom && this.opts.onZoom(this.zoom);
   }

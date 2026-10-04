@@ -11,7 +11,7 @@
    lejos) y la del sistema para el resto de la interfaz. */
 
 :root {
-  --mesa-version: "2.18.0";   /* igual que js/version.js y sw.js */
+  --mesa-version: "2.19.0";   /* igual que js/version.js y sw.js */
   --pitch: #0a0c11;
   --stone: #141821;
   --stone-2: #1b202b;
@@ -1778,3 +1778,82 @@ details.srd > summary b { color: var(--vellum); font-family: var(--serif); font-
 .side h3 { font-size: 17px; letter-spacing: .06em; text-transform: none; }
 .tb-name b { letter-spacing: .04em; }
 @media (max-width: 760px) { .brand h1 { font-size: 19px; } }
+
+/* ============================================================
+   La tele con el mapa de fondo (pantalla apaisada). El mapa ocupa
+   toda la pantalla; la party flota a la izquierda, los enemigos a la
+   derecha en combate, y las barras arriba, todo con algo de
+   transparencia. screen.js mide lo que tapan y centra el encuadre en
+   el hueco libre. Las caras van grandes: se reconocen desde el sofá.
+   ============================================================ */
+@media (min-width: 901px) and (min-aspect-ratio: 1/1) {
+  body.screen .stage { --rail: clamp(230px, 18vw, 320px); }
+  /* grid-area: auto: con un área de la rejilla, el posicionado absoluto se
+     quedaría dentro de esa celda en vez de cubrir toda la tele */
+  body.screen .stage > .board-wrap { grid-area: auto; position: absolute; inset: 0; z-index: 0; display: block; }
+  body.screen .stage .board, body.screen .stage .board.free {
+    width: 100%; height: 100%; max-width: none; max-height: none; aspect-ratio: auto;
+    border: 0; border-radius: 0; box-shadow: none;
+  }
+  body.screen .stage > :not(.board-wrap):not(.handout) { position: relative; z-index: 1; }
+
+  /* Fuera de combate: la party a la izquierda, el resto libre para el mapa */
+  body.screen .stage:not(.fighting) {
+    grid-template-columns: var(--rail) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas: "tools tools" "heroes ." "heroes roll";
+  }
+  body.screen .stage:not(.fighting) > .last-roll { justify-self: end; }
+  body.screen .stage .side.heroes { align-self: start; max-height: 100%; min-height: 0; }
+  body.screen .stage:not(.fighting) .side.heroes { width: auto; max-width: none; margin: 0; }
+  body.screen .stage:not(.fighting) .side.heroes h3 { display: block; text-align: left; }
+  body.screen .stage .side h3 { text-shadow: 0 1px 6px rgba(0, 0, 0, .9); }
+  body.screen .stage .side-list,
+  body.screen .stage:not(.fighting) .side-list {
+    display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 8px;
+    overflow-y: auto; min-height: 0; padding: 2px; scrollbar-width: none;
+  }
+
+  /* Las cartas: translúcidas, con la cara grande */
+  body.screen .stage .who-card,
+  body.screen .stage:not(.fighting) .who-card {
+    width: auto; opacity: 1; padding: 10px 12px; border-radius: 12px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, .04), transparent), rgba(12, 15, 22, .62);
+    border-color: rgba(255, 255, 255, .08);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, .35);
+  }
+  body.screen .stage .who-card .who-top { gap: 12px; }
+  body.screen .stage .who-card .avatar,
+  body.screen .stage:not(.fighting) .who-card .avatar,
+  body.screen .stage.fighting .who-card .avatar {
+    width: clamp(56px, 4.6vw, 76px); height: clamp(56px, 4.6vw, 76px); font-size: 20px; border-radius: 14px;
+    box-shadow: 0 0 0 2px var(--tone), 0 4px 12px rgba(0, 0, 0, .45);
+  }
+  body.screen .stage .who-card .who-top b,
+  body.screen .stage:not(.fighting) .who-card .who-top b { font-size: clamp(17px, 1.3vw, 22px); }
+  body.screen .stage:not(.fighting) .who-card .who-id .state { display: block; }
+  body.screen .stage .who-card .bar,
+  body.screen .stage:not(.fighting) .who-card .bar { margin-top: 9px; height: 7px; }
+  body.screen .stage .who-card .row-line,
+  body.screen .stage:not(.fighting) .who-card .row-line { font-size: 13px; margin-top: 5px; }
+  body.screen .stage .who-card.down { opacity: .55; }
+  body.screen .stage .who-card.aside { opacity: .55; }
+  body.screen .stage .who-card.is-turn { opacity: 1; }
+  /* Muchas cartas en la columna: más juntas, pero la cara sigue a la vista */
+  body.screen .stage .side-list.dense .who-card { padding: 7px 10px; }
+  body.screen .stage .side-list.dense .who-card .avatar { width: 46px; height: 46px; font-size: 15px; border-radius: 11px; }
+  body.screen .stage .side-list.tiny .who-card .avatar { width: 34px; height: 34px; font-size: 12px; border-radius: 9px; }
+
+  /* Las barras de arriba y la última tirada, también sobre el mapa */
+  body.screen .stage .turnbar {
+    background: radial-gradient(80% 140% at 0% 50%, rgba(200, 155, 74, .16), transparent 70%), rgba(12, 15, 22, .72);
+    border-color: rgba(255, 255, 255, .09); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  }
+  body.screen .stage .last-roll {
+    padding: 6px 14px; border-radius: 12px; background: rgba(12, 15, 22, .6);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); text-shadow: 0 1px 6px rgba(0, 0, 0, .8);
+  }
+  body.screen .stage .last-roll:empty { display: none; }
+  body.screen .stage .screen-tools { text-shadow: 0 1px 4px rgba(0, 0, 0, .9); }
+}

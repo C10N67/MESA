@@ -1226,6 +1226,9 @@ function renderMap() {
       onZoom: z => { const l = $("#zoomLabel"); if (l) l.textContent = Math.round(z * 100) + "%"; }
     });
 
+    /* Se puede llevar el mapa un poco más allá de sus bordes: las
+       herramientas y los marcapáginas flotan encima y no deben tapar nada */
+    mapView.overscroll = 170;
     mapView.drawColor = DRAW_COLORS[0];
     mapView.drawWidth = 0.08;
     const pressOnly = b => pane.querySelectorAll("[data-tool],[data-shape],[data-brush],[data-layer],[data-draw]").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
