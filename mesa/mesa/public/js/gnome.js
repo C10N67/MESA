@@ -1,7 +1,7 @@
 /* Chispa, el gnomo ingeniero de la vista del DM.
 
    Está justo a la izquierda del título, asomado por detrás de su mesa de
-   trabajo, con las gafas puestas, una llave en la mano y un engranaje a la
+   trabajo, con las gafas de taller en la frente, una llave en la mano y un engranaje a la
    espalda. Dibujo de trazo dorado, como los iconos de Mesa. Sigue con la
    mirada lo que hace el DM (el puntero, los clics, lo que escribe) y, si pasa
    un rato sin que ocurra nada, se hunde tras la mesa y se queda dormido. De
@@ -124,13 +124,11 @@ const SVG = `<svg viewBox="0 0 120 100" aria-hidden="true" fill="none" stroke="$
       <path d="M38 39 L19 32.5 L37 55" fill="#151923" stroke-width="4"/>
       <path d="M77 39 L96 32.5 L78 55" fill="#151923" stroke-width="4"/>
       <path d="M36 80 V45 Q36 23.5 57.5 23.5 Q79 23.5 79 45 V80" fill="#151923" stroke-width="4.2"/>
-      <g class="gn-eye"><circle cx="49" cy="43.5" r="6.4" stroke-width="3.3"/>
-        <circle class="gn-pupil" cx="49" cy="43.5" r="2.3" stroke-width="2.6"/></g>
-      <g class="gn-eye"><circle cx="66" cy="43.5" r="6.4" stroke-width="3.3"/>
-        <circle class="gn-pupil" cx="66" cy="43.5" r="2.3" stroke-width="2.6"/></g>
-      <path class="gn-sleepeye" d="M43.5 44 Q49 49 54.5 44 M60.5 44 Q66 49 71.5 44" stroke-width="3.2"/>
-      <circle cx="50" cy="57.5" r="1.9" fill="${GOLD}" stroke="none"/>
-      <circle cx="67.5" cy="57.5" r="1.9" fill="${GOLD}" stroke="none"/>
+      <g class="gn-goggles"><circle cx="49" cy="43.5" r="6.4" stroke-width="3.3"/><circle cx="49" cy="43.5" r="2.3" stroke-width="2.6"/>
+        <circle cx="66" cy="43.5" r="6.4" stroke-width="3.3"/><circle cx="66" cy="43.5" r="2.3" stroke-width="2.6"/></g>
+      <g class="gn-eye"><circle class="gn-pupil" cx="50" cy="57.5" r="2" fill="${GOLD}" stroke="none"/></g>
+      <g class="gn-eye"><circle class="gn-pupil" cx="67.5" cy="57.5" r="2" fill="${GOLD}" stroke="none"/></g>
+      <path class="gn-sleepeye" d="M47.4 57.2 Q50 59.6 52.6 57.2 M64.9 57.2 Q67.5 59.6 70.1 57.2" stroke-width="2"/>
       <circle class="gn-mouth" cx="58.8" cy="63.6" r="3.9" stroke-width="3"/>
     </g>
   </g>
@@ -222,12 +220,12 @@ export function mountGnome(slot) {
     frame = 0;
     if (!pointer || state !== "awake" || !visible()) return;
     const r = me.getBoundingClientRect();
-    const ex = r.left + r.width * .48, ey = r.top + r.height * .435;
+    const ex = r.left + r.width * .49, ey = r.top + r.height * .575;
     const dx = pointer.x - ex, dy = pointer.y - ey;
     const d = Math.hypot(dx, dy) || 1;
     const k = Math.min(1, d / 90);
-    me.style.setProperty("--px", (dx / d * 2.3 * k).toFixed(2) + "px");
-    me.style.setProperty("--py", (dy / d * 2.1 * k).toFixed(2) + "px");
+    me.style.setProperty("--px", (dx / d * 1.7 * k).toFixed(2) + "px");
+    me.style.setProperty("--py", (dy / d * 1.3 * k).toFixed(2) + "px");
     me.style.setProperty("--hr", Math.max(-6, Math.min(6, dx / 90)).toFixed(1) + "deg");
   }
 
@@ -238,7 +236,7 @@ export function mountGnome(slot) {
       if (!frame) frame = requestAnimationFrame(look);
     }
     /* Escribiendo: mira hacia abajo, como quien lee por encima del hombro */
-    if (e.type === "keydown" && state === "awake") { me.style.setProperty("--py", "2px"); }
+    if (e.type === "keydown" && state === "awake") { me.style.setProperty("--py", "1.3px"); }
     if (state !== "awake" && !nodding) wake();
     if (e.type === "pointerdown" && !me.contains(e.target)) {
       set("peek", true); clearTimeout(peekT); peekT = setTimeout(() => set("peek", false), 700);

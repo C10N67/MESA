@@ -994,7 +994,7 @@ enseñaría por dónde ha venido.
 ## Qué versión tengo
 
 La versión de Mesa sale en la pantalla de entrada y al final del menú **···**
-del DM («Mesa 2.23.0»). Si el navegador trae una versión distinta de la del
+del DM («Mesa 2.23.1»). Si el navegador trae una versión distinta de la del
 servidor, Mesa vacía sus copias guardadas y recarga sola; si no lo consigue,
 lo dice en la pantalla de entrada.
 
@@ -1084,7 +1084,7 @@ rayado o el color del papel se cambian ahí y se vuelve a generar.
 ## Chispa, el gnomo ingeniero
 
 En la vista del DM, justo a la izquierda del título, hay un gnomo ingeniero
-asomado por detrás de su mesa de trabajo: trazo dorado, gafas redondas,
+asomado por detrás de su mesa de trabajo: trazo dorado, gafas de taller,
 orejas puntiagudas, una llave en la mano y un engranaje a la espalda que gira
 despacio. Sigue con la mirada el puntero del DM, se asoma cuando pulsas en el
 mapa y mira hacia abajo cuando escribes. Si pasan 45 segundos sin que hagas
