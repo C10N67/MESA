@@ -18,6 +18,7 @@ import { openGridFit, openWallFit } from "./gridfit.js";
 import { langPicker } from "./i18n.js";
 import { icon, withIcon, conditionIcon, conditionTone } from "./icons.js";
 import { VERSION } from "./version.js";
+import { mountDwarf, dwarfEnabled, setDwarfEnabled } from "./dwarf.js";
 import { rollHitPoints } from "./dice.js";
 import { TYPE_NAMES, typeOf, crValue, CATALOG_BY_ID } from "./catalog.js";
 
@@ -74,6 +75,7 @@ export function mountDM(root) {
     <div class="shell">
       <div class="banner hidden" id="offline">Se ha perdido la conexión con la partida. Reintentando…</div>
       <header class="topbar">
+        <span id="dwarfSlot"></span>
         <div class="brand">
           <h1>Mesa</h1>
           <input class="campaign" id="campaign" aria-label="Nombre de la campaña">
@@ -123,6 +125,7 @@ export function mountDM(root) {
   $("#restBtn", root).addEventListener("click", openRest);
   $("#undoBtn", root).addEventListener("click", () => { op("undo"); toast("Deshecho"); });
   $("#moreBtn", root).addEventListener("click", openMenu);
+  mountDwarf($("#dwarfSlot", root));
   $("#presence", root).addEventListener("click", openPresence);
   $("#voiceSlot", root).replaceWith(voiceWidget());
 
@@ -2026,6 +2029,7 @@ function openMenu() {
     ${item("export", "download", "Guardar copia", "Descarga un archivo con toda la partida")}
     ${item("import", "upload", "Cargar una copia", "Sustituye la partida por la de un archivo")}
     <div class="menu-item static"><span class="menu-ico">${icon("lang", 20)}</span><span class="menu-text"><b>Idioma</b><small>Solo cambia en este aparato</small></span><span id="menuLang"></span></div>
+    ${item("dwarf", "wand", dwarfEnabled() ? "Despedir a Brokk" : "Llamar a Brokk", dwarfEnabled() ? "El enano ingeniero se vuelve a su forja" : "El enano ingeniero vuelve a vigilar la mesa")}
     ${item("leave", "exit", "Salir de la sesión", "Vuelves a la pantalla de entrada", "danger")}
     <p class="menu-version">Mesa ${VERSION}</p>
     <input type="file" id="handoutFile" accept="image/*" hidden>
@@ -2068,6 +2072,12 @@ function openMenu() {
       URL.revokeObjectURL(a.href);
     }
     if (what === "import") file.click();
+    if (what === "dwarf") {
+      const on = !dwarfEnabled();
+      setDwarfEnabled(on);
+      m.close();
+      toast(on ? "Brokk vuelve a la mesa" : "Brokk se ha ido a su forja", "good");
+    }
     if (what === "handout") {
       if (session().handoutId) {
         modal({ title: "Ya estás enseñando una imagen", body: '<p class="prose">Puedes cambiarla o guardarla.</p>',

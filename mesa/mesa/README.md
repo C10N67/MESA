@@ -994,7 +994,7 @@ enseñaría por dónde ha venido.
 ## Qué versión tengo
 
 La versión de Mesa sale en la pantalla de entrada y al final del menú **···**
-del DM («Mesa 2.21.0»). Si el navegador trae una versión distinta de la del
+del DM («Mesa 2.22.0»). Si el navegador trae una versión distinta de la del
 servidor, Mesa vacía sus copias guardadas y recarga sola; si no lo consigue,
 lo dice en la pantalla de entrada.
 
@@ -1081,6 +1081,22 @@ la escena en vectores y la pasa a lápiz en un navegador (necesita Playwright:
 `PWROOT=$(npm root -g) node tools/fondo-forja.mjs`); la composición, el
 rayado o el color del papel se cambian ahí y se vuelve a generar.
 
+## Brokk, el enano ingeniero
+
+En la vista del DM, a la izquierda del título, hay un enano ingeniero
+sentado en el borde de la barra, con las gafas de latón en la frente y una
+llave inglesa en el mandil. Sigue con la mirada el puntero del DM, se asoma
+cuando pulsas en el mapa y mira hacia abajo cuando escribes. Si pasan 45
+segundos sin que hagas nada, empieza a cabecear y se queda dormido (con sus
+zetas); al mover el ratón se despierta de un respingo. Aunque estés
+trabajando, de vez en cuando da una cabezada y se despierta solo. Si lo
+pulsas, suelta algún comentario sobre tu mazmorra.
+
+Es solo decoración: no toca la partida. Se quita y se vuelve a poner desde
+el menú **···** («Despedir a Brokk» / «Llamar a Brokk»), y cada aparato lo
+recuerda por su cuenta. En el teléfono no sale, y si el sistema pide reducir
+el movimiento se queda quieto. Vive en `public/js/dwarf.js`.
+
 ## Estructura
 
 ```
@@ -1106,6 +1122,7 @@ public/
     rules.js           clases, especies, trasfondos, armas y cuentas de la ficha (2014 y 2024)
     builder.js         el creador de personajes paso a paso
     manual.js          la ventana del manual del DM
+    dwarf.js           Brokk, el enano ingeniero de la vista del DM
     manual-data.js     el texto del manual: la chuleta de la 5.5 y las otras ediciones
     soundscape.js      hacer sonar el mapa en la pantalla de la party
     attacks.js         leer y lanzar ataques
