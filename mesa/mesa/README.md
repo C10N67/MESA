@@ -26,7 +26,11 @@ pestañas, cada pestaña lleva la suya.
 ## Arrancarla
 
 1. Instala **Node.js** una vez, desde <https://nodejs.org> (opción LTS).
-2. Doble clic en `Abrir Mesa (Windows).bat` o en `Abrir Mesa (Mac y Linux).command`.
+2. Si te ha llegado en un `.zip` o `.rar`, **descomprímelo entero** primero
+   (clic derecho → «Extraer todo» o «Extraer aquí»). Abierto desde dentro del
+   comprimido no arranca: Windows solo saca ese archivo a una carpeta
+   temporal, sin el resto de Mesa.
+3. Doble clic en `Abrir Mesa (Windows).bat` o en `Abrir Mesa (Mac y Linux).command`.
    Desde una terminal es `npm start`.
 
 Para jugar cada uno desde su casa, en vez de esos dos archivos usa los de
