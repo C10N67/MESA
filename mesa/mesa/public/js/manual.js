@@ -9,7 +9,7 @@
    Los catálogos (public/data/srd52/*.json) pesan: se piden la primera vez
    que se abren, no al cargar Mesa. */
 
-import { modal, esc, el, on } from "./util.js";
+import { esc, el, on } from "./util.js";
 import { EDITIONS, SECTIONS } from "./manual-data.js";
 import { conditionIcon, conditionTone } from "./icons.js";
 
@@ -291,7 +291,11 @@ async function searchSrd(query) {
   };
 }
 
+/* El grimorio abierto, si lo hay: solo uno a la vez */
+let book = null;
+
 export function openManual(start) {
+  if (book) { book.front(start); return book; }
   let saved = {};
   try { saved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch {}
   let ed = start || saved.ed || "intro";
@@ -384,10 +388,111 @@ export function openManual(start) {
     typing = setTimeout(() => { query = e.target.value.trim(); paint(); }, 180);
   });
 
-  const win = modal({ title: "Manual de D&D 5.5", body, wide: true, actions: [] });
-  win.body.closest(".modal").classList.add("manual");
   paint();
-  return win;
+  book = grimoire(body, {
+    onGo: next => { ed = next; query = ""; body.querySelector(".man-search").value = ""; remember(); paint(); },
+    onClose: () => { book = null; }
+  });
+  return book;
+}
+
+/* ---------- El grimorio ----------
+   El manual se abre como un libro: tapas de cuero, dos páginas de pergamino
+   (a la izquierda el índice y el buscador, a la derecha lo que se lee) y una
+   tapa que se abre al sacarlo. No es una ventana que bloquea: flota sobre la
+   partida, se arrastra por el lomo de arriba y se agranda por la esquina,
+   así que se puede consultar mientras se juega. Recuerda dónde se dejó. En el
+   móvil ocupa la pantalla entera. */
+const BOOK_KEY = "mesa.grimoire";
+const MIN_W = 560, MIN_H = 380;
+
+function grimoire(content, { onGo, onClose }) {
+  const node = el(`<section class="grimoire" role="dialog" aria-label="Manual de D&D 5.5" tabindex="-1">
+    <header class="grim-head" title="Arrastra para mover el grimorio">
+      <span class="grim-clasp" aria-hidden="true"></span>
+      <h2 class="grim-title">Manual de D<span class="amp">&amp;</span>D 5.5</h2>
+      <span class="grim-hint">arrastra por aquí para moverlo</span>
+      <button type="button" class="grim-close" data-close aria-label="Cerrar el grimorio" title="Cerrar el grimorio">×</button>
+    </header>
+    <div class="grim-pages"></div>
+    <span class="grim-grip" title="Arrastra para cambiar el tamaño" aria-hidden="true"></span>
+    <div class="grim-cover" aria-hidden="true"><span>Manual<br>de D<span class="amp">&amp;</span>D</span></div>
+  </section>`);
+  node.querySelector(".grim-pages").appendChild(content);
+  document.body.appendChild(node);
+
+  /* Dónde y de qué tamaño: lo último que eligió el DM, o centrado */
+  const small = () => innerWidth <= 700;
+  let box = null;
+  try { box = JSON.parse(localStorage.getItem(BOOK_KEY) || "null"); } catch {}
+  const fit = b => {
+    const w = Math.min(Math.max(MIN_W, b.w), innerWidth - 16), h = Math.min(Math.max(MIN_H, b.h), innerHeight - 16);
+    return { w, h, x: Math.min(Math.max(8 - w + 120, b.x), innerWidth - 120), y: Math.min(Math.max(8, b.y), innerHeight - 60) };
+  };
+  if (!box || !box.w) {
+    const w = Math.min(1080, innerWidth - 48), h = Math.min(Math.round(innerHeight * 0.86), 820);
+    box = { w, h, x: Math.round((innerWidth - w) / 2), y: Math.round((innerHeight - h) / 2) };
+  }
+  const place = () => {
+    if (small()) { node.removeAttribute("style"); return; }
+    box = fit(box);
+    Object.assign(node.style, { left: box.x + "px", top: box.y + "px", width: box.w + "px", height: box.h + "px" });
+  };
+  const save = () => { try { localStorage.setItem(BOOK_KEY, JSON.stringify(box)); } catch {} };
+  place();
+
+  /* Arrastrar por el lomo, y agrandar por la esquina */
+  const drag = (handle, move) => handle.addEventListener("pointerdown", e => {
+    if (small() || e.button !== 0 || e.target.closest("button")) return;
+    e.preventDefault();
+    const start = { x: e.clientX, y: e.clientY, box: { ...box } };
+    node.classList.add("moving");
+    handle.setPointerCapture(e.pointerId);
+    const onMove = ev => { move(start, ev.clientX - start.x, ev.clientY - start.y); place(); };
+    const onUp = () => {
+      node.classList.remove("moving");
+      handle.removeEventListener("pointermove", onMove);
+      handle.removeEventListener("pointerup", onUp);
+      handle.removeEventListener("pointercancel", onUp);
+      save();
+    };
+    handle.addEventListener("pointermove", onMove);
+    handle.addEventListener("pointerup", onUp);
+    handle.addEventListener("pointercancel", onUp);
+  });
+  drag(node.querySelector(".grim-head"), (s, dx, dy) => { box.x = s.box.x + dx; box.y = s.box.y + dy; });
+  drag(node.querySelector(".grim-grip"), (s, dx, dy) => { box.w = s.box.w + dx; box.h = s.box.h + dy; });
+  const onResize = () => place();
+  addEventListener("resize", onResize);
+
+  /* Al frente si se pulsa encima (por si hay otra cosa flotando) */
+  node.addEventListener("pointerdown", () => node.classList.add("front"));
+
+  let closed = false;
+  const close = () => {
+    if (closed) return;
+    closed = true;
+    removeEventListener("resize", onResize);
+    onClose();
+    const done = () => node.remove();
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return done();
+    node.classList.add("closing");
+    setTimeout(done, 260);
+  };
+  node.querySelector("[data-close]").addEventListener("click", close);
+  node.addEventListener("keydown", e => { if (e.key === "Escape" && !e.target.closest("input, select")) close(); });
+  node.focus({ preventScroll: true });
+
+  return {
+    el: node, close,
+    /* Si ya está abierto, se trae al frente con un pequeño aviso (y, si se
+       pide, se abre por esa página) */
+    front(start) {
+      if (start) onGo(start);
+      node.classList.remove("nudge"); void node.offsetWidth; node.classList.add("nudge");
+      node.focus({ preventScroll: true });
+    }
+  };
 }
 
 /* Resalta lo buscado en el texto ya pintado */

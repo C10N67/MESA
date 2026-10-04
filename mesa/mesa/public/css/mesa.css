@@ -11,7 +11,7 @@
    lejos) y la del sistema para el resto de la interfaz. */
 
 :root {
-  --mesa-version: "2.19.0";   /* igual que js/version.js y sw.js */
+  --mesa-version: "2.20.0";   /* igual que js/version.js y sw.js */
   --pitch: #0a0c11;
   --stone: #141821;
   --stone-2: #1b202b;
@@ -1856,4 +1856,173 @@ details.srd > summary b { color: var(--vellum); font-family: var(--serif); font-
   }
   body.screen .stage .last-roll:empty { display: none; }
   body.screen .stage .screen-tools { text-shadow: 0 1px 4px rgba(0, 0, 0, .9); }
+}
+
+/* ============================================================
+   El grimorio: el manual del DM como un libro abierto que flota
+   sobre la partida. Tapas de cuero granate con cantoneras doradas,
+   dos páginas de pergamino con el lomo en medio y tinta oscura.
+   Se arrastra por la franja de arriba y se agranda por la esquina.
+   Dentro se redefine la paleta: todo el manual pasa a tinta sobre
+   pergamino sin tocar cada regla.
+   ============================================================ */
+.grimoire {
+  --leather: #5a1f18; --leather-dark: #2c0e0a; --gilt: #c9a25a;
+  position: fixed; z-index: 50; display: flex; flex-direction: column;
+  padding: 0 14px 14px; border-radius: 10px 16px 16px 10px; outline: none;
+  background:
+    radial-gradient(120% 90% at 30% 20%, rgba(255, 255, 255, .07), transparent 60%),
+    repeating-radial-gradient(circle at 20% 30%, rgba(0, 0, 0, .05) 0 1px, transparent 1px 3px),
+    linear-gradient(160deg, var(--leather), var(--leather-dark));
+  box-shadow:
+    inset 0 0 0 2px rgba(201, 162, 90, .55), inset 0 0 0 7px var(--leather-dark), inset 0 0 0 8px rgba(201, 162, 90, .3),
+    0 30px 80px rgba(0, 0, 0, .65), 0 8px 20px rgba(0, 0, 0, .5);
+  transform-origin: 50% 60%;
+  animation: grimIn .45s cubic-bezier(.22, 1, .36, 1) both;
+}
+.grimoire.front { z-index: 51; }
+.grimoire.moving { cursor: grabbing; user-select: none; opacity: .96; }
+.grimoire.closing { animation: grimOut .26s ease-in both; }
+.grimoire.nudge { animation: grimNudge .45s ease; }
+/* Cantoneras doradas en las cuatro esquinas */
+.grimoire::before, .grimoire::after {
+  content: ""; position: absolute; width: 34px; height: 34px; pointer-events: none;
+  border: 3px solid var(--gilt); opacity: .75;
+}
+.grimoire::before { left: 6px; bottom: 6px; border-top: 0; border-right: 0; border-radius: 0 0 0 8px; }
+.grimoire::after { right: 6px; bottom: 6px; border-top: 0; border-left: 0; border-radius: 0 0 8px 0; }
+
+/* El lomo de arriba: título dorado y asa para arrastrar */
+.grim-head {
+  display: flex; align-items: center; gap: 10px; padding: 9px 4px 9px 8px; cursor: grab; user-select: none;
+  color: var(--gilt); touch-action: none;
+}
+.grimoire.moving .grim-head { cursor: grabbing; }
+.grim-title {
+  margin: 0; font-family: var(--title); font-weight: 400; font-size: 21px; letter-spacing: .12em; text-transform: uppercase;
+  color: #e3c27d; text-shadow: 0 1px 0 rgba(0, 0, 0, .6), 0 0 12px rgba(201, 162, 90, .25);
+}
+.grim-hint { font-size: 11.5px; color: rgba(227, 194, 125, .55); font-style: italic; }
+.grim-clasp {
+  width: 20px; height: 20px; border-radius: 50%; flex: none;
+  background: radial-gradient(circle at 35% 35%, #f3d99a, #b28537 60%, #6e4d1c);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, .35), inset 0 -2px 3px rgba(0, 0, 0, .35);
+}
+.grim-close {
+  margin-left: auto; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(201, 162, 90, .5);
+  background: rgba(0, 0, 0, .25); color: #e3c27d; font-size: 20px; line-height: 1; cursor: pointer;
+}
+.grim-close:hover, .grim-close:focus-visible { background: rgba(201, 162, 90, .2); outline: none; }
+
+/* Las dos páginas */
+.grim-pages {
+  flex: 1; min-height: 0; display: flex; border-radius: 4px 8px 8px 4px; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .5), 0 3px 0 #d8c7a2, 0 5px 0 #c9b58c, 0 7px 0 #b9a47a, 0 9px 10px rgba(0, 0, 0, .4);
+}
+.grimoire .man {
+  --vellum: #2b1e12; --dim: #6d5638; --gold-soft: #8a2c1c; --gold: #8a2c1c; --edge: rgba(98, 66, 30, .3);
+  --stone: #efe3c6; --stone-2: #e6d5ae; --stone-3: #dcc79a; --pitch: #f4ebd4;
+  flex: 1; display: grid; grid-template-columns: minmax(190px, 28%) minmax(0, 1fr);
+  color: var(--vellum); font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+}
+.grimoire .man-nav {
+  border-right: 0; padding: 16px 18px 16px 16px;
+  background:
+    linear-gradient(to right, transparent 82%, rgba(90, 60, 25, .18) 96%, rgba(60, 38, 14, .35)),
+    radial-gradient(120% 80% at 20% 10%, #f4ead2, #e9d9b3);
+}
+.grimoire .man-page {
+  padding: 18px 26px 28px 30px;
+  background:
+    linear-gradient(to left, transparent 90%, rgba(90, 60, 25, .16) 97%, rgba(60, 38, 14, .32)),
+    radial-gradient(130% 90% at 80% 10%, #f6edd8, #ecdfbf);
+}
+.grimoire .man-page h3 {
+  font-family: var(--title); font-weight: 400; letter-spacing: .06em; font-size: 26px; color: #6e1f12;
+  border-bottom: 1px solid rgba(110, 31, 18, .35); padding-bottom: 6px;
+}
+.grimoire .man-page h4 { font-family: Georgia, serif; color: #8a2c1c; font-variant: small-caps; letter-spacing: .03em; }
+.grimoire .man-page h5 { color: #3a2814; }
+.grimoire .man-page p, .grimoire .man-page li { color: #2f2316; }
+.grimoire .man-page b { color: #1f150b; }
+.grimoire .man-page a, .grimoire .linkish { color: #8a2c1c; }
+.grimoire .man-page mark { background: rgba(214, 160, 40, .45); }
+.grimoire .man-page section + section { border-top-color: rgba(98, 66, 30, .25); }
+/* La primera letra de cada página, como en los libros iluminados */
+.grimoire .man-page > section:first-of-type > p:first-of-type::first-letter {
+  float: left; font-family: var(--title); font-size: 2.9em; line-height: .85; padding: 4px 6px 0 0; color: #8a2c1c;
+}
+.grimoire .man-group { color: #8a6a40; }
+.grimoire .man-nav nav button { color: #4b3820; border-color: transparent; }
+.grimoire .man-nav nav button:hover { color: #1f150b; background: rgba(120, 80, 30, .1); }
+.grimoire .man-nav nav button[aria-current="page"] { color: #6e1f12; border-color: rgba(138, 44, 28, .45); background: rgba(138, 44, 28, .08); }
+/* !important: la regla general de los campos lleva cinco :not() y pesa más */
+.grimoire .man input:not([type=checkbox]):not([type=radio]), .grimoire .man select {
+  background: rgba(255, 252, 240, .75) !important; color: #2b1e12 !important; border-color: rgba(98, 66, 30, .35) !important;
+}
+.grimoire .man input[type=checkbox] { accent-color: #8a2c1c; }
+/* La letra del título no tiene «&»: va en la de los libros */
+.grim-title .amp, .grim-cover .amp { font-family: Georgia, "Times New Roman", serif; font-style: italic; text-transform: none; letter-spacing: 0; }
+.grimoire .man input::placeholder { color: #8f7a58; }
+.grimoire .man input:focus, .grimoire .man select:focus { border-color: #8a2c1c; }
+.grimoire .srd-filters { background: #efe3c4; }
+.grimoire .man-table thead th { background: rgba(138, 44, 28, .1); color: #6e1f12; }
+.grimoire .man-table tbody th { background: rgba(120, 80, 30, .06); color: #2b1e12; }
+.grimoire details.srd { background: rgba(255, 250, 235, .45); border-color: rgba(98, 66, 30, .25); }
+.grimoire details.srd[open] { background: rgba(255, 250, 235, .7); border-color: rgba(138, 44, 28, .45); }
+.grimoire details.srd > summary b { color: #2b1e12; }
+.grimoire .srd-meta dd { color: #2f2316; }
+.grimoire .srd-abil div { background: rgba(255, 250, 235, .6); }
+.grimoire .srd-abil span { color: #2b1e12; }
+.grimoire .srd-flag { background: rgba(138, 44, 28, .12); color: #8a2c1c; }
+.grimoire .srd-act b i { color: #2b1e12; }
+.grimoire .srd-jump button { background: rgba(255, 250, 235, .55); color: #3a2814; border-color: rgba(98, 66, 30, .3); }
+.grimoire .man-conds dt { color: #2b1e12; }
+.grimoire .man-conds dd { color: #3a2a18; }
+.grimoire .man-page::-webkit-scrollbar, .grimoire .man-nav::-webkit-scrollbar { width: 10px; }
+.grimoire .man-page::-webkit-scrollbar-thumb, .grimoire .man-nav::-webkit-scrollbar-thumb { background: rgba(98, 66, 30, .35); border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
+.grimoire .man-page, .grimoire .man-nav { scrollbar-color: rgba(98, 66, 30, .4) transparent; }
+
+/* La esquina para agrandarlo */
+.grim-grip {
+  position: absolute; right: 2px; bottom: 2px; width: 22px; height: 22px; cursor: nwse-resize; touch-action: none; z-index: 2;
+  background: linear-gradient(135deg, transparent 45%, rgba(227, 194, 125, .8) 45% 52%, transparent 52% 64%, rgba(227, 194, 125, .8) 64% 71%, transparent 71%);
+}
+
+/* La tapa que se abre al sacarlo: gira sobre el lomo y desaparece */
+.grim-cover {
+  position: absolute; top: 0; bottom: 0; left: 50%; right: 0; z-index: 3; pointer-events: none;
+  border-radius: 6px 16px 16px 6px; display: grid; place-items: center;
+  background:
+    radial-gradient(90% 70% at 40% 30%, rgba(255, 255, 255, .08), transparent 60%),
+    linear-gradient(160deg, var(--leather), var(--leather-dark));
+  box-shadow: inset 0 0 0 3px rgba(201, 162, 90, .6), inset 0 0 0 9px var(--leather-dark), inset 0 0 0 10px rgba(201, 162, 90, .35);
+  transform-origin: 0 50%; backface-visibility: hidden;
+  animation: grimCover .7s .08s cubic-bezier(.45, .05, .25, 1) both;
+}
+.grim-cover span {
+  font-family: var(--title); color: #e3c27d; font-size: 30px; letter-spacing: .12em; text-align: center; text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .6);
+}
+@keyframes grimIn { from { opacity: 0; transform: translateY(18px) scale(.94); } }
+@keyframes grimOut { to { opacity: 0; transform: translateY(14px) scale(.95); } }
+@keyframes grimNudge { 30% { transform: translateY(-6px) rotate(-.6deg); } 60% { transform: translateY(0) rotate(.4deg); } }
+@keyframes grimCover {
+  from { transform: perspective(1800px) rotateY(0deg); opacity: 1; }
+  80% { opacity: 1; }
+  to { transform: perspective(1800px) rotateY(-178deg); opacity: 0; visibility: hidden; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .grimoire, .grimoire.closing, .grimoire.nudge { animation: none; }
+  .grim-cover { display: none; }
+}
+
+/* En el móvil, el libro ocupa la pantalla y no se arrastra */
+@media (max-width: 700px) {
+  .grimoire { inset: 0; width: auto; height: auto; border-radius: 0; padding: 0 6px 6px; }
+  .grim-hint, .grim-grip { display: none; }
+  .grim-head { cursor: default; padding-top: max(9px, env(safe-area-inset-top)); }
+  .grimoire .man { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .grimoire .man-nav { padding: 10px; background: #ecdfbf; border-bottom: 1px solid rgba(98, 66, 30, .3); }
+  .grimoire .man-page { padding: 14px 16px 24px; }
 }

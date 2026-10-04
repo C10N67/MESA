@@ -317,7 +317,14 @@ jugador, el nombre y lo que hace, resumido. Las subclases se escriben a mano
 ## Manual del DM
 
 El botón **Manual** de la barra del DM abre el manual de la **5.5** (D&D
-2024). Todo lo de la 5.5 sale del **SRD 5.2**, el reglamento libre de Wizards
+2024) como un **grimorio**: un libro de tapas de cuero que se abre sobre la
+partida, con el índice y el buscador en la página de la izquierda y lo que se
+lee en la de la derecha, en pergamino. No bloquea nada: se puede seguir
+moviendo fichas y tirando dados con él abierto. Se **arrastra por el lomo** de
+arriba para dejarlo donde estorbe menos, se **agranda o se achica** por la
+esquina de abajo a la derecha y recuerda su sitio, su tamaño y la página en la
+que se quedó. Se cierra con la × o con Escape; en el móvil ocupa la pantalla
+entera. Todo lo de la 5.5 sale del **SRD 5.2**, el reglamento libre de Wizards
 of the Coast (CC-BY-4.0), traducido al castellano para Mesa:
 
 - **Chuleta**: lo que más se consulta en la mesa, solo con reglas de 2024 (CD,
@@ -986,7 +993,7 @@ enseñaría por dónde ha venido.
 
 ## Qué versión tengo
 
-La versión de Mesa sale al final del menú **···** del DM («Mesa 2.19.0»). Si
+La versión de Mesa sale al final del menú **···** del DM («Mesa 2.20.0»). Si
 el navegador se quedara con una hoja de estilos de otra versión (lo nuevo
 aparece pero no hace nada, como un botón que no esconde nada), Mesa lo nota
 al entrar, vacía sus copias guardadas y la vuelve a pedir. Si aun así algo
