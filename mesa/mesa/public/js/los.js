@@ -42,7 +42,7 @@ function diagonals(map) {
   }
   /* Índice por cubos de BUCKET×BUCKET casillas: un rayo solo mira los tramos
      de los cubos que pisa, no los miles que puede tener un plano trazado con
-     la IA o la varita */
+     la varita o a mano alzada */
   const grid = new Map();
   segs.forEach((sg, i) => {
     sg.i = i;

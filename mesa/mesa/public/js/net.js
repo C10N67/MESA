@@ -224,23 +224,6 @@ export async function uploadAudio(file) {
   return (await transport()).audio(store.session.token, blob);
 }
 
-/* Ayuda de la IA (Claude o Gemini) para los muros del plano. Habla con el
-   servidor del DM, que es quien tiene las claves; en la versión de prueba no
-   hay servidor. */
-async function aiCall(path, body) {
-  if (DEMO) throw new Error("La ayuda de la IA necesita el servidor de Mesa: en la versión de prueba no está");
-  const token = store.session && store.session.token;
-  const res = body
-    ? await fetch("api/ai/" + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, ...body }) })
-    : await fetch("api/ai/" + path + "?token=" + encodeURIComponent(token || ""));
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw Object.assign(new Error(data.error || "No se pudo hablar con el servidor"), { status: res.status });
-  return data;
-}
-export const aiStatus = () => aiCall("status");
-export const aiSetKey = (provider, key) => aiCall("key", { provider, key });
-export const aiWalls = (provider, tiles) => aiCall("walls", { provider, tiles });
-
 /* Al cerrar la pestaña, en la versión de prueba se avisa para que no se quede
    como conectada (por HTTP lo nota el servidor solo). */
 addEventListener("pagehide", () => {

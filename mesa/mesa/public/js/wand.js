@@ -1,7 +1,7 @@
 /* Varita mágica: el DM pincha en el suelo de cada sala y se rellena hasta
    donde llegue ese color, como el bote de pintura de Paint. Con eso se sabe
-   qué casillas son suelo (lo mismo que se le pregunta a la IA), gratis y sin
-   internet, y el trazado de wallfind.js pega los muros a la tinta.
+   qué casillas son suelo, gratis y sin internet, y el trazado de
+   wallfind.js pega los muros a la tinta.
 
    - Se trabaja con bloques de unos pocos píxeles (la media de su color): así
      una línea de cuadrícula de 1 px no corta el relleno y una pared de
@@ -13,6 +13,8 @@
      toca, y lo que se quita a mano tampoco vuelve.
 
    Sin navegador: trabaja sobre los píxeles en un array, como wallfind.js. */
+
+import { edgeKey } from "./schema.js";
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
@@ -126,4 +128,25 @@ export function wandFloor(blocks, clicks, tol, { holes = true } = {}) {
   /* Lo quitado a mano no vuelve por rellenar huecos */
   const gone = cellsFromMask(blocks, removed);
   return fillHoles(floor, grid.cols, grid.rows).map((f, k) => f && !gone[k]);
+}
+
+/* Del suelo (una casilla por posición, true si es suelo) y los separadores
+   (tabiques y puertas entre dos casillas) a muros y puertas de la
+   cuadrícula: hay muro donde se pasa de suelo a lo que no lo es. */
+export function edgesFromFloor(cols, rows, { floor, separators = [] }) {
+  const isFloor = (x, y) => x >= 0 && y >= 0 && x < cols && y < rows && !!floor[y * cols + x];
+  const edges = {};
+  for (let y = 0; y < rows; y++)
+    for (let x = 0; x <= cols; x++) if (isFloor(x - 1, y) !== isFloor(x, y)) edges[edgeKey(x, y, "v")] = "wall";
+  for (let y = 0; y <= rows; y++)
+    for (let x = 0; x < cols; x++) if (isFloor(x, y - 1) !== isFloor(x, y)) edges[edgeKey(x, y, "h")] = "wall";
+  for (const s of separators) {
+    const key = s.side === "right" ? edgeKey(s.x + 1, s.y, "v") : edgeKey(s.x, s.y + 1, "h");
+    const other = s.side === "right" ? [s.x + 1, s.y] : [s.x, s.y + 1];
+    const a = isFloor(s.x, s.y), b = isFloor(other[0], other[1]);
+    if (s.kind === "door" && (a || b)) edges[key] = "door";      // también en el borde de una sala
+    else if (a && b) edges[key] = "wall";                         // tabique entre dos suelos
+  }
+  const mask = Array.from({ length: cols * rows }, (_, i) => isFloor(i % cols, Math.floor(i / cols)));
+  return { edges, floor: mask };
 }

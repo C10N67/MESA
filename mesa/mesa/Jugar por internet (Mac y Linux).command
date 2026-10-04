@@ -25,13 +25,6 @@ if ! command -v cloudflared >/dev/null 2>&1 && [ ! -x ./cloudflared ]; then
   fi
 fi
 
-# La ayuda de la IA para los muros del plano usa el módulo de Claude.
-# Se instala solo la primera vez; sin internet, Mesa arranca igual sin ella.
-if [ ! -f node_modules/@anthropic-ai/sdk/package.json ] && command -v npm >/dev/null 2>&1; then
-  echo "  Instalando la ayuda de la IA (solo la primera vez)..."
-  npm install --omit=dev --no-audit --no-fund --loglevel=error >/dev/null 2>&1 || true
-fi
-
 echo "  Abriendo Mesa para jugar por internet. No cierres esta ventana mientras jugáis."
 ( sleep 1; (open http://localhost:8080 2>/dev/null || xdg-open http://localhost:8080 2>/dev/null) ) &
 node server.js --internet

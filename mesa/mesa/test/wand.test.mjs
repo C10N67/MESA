@@ -6,7 +6,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { makeBlocks, blockAt, wandFloor, fillHoles } from "../public/js/wand.js";
+import { makeBlocks, blockAt, wandFloor, fillHoles, edgesFromFloor } from "../public/js/wand.js";
 
 const C = 30, COLS = 20, ROWS = 14;
 /* Sala de 3..15 × 2..10 */
@@ -71,4 +71,19 @@ test("los huecos grandes o pegados al borde no se rellenan", () => {
   assert.equal(out[3 * cols + 3], true);
   assert.equal(out[3 * cols + 6], false, "más grande que el límite: es otra cosa");
   assert.equal(out[0], false, "lo de fuera no es un hueco");
+});
+
+test("del suelo a muros: contorno, tabique entre suelos y puerta", () => {
+  /* Dos salas de 2×2 pegadas, con un tabique con puerta entre ellas */
+  const cols = 6, rows = 4;
+  const floor = Array.from({ length: cols * rows }, (_, i) => { const x = i % cols, y = Math.floor(i / cols); return x >= 1 && x <= 4 && y >= 1 && y <= 2; });
+  const separators = [{ x: 2, y: 1, side: "right", kind: "wall" }, { x: 2, y: 2, side: "right", kind: "door" }];
+  const { edges, floor: mask } = edgesFromFloor(cols, rows, { floor, separators });
+  assert.equal(edges["3,1,v"], "wall");
+  assert.equal(edges["3,2,v"], "door");
+  assert.equal(edges["1,1,v"], "wall");
+  assert.equal(edges["1,1,h"], "wall");
+  assert.equal(edges["2,2,v"], undefined, "dentro de la sala no hay muro");
+  assert.equal(Object.values(edges).filter(t => t === "wall").length, 4 + 4 + 2 + 2 + 1);
+  assert.equal(mask.filter(Boolean).length, 8);
 });

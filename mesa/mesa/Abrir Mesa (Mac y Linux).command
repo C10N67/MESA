@@ -10,13 +10,6 @@ if ! command -v node >/dev/null 2>&1; then
   exit 1
 fi
 
-# La ayuda de la IA para los muros del plano usa el modulo de Claude.
-# Se instala solo la primera vez; sin internet, Mesa arranca igual sin ella.
-if [ ! -f node_modules/@anthropic-ai/sdk/package.json ] && command -v npm >/dev/null 2>&1; then
-  echo "  Instalando la ayuda de la IA (solo la primera vez)..."
-  npm install --omit=dev --no-audit --no-fund --loglevel=error >/dev/null 2>&1 || true
-fi
-
 echo "  Abriendo Mesa. No cierres esta ventana mientras juegas."
 ( sleep 1; (open http://localhost:8080 2>/dev/null || xdg-open http://localhost:8080 2>/dev/null) ) &
 node server.js

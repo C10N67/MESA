@@ -6,7 +6,7 @@
    party solo recibe lo que su personaje alcanza a ver. */
 
 import { cellKey, edgeKey, clamp, footprint, conditionName } from "./schema.js";
-import { visibleCells, reachableCells, shapeCells, gridDistance, occupied, fits, nextRoomId, blockingSegments, hasSight } from "./los.js";
+import { visibleCells, reachableCells, shapeCells, gridDistance, occupied, fits, nextRoomId, blockingSegments } from "./los.js";
 import { initials, imgURL, pct, hpTone, reducedMotion } from "./util.js";
 import { drawGlyph } from "./icons.js";
 
@@ -1291,120 +1291,115 @@ export class MapView {
   /* La sombra de los muros. La niebla difuminada deja asomar un poco lo que
      hay al otro lado de un muro, y un muro a mano alzada que cruza una casilla
      vista enseña entera la mitad de detrás. Con «wallFade» por debajo de 1
-     se tapa: detrás de cada muro, en la sombra que proyecta desde quienes
-     miran, la vista se apaga en esa profundidad (en casillas; 0, en seco).
+     se tapa: detrás de cada muro la vista se apaga en esa profundidad (en
+     casillas; 0, en seco).
 
-     Para no tapar lo que sí se ve, la sombra de un muro es la intersección
-     de las de cada personaje que alcanza a verlo (si alguien lo ve desde el
-     otro lado, no hay sombra), y no se pinta sobre casillas vistas, salvo en
-     las que el propio muro atraviesa, ni sobre lo explorado o la penumbra.
-     Se pinta en un lienzo aparte y solo se rehace cuando cambia algo de eso. */
+     No depende de dónde estén los personajes ni de hasta dónde vean: cada
+     muro mira qué hay a cada lado (visto, explorado, penumbra o nada) y
+     oscurece el lado que debe verse más oscuro, hasta el tono de ese lado.
+     Así vale igual para un muro junto a la party, para uno al fondo de una
+     sala revelada o para el borde de lo que se recuerda. Si a los dos lados
+     hay lo mismo, el muro no tapa nada.
+
+     Cada tono va en su capa: dentro de ella no se pinta sobre las casillas
+     más claras (lo que sí se ve), salvo las que el propio muro atraviesa, que
+     son las que enseñaban media casilla de más. Se pinta en un lienzo aparte
+     y solo se rehace cuando cambia lo que se ve o los muros. */
   wallShade(map, seen, known, fog) {
     const fade = map.wallFade ?? 1;
     if (!(fade < 1) || !seen) return null;
     const occ = map.occluders || map;
-    const viewers = (this.data.chars || []).filter(c => c.kind === "pc" && c.hp > 0 && c.mx !== null && c.mapId === map.id)
-      .map(c => {
-        const trueSight = Math.min(40, Math.max(c.vision || 0, c.light || 0));
-        const reach = Math.max(trueSight, Math.min(60, map.dark ? trueSight : Math.max(map.radius || 0, trueSight)));
-        return { x: c.mx + 0.5, y: c.my + 0.5, reach };
-      })
-      .filter(v => v.reach > 0);
     const edges = occ.edges || {}, walls = occ.walls || [];
-    const key = [fog.key, fade, map.cols, map.rows, viewers.map(v => v.x + ":" + v.y + ":" + v.reach).join(";"),
-      Object.keys(edges).length, Object.values(edges).filter(v => v === "door").length,
-      walls.length, walls.reduce((n, w) => n + w.points.length, 0)].join("|");
+    const key = [fog.key, fade, map.cols, map.rows, Object.keys(edges).length,
+      Object.values(edges).filter(v => v === "door").length, walls.length, walls.reduce((n, w) => n + w.points.length, 0)].join("|");
     if (this._shade && this._shade.key === key) return this._shade.canvas;
-    if (!viewers.length) { this._shade = { key, canvas: null }; return null; }
+
+    /* El tono de cada casilla, el mismo que le da la niebla (fogLayer) */
+    const fringe = new Set(map.fringe || []);
+    const toneOf = k => seen.has(k) ? 0 : known.has(k) ? 0.24 : fringe.has(k) ? 0.6 : 1;
+    const cellAt = (x, y) => cellKey(Math.floor(x), Math.floor(y));
 
     /* Resolución: unas cuantas decenas de píxeles por casilla, sin pasar de
        unos pocos millones de píxeles en total */
     const R = Math.max(6, Math.min(32, Math.floor(Math.sqrt(3.5e6 / (map.cols * map.rows)))));
-    const canvas = (this._shade && this._shade.canvas) || document.createElement("canvas");
-    canvas.width = map.cols * R; canvas.height = map.rows * R;
-    const sctx = canvas.getContext("2d");
-    sctx.setTransform(1, 0, 0, 1, 0, 0);
-    sctx.clearRect(0, 0, canvas.width, canvas.height);
-    sctx.setTransform(R, 0, 0, R, 0, 0);
+    const fresh = () => {
+      const c = document.createElement("canvas");
+      c.width = map.cols * R; c.height = map.rows * R;
+      const x = c.getContext("2d");
+      x.setTransform(R, 0, 0, R, 0, 0);
+      return { canvas: c, ctx: x, crossed: new Set() };
+    };
+    const layers = new Map();          // tono -> { canvas, ctx, crossed }
+    const DEPTH = 1.3;                 // hasta dónde llega la sombra detrás del muro, en casillas
+    const EXT = 0.5;                   // y cuánto se alarga por los extremos, para tapar las esquinas
 
-    const fringe = new Set(map.fringe || []);
-    const nearSeen = (x, y) => {
-      const cx = Math.floor(x), cy = Math.floor(y);
-      for (let oy = -1; oy <= 1; oy++) for (let ox = -1; ox <= 1; ox++) if (seen.has(cellKey(cx + ox, cy + oy))) return true;
-      return false;
-    };
-    const segDistTo = (v, s) => segDist(v.x, v.y, [s.x1, s.y1], [s.x2, s.y2]);
-    const crossed = new Set();      // casillas vistas que atraviesa un muro
-    const LONG = 2.5;               // hasta dónde se alarga la sombra, en casillas
-    const occMap = { edges, walls };
-    /* Cuenta quien alcanza el muro y lo tiene a la vista: el lado del muro
-       que da a él no queda tapado por otro muro */
-    const facing = (v, s) => {
-      if (segDistTo(v, s) > v.reach + 1.5) return false;
-      const mx = (s.x1 + s.x2) / 2, my = (s.y1 + s.y2) / 2, len = Math.hypot(s.x2 - s.x1, s.y2 - s.y1);
-      let nx = -(s.y2 - s.y1) / len, ny = (s.x2 - s.x1) / len;
-      if ((v.x - mx) * nx + (v.y - my) * ny < 0) { nx = -nx; ny = -ny; }
-      /* La casilla de delante del muro; si un muro a mano alzada deja su
-         centro al otro lado, la siguiente */
-      return [0.35, 0.85].some(k => hasSight(occMap, Math.floor(v.x), Math.floor(v.y), Math.floor(mx + nx * k), Math.floor(my + ny * k)));
-    };
-    for (const s of blockingSegments(occMap)) {
-      if (!nearSeen(s.x1, s.y1) && !nearSeen(s.x2, s.y2) && !nearSeen((s.x1 + s.x2) / 2, (s.y1 + s.y2) / 2)) continue;
-      const who = viewers.filter(v => facing(v, s));
-      if (!who.length) continue;
-      if (s.cross) {
-        const len = Math.hypot(s.x2 - s.x1, s.y2 - s.y1), n = Math.max(1, Math.ceil(len * 8));
-        for (let i = 0; i <= n; i++) {
-          const t = i / n;
-          crossed.add(cellKey(Math.floor(s.x1 + (s.x2 - s.x1) * t), Math.floor(s.y1 + (s.y2 - s.y1) * t)));
+    for (const sg of blockingSegments({ edges, walls })) {
+      const dx = sg.x2 - sg.x1, dy = sg.y2 - sg.y1, len = Math.hypot(dx, dy);
+      if (len < 1e-3) continue;
+      const ux = dx / len, uy = dy / len, nx = -uy, ny = ux;
+      const mx = (sg.x1 + sg.x2) / 2, my = (sg.y1 + sg.y2) / 2;
+      const own = cellAt(mx, my);
+      /* La casilla de cada lado: la de al lado, sin contar la que atraviesa */
+      const sideCell = sign => {
+        if (!sg.cross) return cellAt(mx + sign * nx * 0.5, my + sign * ny * 0.5);
+        for (const k of [0.5, 1, 1.5]) {
+          const c = cellAt(mx + sign * nx * k, my + sign * ny * k);
+          if (c !== own) return c;
         }
+        return own;
+      };
+      const a = toneOf(sideCell(1)), b = toneOf(sideCell(-1));
+      if (a === b) continue;
+      const sign = a > b ? 1 : -1, tone = Math.max(a, b);
+      const hx = nx * sign, hy = ny * sign;
+      let layer = layers.get(tone);
+      if (!layer) layers.set(tone, layer = fresh());
+      if (sg.cross) {
+        const n = Math.max(1, Math.ceil(len * 8));
+        for (let i = 0; i <= n; i++) layer.crossed.add(cellAt(sg.x1 + dx * i / n, sg.y1 + dy * i / n));
       }
-      sctx.save();
-      let empty = false;
-      for (const v of who) {
-        const ax = s.x1 - v.x, ay = s.y1 - v.y, bx = s.x2 - v.x, by = s.y2 - v.y;
-        const la = Math.hypot(ax, ay), lb = Math.hypot(bx, by);
-        if (la < 1e-3 || lb < 1e-3 || Math.abs(ax * by - ay * bx) < 1e-6) { empty = true; break; }   // de canto o encima: no proyecta
-        sctx.beginPath();
-        sctx.moveTo(s.x1, s.y1);
-        sctx.lineTo(s.x2, s.y2);
-        sctx.lineTo(s.x2 + bx / lb * LONG, s.y2 + by / lb * LONG);
-        sctx.lineTo(s.x1 + ax / la * LONG, s.y1 + ay / la * LONG);
-        sctx.closePath();
-        sctx.clip();
-      }
-      if (!empty) {
-        /* Degradado perpendicular al muro, del lado contrario a quien mira */
-        const dx = s.x2 - s.x1, dy = s.y2 - s.y1, len = Math.hypot(dx, dy);
-        let nx = -dy / len, ny = dx / len;
-        const v = who[0];
-        if ((v.x - s.x1) * nx + (v.y - s.y1) * ny > 0) { nx = -nx; ny = -ny; }
-        if (fade > 0.01) {
-          const mx = (s.x1 + s.x2) / 2, my = (s.y1 + s.y2) / 2;
-          const grad = sctx.createLinearGradient(mx, my, mx + nx * fade, my + ny * fade);
-          grad.addColorStop(0, "rgba(5,6,10,0)");
-          grad.addColorStop(1, "rgba(5,6,10,1)");
-          sctx.fillStyle = grad;
-        } else sctx.fillStyle = "rgb(5,6,10)";
-        const pad = LONG + 1;
-        sctx.fillRect(Math.min(s.x1, s.x2) - pad, Math.min(s.y1, s.y2) - pad, Math.abs(dx) + pad * 2, Math.abs(dy) + pad * 2);
-      }
-      sctx.restore();
+      const c = layer.ctx;
+      const ax = sg.x1 - ux * EXT, ay = sg.y1 - uy * EXT, bx = sg.x2 + ux * EXT, by = sg.y2 + uy * EXT;
+      c.save();
+      c.beginPath();
+      c.moveTo(ax, ay); c.lineTo(bx, by);
+      c.lineTo(bx + hx * DEPTH, by + hy * DEPTH); c.lineTo(ax + hx * DEPTH, ay + hy * DEPTH);
+      c.closePath();
+      c.clip();
+      if (fade > 0.01) {
+        const grad = c.createLinearGradient(mx, my, mx + hx * fade, my + hy * fade);
+        grad.addColorStop(0, "rgba(5,6,10,0)");
+        grad.addColorStop(1, "rgba(5,6,10,1)");
+        c.fillStyle = grad;
+      } else c.fillStyle = "rgb(5,6,10)";
+      c.fillRect(Math.min(ax, bx) - DEPTH - 1, Math.min(ay, by) - DEPTH - 1, Math.abs(bx - ax) + DEPTH * 2 + 2, Math.abs(by - ay) + DEPTH * 2 + 2);
+      c.restore();
     }
 
-    /* Lo que se ve de verdad, lo explorado y la penumbra se quedan como están */
-    sctx.globalCompositeOperation = "destination-out";
-    sctx.fillStyle = "#000";
-    const keep = k => {
-      const [x, y] = k.split(",").map(Number);
-      sctx.fillRect(x, y, 1, 1);
-    };
-    for (const k of seen) if (!crossed.has(k)) keep(k);
-    for (const k of known) if (!seen.has(k)) keep(k);
-    for (const k of fringe) keep(k);
-    sctx.globalCompositeOperation = "source-over";
-    this._shade = { key, canvas };
-    return canvas;
+    const canvas = (this._shade && this._shade.canvas) || document.createElement("canvas");
+    canvas.width = map.cols * R; canvas.height = map.rows * R;
+    const out = canvas.getContext("2d");
+    out.setTransform(1, 0, 0, 1, 0, 0);
+    out.clearRect(0, 0, canvas.width, canvas.height);
+    if (layers.size) {
+      /* Lo más claro que el tono de la capa se queda como está */
+      const lighter = [...seen, ...known, ...fringe];
+      for (const [tone, layer] of layers) {
+        const c = layer.ctx;
+        c.globalCompositeOperation = "destination-out";
+        c.fillStyle = "#000";
+        for (const k of lighter) {
+          if (layer.crossed.has(k) || toneOf(k) >= tone) continue;
+          const [x, y] = k.split(",").map(Number);
+          c.fillRect(x, y, 1, 1);
+        }
+        out.globalAlpha = tone;
+        out.drawImage(layer.canvas, 0, 0);
+      }
+      out.globalAlpha = 1;
+    }
+    this._shade = { key, canvas: layers.size ? canvas : null };
+    return this._shade.canvas;
   }
 
   dmLayers(ctx, g, map, X, Y) {

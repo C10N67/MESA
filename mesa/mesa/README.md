@@ -6,9 +6,7 @@ personaje alcanza a ver. En la tele puedes poner una tercera pantalla con el
 mapa y los turnos.
 
 No necesita instalar nada más que Node.js, no tiene dependencias obligatorias y
-funciona sin internet: basta con que todos estéis en el mismo wifi. (La ayuda
-de la IA para trazar los muros de un plano es opcional y esa sí necesita
-internet; la varita mágica, no.)
+funciona sin internet: basta con que todos estéis en el mismo wifi.
 
 ## Probarla sin instalar nada
 
@@ -462,13 +460,13 @@ siempre por la cuadrícula. Si lo prefieres como antes, **Por los bordes de la
 cuadrícula** pone muros rectos y diagonales de casilla. En los dos casos se
 revisa sobre el plano antes de ponerlo.
 
-### Ayudas para planos con mucho detalle
+### Varita mágica para planos con mucho detalle
 
 En planos con mucho detalle (mesas, alfombras con borde oscuro, estanterías,
 escombros, sombras) la detección automática se confunde: ve líneas oscuras y
-cree que son paredes. En la misma ventana de **Muros y puertas del plano** hay
-tres ayudas para decirle qué es suelo; con eso, Mesa ajusta los muros a la
-tinta del dibujo igual que siempre.
+cree que son paredes. En la misma ventana de **Muros y puertas del plano** está
+la **varita mágica** para decirle qué es suelo; con eso, Mesa ajusta los muros
+a la tinta del dibujo igual que siempre.
 
 **Varita mágica (gratis, sin internet).** Pincha sobre el plano en el suelo de
 cada sala y de cada pasillo: se rellena hasta donde llegue ese color, como el
@@ -479,36 +477,6 @@ se queda fuera, como una estantería pegada a la pared, pincha también encima.
 pinchazo y la **tolerancia** dice cuánto se puede parecer un color al pinchado
 para rellenarse. La varita no busca puertas: salen las que encuentre la
 detección automática, y las demás se ponen con **Puerta**.
-
-**Gemini (gratis, con límites).** La IA de Google mira el plano y dice qué
-casillas son suelo, sabiendo que un mueble no es una pared, y dónde hay
-tabiques y puertas. Su plan gratuito no pide tarjeta: la clave se saca en
-<https://aistudio.google.com/apikey> y se pega una vez en la ventana. Tiene un
-límite de consultas por minuto y por día, así que Mesa le manda las partes de
-una en una y, si Google pide calma, espera y lo vuelve a intentar. **Ojo:** en
-el plan gratuito Google puede usar lo que le mandas (las partes del plano,
-nada más) para mejorar sus productos. Se usa el último modelo Flash
-(`gemini-flash-latest`; se puede cambiar con la variable `GEMINI_MODEL`).
-
-**Claude (de pago).** Lo mismo con la IA de Anthropic: hace falta una clave de
-la API (<https://console.anthropic.com/settings/keys>) con saldo, y cada parte
-cuesta unos céntimos. Necesita el módulo de Claude, que «Abrir Mesa» y «Jugar
-por internet» instalan solos la primera vez (o `npm install` en la carpeta).
-
-Lo común a las dos IA:
-
-- **Cómo lo ven.** El plano se manda por partes de hasta 20 × 20 casillas, con
-  la cuadrícula y las coordenadas dibujadas encima, para que digan exactamente
-  qué casilla es cuál. Un plano de 30 × 20 son dos partes.
-- **Las claves se quedan en el ordenador del DM** (`data/gemini.json`,
-  `data/claude.json`, o las variables `GEMINI_API_KEY` y `ANTHROPIC_API_KEY`):
-  no viajan a los navegadores ni a los móviles, y solo el DM puede usar estas
-  ayudas. **Olvidar la clave** la borra.
-- **Lo que sale de tu ordenador** son las partes del plano: ni la partida ni
-  los personajes. Hace falta internet, y en la versión de prueba de GitHub
-  Pages no están, porque no hay servidor.
-- Si una parte falla, ahí se usa la detección automática y se avisa.
-  **Volver a la detección automática** deshace la ayuda sin preguntar otra vez.
 
 - **Fichas** arrastra por las casillas. Al arrastrar se pinta **hasta dónde
   llega** con la velocidad que le quede, rodeando muros, y un contador dice
@@ -688,12 +656,15 @@ muro, mapa a mapa:
   profundidad (hasta una casilla) en la que lo de detrás se funde a negro.
 - **Del todo a la izquierda**, se corta en seco justo en el muro.
 
-La sombra la proyecta cada muro (recto, diagonal o a mano alzada) desde los
-personajes que lo tienen delante. Si alguien lo ve desde el otro lado, no hay
-sombra, y nunca tapa lo que la party ve de verdad, lo que recuerda haber
-explorado ni la penumbra. Por una puerta abierta se ve el cono que deja el
-hueco. Funciona igual aunque no enseñes los muros a la party: para recortar la
-vista le llegan solo los que tiene cerca, sin dibujarlos.
+Vale para todos los muros a la vez (rectos, diagonales o a mano alzada), estén
+cerca o lejos de la party y vea lo que vea cada personaje: cada muro mira qué
+hay a cada lado (lo que se ve, lo explorado, la penumbra o nada) y oscurece el
+lado que debe verse más oscuro. Así se corta igual la pared del fondo de una
+sala revelada, aunque nadie llegue a verla, que el borde de lo que se
+recuerda. Si a los dos lados hay lo mismo, el muro no tapa nada, y nunca se
+oscurece lo que la party ve de verdad. Funciona igual aunque no enseñes los
+muros a la party: para recortar la vista le llegan solo los que tiene cerca,
+sin dibujarlos.
 
 ### Sonido en el mapa
 
@@ -978,8 +949,6 @@ En la pantalla de la party, doble clic entra y sale de pantalla completa.
 
 ```
 server.js              servidor: red, disco y reparto a cada aparato
-claude.js              ayuda de Claude para los muros del plano (la clave se queda aquí)
-gemini.js              ayuda de Gemini para los muros del plano (la clave se queda aquí)
 public/
   index.html           el documento; la interfaz la monta el JavaScript
   manifest.webmanifest lo que hace falta para instalarla como aplicación
@@ -1019,11 +988,10 @@ public/
     gridfind.js        encontrar la cuadrícula dibujada en el plano
     gridfit.js         ventanas de encajar la cuadrícula y de muros y puertas del plano
     wallfind.js        proponer muros y puertas del plano y trazarlos sobre la tinta
-    aiwalls.js         ayuda de la IA: trocear el plano, la pregunta y juntar las respuestas
     wand.js            varita mágica: pinchar en el suelo y rellenar por color
   retratos/            retratos de serie de cada especie, de hombre y de mujer
 tools/retratos.mjs     genera esos retratos
-data/                  la partida, las imágenes y las claves de la IA si las guardas (se crea al arrancar)
+data/                  la partida y las imágenes (se crea al arrancar)
 ```
 
 ## Seguridad, con nombre y apellidos
