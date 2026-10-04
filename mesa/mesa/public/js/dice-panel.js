@@ -61,7 +61,7 @@ export function dicePanel({ isDM = false, stowable = isDM } = {}) {
         <h2>${icon("dice", 18)}<span>Dados y mesa</span></h2>
         <span class="spacer"></span>
         ${isDM ? `<button class="icon-btn" data-clear title="Vaciar el registro">${icon("trash")}</button>` : ""}
-        ${stowable ? `<button class="btn sm dock-stow" data-stow title="Guardar el panel en el marcapáginas del d20">${withIcon("bookmark", "Guardar", 15)}</button>` : ""}
+        ${stowable ? `<button class="btn sm dock-stow" data-stow title="Guardar el panel en el marcapáginas del d20">${BOOKMARK}<span class="lbl">Guardar</span></button>` : ""}
         <button class="icon-btn" data-toggle title="Abrir o cerrar">${icon("up")}</button>
       </header>
       <div class="dice-pad">
@@ -152,13 +152,73 @@ export function dicePanel({ isDM = false, stowable = isDM } = {}) {
   return node;
 }
 
+/* Los estilos de guardar el panel viajan con este código y no en mesa.css: si
+   el navegador se quedara con una hoja de estilos vieja (una copia a medio
+   actualizar, una caché terca), el botón seguiría funcionando igual. Por lo
+   mismo, los dos iconos van aquí por si icons.js no los tuviera aún. */
+const STOW_CSS = `
+@media (min-width: 1081px) { .dock.can-stow [data-toggle] { display: none; } }
+.dock-stow { gap: 5px; padding: 5px 10px; }
+.dock-stow .ico { color: var(--gold-soft); }
+
+.layout.dock-stowed { grid-template-columns: minmax(0, 1fr); }
+.dock.stowed { display: contents; }
+.dock.stowed > :not(.dock-mark) { display: none !important; }
+.dock-mark { display: none; }
+.dock.stowed .dock-mark {
+  display: block; position: fixed; z-index: 34; top: var(--bm-top, 57px); right: 22px;
+  padding: 0; border: 0; background: none; cursor: pointer;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .5));
+  animation: markDrop .35s cubic-bezier(.22, 1.3, .36, 1) both;
+}
+.dock-mark-ribbon {
+  display: grid; justify-items: center; align-content: start; gap: 4px;
+  width: 46px; height: 78px; padding-top: 12px; color: #f2d48c;
+  background:
+    linear-gradient(90deg, transparent 4px, rgba(242, 212, 140, .55) 4px 5.5px, transparent 5.5px calc(100% - 5.5px), rgba(242, 212, 140, .55) calc(100% - 5.5px) calc(100% - 4px), transparent calc(100% - 4px)),
+    linear-gradient(180deg, #5c1519, #8a2329 40%, #741c22);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+  transition: height .18s ease, padding-top .18s ease;
+}
+.dock-mark:hover .dock-mark-ribbon, .dock-mark:focus-visible .dock-mark-ribbon { height: 88px; padding-top: 20px; }
+.dock-mark:focus-visible { outline: none; }
+.dock-mark:focus-visible .dock-mark-ribbon { color: #fff4d6; }
+.dock-mark .ico { filter: drop-shadow(0 1px 0 rgba(0, 0, 0, .5)); }
+.dock-mark-count {
+  min-width: 20px; padding: 0 5px; border-radius: 99px; text-align: center;
+  font: 700 11px/18px var(--sans); color: #2a1a08; background: #f2d48c;
+}
+.dock-mark-count[hidden] { display: none; }
+@keyframes markDrop { from { transform: translateY(-100%); } }
+@media (min-width: 1081px) { .layout.dock-stowed > main { padding-right: 84px; } }
+@media (max-width: 1080px) {
+  .dock.stowed .dock-mark { top: auto; bottom: 0; right: 16px; animation-name: markRise; }
+  .dock-mark-ribbon { align-content: end; padding: 0 0 14px; clip-path: polygon(0 20%, 50% 0, 100% 20%, 100% 100%, 0 100%); }
+  .dock-mark:hover .dock-mark-ribbon, .dock-mark:focus-visible .dock-mark-ribbon { padding: 0 0 20px; }
+  .dock-mark-count { order: -1; }
+}
+@keyframes markRise { from { transform: translateY(100%); } }
+@media (prefers-reduced-motion: reduce) { .dock.stowed .dock-mark { animation: none; } .dock-mark-ribbon { transition: none; } }
+`;
+const BOOKMARK = '<svg class="ico" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3.5h11v17L12 16.6l-5.5 3.9Z"/></svg>';
+const D20 = '<svg class="ico" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.4 20.6 7.2v9.6L12 21.6 3.4 16.8V7.2Z"/><path d="M12 7.6 16.8 15.6H7.2Z"/><path d="M12 2.4v5.2M20.6 7.2l-3.8 8.4M3.4 7.2l3.8 8.4M3.4 16.8l3.8-1.2M20.6 16.8l-3.8-1.2M7.2 15.6 12 21.6l4.8-6"/></svg>';
+function stowStyles() {
+  if (document.getElementById("mesa-dock-stow")) return;
+  const style = document.createElement("style");
+  style.id = "mesa-dock-stow";
+  style.textContent = STOW_CSS;
+  document.head.appendChild(style);
+}
+
 /* Guardar el panel: desaparece, el resto de la vista gana su ancho y queda un
    marcapáginas con un d20 colgando del borde de arriba. Pulsarlo lo vuelve a
    abrir. Mientras está guardado, el marcapáginas cuenta lo que ha pasado en
    la mesa (tiradas y mensajes de los demás). Se recuerda en este navegador. */
 function stowing(node) {
+  stowStyles();
+  node.classList.add("can-stow");
   const mark = el(`<button type="button" class="dock-mark" title="Abrir dados y mesa" aria-label="Abrir dados y mesa">
-    <span class="dock-mark-ribbon">${icon("d20", 26)}<span class="dock-mark-count" hidden></span></span></button>`);
+    <span class="dock-mark-ribbon">${D20}<span class="dock-mark-count" hidden></span></span></button>`);
   node.appendChild(mark);
   /* Hasta cuándo se ha visto el registro (la hora de su última entrada; null:
      aún no ha llegado la partida, y se toma en cuanto llegue). Por hora y no

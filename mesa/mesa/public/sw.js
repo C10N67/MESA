@@ -14,7 +14,7 @@
    Todas las rutas son relativas al sitio donde vive Mesa: en GitHub Pages es
    una subcarpeta (/DnD/), no la raíz. */
 
-const VERSION = "mesa-2.16.0";
+const VERSION = "mesa-2.17.0";
 const SHELL_CACHE = VERSION + "-app";
 const IMG_CACHE = "mesa-img";
 const IMG_LIMIT = 80;
@@ -44,7 +44,8 @@ const SHELL = [
 self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(SHELL_CACHE)
-      .then(cache => cache.addAll(SHELL))
+      /* «reload»: directo del servidor, sin pasar por la caché del navegador */
+      .then(cache => cache.addAll(SHELL.map(u => new Request(u, { cache: "reload" }))))
       .catch(() => {})            // sin red al instalar: ya se llenará al usarla
       .then(() => self.skipWaiting())
   );
@@ -79,7 +80,10 @@ self.addEventListener("fetch", event => {
 async function networkFirst(req) {
   const cache = await caches.open(SHELL_CACHE);
   try {
-    const res = await fetch(req);
+    /* Siempre se pregunta al servidor si ha cambiado (con ETag cuesta un 304):
+       así no se mezcla un archivo nuevo con otros viejos que el navegador
+       tuviera guardados. Las navegaciones no admiten cambiar el modo. */
+    const res = await fetch(req.mode === "navigate" ? req : new Request(req, { cache: "no-cache" }));
     if (res.ok) cache.put(stripQuery(req), res.clone());
     return res;
   } catch {
