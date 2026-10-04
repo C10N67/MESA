@@ -4,6 +4,7 @@ import { modal, esc, toast, shrinkImage, imgURL, initials } from "./util.js";
 import { ABILITIES, SKILLS, CONDITIONS, SHAPE_NAMES, normalizeChar, normalizeAttack, modOf, uid } from "./schema.js";
 import { attacksOf, attackLabel } from "./attacks.js";
 import { op, patchChar, uploadImage } from "./net.js";
+import { openBuilder } from "./builder.js";
 
 const field = (label, name, value, type = "text", extra = "") =>
   `<label class="field"><span>${label}</span><input name="${name}" type="${type}" value="${esc(value ?? "")}" ${extra}></label>`;
@@ -15,6 +16,9 @@ export function openCharEditor(source, { isDM = true, title } = {}) {
 
   const body = document.createElement("div");
   body.innerHTML = `
+    ${!isNew && c.kind === "pc" && c.build ? `<div class="row" style="margin-bottom:12px;align-items:center">
+      <span class="prose small" style="flex:1"><span>Hecho con el creador de personajes (reglas de ${esc(c.rules || c.build.rules || "")}).</span></span>
+      <button type="button" class="btn sm primary" id="levelUp">Subir de nivel en el creador</button></div>` : ""}
     <fieldset>
       <legend>Quién es</legend>
       <div class="row" style="align-items:flex-start">
@@ -36,6 +40,8 @@ export function openCharEditor(source, { isDM = true, title } = {}) {
       <div class="cols2">
         ${field("Trasfondo", "background", c.background)}
         ${field("Alineamiento", "alignment", c.alignment)}
+        ${field("Subclase", "subclass", c.subclass)}
+        ${field("Idiomas", "languages", c.languages)}
       </div>
       <label class="field"><span>Color de la ficha</span>
         <input name="color" type="color" value="${esc(c.color)}" style="height:38px;padding:2px"></label>
@@ -108,6 +114,7 @@ export function openCharEditor(source, { isDM = true, title } = {}) {
       <label class="field"><span>Ataques y armas</span><textarea name="weapons">${esc(c.weapons)}</textarea></label>
       <label class="field"><span>Conjuros</span><textarea name="spells">${esc(c.spells)}</textarea></label>
       <label class="field"><span>Equipo</span><textarea name="inventory">${esc(c.inventory)}</textarea></label>
+      <label class="field"><span>Rasgos y aptitudes</span><textarea name="features" rows="5">${esc(c.features)}</textarea></label>
       <label class="field"><span>Anotaciones</span><textarea name="notes">${esc(c.notes)}</textarea></label>
     </fieldset>`;
 
@@ -155,6 +162,10 @@ export function openCharEditor(source, { isDM = true, title } = {}) {
   (c.attacks.length ? c.attacks : attacksOf(c).slice(0, 6)).forEach(addAtk);
   body.querySelector("#addAtk").addEventListener("click", () => addAtk());
 
+  /* Subir de nivel: se cierra esta ventana y se abre el creador donde se dejó */
+  const up = body.querySelector("#levelUp");
+  if (up) up.addEventListener("click", () => { win.close(); openBuilder({ char: c, isDM }); });
+
   /* Retrato */
   const file = body.querySelector("#avFile");
   body.querySelector("#avPick").addEventListener("click", () => file.click());
@@ -170,7 +181,7 @@ export function openCharEditor(source, { isDM = true, title } = {}) {
     } catch (err) { toast(err.message, "bad"); }
   });
 
-  modal({
+  const win = modal({
     title: title || (isNew ? "Nuevo personaje" : "Editar " + c.name),
     body,
     wide: true,
@@ -186,6 +197,7 @@ export function openCharEditor(source, { isDM = true, title } = {}) {
             name: val("name").trim() || "Sin nombre",
             className: val("className"), race: val("race"), player: val("player"),
             background: val("background"), alignment: val("alignment"), color: val("color"),
+            subclass: val("subclass"), languages: val("languages"), features: val("features"),
             level: +val("level") || 1, hp: +val("hp"), maxHp: Math.max(1, +val("maxHp")), tempHp: +val("tempHp"),
             ac: +val("ac"), initiative: +val("initiative"), speed: +val("speed"),
             proficiency: +val("proficiency") || 2, hitDice: val("hitDice"),

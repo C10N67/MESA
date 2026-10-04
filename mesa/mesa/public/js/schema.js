@@ -75,7 +75,12 @@ const CHAR_DEFAULTS = {
   spellbook: [],        // conjuros que conoce, ya listos para lanzar
   castAbility: "",      // característica de lanzamiento (int, wis, cha)
   spellDC: 0,           // CD fija (0 = 8 + competencia + característica)
-  spellAtk: 0           // ataque fijo (0 = competencia + característica)
+  spellAtk: 0,          // ataque fijo (0 = competencia + característica)
+  /* Del creador de personajes */
+  rules: "",            // "2014" o "2024": con qué reglas se hizo
+  subclass: "",
+  features: "",         // rasgos de clase, especie y trasfondo, una línea cada uno
+  build: null           // lo que se eligió en el creador, para subir de nivel
 };
 
 /* Cuántas casillas ocupa cada tamaño, como en el manual: lo diminuto y lo
@@ -138,6 +143,10 @@ export function normalizeChar(raw = {}) {
   c.vision = clamp(Math.trunc(num(c.vision)), 0, 40);
   c.light = clamp(Math.trunc(num(c.light)), 0, 40);
   c.reach = clamp(Math.trunc(num(c.reach, 1)), 1, 6);
+  c.rules = c.rules === "2014" || c.rules === "2024" ? c.rules : "";
+  c.subclass = String(c.subclass || "").slice(0, 60);
+  c.features = String(c.features || "").slice(0, 8000);
+  c.build = c.build && typeof c.build === "object" && !Array.isArray(c.build) && JSON.stringify(c.build).length < 12000 ? c.build : null;
   c.attacks = Array.isArray(c.attacks) ? c.attacks.map(normalizeAttack).filter(a => a.name) : [];
   c.spellbook = Array.isArray(c.spellbook) ? c.spellbook.map(normalizeSpell).slice(0, 80) : [];
   c.castAbility = ["int", "wis", "cha"].includes(c.castAbility) ? c.castAbility : "";

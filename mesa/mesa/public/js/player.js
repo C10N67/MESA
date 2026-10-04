@@ -9,6 +9,7 @@ import { store, onState, onStatus, onPresence, op, patchChar, leave } from "./ne
 import { dicePanel, renderLog, throwDice, tellTable } from "./dice-panel.js";
 import { openAttacks, areaAttacks, slotsLeft, shapeLabel } from "./attacks.js";
 import { openCharEditor, openConditions } from "./char-editor.js";
+import { openBuilder } from "./builder.js";
 import { MapView } from "./map.js";
 import { openSpellbook } from "./spellbook.js";
 import { langPicker } from "./i18n.js";
@@ -220,6 +221,7 @@ function renderSheet(pane, c) {
         <h2>${esc(c.name)}</h2>
         <small>${esc([c.className, c.race, "nivel " + c.level].filter(Boolean).join(" · "))}</small>
       </div>
+      ${c.build ? `<button class="btn sm" data-act="levelUp" title="Subir de nivel con el creador">${withIcon("up", "Nivel", 16)}</button>` : ""}
       <button class="btn sm" data-act="edit" title="Editar ficha">${withIcon("pencil", "Editar", 16)}</button>
     </div>
 
@@ -284,8 +286,8 @@ function renderSheet(pane, c) {
 
     <div class="detail" style="border-radius:12px;border:1px solid var(--edge)">
       ${block("Ataques", c.weapons) || ""}${block("Conjuros", c.spells) || ""}
-      ${block("Equipo", c.inventory) || ""}${block("Notas", c.notes) || ""}
-      ${!c.weapons && !c.spells && !c.inventory && !c.notes ? '<p class="prose">Tu ficha aún no tiene ataques ni equipo apuntados. Pulsa «Editar» para rellenarla.</p>' : ""}
+      ${block("Equipo", c.inventory) || ""}${block("Rasgos y aptitudes", c.features) || ""}${block("Notas", c.notes) || ""}
+      ${!c.weapons && !c.spells && !c.inventory && !c.notes && !c.features ? '<p class="prose">Tu ficha aún no tiene ataques ni equipo apuntados. Pulsa «Editar» para rellenarla.</p>' : ""}
     </div>`;
 }
 
@@ -480,7 +482,7 @@ function bindActions(root) {
     if (r && dc) tellTable(`${c ? c.name : store.session.name}: ${r.total >= dc ? "supera" : "falla"} ${b.dataset.label} (CD ${dc})`);
     op("request.done", { id: b.dataset.ask, charId: c ? c.id : "" });
   });
-  on(root, "click", "[data-new]", () => openCharEditor(null, { isDM: false }));
+  on(root, "click", "[data-new]", () => openBuilder({ isDM: false, onManual: () => openCharEditor(null, { isDM: false }) }));
 
   on(root, "click", "[data-act]", (e, b) => {
     const c = me();
@@ -490,6 +492,7 @@ function bindActions(root) {
 
     switch (b.dataset.act) {
       case "edit": return openCharEditor(c, { isDM: false });
+      case "levelUp": return openBuilder({ char: c, isDM: false });
       case "hp": {
         const n = +b.dataset.n;
         const hp = Math.max(0, Math.min(c.maxHp, c.hp + n));

@@ -266,6 +266,63 @@ El botón **↶** (o `Ctrl/Cmd + Z`) deshace el último cambio. Se guardan los
 veinte últimos, así que un daño mal apuntado o un borrado por error se arreglan
 en un segundo.
 
+### Crear un personaje paso a paso
+
+**Añadir personaje** (el DM) y **Crear mi personaje** (cada jugador en su
+móvil) abren un creador por pasos, al estilo de D&D Beyond: una barra arriba
+con los pasos y tarjetas para elegir, con lo que da cada opción a la vista.
+
+1. **Reglas**: las de **2024** (la revisión de la 5.ª) o las de **2014**.
+   Cambian sobre todo de dónde salen las mejoras de característica (del
+   trasfondo en 2024, de la raza en 2014) y algunos rasgos de clase.
+2. **Clase** y **nivel** (del 1 al 20): los doce de siempre, con su dado de
+   golpe, salvaciones, armaduras, armas, las habilidades a elegir, la
+   subclase cuando toca y sus rasgos hasta ese nivel. La vida, media o
+   tirando los dados.
+3. **Trasfondo**: habilidades, rasgo (2014) o dote de origen y mejoras +2/+1
+   o +1/+1/+1 (2024).
+4. **Especie** (o raza en 2014), con sus rasgos y lo que haya que elegir.
+5. **Características**: serie estándar, compra por puntos (27) o tiradas de
+   4d6 / a mano, con las mejoras por nivel. Nada pasa de 20.
+6. **Equipo**: armadura, escudo y armas, con la CA y los ataques calculados
+   al momento (y la maestría de cada arma, en 2024).
+7. **Conjuros**, si la clase los tiene: espacios, CD y ataque, y los conjuros
+   de la biblioteca de Mesa de su lista.
+8. **Detalles**: nombre, retrato, color, alineamiento, idiomas, personalidad.
+9. **Resumen**, y **Crear personaje**.
+
+Abajo se ve siempre cómo va la ficha (PV y CA). Sale una ficha normal de Mesa,
+con los ataques listos para tirar, los recursos de clase (furia, inspiración
+bárdica, canalizar divinidad…), los espacios de conjuro y una lista de
+**rasgos y aptitudes**; se puede seguir retocando a mano. Lo elegido queda
+guardado: **Subir de nivel** (en la ficha del jugador o en el editor) vuelve a
+abrir el creador donde se dejó, con un nivel más y sin perder el daño que
+lleve encima. Quien prefiera rellenar todo a mano tiene **Ficha en blanco**
+en el primer paso.
+
+Las clases, especies y trasfondos salen del documento de referencia de la 5.ª
+(SRD 5.1 y 5.2, licencia CC-BY-4.0) y, de lo que solo está en el Manual del
+jugador, el nombre y lo que hace, resumido. Las subclases se escriben a mano
+(se sugiere la del SRD).
+
+## Manual del DM
+
+El botón **Manual** de la barra del DM abre un manual de consulta con todas
+las ediciones de D&D: el original de 1974, el Básico (Holmes, B/X, BECMI y
+Rules Cyclopedia), AD&D 1.ª y 2.ª, la 3.ª y la 3.5, la 4.ª, la 5.ª de 2014 y la
+revisión de 2024. De cada una: qué es, cómo son los personajes, cómo se
+juega y consejos para dirigirla hoy o adaptarla a la 5.ª.
+
+Además trae **reglas rápidas** de la 5.ª para la mesa (CD, acciones,
+cobertura, luz, salvaciones de muerte, concentración, descansos,
+agotamiento, estados, agarrar, viajes, conjuros, niveles y encuentros, con
+las diferencias entre 2014 y 2024), una **comparativa** de las ediciones con
+cómo convertir números entre ellas, y un **buscador** que mira en todas a la
+vez («THAC0», «agarrar», «descanso»…).
+
+Está escrito con palabras propias: no copia los libros, que siguen haciendo
+falta para jugar las ediciones antiguas.
+
 ## Combate
 
 **Iniciar combate** monta el orden con las iniciativas que ya haya.
@@ -920,6 +977,10 @@ public/
     los.js             muros, luz, visión, distancias y plantillas (compartido)
     hearing.js         cuánto oye la party cada fuente de sonido (compartido)
     synth.js           los sonidos de serie, sintetizados en el navegador
+    rules.js           clases, especies, trasfondos, armas y cuentas de la ficha (2014 y 2024)
+    builder.js         el creador de personajes paso a paso
+    manual.js          la ventana del manual del DM
+    manual-data.js     el texto del manual: todas las ediciones y reglas rápidas
     soundscape.js      hacer sonar el mapa en la pantalla de la party
     attacks.js         leer y lanzar ataques
     spells.js          biblioteca de conjuros del SRD
