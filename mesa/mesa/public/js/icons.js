@@ -90,6 +90,9 @@ const P = {
   sound: '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4v-5Z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/>',
   soundOff: '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4v-5Z"/><path d="m16 9.5 5 5M21 9.5l-5 5"/>',
   wand: '<path d="M4 20 15 9"/><path d="m14 4 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2Z"/><path d="m19 11 .6 1.2 1.2.6-1.2.6-.6 1.2-.6-1.2-1.2-.6 1.2-.6.6-1.2Z"/>',
+  /* Un icosaedro visto de frente: la cara del 20 en medio */
+  d20: '<path d="M12 2.4 20.6 7.2v9.6L12 21.6 3.4 16.8V7.2Z"/><path d="M12 7.6 16.8 15.6H7.2Z"/><path d="M12 2.4v5.2M20.6 7.2l-3.8 8.4M3.4 7.2l3.8 8.4M3.4 16.8l3.8-1.2M20.6 16.8l-3.8-1.2M7.2 15.6 12 21.6l4.8-6"/>',
+  bookmark: '<path d="M6.5 3.5h11v17L12 16.6l-5.5 3.9Z"/>',
   /* Estados: uno por cada uno, para reconocerlos de un vistazo. Repiten la
      idea de las chapitas que pinta el mapa sobre las fichas. */
   c_agarrado: '<path d="M7.5 11.5V7a1.5 1.5 0 0 1 3 0v4"/><path d="M10.5 10V5.5a1.5 1.5 0 0 1 3 0V10"/><path d="M13.5 10V6.5a1.5 1.5 0 0 1 3 0v5"/><path d="M16.5 10a1.5 1.5 0 0 1 3 0v4a7 7 0 0 1-7 7h-.8a6 6 0 0 1-4.9-2.6l-3-4.4a1.6 1.6 0 0 1 2.5-2l1.2 1.5"/>',

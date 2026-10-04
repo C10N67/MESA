@@ -878,6 +878,13 @@ nadie, lo lee toda la mesa.
 El registro se filtra por **Todo**, **Tiradas** o **Charla**, y en el móvil sale
 un punto en la pestaña cuando hay algo sin leer.
 
+El DM puede **guardar el panel** con el botón del marcapáginas de su cabecera:
+desaparece, el mapa y la mesa ganan todo su ancho y queda un **marcapáginas
+granate con un d20** colgando del borde de arriba (en el móvil, asomando por
+abajo). Pulsarlo vuelve a abrir el panel tal como estaba. Mientras está
+guardado, el marcapáginas cuenta las tiradas y los mensajes de los demás que se
+ha perdido, y el navegador recuerda que lo dejó guardado.
+
 Desde **⋯ → Pedir una tirada a la party** eliges qué pides, a quién y con qué
 CD; a cada jugador le sale un botón grande en su móvil y, al pulsarlo, tira y se
 anuncia si supera la dificultad. Y con **Enseñar una imagen a la mesa** sale a

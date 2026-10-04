@@ -11,6 +11,8 @@ let mode = "normal";
 let secret = false;
 let filter = "todo";
 let whisperTo = [];      // identificadores de ficha, y "dm" para el máster
+let logPainted = null;   // aviso al panel cada vez que se repinta el registro
+const STOW_KEY = "mesa.dockStowed";
 
 export function throwDice(formula, { label = "", mode: m = mode, secret: s = false } = {}) {
   const result = roll(formula, m);
@@ -52,13 +54,14 @@ function audience() {
   return list;
 }
 
-export function dicePanel({ isDM = false } = {}) {
+export function dicePanel({ isDM = false, stowable = isDM } = {}) {
   const node = el(`
     <aside class="dock" id="dock">
       <header>
         <h2>${icon("dice", 18)}<span>Dados y mesa</span></h2>
         <span class="spacer"></span>
         ${isDM ? `<button class="icon-btn" data-clear title="Vaciar el registro">${icon("trash")}</button>` : ""}
+        ${stowable ? `<button class="icon-btn" data-stow title="Guardar en el marcapáginas" aria-label="Guardar el panel en el marcapáginas">${icon("bookmark")}</button>` : ""}
         <button class="icon-btn" data-toggle title="Abrir o cerrar">${icon("up")}</button>
       </header>
       <div class="dice-pad">
@@ -145,7 +148,59 @@ export function dicePanel({ isDM = false } = {}) {
   const clear = node.querySelector("[data-clear]");
   if (clear) clear.addEventListener("click", () => op("log.clear"));
 
+  if (stowable) stowing(node);
   return node;
+}
+
+/* Guardar el panel: desaparece, el resto de la vista gana su ancho y queda un
+   marcapáginas con un d20 colgando del borde de arriba. Pulsarlo lo vuelve a
+   abrir. Mientras está guardado, el marcapáginas cuenta lo que ha pasado en
+   la mesa (tiradas y mensajes de los demás). Se recuerda en este navegador. */
+function stowing(node) {
+  const mark = el(`<button type="button" class="dock-mark" title="Abrir dados y mesa" aria-label="Abrir dados y mesa">
+    <span class="dock-mark-ribbon">${icon("d20", 26)}<span class="dock-mark-count" hidden></span></span></button>`);
+  node.appendChild(mark);
+  /* Hasta cuándo se ha visto el registro (la hora de su última entrada; null:
+     aún no ha llegado la partida, y se toma en cuanto llegue). Por hora y no
+     por entrada, porque el registro se recorta y la entrada puede irse. */
+  let seen = 0;
+  const lastTs = () => { const log = (store.doc && store.doc.log) || []; return log.length ? log[log.length - 1].ts : 0; };
+  const unread = () => {
+    if (!store.doc) return 0;
+    if (seen === null) seen = lastTs();
+    const me = store.session && store.session.name;
+    return (store.doc.log || []).filter(e => e.ts > seen && ["roll", "attack", "chat"].includes(e.kind) && e.actor !== me).length;
+  };
+  const paintCount = () => {
+    const n = node.classList.contains("stowed") ? unread() : 0;
+    const badge = mark.querySelector(".dock-mark-count");
+    badge.hidden = !n;
+    badge.textContent = n > 99 ? "99+" : String(n);
+    mark.setAttribute("aria-label", n ? `Abrir dados y mesa (${n} nuevos)` : "Abrir dados y mesa");
+  };
+  /* Cuelga justo debajo de la barra de arriba, mida lo que mida */
+  const hang = () => {
+    const bar = document.querySelector(".topbar");
+    mark.style.setProperty("--bm-top", Math.round(bar ? bar.getBoundingClientRect().bottom : 57) + "px");
+  };
+  const stow = on => {
+    node.classList.toggle("stowed", on);
+    node.classList.remove("open");
+    if (node.parentElement) node.parentElement.classList.toggle("dock-stowed", on);
+    seen = on && store.doc ? lastTs() : on ? null : 0;
+    try { on ? localStorage.setItem(STOW_KEY, "1") : localStorage.removeItem(STOW_KEY); } catch {}
+    hang();
+    paintCount();
+    if (!on) node.querySelector(".dice-form input").focus({ preventScroll: true });
+  };
+  node.querySelector("[data-stow]").addEventListener("click", e => { e.stopPropagation(); stow(true); });
+  mark.addEventListener("click", () => stow(false));
+  addEventListener("resize", hang);
+  logPainted = paintCount;
+  let saved = false;
+  try { saved = localStorage.getItem(STOW_KEY) === "1"; } catch {}
+  /* Se aplica cuando ya está dentro de la vista, para poder ensanchar el resto */
+  if (saved) queueMicrotask(() => stow(true));
 }
 
 /* Quién va a leerlo: se eligen uno o varios; sin nadie marcado, lo lee la mesa. */
@@ -179,6 +234,7 @@ export const isSecret = () => secret;
 export function renderLog(host) {
   const doc = store.doc;
   if (!host || !doc) return;
+  if (logPainted) logPainted();
   const keep = e => filter === "todo" ? true
     : filter === "chat" ? e.kind === "chat"
     : e.kind === "roll" || e.kind === "attack";
