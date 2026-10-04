@@ -1,0 +1,997 @@
+[
+ {
+  "id": "aboleth",
+  "name": "Aboleth",
+  "languages": "Deep Speech; telepathy 120 ft.",
+  "traits": [
+   {
+    "name": "Amphibious",
+    "desc": "The aboleth can breathe air and water."
+   },
+   {
+    "name": "Eldritch Restoration",
+    "desc": "If destroyed, the aboleth gains a new body in 5d10 days, reviving with all its Hit Points in the Far Realm or another location chosen by the DM."
+   },
+   {
+    "name": "Legendary Resistance (3/Day, or 4/Day in Lair)",
+    "desc": "If the aboleth fails a saving throw, it can choose to succeed instead."
+   },
+   {
+    "name": "Mucus Cloud",
+    "desc": "While underwater, the aboleth is surrounded by mucus. Constitution Saving Throw: DC 14, each creature in a 5-foot Emanation originating from the aboleth at the end of the aboleth's turn. Failure: The target is cursed. Until the curse ends, the target's skin becomes slimy, the target can breathe air and water, and it can't regain Hit Points unless it is underwater. While the cursed creature is outside a body of water, the creature takes 6 (1d12) Acid damage at the end of every 10 minutes unless moisture is applied to its skin before those minutes have passed."
+   },
+   {
+    "name": "Probing Telepathy",
+    "desc": "If a creature the aboleth can see communicates telepathically with the aboleth, the aboleth learns the creature's greatest desires."
+   }
+  ],
+  "actions": [
+   {
+    "key": "aboleth_multiattack",
+    "name": "Multiattack",
+    "desc": "The aboleth makes two Tentacle attacks and uses either Consume Memories or Dominate Mind if available."
+   },
+   {
+    "key": "aboleth_tentacle",
+    "name": "Tentacle",
+    "desc": "Melee Attack Roll: +9, reach 15 ft. 12 (2d6 + 5) Bludgeoning damage. If the target is a Large or smaller creature, it has the Grappled condition (escape DC 14) from one of four tentacles."
+   },
+   {
+    "key": "aboleth_consume-memories",
+    "name": "Consume Memories",
+    "desc": "Intelligence Saving Throw: DC 16, one creature within 30 feet that is Charmed or Grappled by the aboleth. Failure: 10 (3d6) Psychic damage. Success: Half damage. Failure or Success: The aboleth gains the target's memories if the target is a Humanoid and is reduced to 0 Hit Points by this action."
+   },
+   {
+    "key": "aboleth_dominate-mind",
+    "name": "Dominate Mind",
+    "desc": "Wisdom Saving Throw: DC 16, one creature the aboleth can see within 30 feet. Failure: The target has the Charmed condition until the aboleth dies or is on a different plane of existence from the target. While Charmed, the target acts as an ally to the aboleth and is under its control while within 60 feet of it. In addition, the aboleth and the target can communicate telepathically with each other over any distance. The target repeats the save whenever it takes damage as well as after every 24 hours it spends at least 1 mile away from the aboleth, ending the effect on itself on a success."
+   },
+   {
+    "key": "aboleth_lash",
+    "name": "Lash",
+    "desc": "The aboleth makes one Tentacle attack."
+   },
+   {
+    "key": "aboleth_psychic-drain",
+    "name": "Psychic Drain",
+    "desc": "If the aboleth has at least one creature Charmed or Grappled, it uses Consume Memories and regains 5 (1d10) Hit Points."
+   }
+  ]
+ },
+ {
+  "id": "adult-black-dragon",
+  "name": "Adult Black Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Amphibious",
+    "desc": "The dragon can breathe air and water."
+   },
+   {
+    "name": "Legendary Resistance (3/Day, or 4/Day in Lair)",
+    "desc": "If the dragon fails a saving throw, it can choose to succeed instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "adult-black-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes three Rend attacks. It can replace one attack with a use of Spellcasting to cast Acid Arrow (level 3 version)."
+   },
+   {
+    "key": "adult-black-dragon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +11, reach 10 ft. 13 (2d6 + 6) Slashing damage plus 4 (1d8) Acid damage."
+   },
+   {
+    "key": "adult-black-dragon_acid-breath-recharge",
+    "name": "Acid Breath",
+    "desc": "Dexterity Saving Throw: DC 18, each creature in a 60-foot-long, 5-foot-wide Line. Failure: 54 (12d8) Acid damage. Success: Half damage."
+   },
+   {
+    "key": "adult-black-dragon_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 17, +9 to hit with spell attacks):\n\n- **At Will:** Detect Magic, Fear, Acid Arrow\n- **1/Day Each:** Speak with Dead, Vitriolic Sphere"
+   },
+   {
+    "key": "adult-black-dragon_cloud-of-insects",
+    "name": "Cloud of Insects",
+    "desc": "Dexterity Saving Throw: DC 17, one creature the dragon can see within 120 feet. Failure: 22 (4d10) Poison damage, and the target has Disadvantage on saving throws to maintain Concentration until the end of its next turn. Failure or Success: The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "adult-black-dragon_frightful-presence",
+    "name": "Frightful Presence",
+    "desc": "The dragon uses Spellcasting to cast Fear. The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "adult-black-dragon_pounce",
+    "name": "Pounce",
+    "desc": "The dragon can move up to half its Speed, and it makes one Rend attack."
+   }
+  ]
+ },
+ {
+  "id": "adult-blue-dragon",
+  "name": "Adult Blue Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Legendary Resistance (3/Day, or 4/Day in Lair)",
+    "desc": "If the dragon fails a saving throw, it can choose to succeed instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "adult-blue-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes three Rend attacks. It can replace one attack with a use of Spellcasting to cast Shatter."
+   },
+   {
+    "key": "adult-blue-dragon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +12, reach 10 ft. 16 (2d8 + 7) Slashing damage plus 5 (1d10) Lightning damage."
+   },
+   {
+    "key": "adult-blue-dragon_lightning-breath",
+    "name": "Lightning Breath",
+    "desc": "Dexterity Saving Throw: DC 19, each creature in a 90-foot-long, 5-foot-wide Line. Failure: 60 (11d10) Lightning damage. Success: Half damage."
+   },
+   {
+    "key": "adult-blue-dragon_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 18):\n\n- **At Will:** Detect Magic, Invisibility, Mage Hand, Shatter\n- **1/Day Each:** Scrying, Sending"
+   },
+   {
+    "key": "adult-blue-dragon_cloaked-flight",
+    "name": "Cloaked Flight",
+    "desc": "The dragon uses Spellcasting to cast Invisibility on itself, and it can fly up to half its Fly Speed. The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "adult-blue-dragon_sonic-boom",
+    "name": "Sonic Boom",
+    "desc": "The dragon uses Spellcasting to cast Shatter. The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "adult-blue-dragon_tail-swipe",
+    "name": "Tail Swipe",
+    "desc": "The dragon makes one Rend attack."
+   }
+  ]
+ },
+ {
+  "id": "adult-brass-dragon",
+  "name": "Adult Brass Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Legendary Resistance (3/Day, or 4/Day in Lair)",
+    "desc": "If the dragon fails a saving throw, it can choose to succeed instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "adult-brass-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes three Rend attacks. It can replace one attack with a use of (A) Sleep Breath or (B) Spellcasting to cast Scorching Ray."
+   },
+   {
+    "key": "adult-brass-dragon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +11, reach 10 ft. 17 (2d10 + 6) Slashing damage plus 4 (1d8) Fire damage."
+   },
+   {
+    "key": "adult-brass-dragon_fire-breath",
+    "name": "Fire Breath",
+    "desc": "Dexterity Saving Throw: DC 18, each creature in a 60-foot-long, 5-foot-wide Line. Failure: 45 (10d8) Fire damage. Success: Half damage."
+   },
+   {
+    "key": "adult-brass-dragon_sleep-breath",
+    "name": "Sleep Breath",
+    "desc": "Constitution Saving Throw: DC 18, each creature in a 60-foot Cone. Failure: The target has the Incapacitated condition until the end of its next turn, at which point it repeats the save. Second Failure The target has the Unconscious condition for 10 minutes. This effect ends for the target if it takes damage or a creature within 5 feet of it takes an action to wake it."
+   },
+   {
+    "key": "adult-brass-dragon_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 16):\n\n- **At Will:** Detect Magic, Minor Illusion, Scorching Ray, Shapechange, Speak with Animals\n- **1/Day Each:** Detect Thoughts, Control Weather"
+   },
+   {
+    "key": "adult-brass-dragon_blazing-light",
+    "name": "Blazing Light",
+    "desc": "The dragon uses Spellcasting to cast Scorching Ray."
+   },
+   {
+    "key": "adult-brass-dragon_pounce",
+    "name": "Pounce",
+    "desc": "The dragon moves up to half its Speed, and it makes one Rend attack."
+   },
+   {
+    "key": "adult-brass-dragon_scorching-sands",
+    "name": "Scorching Sands",
+    "desc": "Dexterity Saving Throw: DC 16, one creature the dragon can see within 120 feet. Failure: 27 (6d8) Fire damage, and the target's Speed is halved until the end of its next turn. Failure or Success: The dragon can't take this action again until the start of its next turn."
+   }
+  ]
+ },
+ {
+  "id": "adult-bronze-dragon",
+  "name": "Adult Bronze Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Amphibious",
+    "desc": "The dragon can breathe air and water."
+   },
+   {
+    "name": "Legendary Resistance (3/Day, or 4/Day in Lair)",
+    "desc": "If the dragon fails a saving throw, it can choose to succeed instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "adult-bronze-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes three Rend attacks. It can replace one attack with a use of (A) Repulsion Breath or (B) Spellcasting to cast Guiding Bolt (level 2 version)."
+   },
+   {
+    "key": "adult-bronze-dragon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +12, reach 10 ft. 16 (2d8 + 7) Slashing damage plus 5 (1d10) Lightning damage."
+   },
+   {
+    "key": "adult-bronze-dragon_lightning-breath",
+    "name": "Lightning Breath",
+    "desc": "Dexterity Saving Throw: DC 19, each creature in a 90-foot-long, 5-foot-wide Line. Failure: 55 (10d10) Lightning damage. Success: Half damage."
+   },
+   {
+    "key": "adult-bronze-dragon_repulsion-breath",
+    "name": "Repulsion Breath",
+    "desc": "Strength Saving Throw: DC 19, each creature in a 30-foot Cone. Failure: The target is pushed up to 60 feet straight away from the dragon and has the Prone condition."
+   },
+   {
+    "key": "adult-bronze-dragon_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 17, +10 to hit with spell attacks):\n\n- **At Will:** Detect Magic, Guiding Bolt, Shapechange, Speak with Animals, Thaumaturgy\n- **1/Day Each:** Detect Thoughts, Water Breathing"
+   },
+   {
+    "key": "adult-bronze-dragon_guiding-light",
+    "name": "Guiding Light",
+    "desc": "The dragon uses Spellcasting to cast Guiding Bolt (level 2 version)."
+   },
+   {
+    "key": "adult-bronze-dragon_pounce",
+    "name": "Pounce",
+    "desc": "The dragon moves up to half its Speed, and it makes one Rend attack."
+   },
+   {
+    "key": "adult-bronze-dragon_thunderclap",
+    "name": "Thunderclap",
+    "desc": "Constitution Saving Throw: DC 17, each creature in a 20-foot-radius Sphere [Area of Effect]|XPHB|Sphere centered on a point the dragon can see within 90 feet. Failure: 10 (3d6) Thunder damage, and the target has the Deafened condition until the end of its next turn."
+   }
+  ]
+ },
+ {
+  "id": "adult-copper-dragon",
+  "name": "Adult Copper Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Legendary Resistance (3/Day, or 4/Day in Lair)",
+    "desc": "If the dragon fails a saving throw, it can choose to succeed instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "adult-copper-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes three Rend attacks. It can replace one attack with a use of (A) Slowing Breath or (B) Spellcasting to cast Mind Spike (level 4 version)."
+   },
+   {
+    "key": "adult-copper-dragon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +11, reach 10 ft. 17 (2d10 + 6) Slashing damage plus 4 (1d8) Acid damage."
+   },
+   {
+    "key": "adult-copper-dragon_acid-breath",
+    "name": "Acid Breath",
+    "desc": "Dexterity Saving Throw: DC 18, each creature in an 60-foot-long, 5-foot-wide Line. Failure: 54 (12d8) Acid damage. Success: Half damage."
+   },
+   {
+    "key": "adult-copper-dragon_slowing-breath",
+    "name": "Slowing Breath",
+    "desc": "Constitution Saving Throw: DC 18, each creature in a 60-foot Cone. Failure: The target can't take Reactions; its Speed is halved; and it can take either an action or a Bonus Action on its turn, not both. This effect lasts until the end of its next turn."
+   },
+   {
+    "key": "adult-copper-dragon_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 17):\n\n- **At Will:** Detect Magic, Mind Spike, Minor Illusion, Shapechange\n- **1/Day Each:** Greater Restoration, Major Image"
+   },
+   {
+    "key": "adult-copper-dragon_giggling-magic",
+    "name": "Giggling Magic",
+    "desc": "Charisma Saving Throw: DC 17, one creature the dragon can see within 90 feet. Failure: 24 (7d6) Psychic damage. Until the end of its next turn, the target rolls 1d6 whenever it makes an ability check or attack roll and subtracts the number rolled from the D20 Test. Failure or Success: The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "adult-copper-dragon_mind-jolt",
+    "name": "Mind Jolt",
+    "desc": "The dragon uses Spellcasting to cast Mind Spike (level 4 version). The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "adult-copper-dragon_pounce",
+    "name": "Pounce",
+    "desc": "The dragon moves up to half its Speed, and it makes one Rend attack."
+   }
+  ]
+ },
+ {
+  "id": "adult-gold-dragon",
+  "name": "Adult Gold Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Amphibious",
+    "desc": "The dragon can breathe air and water."
+   },
+   {
+    "name": "Legendary Resistance (3/Day, or 4/Day in Lair)",
+    "desc": "If the dragon fails a saving throw, it can choose to succeed instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "adult-gold-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes three Rend attacks. It can replace one attack with a use of (A) Spellcasting to cast Guiding Bolt (level 2 version) or (B) Weakening Breath."
+   },
+   {
+    "key": "adult-gold-dragon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +14, reach 10 ft. 17 (2d8 + 8) Slashing damage plus 4 (1d8) Fire damage."
+   },
+   {
+    "key": "adult-gold-dragon_fire-breath",
+    "name": "Fire Breath",
+    "desc": "Dexterity Saving Throw: DC 21, each creature in a 60-foot Cone. Failure: 66 (12d10) Fire damage. Success: Half damage."
+   },
+   {
+    "key": "adult-gold-dragon_weakening-breath",
+    "name": "Weakening Breath",
+    "desc": "Strength Saving Throw: DC 21, each creature that isn't currently affected by this breath in a 60-foot Cone. Failure: The target has Disadvantage on Strength-based D20 Test and subtracts 3 (1d6) from its damage rolls. It repeats the save at the end of each of its turns, ending the effect on itself on a success. After 1 minute, it succeeds automatically."
+   },
+   {
+    "key": "adult-gold-dragon_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 21, +13 to hit with spell attacks):\n\n- **At Will:** Detect Magic, Guiding Bolt, Shapechange\n- **1/Day Each:** Flame Strike, Zone of Truth"
+   },
+   {
+    "key": "adult-gold-dragon_banish",
+    "name": "Banish",
+    "desc": "Charisma Saving Throw: DC 21, one creature the dragon can see within 120 feet. Failure: 10 (3d6) Force damage, and the target has the Incapacitated condition and is transported to a harmless demiplane until the start of the dragon's next turn, at which point it reappears in an unoccupied space of the dragon's choice within 120 feet of the dragon. Failure or Success: The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "adult-gold-dragon_guiding-light",
+    "name": "Guiding Light",
+    "desc": "The dragon uses Spellcasting to cast Guiding Bolt (level 2 version)."
+   },
+   {
+    "key": "adult-gold-dragon_pounce",
+    "name": "Pounce",
+    "desc": "The dragon moves up to half its Speed, and it makes one Rend attack."
+   }
+  ]
+ },
+ {
+  "id": "adult-green-dragon",
+  "name": "Adult Green Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Amphibious",
+    "desc": "The dragon can breathe air and water."
+   },
+   {
+    "name": "Legendary Resistance (3/Day, or 4/Day in Lair)",
+    "desc": "If the dragon fails a saving throw, it can choose to succeed instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "adult-green-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes three Rend attacks. It can replace one attack with a use of Spellcasting to cast Mind Spike (level 3 version)."
+   },
+   {
+    "key": "adult-green-dragon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +11, reach 10 ft. 15 (2d8 + 6) Slashing damage plus 7 (2d6) Poison damage."
+   },
+   {
+    "key": "adult-green-dragon_poison-breath",
+    "name": "Poison Breath",
+    "desc": "Constitution Saving Throw: DC 18, each creature in a 60-foot Cone. Failure: 56 (16d6) Poison damage. Success: Half damage."
+   },
+   {
+    "key": "adult-green-dragon_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 17):\n- **At Will:** Detect Magic, Mind Spike\n- **1/Day Each:** Geas"
+   },
+   {
+    "key": "adult-green-dragon_mind-invasion",
+    "name": "Mind Invasion",
+    "desc": "The dragon uses Spellcasting to cast Mind Spike (level 3 version)."
+   },
+   {
+    "key": "adult-green-dragon_noxious-miasma",
+    "name": "Noxious Miasma",
+    "desc": "Constitution Saving Throw: DC 17, each creature in a 20-foot-radius Sphere [Area of Effect]|XPHB|Sphere centered on a point the dragon can see within 90 feet. Failure: 7 (2d6) Poison damage, and the target takes a -2 penalty to AC until the end of its next turn. Failure or Success: The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "adult-green-dragon_pounce",
+    "name": "Pounce",
+    "desc": "The dragon moves up to half its Speed, and it makes one Rend attack."
+   }
+  ]
+ },
+ {
+  "id": "adult-red-dragon",
+  "name": "Adult Red Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Legendary Resistance (3/Day, or 4/Day in Lair)",
+    "desc": "If the dragon fails a saving throw, it can choose to succeed instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "adult-red-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes three Rend attacks. It can replace one attack with a use of Spellcasting to cast Scorching Ray."
+   },
+   {
+    "key": "adult-red-dragon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +14, reach 10 ft. 13 (1d10 + 8) Slashing damage plus 5 (2d4) Fire damage."
+   },
+   {
+    "key": "adult-red-dragon_fire-breath",
+    "name": "Fire Breath",
+    "desc": "Dexterity Saving Throw: DC 21, each creature in a 60-foot Cone. Failure: 59 (17d6) Fire damage. Success: Half damage."
+   },
+   {
+    "key": "adult-red-dragon_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 20, +12 to hit with spell attacks):\n\n- **At Will:** Command, Detect Magic, Scorching Ray\n- **1/Day Each:** Fireball"
+   },
+   {
+    "key": "adult-red-dragon_commanding-presence",
+    "name": "Commanding Presence",
+    "desc": "The dragon uses Spellcasting to cast Command (level 2 version). The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "adult-red-dragon_fiery-rays",
+    "name": "Fiery Rays",
+    "desc": "The dragon uses Spellcasting to cast Scorching Ray. The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "adult-red-dragon_pounce",
+    "name": "Pounce",
+    "desc": "The dragon moves up to half its Speed, and it makes one Rend attack."
+   }
+  ]
+ },
+ {
+  "id": "adult-silver-dragon",
+  "name": "Adult Silver Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Legendary Resistance (3/Day, or 4/Day in Lair)",
+    "desc": "If the dragon fails a saving throw, it can choose to succeed instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "adult-silver-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes three Rend attacks. It can replace one attack with a use of (A) Paralyzing Breath or (B) Spellcasting to cast Ice Knife."
+   },
+   {
+    "key": "adult-silver-dragon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +13, reach 10 ft. 17 (2d8 + 8) Slashing damage plus 4 (1d8) Cold damage."
+   },
+   {
+    "key": "adult-silver-dragon_cold-breath",
+    "name": "Cold Breath",
+    "desc": "Constitution Saving Throw: DC 20, each creature in a 60-foot Cone. Failure: 54 (12d8) Cold damage. Success: Half damage."
+   },
+   {
+    "key": "adult-silver-dragon_paralyzing-breath",
+    "name": "Paralyzing Breath",
+    "desc": "Constitution Saving Throw: DC 20, each creature in a 60-foot Cone. First Failure The target has the Incapacitated condition until the end of its next turn, when it repeats the save. Second Failure The target has the Paralyzed condition, and it repeats the save at the end of each of its turns, ending the effect on itself on a success. After 1 minute, it succeeds automatically."
+   },
+   {
+    "key": "adult-silver-dragon_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 19, +11 to hit with spell attacks):\n\n- **At Will:** Detect Magic, Hold Monster, Ice Knife, Shapechange\n- **1/Day Each:** Ice Storm, Zone of Truth"
+   },
+   {
+    "key": "adult-silver-dragon_chill",
+    "name": "Chill",
+    "desc": "The dragon uses Spellcasting to cast Hold Monster. The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "adult-silver-dragon_cold-gale",
+    "name": "Cold Gale",
+    "desc": "Dexterity Saving Throw: DC 19, each creature in a 60-foot-long, 10-foot-wide Line. Failure: 14 (4d6) Cold damage, and the target is pushed up to 30 feet straight away from the dragon. Success: Half damage only. Failure or Success: The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "adult-silver-dragon_pounce",
+    "name": "Pounce",
+    "desc": "The dragon moves up to half its Speed, and it makes one Rend attack."
+   }
+  ]
+ },
+ {
+  "id": "adult-white-dragon",
+  "name": "Adult White Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Ice Walk",
+    "desc": "The dragon can move across and climb icy surfaces without needing to make an ability check. Additionally, Difficult Terrain composed of ice or snow doesn't cost it extra movement."
+   },
+   {
+    "name": "Legendary Resistance (3/Day, or 4/Day in Lair)",
+    "desc": "If the dragon fails a saving throw, it can choose to succeed instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "adult-white-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes three Rend attacks."
+   },
+   {
+    "key": "adult-white-dragon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +11, reach 10 ft. 13 (2d6 + 6) Slashing damage plus 4 (1d8) Cold damage."
+   },
+   {
+    "key": "adult-white-dragon_cold-breath",
+    "name": "Cold Breath",
+    "desc": "Constitution Saving Throw: DC 19, each creature in a 60-foot Cone. Failure: 54 (12d8) Cold damage. Success: Half damage."
+   },
+   {
+    "key": "adult-white-dragon_freezing-burst",
+    "name": "Freezing Burst",
+    "desc": "Constitution Saving Throw: DC 14, each creature in a 30-foot-radius Sphere [Area of Effect]|XPHB|Sphere centered on a point the dragon can see within 120 feet. Failure: 7 (2d6) Cold damage, and the target's Speed is 0 until the end of the target's next turn. Failure or Success: The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "adult-white-dragon_pounce",
+    "name": "Pounce",
+    "desc": "The dragon moves up to half its Speed, and it makes one Rend attack."
+   },
+   {
+    "key": "adult-white-dragon_frightful-presence",
+    "name": "Frightful Presence",
+    "desc": "The dragon casts Fear, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 14). The dragon can't take this action again until the start of its next turn."
+   }
+  ]
+ },
+ {
+  "id": "air-elemental",
+  "name": "Air Elemental",
+  "languages": "Primordial (Auran)",
+  "traits": [
+   {
+    "name": "Air Form",
+    "desc": "The elemental can enter a creature's space and stop there. It can move through a space as narrow as 1 inch without expending extra movement to do so."
+   }
+  ],
+  "actions": [
+   {
+    "key": "air-elemental_multiattack",
+    "name": "Multiattack",
+    "desc": "The elemental makes two Thunderous Slam attacks."
+   },
+   {
+    "key": "air-elemental_thunderous-slam",
+    "name": "Thunderous Slam",
+    "desc": "Melee Attack Roll: +8, reach 10 ft. 14 (2d8 + 5) Thunder damage."
+   },
+   {
+    "key": "air-elemental_whirlwind",
+    "name": "Whirlwind",
+    "desc": "Strength Saving Throw: DC 13, one Medium or smaller creature in the elemental's space. Failure: 24 (4d10 + 2) Thunder damage, and the target is pushed up to 20 feet straight away from the elemental and has the Prone condition. Success: Half damage only."
+   }
+  ]
+ },
+ {
+  "id": "allosaurus",
+  "name": "Allosaurus",
+  "actions": [
+   {
+    "key": "allosaurus_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 15 (2d10 + 4) Piercing damage."
+   },
+   {
+    "key": "allosaurus_claws",
+    "name": "Claws",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 8 (1d8 + 4) Slashing damage. If the target is a Large or smaller creature and the allosaurus moved 30+ feet straight toward it immediately before the hit, the target has the Prone condition, and the allosaurus can make one Bite attack against it."
+   }
+  ]
+ },
+ {
+  "id": "ancient-black-dragon",
+  "name": "Ancient Black Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Amphibious",
+    "desc": "The dragon can breathe air and water."
+   },
+   {
+    "name": "Legendary Resistance (4/Day, or 5/Day in Lair)",
+    "desc": "If the dragon fails a saving throw, it can choose to succeed instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ancient-black-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes three Rend attacks. It can replace one attack with a use of Spellcasting to cast Acid Arrow (level 4 version)."
+   },
+   {
+    "key": "ancient-black-dragon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +15, reach 15 ft. 17 (2d8 + 8) Slashing damage plus 9 (2d8) Acid damage."
+   },
+   {
+    "key": "ancient-black-dragon_acid-breath",
+    "name": "Acid Breath",
+    "desc": "Dexterity Saving Throw: DC 22, each creature in a 90-foot-long, 10-foot-wide Line. Failure: 67 (15d8) Acid damage. Success: Half damage."
+   },
+   {
+    "key": "ancient-black-dragon_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 21, +13 to hit with spell attacks):\n\n- **At Will:** Detect Magic, Fear, Acid Arrow\n- **1/Day Each:** Create Undead, Speak with Dead, Vitriolic Sphere"
+   },
+   {
+    "key": "ancient-black-dragon_cloud-of-insects",
+    "name": "Cloud of Insects",
+    "desc": "Dexterity Saving Throw: DC 21, one creature the dragon can see within 120 feet. Failure: 33 (6d10) Poison damage, and the target has Disadvantage on saving throws to maintain Concentration until the end of its next turn. Failure or Success: The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "ancient-black-dragon_frightful-presence",
+    "name": "Frightful Presence",
+    "desc": "The dragon uses Spellcasting to cast Fear. The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "ancient-black-dragon_pounce",
+    "name": "Pounce",
+    "desc": "The dragon moves up to half its Speed, and it makes one Rend attack."
+   }
+  ]
+ },
+ {
+  "id": "ancient-blue-dragon",
+  "name": "Ancient Blue Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Legendary Resistance (4/Day, or 5/Day in Lair)",
+    "desc": "If the dragon fails a saving throw, it can choose to succeed instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ancient-blue-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes three Rend attacks. It can replace one attack with a use of Spellcasting to cast Shatter (level 3 version)."
+   },
+   {
+    "key": "ancient-blue-dragon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +16, reach 15 ft. 18 (2d8 + 9) Slashing damage plus 11 (2d10) Lightning damage."
+   },
+   {
+    "key": "ancient-blue-dragon_lightning-breath",
+    "name": "Lightning Breath",
+    "desc": "Dexterity Saving Throw: DC 23, each creature in a 120-foot-long, 10-foot-wide Line. Failure: 88 (16d10) Lightning damage. Success: Half damage."
+   },
+   {
+    "key": "ancient-blue-dragon_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 22):\n\n- **At Will:** Detect Magic, Invisibility, Mage Hand, Shatter\n- **1/Day Each:** Scrying, Sending"
+   },
+   {
+    "key": "ancient-blue-dragon_cloaked-flight",
+    "name": "Cloaked Flight",
+    "desc": "The dragon uses Spellcasting to cast Invisibility on itself, and it can fly up to half its Fly Speed. The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "ancient-blue-dragon_sonic-boom",
+    "name": "Sonic Boom",
+    "desc": "The dragon uses Spellcasting to cast Shatter (level 3 version). The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "ancient-blue-dragon_tail-swipe",
+    "name": "Tail Swipe",
+    "desc": "The dragon makes one Rend attack."
+   }
+  ]
+ },
+ {
+  "id": "ancient-brass-dragon",
+  "name": "Ancient Brass Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Legendary Resistance (4/Day, or 5/Day in Lair)",
+    "desc": "If the dragon fails a saving throw, it can choose to succeed instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ancient-brass-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes three Rend attacks. It can replace one attack with a use of (A) Sleep Breath or (B) Spellcasting to cast Scorching Ray (level 3 version)."
+   },
+   {
+    "key": "ancient-brass-dragon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +14, reach 15 ft. 19 (2d10 + 8) Slashing damage plus 7 (2d6) Fire damage."
+   },
+   {
+    "key": "ancient-brass-dragon_fire-breath",
+    "name": "Fire Breath",
+    "desc": "Dexterity Saving Throw: DC 21, each creature in a 90-foot-long, 5-foot-wide Line. Failure: 58 (13d8) Fire damage. Success: Half damage."
+   },
+   {
+    "key": "ancient-brass-dragon_sleep-breath",
+    "name": "Sleep Breath",
+    "desc": "Constitution Saving Throw: DC 21, each creature in a 90-foot Cone. Failure: The target has the Incapacitated condition until the end of its next turn, at which point it repeats the save. Second Failure The target has the Unconscious condition for 10 minutes. This effect ends for the target if it takes damage or a creature within 5 feet of it takes an action to wake it."
+   },
+   {
+    "key": "ancient-brass-dragon_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 20):\n\n- **At Will:** Detect Magic, Minor Illusion, Scorching Ray, Shapechange, Speak with Animals\n- **1/Day Each:** Control Weather, Detect Thoughts"
+   },
+   {
+    "key": "ancient-brass-dragon_blazing-light",
+    "name": "Blazing Light",
+    "desc": "The dragon uses Spellcasting to cast Scorching Ray (level 3 version)."
+   },
+   {
+    "key": "ancient-brass-dragon_pounce",
+    "name": "Pounce",
+    "desc": "The dragon moves up to half its Speed, and it makes one Rend attack."
+   },
+   {
+    "key": "ancient-brass-dragon_scorching-sands",
+    "name": "Scorching Sands",
+    "desc": "Dexterity Saving Throw: DC 20, one creature the dragon can see within 120 feet. Failure: 36 (8d8) Fire damage, and the target's Speed is halved until the end of its next turn. Failure or Success: The dragon can't take this action again until the start of its next turn."
+   }
+  ]
+ },
+ {
+  "id": "ancient-bronze-dragon",
+  "name": "Ancient Bronze Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Amphibious",
+    "desc": "The dragon can breathe air and water."
+   },
+   {
+    "name": "Legendary Resistance (4/Day, or 5/Day in Lair)",
+    "desc": "If the dragon fails a saving throw, it can choose to succeed instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ancient-bronze-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes three Rend attacks. It can replace one attack with a use of (A) Repulsion Breath or (B) Spellcasting to cast Guiding Bolt (level 2 version)."
+   },
+   {
+    "key": "ancient-bronze-dragon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +16, reach 15 ft. 18 (2d8 + 9) Slashing damage plus 9 (2d8) Lightning damage."
+   },
+   {
+    "key": "ancient-bronze-dragon_lightning-breath",
+    "name": "Lightning Breath",
+    "desc": "Dexterity Saving Throw: DC 23, each creature in a 120-foot-long, 10-foot-wide Line. Failure: 82 (15d10) Lightning damage. Success: Half damage."
+   },
+   {
+    "key": "ancient-bronze-dragon_repulsion-breath",
+    "name": "Repulsion Breath",
+    "desc": "Strength Saving Throw: DC 23, each creature in a 30-foot Cone. Failure: The target is pushed up to 60 feet straight away from the dragon and has the Prone condition."
+   },
+   {
+    "key": "ancient-bronze-dragon_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 22, +14 to hit with spell attacks):\n\n- **At Will:** Detect Magic, Guiding Bolt, Shapechange, Speak with Animals, Thaumaturgy\n- **1/Day Each:** Detect Thoughts, Control Water, Scrying, Water Breathing"
+   },
+   {
+    "key": "ancient-bronze-dragon_guiding-light",
+    "name": "Guiding Light",
+    "desc": "The dragon uses Spellcasting to cast Guiding Bolt (level 2 version)."
+   },
+   {
+    "key": "ancient-bronze-dragon_pounce",
+    "name": "Pounce",
+    "desc": "The dragon moves up to half its Speed, and it makes one Rend attack."
+   },
+   {
+    "key": "ancient-bronze-dragon_thunderclap",
+    "name": "Thunderclap",
+    "desc": "Constitution Saving Throw: DC 22, each creature in a 20-foot-radius Sphere [Area of Effect]|XPHB|Sphere centered on a point the dragon can see within 120 feet. Failure: 13 (3d8) Thunder damage, and the target has the Deafened condition until the end of its next turn."
+   }
+  ]
+ },
+ {
+  "id": "ancient-copper-dragon",
+  "name": "Ancient Copper Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Legendary Resistance (4/Day, or 5/Day in Lair)",
+    "desc": "If the dragon fails a saving throw, it can choose to succeed instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ancient-copper-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes three Rend attacks. It can replace one attack with a use of (A) Slowing Breath or (B) Spellcasting to cast Mind Spike (level 5 version)."
+   },
+   {
+    "key": "ancient-copper-dragon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +15, reach 15 ft. 19 (2d10 + 8) Slashing damage plus 9 (2d8) Acid damage."
+   },
+   {
+    "key": "ancient-copper-dragon_acid-breath",
+    "name": "Acid Breath",
+    "desc": "Dexterity Saving Throw: DC 22, each creature in an 90-foot-long, 10-foot-wide Line. Failure: 63 (14d8) Acid damage. Success: Half damage."
+   },
+   {
+    "key": "ancient-copper-dragon_slowing-breath",
+    "name": "Slowing Breath",
+    "desc": "Constitution Saving Throw: DC 22, each creature in a 90-foot Cone. Failure: The target can't take Reactions; its Speed is halved; and it can take either an action or a Bonus Action on its turn, not both. This effect lasts until the end of its next turn."
+   },
+   {
+    "key": "ancient-copper-dragon_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 21):\n\n- **At Will:** Detect Magic, Mind Spike, Minor Illusion, Shapechange\n- **1/Day Each:** Greater Restoration, Major Image, Project Image"
+   },
+   {
+    "key": "ancient-copper-dragon_giggling-magic",
+    "name": "Giggling Magic",
+    "desc": "Charisma Saving Throw: DC 21, one creature the dragon can see within 120 feet. Failure: 31 (9d6) Psychic damage. Until the end of its next turn, the target rolls 1d8 whenever it makes an ability check or attack roll and subtracts the number rolled from the D20 Test. Failure or Success: The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "ancient-copper-dragon_mind-jolt",
+    "name": "Mind Jolt",
+    "desc": "The dragon uses Spellcasting to cast Mind Spike (level 5 version). The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "ancient-copper-dragon_pounce",
+    "name": "Pounce",
+    "desc": "The dragon moves up to half its Speed, and it makes one Rend attack."
+   }
+  ]
+ },
+ {
+  "id": "ancient-gold-dragon",
+  "name": "Ancient Gold Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Amphibious",
+    "desc": "The dragon can breathe air and water."
+   },
+   {
+    "name": "Legendary Resistance (4/Day, or 5/Day in Lair)",
+    "desc": "If the dragon fails a saving throw, it can choose to succeed instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ancient-gold-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes three Rend attacks. It can replace one attack with a use of (A) Spellcasting to cast Guiding Bolt (level 4 version) or (B) Weakening Breath."
+   },
+   {
+    "key": "ancient-gold-dragon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +17 to hit, reach 15 ft. 19 (2d8 + 10) Slashing damage plus 9 (2d8) Fire damage."
+   },
+   {
+    "key": "ancient-gold-dragon_fire-breath",
+    "name": "Fire Breath",
+    "desc": "Dexterity Saving Throw: DC 24, each creature in a 90-foot Cone. Failure: 71 (13d10) Fire damage. Success: Half damage."
+   },
+   {
+    "key": "ancient-gold-dragon_weakening-breath",
+    "name": "Weakening Breath",
+    "desc": "Strength Saving Throw: DC 24, each creature that isn't currently affected by this breath in a 90-foot Cone. Failure: The target has Disadvantage on Strength-based D20 Test and subtracts 5 (1d10) from its damage rolls. It repeats the save at the end of each of its turns, ending the effect on itself on a success. After 1 minute, it succeeds automatically."
+   },
+   {
+    "key": "ancient-gold-dragon_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 24, +16 to hit with spell attacks):\n\n- **At Will:** Detect Magic, Guiding Bolt, Shapechange\n- **1/Day Each:** Flame Strike, Word of Recall, Zone of Truth"
+   },
+   {
+    "key": "ancient-gold-dragon_banish",
+    "name": "Banish",
+    "desc": "Charisma Saving Throw: DC 24, one creature the dragon can see within 120 feet. Failure: 24 (7d6) Force damage, and the target has the Incapacitated condition and is transported to a harmless demiplane until the start of the dragon's next turn, at which point it reappears in an unoccupied space of the dragon's choice within 120 feet of the dragon. Failure or Success: The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "ancient-gold-dragon_guiding-light",
+    "name": "Guiding Light",
+    "desc": "The dragon uses Spellcasting to cast Guiding Bolt (level 4 version)."
+   },
+   {
+    "key": "ancient-gold-dragon_pounce",
+    "name": "Pounce",
+    "desc": "The dragon moves up to half its Speed, and it makes one Rend attack."
+   }
+  ]
+ },
+ {
+  "id": "ancient-green-dragon",
+  "name": "Ancient Green Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Amphibious",
+    "desc": "The dragon can breathe air and water."
+   },
+   {
+    "name": "Legendary Resistance (4/Day, or 5/Day in Lair)",
+    "desc": "If the dragon fails a saving throw, it can choose to succeed instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ancient-green-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes three Rend attacks. It can replace one attack with a use of Spellcasting to cast Mind Spike (level 5 version)."
+   },
+   {
+    "key": "ancient-green-dragon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +15, reach 15 ft. 17 (2d8 + 8) Slashing damage plus 10 (3d6) Poison damage."
+   },
+   {
+    "key": "ancient-green-dragon_poison-breath",
+    "name": "Poison Breath",
+    "desc": "Constitution Saving Throw: DC 22, each creature in a 90-foot Cone. Failure: 77 (22d6) Poison damage. Success: Half damage."
+   },
+   {
+    "key": "ancient-green-dragon_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 21):\n\n- **At Will:** Detect Magic, Mind Spike\n- **1/Day Each:** Geas, Modify Memory"
+   },
+   {
+    "key": "ancient-green-dragon_mind-invasion",
+    "name": "Mind Invasion",
+    "desc": "The dragon uses Spellcasting to cast Mind Spike (level 5 version)."
+   },
+   {
+    "key": "ancient-green-dragon_noxious-miasma",
+    "name": "Noxious Miasma",
+    "desc": "Constitution Saving Throw: DC 21, each creature in a 30-foot-radius Sphere [Area of Effect]|XPHB|Sphere centered on a point the dragon can see within 90 feet. Failure: 17 (5d6) Poison damage, and the target takes a -2 penalty to AC until the end of its next turn. Failure or Success: The dragon can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "ancient-green-dragon_pounce",
+    "name": "Pounce",
+    "desc": "The dragon moves up to half its Speed, and it makes one Rend attack."
+   }
+  ]
+ }
+]

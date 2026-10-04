@@ -1,0 +1,1106 @@
+[
+ {
+  "id": "steam-mephit",
+  "name": "Mefit de vapor",
+  "languages": "Primordial (acuano, ignano)",
+  "traits": [
+   {
+    "name": "Forma borrosa",
+    "desc": "Las tiradas de ataque contra el mefit se hacen con desventaja, a menos que el mefit tenga el estado Incapacitado."
+   },
+   {
+    "name": "Estallido mortal",
+    "desc": "El mefit explota cuando muere. Tirada de salvación de Destreza: CD 10, cada criatura en una emanación de 5 pies que se origina en el mefit. Fallo: 5 (2d4) de daño de fuego. Éxito: mitad de daño."
+   }
+  ],
+  "actions": [
+   {
+    "key": "steam-mephit_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +2, alcance 5 pies. 2 (1d4) de daño cortante más 2 (1d4) de daño de fuego."
+   },
+   {
+    "key": "steam-mephit_steam-breath",
+    "name": "Aliento de vapor",
+    "desc": "Tirada de salvación de Constitución: CD 10, cada criatura en un cono de 15 pies. Fallo: 5 (2d4) de daño de fuego, y la velocidad del objetivo se reduce en 10 pies hasta el final del siguiente turno del mefit. Éxito: solo mitad de daño. Fallo o éxito: estar bajo el agua no otorga resistencia a este daño de fuego."
+   }
+  ]
+ },
+ {
+  "id": "stirge",
+  "name": "Estirge",
+  "actions": [
+   {
+    "key": "stirge_proboscis",
+    "name": "Probóscide",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 6 (1d6 + 3) de daño perforante, y la estirge se adhiere al objetivo. Mientras está adherida, la estirge no puede hacer ataques de Probóscide, y el objetivo recibe 5 (2d4) de daño necrótico al comienzo de cada uno de los turnos de la estirge. La estirge puede soltarse gastando 5 pies de su movimiento. El objetivo o una criatura a 5 pies o menos de él puede soltar a la estirge como acción."
+   }
+  ]
+ },
+ {
+  "id": "stone-giant",
+  "name": "Gigante de piedra",
+  "languages": "Gigante",
+  "actions": [
+   {
+    "key": "stone-giant_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El gigante hace dos ataques, usando Garrote de piedra o Roca en cualquier combinación."
+   },
+   {
+    "key": "stone-giant_stone-club",
+    "name": "Garrote de piedra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +9, alcance 15 pies. 22 (3d10 + 6) de daño contundente."
+   },
+   {
+    "key": "stone-giant_boulder",
+    "name": "Roca",
+    "desc": "Tirada de ataque a distancia: +9, alcance 60/240 pies. 15 (2d8 + 6) de daño contundente. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Derribado."
+   },
+   {
+    "key": "stone-giant_deflect-missile",
+    "name": "Desviar proyectil",
+    "desc": "_Desencadenante:_ El gigante recibe un impacto de una tirada de ataque a distancia y sufre daño contundente, perforante o cortante por él. _Respuesta:_ El gigante reduce el daño que recibe del ataque en 11 (1d10 + 6) y, si ese daño se reduce a 0, puede redirigir parte de la fuerza del ataque. _Tirada de salvación de Destreza:_ CD 17, una criatura que el gigante pueda ver a 60 pies o menos. Fallo: 11 (1d10 + 6) de daño de fuerza."
+   }
+  ]
+ },
+ {
+  "id": "stone-golem",
+  "name": "Gólem de piedra",
+  "languages": "Entiende el común y otros dos idiomas, pero no los habla",
+  "traits": [
+   {
+    "name": "Forma inmutable",
+    "desc": "El gólem no puede cambiar de forma."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "El gólem tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "stone-golem_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El gólem hace dos ataques, usando Golpe o Descarga de fuerza en cualquier combinación."
+   },
+   {
+    "key": "stone-golem_slam",
+    "name": "Golpe",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +10, alcance 5 pies. 15 (2d8 + 6) de daño contundente más 9 (2d8) de daño de fuerza."
+   },
+   {
+    "key": "stone-golem_force-bolt",
+    "name": "Descarga de fuerza",
+    "desc": "Tirada de ataque a distancia: +9, alcance 120 pies. 22 (4d10) de daño de fuerza."
+   },
+   {
+    "key": "stone-golem_slow-recharge-5-6",
+    "name": "Ralentizar",
+    "desc": "El gólem lanza el conjuro Ralentizar, sin necesidad de componentes y usando Constitución como aptitud mágica (CD de salvación de conjuros 17)."
+   }
+  ]
+ },
+ {
+  "id": "storm-giant",
+  "name": "Gigante de las tormentas",
+  "languages": "Común, gigante",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "El gigante puede respirar aire y agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "storm-giant_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El gigante hace dos ataques, usando Espada de tormenta o Rayo en cualquier combinación."
+   },
+   {
+    "key": "storm-giant_storm-sword",
+    "name": "Espada de tormenta",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +14, alcance 10 pies. 23 (4d6 + 9) de daño cortante más 13 (3d8) de daño de relámpago."
+   },
+   {
+    "key": "storm-giant_thunderbolt",
+    "name": "Rayo",
+    "desc": "Tirada de ataque a distancia: +14, alcance 500 pies. 22 (2d12 + 9) de daño de relámpago, y el objetivo tiene los estados Cegado y Ensordecido hasta el comienzo del siguiente turno del gigante."
+   },
+   {
+    "key": "storm-giant_lightning-storm",
+    "name": "Tormenta de relámpagos",
+    "desc": "Tirada de salvación de Destreza: CD 18, cada criatura en un cilindro de 10 pies de radio y 40 pies de altura que se origina en un punto que el gigante pueda ver a 500 pies o menos. Fallo: 55 (10d10) de daño de relámpago. Éxito: mitad de daño."
+   },
+   {
+    "key": "storm-giant_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "El gigante lanza uno de los siguientes conjuros, sin necesidad de componentes materiales y usando Sabiduría como aptitud mágica (CD de salvación de conjuros 18):\n\n- **A voluntad:** Detectar magia, Luz\n- **1/día cada uno:** Controlar el clima"
+   }
+  ]
+ },
+ {
+  "id": "succubus",
+  "name": "Súcubo",
+  "languages": "Abisal, común, infernal; telepatía 60 pies",
+  "traits": [
+   {
+    "name": "Forma de íncubo",
+    "desc": "Cuando el súcubo termina un descanso largo, puede cambiar de forma para convertirse en un Íncubo, usando ese perfil en lugar de este."
+   }
+  ],
+  "actions": [
+   {
+    "key": "succubus_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El súcubo hace un ataque de Toque infernal y usa Encantar o Beso drenante."
+   },
+   {
+    "key": "succubus_fiendish-touch",
+    "name": "Toque infernal",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 16 (2d10 + 5) de daño psíquico."
+   },
+   {
+    "key": "succubus_charm",
+    "name": "Encantar",
+    "desc": "El súcubo lanza Dominar persona (versión de nivel 8), sin necesidad de componentes y usando Carisma como aptitud mágica (CD de salvación de conjuros 15)."
+   },
+   {
+    "key": "succubus_draining-kiss",
+    "name": "Beso drenante",
+    "desc": "Tirada de salvación de Constitución: CD 15, una criatura Encantada por el súcubo a 5 pies o menos. Fallo: 13 (3d8) de daño psíquico. Éxito: mitad de daño. Fallo o éxito: los puntos de golpe máximos del objetivo se reducen en una cantidad igual al daño recibido."
+   },
+   {
+    "key": "succubus_shape-shift",
+    "name": "Cambiar de forma",
+    "desc": "El súcubo cambia de forma para parecerse a un humanoide Mediano o Pequeño, o recupera su verdadera forma. Sus estadísticas de juego son las mismas en todas sus formas, salvo que su velocidad de vuelo solo está disponible en su verdadera forma. El equipo que lleve puesto o porte no se transforma."
+   }
+  ]
+ },
+ {
+  "id": "swarm-of-bats",
+  "name": "Enjambre de murciélagos",
+  "traits": [
+   {
+    "name": "Enjambre",
+    "desc": "El enjambre puede ocupar el espacio de otra criatura y viceversa, y puede moverse a través de cualquier abertura lo bastante grande para un murciélago Diminuto. El enjambre no puede recuperar puntos de golpe ni obtener puntos de golpe temporales."
+   }
+  ],
+  "actions": [
+   {
+    "key": "swarm-of-bats_bites",
+    "name": "Mordiscos",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (2d4) de daño perforante, o 2 (1d4) de daño perforante si el enjambre está Maltrecho."
+   }
+  ]
+ },
+ {
+  "id": "swarm-of-crawling-claws",
+  "name": "Enjambre de garras reptantes",
+  "languages": "Entiende el común pero no lo habla",
+  "traits": [
+   {
+    "name": "Enjambre",
+    "desc": "El enjambre puede ocupar el espacio de otra criatura y viceversa, y puede moverse a través de cualquier abertura lo bastante grande para una criatura Diminuta. El enjambre no puede recuperar puntos de golpe ni obtener puntos de golpe temporales."
+   }
+  ],
+  "actions": [
+   {
+    "key": "swarm-of-crawling-claws_swarm-of-grasping-hands",
+    "name": "Enjambre de manos aferradoras",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 20 (4d8 + 2) de daño necrótico, o 11 (2d8 + 2) de daño necrótico si el enjambre está Maltrecho. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "swarm-of-insects",
+  "name": "Enjambre de insectos",
+  "traits": [
+   {
+    "name": "Trepar como una araña",
+    "desc": "Si el enjambre tiene velocidad trepando, puede trepar por superficies difíciles, incluso por los techos, sin necesidad de hacer una prueba de característica."
+   },
+   {
+    "name": "Enjambre",
+    "desc": "El enjambre puede ocupar el espacio de otra criatura y viceversa, y puede moverse a través de cualquier abertura lo bastante grande para un insecto Diminuto. El enjambre no puede recuperar puntos de golpe ni obtener puntos de golpe temporales."
+   }
+  ],
+  "actions": [
+   {
+    "key": "swarm-of-insects_bites",
+    "name": "Mordiscos",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 6 (2d4 + 1) de daño de veneno, o 3 (1d4 + 1) de daño de veneno si el enjambre está Maltrecho."
+   }
+  ]
+ },
+ {
+  "id": "swarm-of-piranhas",
+  "name": "Enjambre de pirañas",
+  "traits": [
+   {
+    "name": "Enjambre",
+    "desc": "El enjambre puede ocupar el espacio de otra criatura y viceversa, y puede moverse a través de cualquier abertura lo bastante grande para una piraña Diminuta. El enjambre no puede recuperar puntos de golpe ni obtener puntos de golpe temporales."
+   },
+   {
+    "name": "Respirar bajo el agua",
+    "desc": "El enjambre solo puede respirar bajo el agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "swarm-of-piranhas_bites",
+    "name": "Mordiscos",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5 (con ventaja si el objetivo no tiene todos sus puntos de golpe), alcance 5 pies. 8 (2d4 + 3) de daño perforante, o 5 (1d4 + 3) de daño perforante si el enjambre está Maltrecho."
+   }
+  ]
+ },
+ {
+  "id": "swarm-of-rats",
+  "name": "Enjambre de ratas",
+  "traits": [
+   {
+    "name": "Enjambre",
+    "desc": "El enjambre puede ocupar el espacio de otra criatura y viceversa, y puede moverse a través de cualquier abertura lo bastante grande para una rata Diminuta. El enjambre no puede recuperar puntos de golpe ni obtener puntos de golpe temporales."
+   }
+  ],
+  "actions": [
+   {
+    "key": "swarm-of-rats_bites",
+    "name": "Mordiscos",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +2, alcance 5 pies. 5 (2d4) de daño perforante, o 2 (1d4) de daño perforante si el enjambre está Maltrecho."
+   }
+  ]
+ },
+ {
+  "id": "swarm-of-ravens",
+  "name": "Enjambre de cuervos",
+  "traits": [
+   {
+    "name": "Enjambre",
+    "desc": "El enjambre puede ocupar el espacio de otra criatura y viceversa, y puede moverse a través de cualquier abertura lo bastante grande para un cuervo Diminuto. El enjambre no puede recuperar puntos de golpe ni obtener puntos de golpe temporales."
+   }
+  ],
+  "actions": [
+   {
+    "key": "swarm-of-ravens_beaks",
+    "name": "Picos",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño perforante, o 2 (1d4) de daño perforante si el enjambre está Maltrecho."
+   },
+   {
+    "key": "swarm-of-ravens_cacophony",
+    "name": "Cacofonía",
+    "desc": "Tirada de salvación de Sabiduría: CD 10, una criatura en el espacio del enjambre. Fallo: el objetivo tiene el estado Ensordecido hasta el comienzo del siguiente turno del enjambre. Mientras está Ensordecido, el objetivo también tiene desventaja en las pruebas de característica y las tiradas de ataque."
+   }
+  ]
+ },
+ {
+  "id": "swarm-of-venomous-snakes",
+  "name": "Enjambre de serpientes venenosas",
+  "traits": [
+   {
+    "name": "Enjambre",
+    "desc": "El enjambre puede ocupar el espacio de otra criatura y viceversa, y puede moverse a través de cualquier abertura lo bastante grande para una serpiente Diminuta. El enjambre no puede recuperar puntos de golpe ni obtener puntos de golpe temporales."
+   }
+  ],
+  "actions": [
+   {
+    "key": "swarm-of-venomous-snakes_bites",
+    "name": "Mordiscos",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 8 (1d8 + 4) de daño perforante —o 6 (1d4 + 4) de daño perforante si el enjambre está Maltrecho— más 10 (3d6) de daño de veneno."
+   }
+  ]
+ },
+ {
+  "id": "tarrasque",
+  "name": "Tarasca",
+  "traits": [
+   {
+    "name": "Resistencia legendaria (6/día)",
+    "desc": "Si la tarasca falla una tirada de salvación, puede elegir tener éxito en su lugar."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "La tarasca tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   },
+   {
+    "name": "Caparazón reflectante",
+    "desc": "Si la tarasca es objetivo de un conjuro Proyectil mágico o de un conjuro que requiera una tirada de ataque a distancia, tira 1d6. Con un resultado de 1-5, la tarasca no se ve afectada. Con un 6, la tarasca no se ve afectada y refleja el conjuro, convirtiendo al lanzador en el objetivo."
+   },
+   {
+    "name": "Monstruo de asedio",
+    "desc": "La tarasca causa el doble de daño a objetos y estructuras."
+   }
+  ],
+  "actions": [
+   {
+    "key": "tarrasque_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "La tarasca hace un ataque de Mordisco y otros tres ataques, usando Garra o Cola en cualquier combinación."
+   },
+   {
+    "key": "tarrasque_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +19, alcance 15 pies. 36 (4d12 + 10) de daño perforante, y el objetivo tiene el estado Agarrado (CD 20 para escapar). Hasta que termine el agarre, el objetivo tiene el estado Apresado y no puede teletransportarse."
+   },
+   {
+    "key": "tarrasque_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +19, alcance 15 pies. 28 (4d8 + 10) de daño cortante."
+   },
+   {
+    "key": "tarrasque_tail",
+    "name": "Cola",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +19, alcance 30 pies. 23 (3d8 + 10) de daño contundente. Si el objetivo es una criatura Enorme o más pequeña, tiene el estado Derribado."
+   },
+   {
+    "key": "tarrasque_thunderous-bellow",
+    "name": "Bramido atronador",
+    "desc": "Tirada de salvación de Constitución: CD 27, cada criatura y cada objeto que nadie lleve puesto ni porte en un cono de 150 pies. Fallo: 78 (12d12) de daño de trueno, y el objetivo tiene los estados Ensordecido y Asustado hasta el final de su siguiente turno. Éxito: solo mitad de daño."
+   },
+   {
+    "key": "tarrasque_swallow",
+    "name": "Tragar",
+    "desc": "Tirada de salvación de Fuerza: CD 27, una criatura Grande o más pequeña Agarrada por la tarasca (puede tener hasta seis criaturas tragadas a la vez). Fallo: el objetivo es tragado y el estado Agarrado termina. Una criatura tragada tiene los estados Cegado y Apresado y no puede teletransportarse, tiene cobertura total contra los ataques y otros efectos del exterior de la tarasca, y recibe 56 (16d6) de daño de ácido al comienzo de cada uno de los turnos de la tarasca. Si la tarasca recibe 60 de daño o más en un solo turno de una criatura que esté en su interior, debe superar una tirada de salvación de Constitución CD 20 al final de ese turno o regurgitará a todas las criaturas tragadas, cada una de las cuales cae en un espacio a 10 pies o menos de la tarasca y tiene el estado Derribado. Si la tarasca muere, cualquier criatura tragada deja de tener el estado Apresado y puede escapar del cadáver usando 20 pies de movimiento, saliendo Derribada."
+   },
+   {
+    "key": "tarrasque_onslaught",
+    "name": "Acometida",
+    "desc": "La tarasca se mueve hasta la mitad de su velocidad y hace un ataque de Garra o Cola."
+   },
+   {
+    "key": "tarrasque_world-shaking-movement",
+    "name": "Movimiento sísmico",
+    "desc": "La tarasca se mueve hasta su velocidad. Al final de este movimiento, la tarasca crea una onda expansiva instantánea en una emanación de 60 pies que se origina en ella. Las criaturas en esa área pierden la concentración y, si son Medianas o más pequeñas, tienen el estado Derribado. La tarasca no puede volver a realizar esta acción hasta el comienzo de su siguiente turno."
+   }
+  ]
+ },
+ {
+  "id": "tiger",
+  "name": "Tigre",
+  "actions": [
+   {
+    "key": "tiger_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 10 (2d6 + 3) de daño cortante. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Derribado."
+   },
+   {
+    "key": "tiger_nimble-escape",
+    "name": "Huida ágil",
+    "desc": "El tigre realiza la acción de Retirarse o de Esconderse."
+   }
+  ]
+ },
+ {
+  "id": "tough",
+  "name": "Matón",
+  "languages": "Común",
+  "traits": [
+   {
+    "name": "Tácticas de manada",
+    "desc": "El matón tiene ventaja en una tirada de ataque contra una criatura si al menos uno de sus aliados está a 5 pies o menos de la criatura y no tiene el estado Incapacitado."
+   }
+  ],
+  "actions": [
+   {
+    "key": "tough_mace",
+    "name": "Maza",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño contundente."
+   },
+   {
+    "key": "tough_heavy-crossbow",
+    "name": "Ballesta pesada",
+    "desc": "Tirada de ataque a distancia: +3, alcance 100/400 pies. 6 (1d10 + 1) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "tough-boss",
+  "name": "Jefe matón",
+  "languages": "Común y otro idioma",
+  "traits": [
+   {
+    "name": "Tácticas de manada",
+    "desc": "El matón tiene ventaja en una tirada de ataque contra una criatura si al menos uno de sus aliados está a 5 pies o menos de la criatura y no tiene el estado Incapacitado."
+   }
+  ],
+  "actions": [
+   {
+    "key": "tough-boss_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El matón hace dos ataques, usando Martillo de guerra o Ballesta pesada en cualquier combinación."
+   },
+   {
+    "key": "tough-boss_warhammer",
+    "name": "Martillo de guerra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 12 (2d8 + 3) de daño contundente. Si el objetivo es una criatura Grande o más pequeña, el matón empuja al objetivo hasta 10 pies en línea recta alejándolo de sí."
+   },
+   {
+    "key": "tough-boss_heavy-crossbow",
+    "name": "Ballesta pesada",
+    "desc": "Tirada de ataque a distancia: +4, alcance 100/400 pies. 13 (2d10 + 2) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "treant",
+  "name": "Ent",
+  "languages": "Común, druídico, élfico, silvano",
+  "traits": [
+   {
+    "name": "Monstruo de asedio",
+    "desc": "El ent causa el doble de daño a objetos y estructuras."
+   }
+  ],
+  "actions": [
+   {
+    "key": "treant_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El ent hace dos ataques de Golpe."
+   },
+   {
+    "key": "treant_slam",
+    "name": "Golpe",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +10, alcance 5 pies. 16 (3d6 + 6) de daño contundente."
+   },
+   {
+    "key": "treant_hail-of-bark",
+    "name": "Granizo de corteza",
+    "desc": "Tirada de ataque a distancia: +10, alcance 180 pies. 28 (4d10 + 6) de daño perforante."
+   },
+   {
+    "key": "treant_animate-trees",
+    "name": "Animar árboles",
+    "desc": "El ent anima mágicamente hasta dos árboles que pueda ver a 60 pies o menos de él. Cada árbol usa el perfil del Ent, salvo que tiene unas puntuaciones de Inteligencia y Carisma de 1, no puede hablar y carece de esta acción. El árbol actúa inmediatamente después del ent en el mismo turno de iniciativa y obedece al ent. Un árbol permanece animado durante 1 día o hasta que muere, muere el ent o se encuentra a más de 120 pies del ent. Después, el árbol echa raíces si es posible."
+   }
+  ]
+ },
+ {
+  "id": "triceratops",
+  "name": "Triceratops",
+  "actions": [
+   {
+    "key": "triceratops_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El triceratops hace dos ataques de Cornada."
+   },
+   {
+    "key": "triceratops_gore",
+    "name": "Cornada",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +9, alcance 5 pies. 19 (2d12 + 6) de daño perforante. Si el objetivo es Enorme o más pequeño y el triceratops se ha movido 20 pies o más en línea recta hacia él inmediatamente antes del impacto, el objetivo recibe 9 (2d8) de daño perforante adicional y tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "troll",
+  "name": "Trol",
+  "languages": "Gigante",
+  "traits": [
+   {
+    "name": "Miembros repugnantes (4/día)",
+    "desc": "Si el trol termina cualquier turno Maltrecho y ha recibido 15 o más de daño cortante durante ese turno, uno de sus miembros queda cercenado, cae en el espacio del trol y se convierte en un Miembro de trol. El miembro actúa inmediatamente después del turno del trol. El trol tiene 1 nivel de Agotamiento por cada miembro que le falte, y le vuelven a crecer los miembros perdidos la próxima vez que recupera puntos de golpe."
+   },
+   {
+    "name": "Regeneración",
+    "desc": "El trol recupera 15 puntos de golpe al comienzo de cada uno de sus turnos. Si el trol recibe daño de ácido o de fuego, este rasgo no funciona en el siguiente turno del trol. El trol solo muere si empieza su turno con 0 puntos de golpe y no se regenera."
+   }
+  ],
+  "actions": [
+   {
+    "key": "troll_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El trol hace tres ataques de Desgarrar."
+   },
+   {
+    "key": "troll_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. 11 (2d6 + 4) de daño cortante."
+   },
+   {
+    "key": "troll_charge",
+    "name": "Carga",
+    "desc": "El trol se mueve hasta la mitad de su velocidad en línea recta hacia un enemigo que pueda ver."
+   }
+  ]
+ },
+ {
+  "id": "troll-limb",
+  "name": "Miembro de trol",
+  "traits": [
+   {
+    "name": "Regeneración",
+    "desc": "El miembro recupera 5 puntos de golpe al comienzo de cada uno de sus turnos. Si el miembro recibe daño de ácido o de fuego, este rasgo no funciona en el siguiente turno del miembro. El miembro solo muere si empieza su turno con 0 puntos de golpe y no se regenera."
+   },
+   {
+    "name": "Engendro de trol",
+    "desc": "De forma inquietante, el miembro tiene los mismos sentidos que un trol completo. Si el miembro no es destruido en 24 horas, tira 1d12. Con un 12, el miembro se convierte en un Trol. De lo contrario, el miembro se marchita."
+   }
+  ],
+  "actions": [
+   {
+    "key": "troll-limb_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 9 (2d4 + 4) de daño cortante."
+   }
+  ]
+ },
+ {
+  "id": "tyrannosaurus-rex",
+  "name": "Tiranosaurio rex",
+  "actions": [
+   {
+    "key": "tyrannosaurus-rex_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El tiranosaurio hace un ataque de Mordisco y un ataque de Cola."
+   },
+   {
+    "key": "tyrannosaurus-rex_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +10, alcance 10 pies. 33 (4d12 + 7) de daño perforante. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Agarrado (CD 17 para escapar). Mientras está Agarrado, el objetivo tiene el estado Apresado y no puede ser objetivo de la Cola del tiranosaurio."
+   },
+   {
+    "key": "tyrannosaurus-rex_tail",
+    "name": "Cola",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +10, alcance 15 pies. 25 (4d8 + 7) de daño contundente. Si el objetivo es una criatura Enorme o más pequeña, tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "unicorn",
+  "name": "Unicornio",
+  "languages": "Celestial, élfico, silvano; telepatía 120 pies",
+  "traits": [
+   {
+    "name": "Resistencia legendaria (3/día)",
+    "desc": "Si el unicornio falla una tirada de salvación, puede elegir tener éxito en su lugar."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "El unicornio tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "unicorn_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El unicornio hace un ataque de Pezuñas y un ataque de Cuerno radiante."
+   },
+   {
+    "key": "unicorn_hooves",
+    "name": "Pezuñas",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 11 (2d6 + 4) de daño contundente."
+   },
+   {
+    "key": "unicorn_radiant-horn",
+    "name": "Cuerno radiante",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 9 (1d10 + 4) de daño radiante."
+   },
+   {
+    "key": "unicorn_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "El unicornio lanza uno de los siguientes conjuros, sin necesidad de componentes y usando Carisma como aptitud mágica (CD de salvación de conjuros 14):\n\n- **A voluntad:** Detectar el bien y el mal, Artesanía druídica\n- **1/día cada uno:** Calmar emociones, Disipar el bien y el mal, Enmarañar, Pasar sin dejar rastro, Palabra de regreso"
+   },
+   {
+    "key": "unicorn_unicorn's-blessing-3-day",
+    "name": "Bendición del unicornio",
+    "desc": "El unicornio toca a otra criatura con su cuerno y lanza Curar heridas o Restablecimiento menor sobre esa criatura, usando la misma aptitud mágica que en Lanzamiento de conjuros."
+   },
+   {
+    "key": "unicorn_charging-horn",
+    "name": "Carga con el cuerno",
+    "desc": "El unicornio se mueve hasta la mitad de su velocidad sin provocar ataques de oportunidad y hace un ataque de Cuerno radiante."
+   },
+   {
+    "key": "unicorn_shimmering-shield",
+    "name": "Escudo reluciente",
+    "desc": "El unicornio se elige a sí mismo o a una criatura que pueda ver a 60 pies o menos de él como objetivo. El objetivo obtiene 10 (3d6) puntos de golpe temporales, y su CA aumenta en 2 hasta el final del siguiente turno del unicornio. El unicornio no puede volver a realizar esta acción hasta el comienzo de su siguiente turno."
+   }
+  ]
+ },
+ {
+  "id": "vampire",
+  "name": "Vampiro",
+  "languages": "Común y otros dos idiomas",
+  "traits": [
+   {
+    "name": "Resistencia legendaria (3/día, o 4/día en la guarida)",
+    "desc": "Si el vampiro falla una tirada de salvación, puede elegir tener éxito en su lugar."
+   },
+   {
+    "name": "Huida neblinosa",
+    "desc": "Si el vampiro se queda a 0 puntos de golpe fuera de su lugar de descanso, usa Cambiar de forma para convertirse en niebla (no requiere acción). Si no puede usar Cambiar de forma, es destruido. Mientras tenga 0 puntos de golpe en forma de niebla, no puede recuperar su forma de vampiro y debe llegar a su lugar de descanso en 2 horas o será destruido. Una vez en su lugar de descanso, recupera su forma de vampiro y tiene el estado Paralizado hasta que recupere algún punto de golpe, y recupera 1 punto de golpe tras pasar 1 hora allí."
+   },
+   {
+    "name": "Trepar como una araña",
+    "desc": "El vampiro puede trepar por superficies difíciles, incluso por los techos, sin necesidad de hacer una prueba de característica."
+   },
+   {
+    "name": "Debilidades vampíricas",
+    "desc": "El vampiro tiene estas debilidades:\n\n- **Prohibición:** El vampiro no puede entrar en una residencia sin la invitación de uno de sus ocupantes.\n- **Agua corriente:** El vampiro recibe 20 de daño de ácido si termina su turno en agua corriente.\n- **Estaca en el corazón:** Si se clava un arma que cause daño perforante en el corazón del vampiro mientras este tiene el estado Incapacitado en su lugar de descanso, el vampiro tiene el estado Paralizado hasta que se retire el arma.\n- **Luz solar:** El vampiro recibe 20 de daño radiante si empieza su turno bajo la luz solar. Mientras está bajo la luz solar, tiene desventaja en las tiradas de ataque y las pruebas de característica."
+   }
+  ],
+  "actions": [
+   {
+    "key": "vampire_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El vampiro hace dos ataques de Golpe sepulcral y usa Mordisco."
+   },
+   {
+    "key": "vampire_grave-strike",
+    "name": "Golpe sepulcral",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +9, alcance 5 pies. 8 (1d8 + 4) de daño contundente más 7 (2d6) de daño necrótico. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Agarrado (CD 14 para escapar) por una de sus dos manos."
+   },
+   {
+    "key": "vampire_bite-bat-or-vampire-form-only",
+    "name": "Mordisco",
+    "desc": "Tirada de salvación de Constitución: CD 17, una criatura a 5 pies o menos que esté dispuesta o que tenga el estado Agarrado, Incapacitado o Apresado. Fallo: 6 (1d4 + 4) de daño perforante más 13 (3d8) de daño necrótico. Los puntos de golpe máximos del objetivo se reducen en una cantidad igual al daño necrótico recibido, y el vampiro recupera una cantidad de puntos de golpe igual a esa cantidad. Un humanoide que se quede a 0 puntos de golpe por este daño y luego sea enterrado se alza al siguiente atardecer como un Engendro vampírico bajo el control del vampiro."
+   },
+   {
+    "key": "vampire_shape-shift",
+    "name": "Cambiar de forma",
+    "desc": "Si el vampiro no está bajo la luz solar ni en agua corriente, cambia de forma para convertirse en un murciélago Diminuto (velocidad 5 pies, velocidad volando 30 pies) o en una nube de niebla Mediana (velocidad 5 pies, velocidad volando 20 pies [levitar]), o recupera su forma de vampiro. Todo lo que lleve puesto se transforma con él. Mientras está en forma de murciélago, el vampiro no puede hablar. Sus estadísticas de juego, salvo su tamaño y su velocidad, no cambian. Mientras está en forma de niebla, el vampiro no puede realizar ninguna acción, hablar ni manipular objetos. No tiene peso y puede entrar en el espacio de un enemigo y detenerse allí. Si el aire puede pasar a través de un espacio, la niebla también puede hacerlo, pero no puede atravesar líquidos. Tiene resistencia a todo el daño, salvo al daño que recibe de la luz solar."
+   },
+   {
+    "key": "vampire_charm-recharge-5-6",
+    "name": "Encantar",
+    "desc": "El vampiro lanza Hechizar persona, sin necesidad de componentes y usando Carisma como aptitud mágica (CD de salvación de conjuros 17), y la duración es de 24 horas. El objetivo Encantado se deja morder voluntariamente con el Mordisco del vampiro, cuyo daño no pone fin al conjuro. Cuando el conjuro termina, el objetivo no sabe que ha sido Encantado por el vampiro."
+   },
+   {
+    "key": "vampire_deathless-strike",
+    "name": "Golpe imperecedero",
+    "desc": "El vampiro se mueve hasta la mitad de su velocidad y hace un ataque de Golpe sepulcral."
+   },
+   {
+    "key": "vampire_beguile",
+    "name": "Seducir",
+    "desc": "El vampiro lanza Orden imperiosa, sin necesidad de componentes y usando Carisma como aptitud mágica (CD de salvación de conjuros 17). El vampiro no puede volver a realizar esta acción hasta el comienzo de su siguiente turno."
+   }
+  ]
+ },
+ {
+  "id": "vampire-familiar",
+  "name": "Familiar vampírico",
+  "languages": "Común y otro idioma",
+  "traits": [
+   {
+    "name": "Conexión vampírica",
+    "desc": "Mientras el familiar y su amo vampiro estén en el mismo plano de existencia, el vampiro puede comunicarse telepáticamente con el familiar y percibir a través de los sentidos del familiar."
+   }
+  ],
+  "actions": [
+   {
+    "key": "vampire-familiar_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El familiar hace dos ataques de Daga umbría."
+   },
+   {
+    "key": "vampire-familiar_umbral-dagger",
+    "name": "Daga umbría",
+    "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +5, alcance 5 pies o alcance 20/60 pies. 5 (1d4 + 3) de daño perforante más 7 (3d4) de daño necrótico. Si el objetivo se queda a 0 puntos de golpe por este ataque, queda estable, pero tiene el estado Envenenado durante 1 hora. Mientras tiene el estado Envenenado, el objetivo tiene el estado Paralizado."
+   },
+   {
+    "key": "vampire-familiar_deathless-agility",
+    "name": "Agilidad imperecedera",
+    "desc": "El familiar realiza la acción de Correr o de Retirarse."
+   }
+  ]
+ },
+ {
+  "id": "vampire-spawn",
+  "name": "Engendro vampírico",
+  "languages": "Común y otro idioma",
+  "traits": [
+   {
+    "name": "Trepar como una araña",
+    "desc": "El vampiro puede trepar por superficies difíciles, incluso por los techos, sin necesidad de hacer una prueba de característica."
+   },
+   {
+    "name": "Debilidades vampíricas",
+    "desc": "El vampiro tiene estas debilidades:\n\n- **Prohibición:** El vampiro no puede entrar en una residencia sin la invitación de uno de sus ocupantes.\n- **Agua corriente:** El vampiro recibe 20 de daño de ácido si termina su turno en agua corriente.\n- **Estaca en el corazón:** El vampiro es destruido si se clava un arma que cause daño perforante en su corazón mientras tiene el estado Incapacitado.\n- **Luz solar:** El vampiro recibe 20 de daño radiante si empieza su turno bajo la luz solar. Mientras está bajo la luz solar, tiene desventaja en las tiradas de ataque y las pruebas de característica."
+   }
+  ],
+  "actions": [
+   {
+    "key": "vampire-spawn_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El vampiro hace dos ataques de Garra y usa Mordisco."
+   },
+   {
+    "key": "vampire-spawn_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 8 (2d4 + 3) de daño cortante. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Agarrado (CD 13 para escapar) por una de sus dos garras."
+   },
+   {
+    "key": "vampire-spawn_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de salvación de Constitución: CD 14, una criatura a 5 pies o menos que esté dispuesta o que tenga el estado Agarrado, Incapacitado o Apresado. Fallo: 5 (1d4 + 3) de daño perforante más 10 (3d6) de daño necrótico. Los puntos de golpe máximos del objetivo se reducen en una cantidad igual al daño necrótico recibido, y el vampiro recupera una cantidad de puntos de golpe igual a esa cantidad."
+   },
+   {
+    "key": "vampire-spawn_deathless-agility",
+    "name": "Agilidad imperecedera",
+    "desc": "El vampiro realiza la acción de Correr o de Retirarse."
+   }
+  ]
+ },
+ {
+  "id": "venomous-snake",
+  "name": "Serpiente venenosa",
+  "actions": [
+   {
+    "key": "venomous-snake_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 4 (1d4 + 2) de daño perforante más 3 (1d6) de daño de veneno."
+   }
+  ]
+ },
+ {
+  "id": "violet-fungus",
+  "name": "Hongo violeta",
+  "actions": [
+   {
+    "key": "violet-fungus_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El hongo hace dos ataques de Toque putrefacto."
+   },
+   {
+    "key": "violet-fungus_rotting-touch",
+    "name": "Toque putrefacto",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +2, alcance 10 pies. 4 (1d8) de daño necrótico."
+   }
+  ]
+ },
+ {
+  "id": "vrock",
+  "name": "Vrock",
+  "languages": "Abisal; telepatía 120 pies",
+  "traits": [
+   {
+    "name": "Restablecimiento demoníaco",
+    "desc": "Si el vrock muere fuera del Abismo, su cuerpo se disuelve en icor y obtiene un nuevo cuerpo al instante, reviviendo con todos sus puntos de golpe en algún lugar del Abismo."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "El vrock tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "vrock_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El vrock hace dos ataques de Despedazar."
+   },
+   {
+    "key": "vrock_shred",
+    "name": "Despedazar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 10 (2d6 + 3) de daño perforante más 10 (3d6) de daño de veneno."
+   },
+   {
+    "key": "vrock_spores",
+    "name": "Esporas",
+    "desc": "Tirada de salvación de Constitución: CD 15, cada criatura en una emanación de 20 pies que se origina en el vrock. Fallo: el objetivo tiene el estado Envenenado y repite la tirada de salvación al final de cada uno de sus turnos, poniendo fin al efecto sobre sí mismo si tiene éxito. Mientras está Envenenado, el objetivo recibe 5 (1d10) de daño de veneno al comienzo de cada uno de sus turnos. Vaciar un frasco de agua bendita sobre el objetivo pone fin al efecto antes de tiempo."
+   },
+   {
+    "key": "vrock_stunning-screech",
+    "name": "Chillido aturdidor",
+    "desc": "Tirada de salvación de Constitución: CD 15, cada criatura en una emanación de 20 pies que se origina en el vrock (los demonios tienen éxito automáticamente). Fallo: 10 (3d6) de daño de trueno, y el objetivo tiene el estado Aturdido hasta el final del siguiente turno del vrock."
+   }
+  ]
+ },
+ {
+  "id": "vulture",
+  "name": "Buitre",
+  "traits": [
+   {
+    "name": "Tácticas de manada",
+    "desc": "El buitre tiene ventaja en una tirada de ataque contra una criatura si al menos uno de sus aliados está a 5 pies o menos de la criatura y no tiene el estado Incapacitado."
+   }
+  ],
+  "actions": [
+   {
+    "key": "vulture_beak",
+    "name": "Pico",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +2, alcance 5 pies. 2 (1d4) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "warhorse",
+  "name": "Caballo de guerra",
+  "actions": [
+   {
+    "key": "warhorse_hooves",
+    "name": "Pezuñas",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 9 (2d4 + 4) de daño contundente. Si el objetivo es una criatura Grande o más pequeña y el caballo se ha movido 20 pies o más en línea recta hacia él inmediatamente antes del impacto, el objetivo recibe 5 (2d4) de daño contundente adicional y tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "warhorse-skeleton",
+  "name": "Esqueleto de caballo de guerra",
+  "actions": [
+   {
+    "key": "warhorse-skeleton_hooves",
+    "name": "Pezuñas",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 7 (1d6 + 4) de daño contundente. Si el objetivo es una criatura Grande o más pequeña y el esqueleto se ha movido 20 pies o más en línea recta hacia él inmediatamente antes del impacto, el objetivo tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "warrior-infantry",
+  "name": "Guerrero de infantería",
+  "languages": "Común",
+  "traits": [
+   {
+    "name": "Tácticas de manada",
+    "desc": "El guerrero tiene ventaja en una tirada de ataque contra una criatura si al menos uno de sus aliados está a 5 pies o menos de la criatura y no tiene el estado Incapacitado."
+   }
+  ],
+  "actions": [
+   {
+    "key": "warrior-infantry_spear",
+    "name": "Lanza",
+    "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +3, alcance 5 pies o alcance 20/60 pies. 4 (1d6 + 1) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "warrior-veteran",
+  "name": "Veterano",
+  "languages": "Común y otro idioma",
+  "actions": [
+   {
+    "key": "warrior-veteran_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El guerrero hace dos ataques de Espadón o de Ballesta pesada."
+   },
+   {
+    "key": "warrior-veteran_greatsword",
+    "name": "Espadón",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 10 (2d6 + 3) de daño cortante."
+   },
+   {
+    "key": "warrior-veteran_heavy-crossbow",
+    "name": "Ballesta pesada",
+    "desc": "Tirada de ataque a distancia: +3, alcance 100/400 pies. 12 (2d10 + 1) de daño perforante."
+   },
+   {
+    "key": "warrior-veteran_parry",
+    "name": "Parada",
+    "desc": "_Desencadenante:_ El guerrero recibe un impacto de una tirada de ataque cuerpo a cuerpo mientras empuña un arma. _Respuesta:_ El guerrero suma 2 a su CA contra ese ataque, lo que puede hacer que falle."
+   }
+  ]
+ },
+ {
+  "id": "water-elemental",
+  "name": "Elemental de agua",
+  "languages": "Primordial (acuano)",
+  "traits": [
+   {
+    "name": "Congelación",
+    "desc": "Si el elemental recibe daño de frío, su velocidad se reduce en 20 pies hasta el final de su siguiente turno."
+   },
+   {
+    "name": "Forma acuática",
+    "desc": "El elemental puede entrar en el espacio de un enemigo y detenerse allí. Puede moverse a través de un espacio de tan solo 1 pulgada de ancho sin gastar movimiento adicional para ello."
+   }
+  ],
+  "actions": [
+   {
+    "key": "water-elemental_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El elemental hace dos ataques de Golpe."
+   },
+   {
+    "key": "water-elemental_slam",
+    "name": "Golpe",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 13 (2d8 + 4) de daño contundente. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Derribado."
+   },
+   {
+    "key": "water-elemental_whelm",
+    "name": "Anegar",
+    "desc": "Tirada de salvación de Fuerza: CD 15, cada criatura en el espacio del elemental. Fallo: 22 (4d8 + 4) de daño contundente. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Agarrado (CD 14 para escapar). Hasta que termine el agarre, el objetivo tiene el estado Apresado, se asfixia a menos que pueda respirar agua y recibe 9 (2d8) de daño contundente al comienzo de cada uno de los turnos del elemental. El elemental puede agarrar a una criatura Grande o a hasta dos criaturas Medianas o más pequeñas a la vez con Anegar. Como acción, una criatura a 5 pies o menos del elemental puede sacar a una criatura de él si tiene éxito en una prueba de Fuerza (Atletismo) CD 14. Éxito: solo mitad de daño."
+   }
+  ]
+ },
+ {
+  "id": "weasel",
+  "name": "Comadreja",
+  "actions": [
+   {
+    "key": "weasel_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 1 de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "werebear",
+  "name": "Hombre oso",
+  "languages": "Común (no puede hablar en forma de oso)",
+  "actions": [
+   {
+    "key": "werebear_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El hombre oso hace dos ataques, usando Hacha de mano o Desgarrar en cualquier combinación. Puede sustituir un ataque por un ataque de Mordisco."
+   },
+   {
+    "key": "werebear_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 17 (2d12 + 4) de daño perforante. Si el objetivo es un humanoide, queda sometido al siguiente efecto. Tirada de salvación de Constitución: CD 14. Fallo: el objetivo queda maldito. Si el objetivo maldito se queda a 0 puntos de golpe, en su lugar se convierte en un Hombre oso bajo el control del DJ y tiene 10 puntos de golpe. Éxito: el objetivo es inmune a la maldición de este hombre oso durante 24 horas."
+   },
+   {
+    "key": "werebear_handaxe",
+    "name": "Hacha de mano",
+    "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +7, alcance 5 pies o alcance 20/60 pies. 14 (3d6 + 4) de daño cortante."
+   },
+   {
+    "key": "werebear_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 13 (2d8 + 4) de daño cortante."
+   },
+   {
+    "key": "werebear_shape-shift",
+    "name": "Cambiar de forma",
+    "desc": "El hombre oso cambia de forma para convertirse en un híbrido Grande de oso y humanoide o en un oso Grande, o recupera su verdadera forma humanoide. Sus estadísticas de juego, salvo su tamaño, son las mismas en todas sus formas. El equipo que lleve puesto o porte no se transforma."
+   }
+  ]
+ },
+ {
+  "id": "wereboar",
+  "name": "Hombre jabalí",
+  "languages": "Común (no puede hablar en forma de jabalí)",
+  "actions": [
+   {
+    "key": "wereboar_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El hombre jabalí hace dos ataques, usando Jabalina o Colmillo en cualquier combinación. Puede sustituir un ataque por un ataque de Cornada."
+   },
+   {
+    "key": "wereboar_gore",
+    "name": "Cornada",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 12 (2d8 + 3) de daño perforante. Si el objetivo es un humanoide, queda sometido al siguiente efecto. Tirada de salvación de Constitución: CD 12. Fallo: el objetivo queda maldito. Si el objetivo maldito se queda a 0 puntos de golpe, en su lugar se convierte en un Hombre jabalí bajo el control del DJ y tiene 10 puntos de golpe. Éxito: el objetivo es inmune a la maldición de este hombre jabalí durante 24 horas."
+   },
+   {
+    "key": "wereboar_javelin",
+    "name": "Jabalina",
+    "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +5, alcance 5 pies o alcance 30/120 pies. 13 (3d6 + 3) de daño perforante."
+   },
+   {
+    "key": "wereboar_tusk",
+    "name": "Colmillo",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 10 (2d6 + 3) de daño perforante. Si el objetivo es una criatura Mediana o más pequeña y el hombre jabalí se ha movido 20 pies o más en línea recta hacia ella inmediatamente antes del impacto, el objetivo recibe 7 (2d6) de daño perforante adicional y tiene el estado Derribado."
+   },
+   {
+    "key": "wereboar_shape-shift",
+    "name": "Cambiar de forma",
+    "desc": "El hombre jabalí cambia de forma para convertirse en un híbrido Mediano de jabalí y humanoide o en un jabalí Pequeño, o recupera su verdadera forma humanoide. Sus estadísticas de juego, salvo su tamaño, son las mismas en todas sus formas. El equipo que lleve puesto o porte no se transforma."
+   }
+  ]
+ },
+ {
+  "id": "wererat",
+  "name": "Hombre rata",
+  "languages": "Común (no puede hablar en forma de rata)",
+  "actions": [
+   {
+    "key": "wererat_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El hombre rata hace dos ataques, usando Arañazo o Ballesta de mano en cualquier combinación. Puede sustituir un ataque por un ataque de Mordisco."
+   },
+   {
+    "key": "wererat_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 8 (2d4 + 3) de daño perforante. Si el objetivo es un humanoide, queda sometido al siguiente efecto. Tirada de salvación de Constitución: CD 11. Fallo: el objetivo queda maldito. Si el objetivo maldito se queda a 0 puntos de golpe, en su lugar se convierte en un Hombre rata bajo el control del DJ y tiene 10 puntos de golpe. Éxito: el objetivo es inmune a la maldición de este hombre rata durante 24 horas."
+   },
+   {
+    "key": "wererat_scratch",
+    "name": "Arañazo",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 6 (1d6 + 3) de daño cortante."
+   },
+   {
+    "key": "wererat_hand-crossbow",
+    "name": "Ballesta de mano",
+    "desc": "Tirada de ataque a distancia: +5, alcance 30/120 pies. 6 (1d6 + 3) de daño perforante."
+   },
+   {
+    "key": "wererat_shape-shift",
+    "name": "Cambiar de forma",
+    "desc": "El hombre rata cambia de forma para convertirse en un híbrido Mediano de rata y humanoide o en una rata Pequeña, o recupera su verdadera forma humanoide. Sus estadísticas de juego, salvo su tamaño, son las mismas en todas sus formas. El equipo que lleve puesto o porte no se transforma."
+   }
+  ]
+ },
+ {
+  "id": "weretiger",
+  "name": "Hombre tigre",
+  "languages": "Común (no puede hablar en forma de tigre)",
+  "actions": [
+   {
+    "key": "weretiger_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El hombre tigre hace dos ataques, usando Arañazo o Arco largo en cualquier combinación. Puede sustituir un ataque por un ataque de Mordisco."
+   },
+   {
+    "key": "weretiger_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 12 (2d8 + 3) de daño perforante. Si el objetivo es un humanoide, queda sometido al siguiente efecto. Tirada de salvación de Constitución: CD 13. Fallo: el objetivo queda maldito. Si el objetivo maldito se queda a 0 puntos de golpe, en su lugar se convierte en un Hombre tigre bajo el control del DJ y tiene 10 puntos de golpe. Éxito: el objetivo es inmune a la maldición de este hombre tigre durante 24 horas."
+   },
+   {
+    "key": "weretiger_scratch",
+    "name": "Arañazo",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 10 (2d6 + 3) de daño cortante."
+   },
+   {
+    "key": "weretiger_longbow",
+    "name": "Arco largo",
+    "desc": "Tirada de ataque a distancia: +4, alcance 150/600 pies. 11 (2d8 + 2) de daño perforante."
+   },
+   {
+    "key": "weretiger_prowl-tiger-or-hybrid-form-only",
+    "name": "Merodear (solo en forma de tigre o híbrida)",
+    "desc": "El hombre tigre se mueve hasta su velocidad sin provocar ataques de oportunidad. Al final de este movimiento, el hombre tigre puede realizar la acción de Esconderse."
+   },
+   {
+    "key": "weretiger_shape-shift",
+    "name": "Cambiar de forma",
+    "desc": "El hombre tigre cambia de forma para convertirse en un híbrido Grande de tigre y humanoide o en un tigre Grande, o recupera su verdadera forma humanoide. Sus estadísticas de juego, salvo su tamaño, son las mismas en todas sus formas. El equipo que lleve puesto o porte no se transforma."
+   }
+  ]
+ },
+ {
+  "id": "werewolf",
+  "name": "Hombre lobo",
+  "languages": "Común (no puede hablar en forma de lobo)",
+  "traits": [
+   {
+    "name": "Tácticas de manada",
+    "desc": "El hombre lobo tiene ventaja en una tirada de ataque contra una criatura si al menos uno de sus aliados está a 5 pies o menos de la criatura y no tiene el estado Incapacitado."
+   }
+  ],
+  "actions": [
+   {
+    "key": "werewolf_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El hombre lobo hace dos ataques, usando Arañazo o Arco largo en cualquier combinación. Puede sustituir un ataque por un ataque de Mordisco."
+   },
+   {
+    "key": "werewolf_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 12 (2d8 + 3) de daño perforante. Si el objetivo es un humanoide, queda sometido al siguiente efecto. Tirada de salvación de Constitución: CD 12. Fallo: el objetivo queda maldito. Si el objetivo maldito se queda a 0 puntos de golpe, en su lugar se convierte en un Hombre lobo bajo el control del DJ y tiene 10 puntos de golpe. Éxito: el objetivo es inmune a la maldición de este hombre lobo durante 24 horas."
+   },
+   {
+    "key": "werewolf_scratch",
+    "name": "Arañazo",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 10 (2d6 + 3) de daño cortante."
+   },
+   {
+    "key": "werewolf_longbow",
+    "name": "Arco largo",
+    "desc": "Tirada de ataque a distancia: +4, alcance 150/600 pies. 11 (2d8 + 2) de daño perforante."
+   },
+   {
+    "key": "werewolf_shape-shift",
+    "name": "Cambiar de forma",
+    "desc": "El hombre lobo cambia de forma para convertirse en un híbrido Grande de lobo y humanoide o en un lobo Mediano, o recupera su verdadera forma humanoide. Sus estadísticas de juego, salvo su tamaño, son las mismas en todas sus formas. El equipo que lleve puesto o porte no se transforma."
+   }
+  ]
+ }
+]

@@ -1,0 +1,1206 @@
+[
+  {
+    "id": "pit-fiend",
+    "name": "Diablo de la sima",
+    "languages": "Infernal; telepatía 120 pies",
+    "traits": [
+      {
+        "name": "Restauración diabólica",
+        "desc": "Si el diablo de la sima muere fuera de los Nueve Infiernos, su cuerpo desaparece en una humareda sulfurosa y obtiene al instante un cuerpo nuevo, reviviendo con todos sus puntos de golpe en algún lugar de los Nueve Infiernos."
+      },
+      {
+        "name": "Aura de miedo",
+        "desc": "El diablo de la sima emana un aura en una emanación de 20 pies mientras no tenga el estado Incapacitado. Tirada de salvación de Sabiduría: CD 21, cualquier enemigo que empiece su turno en el aura. Fallo: el objetivo tiene el estado Asustado hasta el inicio de su siguiente turno. Éxito: el objetivo es inmune al aura de este diablo de la sima durante 24 horas."
+      },
+      {
+        "name": "Resistencia legendaria (4/día)",
+        "desc": "Si el diablo de la sima falla una tirada de salvación, puede elegir tener éxito en su lugar."
+      },
+      {
+        "name": "Resistencia mágica",
+        "desc": "El diablo de la sima tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+      }
+    ],
+    "actions": [
+      {
+        "key": "pit-fiend_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El diablo de la sima hace un ataque de Mordisco, dos ataques de Garra diabólica y un ataque de Maza ígnea."
+      },
+      {
+        "key": "pit-fiend_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +14, alcance 10 pies. 18 (3d6 + 8) de daño perforante. Si el objetivo es una criatura, debe hacer la siguiente tirada de salvación. Tirada de salvación de Constitución: CD 21. Fallo: el objetivo tiene el estado Envenenado. Mientras esté Envenenado, el objetivo no puede recuperar puntos de golpe y recibe 21 (6d6) de daño de veneno al inicio de cada uno de sus turnos, y repite la tirada de salvación al final de cada uno de sus turnos, terminando el efecto sobre sí mismo si tiene éxito. Al cabo de 1 minuto, tiene éxito automáticamente."
+      },
+      {
+        "key": "pit-fiend_devilish-claw",
+        "name": "Garra diabólica",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +14, alcance 10 pies. 26 (4d8 + 8) de daño necrótico."
+      },
+      {
+        "key": "pit-fiend_fiery-mace",
+        "name": "Maza ígnea",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +14, alcance 10 pies. 22 (4d6 + 8) de daño de fuerza más 21 (6d6) de daño de fuego."
+      },
+      {
+        "key": "pit-fiend_hellfire-spellcasting",
+        "name": "Lanzamiento de conjuros del fuego infernal",
+        "desc": "El diablo de la sima lanza Bola de fuego (versión de nivel 5) dos veces, sin necesitar componentes materiales y usando Carisma como aptitud mágica (CD de salvación de conjuros 21). Puede sustituir una Bola de fuego por Inmovilizar monstruo (versión de nivel 7) o Muro de fuego.\n\n- **A voluntad:**"
+      }
+    ]
+  },
+  {
+    "id": "planetar",
+    "name": "Planetar",
+    "languages": "Todos; telepatía 120 pies",
+    "traits": [
+      {
+        "name": "Conciencia divina",
+        "desc": "El planetar sabe si oye una mentira."
+      },
+      {
+        "name": "Restauración exaltada",
+        "desc": "Si el planetar muere fuera del Monte Celestia, su cuerpo desaparece y obtiene al instante un cuerpo nuevo, reviviendo con todos sus puntos de golpe en algún lugar del Monte Celestia."
+      },
+      {
+        "name": "Resistencia mágica",
+        "desc": "El planetar tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+      }
+    ],
+    "actions": [
+      {
+        "key": "planetar_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El planetar hace tres ataques de Espada radiante o usa Estallido sagrado dos veces."
+      },
+      {
+        "key": "planetar_radiant-sword",
+        "name": "Espada radiante",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +12, alcance 10 pies. 14 (2d6 + 7) de daño cortante más 18 (4d8) de daño radiante."
+      },
+      {
+        "key": "planetar_holy-burst",
+        "name": "Estallido sagrado",
+        "desc": "Tirada de salvación de Destreza: CD 20, cada enemigo en una esfera de 20 pies de radio centrada en un punto que el planetar pueda ver a 120 pies o menos. Fallo: 24 (7d6) de daño radiante. Éxito: mitad de daño."
+      },
+      {
+        "key": "planetar_spellcasting",
+        "name": "Lanzamiento de conjuros",
+        "desc": "El planetar lanza uno de los siguientes conjuros, sin necesitar componentes materiales y usando Carisma como aptitud mágica (CD de salvación de conjuros 20):\n\n- **A voluntad:** Detectar el bien y el mal\n- **1/día cada uno:** Comunión, Controlar el clima, Disipar el bien y el mal, Revivir a los muertos"
+      },
+      {
+        "key": "planetar_divine-aid-2-day",
+        "name": "Ayuda divina",
+        "desc": "El planetar lanza Curar heridas, Invisibilidad, Restablecimiento menor o Levantar maldición, usando la misma aptitud mágica que en Lanzamiento de conjuros."
+      }
+    ]
+  },
+  {
+    "id": "plesiosaurus",
+    "name": "Plesiosaurio",
+    "traits": [
+      {
+        "name": "Contener la respiración",
+        "desc": "El plesiosaurio puede contener la respiración durante 1 hora."
+      }
+    ],
+    "actions": [
+      {
+        "key": "plesiosaurus_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 10 pies. 11 (2d6 + 4) de daño perforante."
+      }
+    ]
+  },
+  {
+    "id": "polar-bear",
+    "name": "Oso polar",
+    "actions": [
+      {
+        "key": "polar-bear_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El oso hace dos ataques de Desgarrar."
+      },
+      {
+        "key": "polar-bear_rend",
+        "name": "Desgarrar",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 9 (1d8 + 5) de daño cortante."
+      }
+    ]
+  },
+  {
+    "id": "pony",
+    "name": "Poni",
+    "actions": [
+      {
+        "key": "pony_hooves",
+        "name": "Pezuñas",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 4 (1d4 + 2) de daño contundente."
+      }
+    ]
+  },
+  {
+    "id": "priest",
+    "name": "Sacerdote",
+    "languages": "Común y otro idioma",
+    "actions": [
+      {
+        "key": "priest_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El sacerdote hace dos ataques, usando Maza o Llama radiante en cualquier combinación."
+      },
+      {
+        "key": "priest_mace",
+        "name": "Maza",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 6 (1d6 + 3) de daño contundente más 5 (2d4) de daño radiante."
+      },
+      {
+        "key": "priest_radiant-flame",
+        "name": "Llama radiante",
+        "desc": "Tirada de ataque a distancia: +5, alcance 60 pies. 11 (2d10) de daño radiante."
+      },
+      {
+        "key": "priest_spellcasting",
+        "name": "Lanzamiento de conjuros",
+        "desc": "El sacerdote lanza uno de los siguientes conjuros, usando Sabiduría como aptitud mágica:\n\n- **A voluntad:** Luz, Taumaturgia\n- **1/día cada uno:** Espíritus guardianes"
+      },
+      {
+        "key": "priest_divine-aid-3-day",
+        "name": "Ayuda divina",
+        "desc": "El sacerdote lanza Bendecir, Disipar magia, Palabra curativa o Restablecimiento menor, usando la misma aptitud mágica que en Lanzamiento de conjuros."
+      }
+    ]
+  },
+  {
+    "id": "priest-acolyte",
+    "name": "Acólito",
+    "languages": "Común",
+    "actions": [
+      {
+        "key": "priest-acolyte_mace",
+        "name": "Maza",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño contundente más 2 (1d4) de daño radiante."
+      },
+      {
+        "key": "priest-acolyte_radiant-flame",
+        "name": "Llama radiante",
+        "desc": "Tirada de ataque a distancia: +4, alcance 60 pies. 7 (2d6) de daño radiante."
+      },
+      {
+        "key": "priest-acolyte_spellcasting",
+        "name": "Lanzamiento de conjuros",
+        "desc": "El sacerdote lanza uno de los siguientes conjuros, usando Sabiduría como aptitud mágica:\n\n- **A voluntad:** Luz, Taumaturgia"
+      },
+      {
+        "key": "priest-acolyte_divine-aid-1-day",
+        "name": "Ayuda divina",
+        "desc": "El sacerdote lanza Bendecir, Palabra curativa o Santuario, usando la misma aptitud mágica que en Lanzamiento de conjuros."
+      }
+    ]
+  },
+  {
+    "id": "pseudodragon",
+    "name": "Pseudodragón",
+    "languages": "Entiende el común y el dracónico pero no los habla",
+    "traits": [
+      {
+        "name": "Resistencia mágica",
+        "desc": "El pseudodragón tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+      }
+    ],
+    "actions": [
+      {
+        "key": "pseudodragon_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El pseudodragón hace dos ataques de Mordisco."
+      },
+      {
+        "key": "pseudodragon_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 4 (1d4 + 2) de daño perforante."
+      },
+      {
+        "key": "pseudodragon_sting",
+        "name": "Aguijón",
+        "desc": "Tirada de salvación de Constitución: CD 12, una criatura que el pseudodragón pueda ver a 5 pies o menos. Fallo: 5 (2d4) de daño de veneno, y el objetivo tiene el estado Envenenado durante 1 hora. Fallo por 5 o más: mientras esté Envenenado, el objetivo también tiene el estado Inconsciente, que termina antes si el objetivo recibe daño o si una criatura a 5 pies o menos de él usa una acción para despertarlo."
+      }
+    ]
+  },
+  {
+    "id": "pteranodon",
+    "name": "Pteranodon",
+    "traits": [
+      {
+        "name": "Vuelo rasante",
+        "desc": "El pteranodon no provoca ataques de oportunidad cuando sale volando del alcance de un enemigo."
+      }
+    ],
+    "actions": [
+      {
+        "key": "pteranodon_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 6 (1d8 + 2) de daño perforante."
+      }
+    ]
+  },
+  {
+    "id": "purple-worm",
+    "name": "Gusano púrpura",
+    "traits": [
+      {
+        "name": "Tunelador",
+        "desc": "El gusano puede excavar a través de roca sólida a la mitad de su velocidad de excavación y deja a su paso un túnel de 10 pies de diámetro."
+      }
+    ],
+    "actions": [
+      {
+        "key": "purple-worm_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El gusano hace un ataque de Mordisco y un ataque de Aguijón de la cola."
+      },
+      {
+        "key": "purple-worm_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +14, alcance 10 pies. 22 (3d8 + 9) de daño perforante. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Agarrado (CD 19 para escapar) y tiene el estado Apresado hasta que termine el agarre."
+      },
+      {
+        "key": "purple-worm_tail-stinger",
+        "name": "Aguijón de la cola",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +14, alcance 10 pies. 16 (2d6 + 9) de daño perforante más 35 (10d6) de daño de veneno."
+      },
+      {
+        "key": "purple-worm_swallow",
+        "name": "Tragar",
+        "desc": "Tirada de salvación de Fuerza: CD 19, una criatura Grande o más pequeña Agarrada por el gusano (puede tener hasta tres criaturas tragadas a la vez). Fallo: el gusano se traga al objetivo, y el estado Agarrado termina. Una criatura tragada tiene los estados Cegado y Apresado, tiene cobertura total contra ataques y otros efectos procedentes del exterior del gusano y recibe 17 (5d6) de daño de ácido al inicio de cada turno del gusano. Si el gusano recibe 30 de daño o más en un solo turno de una criatura que esté en su interior, debe superar una tirada de salvación de Constitución con CD 21 al final de ese turno o regurgitará a todas las criaturas tragadas, cada una de las cuales cae en un espacio a 5 pies o menos del gusano y tiene el estado Derribado. Si el gusano muere, las criaturas tragadas dejan de tener el estado Apresado y pueden escapar del cadáver usando 20 pies de movimiento, saliendo Derribadas."
+      }
+    ]
+  },
+  {
+    "id": "quasit",
+    "name": "Quasit",
+    "languages": "Abisal, común",
+    "traits": [
+      {
+        "name": "Resistencia mágica",
+        "desc": "El quasit tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+      }
+    ],
+    "actions": [
+      {
+        "key": "quasit_rend",
+        "name": "Desgarrar",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 5 (1d4 + 3) de daño cortante, y el objetivo tiene el estado Envenenado hasta el inicio del siguiente turno del quasit."
+      },
+      {
+        "key": "quasit_scare",
+        "name": "Asustar",
+        "desc": "Tirada de salvación de Sabiduría: CD 10, una criatura a 20 pies o menos. Fallo: el objetivo tiene el estado Asustado. Al final de cada uno de sus turnos, el objetivo repite la tirada de salvación, terminando el efecto sobre sí mismo si tiene éxito. Al cabo de 1 minuto, tiene éxito automáticamente."
+      },
+      {
+        "key": "quasit_shape-shift",
+        "name": "Cambiar de forma",
+        "desc": "El quasit cambia de forma para parecerse a un murciélago (velocidad 10 pies, volar 40 pies), un ciempiés (40 pies, trepar 40 pies) o un sapo (40 pies, nadar 40 pies), o vuelve a su forma verdadera. Su perfil es el mismo en cada forma, salvo por su velocidad. El equipo que lleve puesto o transporte no se transforma."
+      },
+      {
+        "key": "quasit_invisibility",
+        "name": "Invisibilidad",
+        "desc": "El quasit se lanza Invisibilidad a sí mismo, sin necesitar componentes de conjuro y usando Carisma como aptitud mágica."
+      }
+    ]
+  },
+  {
+    "id": "rakshasa",
+    "name": "Rakshasa",
+    "languages": "Común, infernal",
+    "traits": [
+      {
+        "name": "Restauración infernal",
+        "desc": "Si el rakshasa muere fuera de los Nueve Infiernos, su cuerpo se convierte en icor y obtiene al instante un cuerpo nuevo, reviviendo con todos sus puntos de golpe en algún lugar de los Nueve Infiernos."
+      },
+      {
+        "name": "Resistencia mágica mayor",
+        "desc": "El rakshasa tiene éxito automáticamente en las tiradas de salvación contra conjuros y otros efectos mágicos, y las tiradas de ataque de los conjuros fallan automáticamente contra él. Sin el permiso del rakshasa, ningún conjuro puede observarlo a distancia ni detectar sus pensamientos, su tipo de criatura o su alineamiento."
+      }
+    ],
+    "actions": [
+      {
+        "key": "rakshasa_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El rakshasa hace tres ataques de Toque maldito."
+      },
+      {
+        "key": "rakshasa_cursed-touch",
+        "name": "Toque maldito",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +10, alcance 5 pies. 12 (2d6 + 5) de daño cortante más 19 (3d12) de daño necrótico. Si el objetivo es una criatura, queda maldito. Mientras esté maldito, el objetivo no obtiene ningún beneficio al terminar un descanso corto o largo."
+      },
+      {
+        "key": "rakshasa_baleful-command",
+        "name": "Orden funesta",
+        "desc": "Tirada de salvación de Sabiduría: CD 18, cada enemigo en una emanación de 30 pies con origen en el rakshasa. Fallo: 28 (8d6) de daño psíquico, y el objetivo tiene los estados Asustado e Incapacitado hasta el inicio del siguiente turno del rakshasa."
+      },
+      {
+        "key": "rakshasa_spellcasting",
+        "name": "Lanzamiento de conjuros",
+        "desc": "El rakshasa lanza uno de los siguientes conjuros, sin necesitar componentes materiales y usando Carisma como aptitud mágica (CD de salvación de conjuros 18):\n\n- **A voluntad:** Detectar magia, Detectar pensamientos, Disfrazarse, Mano de mago, Ilusión menor\n- **1/día cada uno:** Volar, Invisibilidad, Imagen mayor, Desplazamiento entre planos"
+      }
+    ]
+  },
+  {
+    "id": "rat",
+    "name": "Rata",
+    "traits": [
+      {
+        "name": "Ágil",
+        "desc": "La rata no provoca ataques de oportunidad cuando sale del alcance de un enemigo."
+      }
+    ],
+    "actions": [
+      {
+        "key": "rat_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +2, alcance 5 pies. 1 de daño perforante."
+      }
+    ]
+  },
+  {
+    "id": "raven",
+    "name": "Cuervo",
+    "traits": [
+      {
+        "name": "Imitación",
+        "desc": "El cuervo puede imitar sonidos simples que haya oído, como un susurro o un parloteo. Quien lo oiga puede discernir que los sonidos son imitaciones superando una prueba de Sabiduría (Perspicacia) con CD 10."
+      }
+    ],
+    "actions": [
+      {
+        "key": "raven_beak",
+        "name": "Pico",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 1 de daño perforante."
+      }
+    ]
+  },
+  {
+    "id": "red-dragon-wyrmling",
+    "name": "Cría de dragón rojo",
+    "languages": "Dracónico",
+    "actions": [
+      {
+        "key": "red-dragon-wyrmling_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El dragón hace dos ataques de Desgarrar."
+      },
+      {
+        "key": "red-dragon-wyrmling_rend",
+        "name": "Desgarrar",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 9 (1d10 + 4) de daño cortante más 3 (1d6) de daño de fuego."
+      },
+      {
+        "key": "red-dragon-wyrmling_fire-breath",
+        "name": "Aliento de fuego",
+        "desc": "Tirada de salvación de Destreza: CD 13, cada criatura en un cono de 15 pies. Fallo: 24 (7d6) de daño de fuego. Éxito: mitad de daño."
+      }
+    ]
+  },
+  {
+    "id": "reef-shark",
+    "name": "Tiburón de arrecife",
+    "traits": [
+      {
+        "name": "Tácticas de manada",
+        "desc": "El tiburón tiene ventaja en una tirada de ataque contra una criatura si al menos uno de los aliados del tiburón está a 5 pies o menos de la criatura y el aliado no tiene el estado Incapacitado."
+      },
+      {
+        "name": "Respirar bajo el agua",
+        "desc": "El tiburón solo puede respirar bajo el agua."
+      }
+    ],
+    "actions": [
+      {
+        "key": "reef-shark_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 7 (2d4 + 2) de daño perforante."
+      }
+    ]
+  },
+  {
+    "id": "remorhaz",
+    "name": "Remorhaz",
+    "traits": [
+      {
+        "name": "Aura de calor",
+        "desc": "Al final de cada turno del remorhaz, cada criatura en una emanación de 5 pies con origen en el remorhaz recibe 16 (3d10) de daño de fuego."
+      }
+    ],
+    "actions": [
+      {
+        "key": "remorhaz_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +11, alcance 10 pies. 18 (2d10 + 7) de daño perforante más 14 (4d6) de daño de fuego. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Agarrado (CD 17 para escapar) y tiene el estado Apresado hasta que termine el agarre."
+      },
+      {
+        "key": "remorhaz_swallow",
+        "name": "Tragar",
+        "desc": "Tirada de salvación de Fuerza: CD 19, una criatura Grande o más pequeña Agarrada por el remorhaz (puede tener hasta dos criaturas tragadas a la vez). Fallo: el remorhaz se traga al objetivo, y el estado Agarrado termina. Una criatura tragada tiene los estados Cegado y Apresado, tiene cobertura total contra ataques y otros efectos procedentes del exterior del remorhaz y recibe 10 (3d6) de daño de ácido más 10 (3d6) de daño de fuego al inicio de cada turno del remorhaz. Si el remorhaz recibe 30 de daño o más en un solo turno de una criatura que esté en su interior, debe superar una tirada de salvación de Constitución con CD 15 al final de ese turno o regurgitará a todas las criaturas tragadas, cada una de las cuales cae en un espacio a 5 pies o menos del remorhaz y tiene el estado Derribado. Si el remorhaz muere, las criaturas tragadas dejan de tener el estado Apresado y pueden escapar del cadáver usando 15 pies de movimiento, saliendo Derribadas."
+      }
+    ]
+  },
+  {
+    "id": "rhinoceros",
+    "name": "Rinoceronte",
+    "actions": [
+      {
+        "key": "rhinoceros_gore",
+        "name": "Cornada",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 14 (2d8 + 5) de daño perforante. Si el objetivo es una criatura Grande o más pequeña y el rinoceronte se ha movido al menos 20 pies en línea recta hacia él justo antes de impactar, el objetivo recibe 9 (2d8) de daño perforante adicional y tiene el estado Derribado."
+      }
+    ]
+  },
+  {
+    "id": "riding-horse",
+    "name": "Caballo de monta",
+    "actions": [
+      {
+        "key": "riding-horse_hooves",
+        "name": "Pezuñas",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 7 (1d8 + 3) de daño contundente."
+      }
+    ]
+  },
+  {
+    "id": "roc",
+    "name": "Roc",
+    "actions": [
+      {
+        "key": "roc_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El roc hace dos ataques de Pico. Puede sustituir un ataque por un ataque de Garras."
+      },
+      {
+        "key": "roc_beak",
+        "name": "Pico",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +13, alcance 10 pies. 28 (3d12 + 9) de daño perforante."
+      },
+      {
+        "key": "roc_talons",
+        "name": "Garras",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +13, alcance 5 pies. 23 (4d6 + 9) de daño cortante. Si el objetivo es una criatura Enorme o más pequeña, tiene el estado Agarrado (CD 19 para escapar) por ambas garras y tiene el estado Apresado hasta que termine el agarre."
+      },
+      {
+        "key": "roc_swoop-recharge-5-6",
+        "name": "Picado",
+        "desc": "Si el roc tiene a una criatura Agarrada, vuela hasta la mitad de su velocidad de vuelo sin provocar ataques de oportunidad y suelta a esa criatura."
+      }
+    ]
+  },
+  {
+    "id": "roper",
+    "name": "Cordelero",
+    "traits": [
+      {
+        "name": "Trepar como una araña",
+        "desc": "El cordelero puede trepar por superficies difíciles, incluso por los techos, sin necesidad de hacer una prueba de característica."
+      }
+    ],
+    "actions": [
+      {
+        "key": "roper_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El cordelero hace dos ataques de Tentáculo, usa Recoger y hace dos ataques de Mordisco."
+      },
+      {
+        "key": "roper_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 17 (3d8 + 4) de daño perforante."
+      },
+      {
+        "key": "roper_tentacle",
+        "name": "Tentáculo",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 60 pies. El objetivo tiene el estado Agarrado (CD 14 para escapar) por uno de los seis tentáculos, y el objetivo tiene el estado Envenenado hasta que termine el agarre. El tentáculo puede recibir daño y, cuando es destruido, libera a la criatura que tenga Agarrada (CA 20, PG 10, inmunidad al daño de veneno y psíquico). Dañar el tentáculo no inflige daño al cordelero, y un tentáculo destruido vuelve a crecer al inicio del siguiente turno del cordelero."
+      },
+      {
+        "key": "roper_reel",
+        "name": "Recoger",
+        "desc": "El cordelero atrae hasta 30 pies en línea recta hacia sí a cada criatura que tenga Agarrada."
+      }
+    ]
+  },
+  {
+    "id": "rust-monster",
+    "name": "Monstruo corrosivo",
+    "traits": [
+      {
+        "name": "Olfato férreo",
+        "desc": "El monstruo corrosivo puede localizar con precisión el metal ferroso que haya a 30 pies o menos de él."
+      }
+    ],
+    "actions": [
+      {
+        "key": "rust-monster_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El monstruo corrosivo hace un ataque de Mordisco y usa Antenas dos veces."
+      },
+      {
+        "key": "rust-monster_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 5 (1d8 + 1) de daño perforante."
+      },
+      {
+        "key": "rust-monster_antennae",
+        "name": "Antenas",
+        "desc": "El monstruo corrosivo elige como objetivo un objeto de metal no mágico (una armadura o un arma) que lleve puesto o transporte una criatura a 5 pies o menos de él. Tirada de salvación de Destreza: CD 11, la criatura que tiene el objeto. Fallo: el objeto sufre un penalizador de -1 a la CA que proporciona (armadura) o a sus tiradas de ataque (arma). La armadura queda destruida si el penalizador reduce su CA a 10, y un arma queda destruida si su penalizador llega a -5. El penalizador puede eliminarse lanzando el conjuro Reparar sobre la armadura o el arma."
+      },
+      {
+        "key": "rust-monster_destroy-metal",
+        "name": "Destruir metal",
+        "desc": "El monstruo corrosivo toca un objeto de metal no mágico a 5 pies o menos de él que nadie lleve puesto ni transporte. El toque destruye un cubo de 1 pie del objeto."
+      },
+      {
+        "key": "rust-monster_reflexive-antennae",
+        "name": "Antenas reflejas",
+        "desc": "_Desencadenante:_ una tirada de ataque impacta al monstruo corrosivo. _Respuesta:_ el monstruo corrosivo usa **Antenas**."
+      }
+    ]
+  },
+  {
+    "id": "saber-toothed-tiger",
+    "name": "Tigre dientes de sable",
+    "traits": [
+      {
+        "name": "Salto con carrerilla",
+        "desc": "Con una carrerilla de 10 pies, el tigre puede hacer un salto de longitud de hasta 25 pies."
+      }
+    ],
+    "actions": [
+      {
+        "key": "saber-toothed-tiger_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El tigre hace dos ataques de Desgarrar."
+      },
+      {
+        "key": "saber-toothed-tiger_rend",
+        "name": "Desgarrar",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 11 (2d6 + 4) de daño cortante."
+      },
+      {
+        "key": "saber-toothed-tiger_nimble-escape",
+        "name": "Huida ágil",
+        "desc": "El tigre realiza la acción de Retirarse o de Esconderse."
+      }
+    ]
+  },
+  {
+    "id": "sahuagin-warrior",
+    "name": "Guerrero sahuagin",
+    "languages": "Sahuagin",
+    "traits": [
+      {
+        "name": "Frenesí sanguinario",
+        "desc": "El sahuagin tiene ventaja en las tiradas de ataque contra cualquier criatura que no tenga todos sus puntos de golpe."
+      },
+      {
+        "name": "Anfibio limitado",
+        "desc": "El sahuagin puede respirar aire y agua, pero debe sumergirse al menos una vez cada 4 horas para no asfixiarse fuera del agua."
+      },
+      {
+        "name": "Telepatía con tiburones",
+        "desc": "El sahuagin puede controlar mágicamente a los tiburones que estén a 120 pies o menos de él mediante una telepatía especial."
+      }
+    ],
+    "actions": [
+      {
+        "key": "sahuagin-warrior_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El sahuagin hace dos ataques de Garra."
+      },
+      {
+        "key": "sahuagin-warrior_claw",
+        "name": "Garra",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 4 (1d6 + 1) de daño cortante."
+      },
+      {
+        "key": "sahuagin-warrior_aquatic-charge",
+        "name": "Carga acuática",
+        "desc": "El sahuagin nada hasta su velocidad de nado en línea recta hacia un enemigo que pueda ver."
+      }
+    ]
+  },
+  {
+    "id": "salamander",
+    "name": "Salamandra",
+    "languages": "Primordial (ignano)",
+    "traits": [
+      {
+        "name": "Aura de fuego",
+        "desc": "Al final de cada turno de la salamandra, cada criatura que ella elija en una emanación de 5 pies con origen en la salamandra recibe 7 (2d6) de daño de fuego."
+      }
+    ],
+    "actions": [
+      {
+        "key": "salamander_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "La salamandra hace dos ataques de Lanza de llamas. Puede sustituir un ataque por un uso de Constreñir."
+      },
+      {
+        "key": "salamander_flame-spear",
+        "name": "Lanza de llamas",
+        "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +7, alcance 5 pies o alcance 20/60 pies. 13 (2d8 + 4) de daño perforante más 7 (2d6) de daño de fuego. Impacto o fallo: la lanza vuelve mágicamente a la mano de la salamandra inmediatamente después de un ataque a distancia."
+      },
+      {
+        "key": "salamander_constrict",
+        "name": "Constreñir",
+        "desc": "Tirada de salvación de Fuerza: CD 15, una criatura Grande o más pequeña que la salamandra pueda ver a 10 pies o menos. Fallo: 11 (2d6 + 4) de daño contundente más 7 (2d6) de daño de fuego. El objetivo tiene el estado Agarrado (CD 14 para escapar) y tiene el estado Apresado hasta que termine el agarre."
+      }
+    ]
+  },
+  {
+    "id": "satyr",
+    "name": "Sátiro",
+    "languages": "Común, élfico, silvano",
+    "traits": [
+      {
+        "name": "Resistencia mágica",
+        "desc": "El sátiro tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+      }
+    ],
+    "actions": [
+      {
+        "key": "satyr_hooves",
+        "name": "Pezuñas",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 5 (1d4 + 3) de daño contundente. Si el objetivo es una criatura Mediana o más pequeña, el sátiro lo empuja hasta 10 pies en línea recta alejándolo de sí."
+      },
+      {
+        "key": "satyr_mockery",
+        "name": "Burla",
+        "desc": "Tirada de salvación de Sabiduría: CD 12, una criatura que el sátiro pueda ver a 90 pies o menos. Fallo: 5 (1d6 + 2) de daño psíquico."
+      }
+    ]
+  },
+  {
+    "id": "scorpion",
+    "name": "Escorpión",
+    "actions": [
+      {
+        "key": "scorpion_sting",
+        "name": "Aguijón",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +2, alcance 5 pies. 1 de daño perforante más 3 (1d6) de daño de veneno."
+      }
+    ]
+  },
+  {
+    "id": "scout",
+    "name": "Explorador",
+    "languages": "Común y otro idioma",
+    "actions": [
+      {
+        "key": "scout_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El explorador hace dos ataques, usando Espada corta y Arco largo en cualquier combinación."
+      },
+      {
+        "key": "scout_shortsword",
+        "name": "Espada corta",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño perforante."
+      },
+      {
+        "key": "scout_longbow",
+        "name": "Arco largo",
+        "desc": "Tirada de ataque a distancia: +4, alcance 150/600 pies. 6 (1d8 + 2) de daño perforante."
+      }
+    ]
+  },
+  {
+    "id": "sea-hag",
+    "name": "Saga marina",
+    "languages": "Común, gigante, primordial (acuano)",
+    "traits": [
+      {
+        "name": "Anfibio",
+        "desc": "La saga puede respirar aire y agua."
+      },
+      {
+        "name": "Apariencia repugnante",
+        "desc": "Tirada de salvación de Sabiduría: CD 11, cualquier bestia o humanoide que empiece su turno a 30 pies o menos de la saga y pueda ver la forma verdadera de la saga. Fallo: el objetivo tiene el estado Asustado hasta el inicio de su siguiente turno. Éxito: el objetivo es inmune a la Apariencia repugnante de esta saga durante 24 horas."
+      }
+    ],
+    "actions": [
+      {
+        "key": "sea-hag_claw",
+        "name": "Garra",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 10 (2d6 + 3) de daño cortante."
+      },
+      {
+        "key": "sea-hag_death-glare",
+        "name": "Mirada mortal",
+        "desc": "Tirada de salvación de Sabiduría: CD 11, una criatura Asustada que la saga pueda ver a 30 pies o menos. Fallo: si el objetivo tiene 20 puntos de golpe o menos, se queda a 0 puntos de golpe. De lo contrario, el objetivo recibe 13 (3d8) de daño psíquico."
+      },
+      {
+        "key": "sea-hag_illusory-appearance",
+        "name": "Apariencia ilusoria",
+        "desc": "La saga lanza Disfrazarse, usando Constitución como aptitud mágica (CD de salvación de conjuros 13). La duración del conjuro es de 24 horas."
+      }
+    ]
+  },
+  {
+    "id": "seahorse",
+    "name": "Caballito de mar",
+    "traits": [
+      {
+        "name": "Respirar bajo el agua",
+        "desc": "El caballito de mar solo puede respirar bajo el agua."
+      }
+    ],
+    "actions": [
+      {
+        "key": "seahorse_bubble-dash",
+        "name": "Carrera de burbujas",
+        "desc": "Mientras está bajo el agua, el caballito de mar se mueve hasta su velocidad de nado sin provocar ataques de oportunidad."
+      }
+    ]
+  },
+  {
+    "id": "shadow",
+    "name": "Sombra",
+    "traits": [
+      {
+        "name": "Amorfo",
+        "desc": "La sombra puede moverse a través de un espacio de tan solo 1 pulgada de ancho sin gastar movimiento adicional para ello."
+      },
+      {
+        "name": "Debilidad a la luz solar",
+        "desc": "Mientras está bajo la luz del sol, la sombra tiene desventaja en las pruebas de d20."
+      }
+    ],
+    "actions": [
+      {
+        "key": "shadow_draining-swipe",
+        "name": "Zarpazo drenador",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño necrótico, y la puntuación de Fuerza del objetivo disminuye en 1d4. El objetivo muere si esto reduce esa puntuación a 0. Si un humanoide muere por este ataque, una Sombra se alza de su cadáver 1d4 horas después."
+      },
+      {
+        "key": "shadow_shadow-stealth",
+        "name": "Sigilo sombrío",
+        "desc": "Mientras está en luz tenue u oscuridad, la sombra realiza la acción de Esconderse."
+      }
+    ]
+  },
+  {
+    "id": "shambling-mound",
+    "name": "Montículo errante",
+    "traits": [
+      {
+        "name": "Absorción de relámpagos",
+        "desc": "Siempre que el montículo errante sufre daño de relámpago, recupera un número de puntos de golpe igual al daño de relámpago infligido."
+      }
+    ],
+    "actions": [
+      {
+        "key": "shambling-mound_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El montículo errante hace tres ataques de Zarcillo cargado. Puede sustituir un ataque por un uso de Engullir."
+      },
+      {
+        "key": "shambling-mound_charged-tendril",
+        "name": "Zarcillo cargado",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. 7 (1d6 + 4) de daño contundente más 5 (2d4) de daño de relámpago. Si el objetivo es una criatura Mediana o más pequeña, el montículo errante atrae al objetivo 5 pies en línea recta hacia sí."
+      },
+      {
+        "key": "shambling-mound_engulf",
+        "name": "Engullir",
+        "desc": "Tirada de salvación de Fuerza: CD 15, una criatura Mediana o más pequeña a 5 pies o menos. Fallo: el objetivo es arrastrado al espacio del montículo errante y tiene el estado Agarrado (CD 14 para escapar). Hasta que termine el agarre, el objetivo tiene los estados Cegado y Apresado, y recibe 10 (3d6) de daño de relámpago al inicio de cada uno de sus turnos. Cuando el montículo errante se mueve, el objetivo Agarrado se mueve con él, sin que le cueste movimiento adicional. El montículo errante solo puede tener una criatura Agarrada mediante esta acción a la vez."
+      }
+    ]
+  },
+  {
+    "id": "shield-guardian",
+    "name": "Guardián protector",
+    "languages": "Entiende las órdenes dadas en cualquier idioma pero no habla",
+    "traits": [
+      {
+        "name": "Vinculado",
+        "desc": "El guardián está vinculado mágicamente a un amuleto. Mientras el guardián y su amuleto estén en el mismo plano de existencia, el portador del amuleto puede llamar telepáticamente al guardián para que acuda a él, y el guardián conoce la distancia y la dirección hasta el amuleto. Si el guardián está a 60 pies o menos del portador del amuleto, la mitad de cualquier daño que reciba el portador (redondeando hacia arriba) se transfiere al guardián."
+      },
+      {
+        "name": "Regeneración",
+        "desc": "El guardián recupera 10 puntos de golpe al inicio de cada uno de sus turnos si tiene al menos 1 punto de golpe."
+      },
+      {
+        "name": "Almacenar conjuro",
+        "desc": "Un lanzador que lleve puesto el amuleto del guardián puede hacer que el guardián almacene un conjuro de nivel 4 o inferior. Para ello, el portador debe lanzar el conjuro sobre el guardián mientras está a 5 pies o menos de él. El conjuro no tiene efecto, pero queda almacenado en el guardián. Cualquier conjuro almacenado previamente se pierde cuando se almacena uno nuevo. El guardián puede lanzar el conjuro almacenado con los parámetros que haya fijado el lanzador original, sin necesitar componentes de conjuro y usando la aptitud mágica del lanzador. Después, el conjuro almacenado se pierde."
+      }
+    ],
+    "actions": [
+      {
+        "key": "shield-guardian_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El guardián hace dos ataques de Puño."
+      },
+      {
+        "key": "shield-guardian_fist",
+        "name": "Puño",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. 11 (2d6 + 4) de daño contundente más 7 (2d6) de daño de fuerza."
+      },
+      {
+        "key": "shield-guardian_protection",
+        "name": "Protección",
+        "desc": "_Desencadenante:_ una tirada de ataque impacta al portador del amuleto del guardián mientras el portador está a 5 pies o menos del guardián. _Respuesta:_ el portador obtiene un bonificador de +5 a la CA, también contra el ataque desencadenante, lo que puede hacer que falle, hasta el inicio del siguiente turno del guardián."
+      }
+    ]
+  },
+  {
+    "id": "shrieker-fungus",
+    "name": "Chillón",
+    "actions": [
+      {
+        "key": "shrieker-fungus_shriek",
+        "name": "Chillido",
+        "desc": "_Desencadenante:_ una criatura o una fuente de luz brillante se mueve a 30 pies o menos del chillón. _Respuesta:_ el chillón emite un chillido audible a 300 pies o menos de él durante 1 minuto o hasta que el chillón muera."
+      }
+    ]
+  },
+  {
+    "id": "silver-dragon-wyrmling",
+    "name": "Cría de dragón de plata",
+    "languages": "Dracónico",
+    "actions": [
+      {
+        "key": "silver-dragon-wyrmling_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El dragón hace dos ataques de Desgarrar."
+      },
+      {
+        "key": "silver-dragon-wyrmling_rend",
+        "name": "Desgarrar",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 9 (1d10 + 4) de daño perforante."
+      },
+      {
+        "key": "silver-dragon-wyrmling_cold-breath",
+        "name": "Aliento de frío",
+        "desc": "Tirada de salvación de Constitución: CD 13, cada criatura en un cono de 15 pies. Fallo: 18 (4d8) de daño de frío. Éxito: mitad de daño."
+      },
+      {
+        "key": "silver-dragon-wyrmling_paralyzing-breath",
+        "name": "Aliento paralizante",
+        "desc": "Tirada de salvación de Constitución: CD 13, cada criatura en un cono de 15 pies. Primer fallo: el objetivo tiene el estado Incapacitado hasta el final de su siguiente turno, momento en el que repite la tirada de salvación. Segundo fallo: el objetivo tiene el estado Paralizado y repite la tirada de salvación al final de cada uno de sus turnos, terminando el efecto sobre sí mismo si tiene éxito. Al cabo de 1 minuto, tiene éxito automáticamente."
+      }
+    ]
+  },
+  {
+    "id": "skeleton",
+    "name": "Esqueleto",
+    "languages": "Entiende el común y otro idioma pero no los habla",
+    "actions": [
+      {
+        "key": "skeleton_shortsword",
+        "name": "Espada corta",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 6 (1d6 + 3) de daño perforante."
+      },
+      {
+        "key": "skeleton_shortbow",
+        "name": "Arco corto",
+        "desc": "Tirada de ataque a distancia: +5, alcance 80/320 pies. 6 (1d6 + 3) de daño perforante."
+      }
+    ]
+  },
+  {
+    "id": "solar",
+    "name": "Solar",
+    "languages": "Todos; telepatía 120 pies",
+    "traits": [
+      {
+        "name": "Conciencia divina",
+        "desc": "El solar sabe si oye una mentira."
+      },
+      {
+        "name": "Restauración exaltada",
+        "desc": "Si el solar muere fuera del Monte Celestia, su cuerpo desaparece y obtiene al instante un cuerpo nuevo, reviviendo con todos sus puntos de golpe en algún lugar del Monte Celestia."
+      },
+      {
+        "name": "Resistencia legendaria (4/día)",
+        "desc": "Si el solar falla una tirada de salvación, puede elegir tener éxito en su lugar."
+      },
+      {
+        "name": "Resistencia mágica",
+        "desc": "El solar tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+      }
+    ],
+    "actions": [
+      {
+        "key": "solar_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El solar hace dos ataques de Espada voladora. Puede sustituir un ataque por un uso de Arco asesino."
+      },
+      {
+        "key": "solar_flying-sword",
+        "name": "Espada voladora",
+        "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +15, alcance 10 pies o alcance 120 pies. 22 (4d6 + 8) de daño cortante más 36 (8d8) de daño radiante. Impacto o fallo: la espada vuelve mágicamente a la mano del solar o levita a 5 pies o menos del solar inmediatamente después de un ataque a distancia."
+      },
+      {
+        "key": "solar_slaying-bow",
+        "name": "Arco asesino",
+        "desc": "Tirada de salvación de Destreza: CD 21, una criatura que el solar pueda ver a 600 pies o menos. Fallo: si la criatura tiene 100 puntos de golpe o menos, muere. De lo contrario, recibe 24 (4d8 + 6) de daño perforante más 36 (8d8) de daño radiante."
+      },
+      {
+        "key": "solar_spellcasting",
+        "name": "Lanzamiento de conjuros",
+        "desc": "El solar lanza uno de los siguientes conjuros, sin necesitar componentes materiales y usando Carisma como aptitud mágica (CD de salvación de conjuros 25):\n\n- **A voluntad:** Detectar el bien y el mal\n- **1/día cada uno:** Comunión, Controlar el clima, Disipar el bien y el mal, Resurrección"
+      },
+      {
+        "key": "solar_divine-aid-3-day",
+        "name": "Ayuda divina",
+        "desc": "El solar lanza Curar heridas (versión de nivel 2), Restablecimiento menor o Levantar maldición, usando la misma aptitud mágica que en Lanzamiento de conjuros."
+      },
+      {
+        "key": "solar_blinding-gaze",
+        "name": "Mirada cegadora",
+        "desc": "Tirada de salvación de Constitución: CD 25, una criatura que el solar pueda ver a 120 pies o menos. Fallo: el objetivo tiene el estado Cegado durante 1 minuto. Fallo o éxito: el solar no puede volver a realizar esta acción hasta el inicio de su siguiente turno."
+      },
+      {
+        "key": "solar_radiant-teleport",
+        "name": "Teletransporte radiante",
+        "desc": "El solar se teletransporta hasta 60 pies a un espacio desocupado que pueda ver. Tirada de salvación de Destreza: CD 25, cada criatura en una emanación de 10 pies con origen en el solar en su espacio de destino. Fallo: 11 (2d10) de daño radiante. Éxito: mitad de daño."
+      }
+    ]
+  },
+  {
+    "id": "specter",
+    "name": "Aparición",
+    "languages": "Entiende el común y otro idioma pero no los habla",
+    "traits": [
+      {
+        "name": "Movimiento incorpóreo",
+        "desc": "La aparición puede moverse a través de otras criaturas y objetos como si fueran terreno difícil. Recibe 5 (1d10) de daño de fuerza si termina su turno dentro de un objeto."
+      },
+      {
+        "name": "Sensibilidad a la luz solar",
+        "desc": "Mientras está bajo la luz del sol, la aparición tiene desventaja en las pruebas de característica y en las tiradas de ataque."
+      }
+    ],
+    "actions": [
+      {
+        "key": "specter_life-drain",
+        "name": "Drenar vida",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 7 (2d6) de daño necrótico. Si el objetivo es una criatura, sus puntos de golpe máximos disminuyen en una cantidad igual al daño recibido."
+      }
+    ]
+  },
+  {
+    "id": "sphinx-of-lore",
+    "name": "Esfinge del saber",
+    "languages": "Celestial, común",
+    "traits": [
+      {
+        "name": "Inescrutable",
+        "desc": "Ninguna magia puede observar a la esfinge a distancia ni detectar sus pensamientos sin su permiso. Las pruebas de Sabiduría (Perspicacia) hechas para averiguar sus intenciones o su sinceridad se hacen con desventaja."
+      },
+      {
+        "name": "Resistencia legendaria (3/día, o 4/día en su guarida)",
+        "desc": "Si la esfinge falla una tirada de salvación, puede elegir tener éxito en su lugar."
+      }
+    ],
+    "actions": [
+      {
+        "key": "sphinx-of-lore_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "La esfinge hace tres ataques de Garra."
+      },
+      {
+        "key": "sphinx-of-lore_claw",
+        "name": "Garra",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +8, alcance 5 pies. 14 (3d6 + 4) de daño cortante."
+      },
+      {
+        "key": "sphinx-of-lore_mind-rending-roar",
+        "name": "Rugido desgarramentes",
+        "desc": "Tirada de salvación de Sabiduría: CD 16, cada enemigo en una emanación de 300 pies con origen en la esfinge. Fallo: 35 (10d6) de daño psíquico, y el objetivo tiene el estado Incapacitado hasta el inicio del siguiente turno de la esfinge."
+      },
+      {
+        "key": "sphinx-of-lore_spellcasting",
+        "name": "Lanzamiento de conjuros",
+        "desc": "La esfinge lanza uno de los siguientes conjuros, sin necesitar componentes materiales y usando Inteligencia como aptitud mágica (CD de salvación de conjuros 16):\n\n- **A voluntad:** Detectar magia, Identificar, Mano de mago, Ilusión menor, Prestidigitación\n- **1/día cada uno:** Disipar magia, Conocimiento de leyendas, Localizar objeto, Desplazamiento entre planos, Levantar maldición, Don de lenguas"
+      },
+      {
+        "key": "sphinx-of-lore_arcane-prowl",
+        "name": "Acecho arcano",
+        "desc": "La esfinge puede teletransportarse hasta 30 pies a un espacio desocupado que pueda ver, y hace un ataque de Garra."
+      },
+      {
+        "key": "sphinx-of-lore_weight-of-years",
+        "name": "Peso de los años",
+        "desc": "Tirada de salvación de Constitución: CD 16, una criatura que la esfinge pueda ver a 120 pies o menos. Fallo: el objetivo gana 1 nivel de Agotamiento. Mientras el objetivo tenga algún nivel de Agotamiento, aparenta 3d10 años más. Fallo o éxito: la esfinge no puede volver a realizar esta acción hasta el inicio de su siguiente turno."
+      }
+    ]
+  },
+  {
+    "id": "sphinx-of-valor",
+    "name": "Esfinge del valor",
+    "languages": "Celestial, común",
+    "traits": [
+      {
+        "name": "Inescrutable",
+        "desc": "Ninguna magia puede observar a la esfinge a distancia ni detectar sus pensamientos sin su permiso. Las pruebas de Sabiduría (Perspicacia) hechas para averiguar sus intenciones o su sinceridad se hacen con desventaja."
+      },
+      {
+        "name": "Resistencia legendaria (3/día, o 4/día en su guarida)",
+        "desc": "Si la esfinge falla una tirada de salvación, puede elegir tener éxito en su lugar."
+      }
+    ],
+    "actions": [
+      {
+        "key": "sphinx-of-valor_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "La esfinge hace dos ataques de Garra y usa Rugido."
+      },
+      {
+        "key": "sphinx-of-valor_claw",
+        "name": "Garra",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +12, alcance 5 pies. 20 (4d6 + 6) de daño cortante."
+      },
+      {
+        "key": "sphinx-of-valor_roar",
+        "name": "Rugido",
+        "desc": "La esfinge emite un rugido mágico. Cada vez que ruge, el rugido tiene un efecto distinto, como se detalla a continuación (la secuencia se reinicia cuando realiza un descanso largo): - Primer rugido: Tirada de salvación de Sabiduría: CD 20, cada enemigo en una emanación de 500 pies con origen en la esfinge. Fallo: el objetivo tiene el estado Asustado durante 1 minuto. - Segundo rugido: Tirada de salvación de Sabiduría: CD 20, cada enemigo en una emanación de 500 pies con origen en la esfinge. Fallo: el objetivo tiene el estado Paralizado y repite la tirada de salvación al final de cada uno de sus turnos, terminando el efecto sobre sí mismo si tiene éxito. Al cabo de 1 minuto, tiene éxito automáticamente. - Tercer rugido: Tirada de salvación de Constitución: CD 20, cada enemigo en una emanación de 500 pies con origen en la esfinge. Fallo: 44 (8d10) de daño de trueno, y el objetivo tiene el estado Derribado. Éxito: solo mitad de daño."
+      },
+      {
+        "key": "sphinx-of-valor_spellcasting",
+        "name": "Lanzamiento de conjuros",
+        "desc": "La esfinge lanza uno de los siguientes conjuros, sin necesitar componentes materiales y usando Sabiduría como aptitud mágica (CD de salvación de conjuros 20):\n\n- **A voluntad:** Detectar el bien y el mal, Taumaturgia\n- **1/día cada uno:** Detectar magia, Disipar magia, Restablecimiento mayor, Banquete de héroes, Zona de verdad"
+      },
+      {
+        "key": "sphinx-of-valor_arcane-prowl",
+        "name": "Acecho arcano",
+        "desc": "La esfinge puede teletransportarse hasta 30 pies a un espacio desocupado que pueda ver, y hace un ataque de Garra."
+      },
+      {
+        "key": "sphinx-of-valor_weight-of-years",
+        "name": "Peso de los años",
+        "desc": "Tirada de salvación de Constitución: CD 16, una criatura que la esfinge pueda ver a 120 pies o menos. Fallo: el objetivo gana 1 nivel de Agotamiento. Mientras el objetivo tenga algún nivel de Agotamiento, aparenta 3d10 años más. Fallo o éxito: la esfinge no puede volver a realizar esta acción hasta el inicio de su siguiente turno."
+      }
+    ]
+  },
+  {
+    "id": "sphinx-of-wonder",
+    "name": "Esfinge de las maravillas",
+    "languages": "Celestial, común",
+    "traits": [
+      {
+        "name": "Resistencia mágica",
+        "desc": "La esfinge tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+      }
+    ],
+    "actions": [
+      {
+        "key": "sphinx-of-wonder_rend",
+        "name": "Desgarrar",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 5 (1d4 + 3) de daño cortante más 7 (2d6) de daño radiante."
+      },
+      {
+        "key": "sphinx-of-wonder_burst-of-ingenuity",
+        "name": "Arrebato de ingenio",
+        "desc": "_Desencadenante:_ la esfinge u otra criatura a 30 pies o menos hace una prueba de característica o una tirada de salvación. _Respuesta:_ la esfinge suma 2 a la tirada."
+      }
+    ]
+  },
+  {
+    "id": "spider",
+    "name": "Araña",
+    "traits": [
+      {
+        "name": "Trepar como una araña",
+        "desc": "La araña puede trepar por superficies difíciles, incluso por los techos, sin necesidad de hacer una prueba de característica."
+      },
+      {
+        "name": "Caminante de telarañas",
+        "desc": "La araña ignora las restricciones de movimiento causadas por las telarañas, y sabe dónde está cualquier otra criatura que esté en contacto con la misma telaraña."
+      }
+    ],
+    "actions": [
+      {
+        "key": "spider_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 1 de daño perforante más 2 (1d4) de daño de veneno."
+      }
+    ]
+  },
+  {
+    "id": "spirit-naga",
+    "name": "Naga espiritual",
+    "languages": "Abisal, común",
+    "traits": [
+      {
+        "name": "Restauración infernal",
+        "desc": "Si muere, la naga vuelve a la vida en 1d6 días y recupera todos sus puntos de golpe. Solo un conjuro de Deseo puede impedir que este rasgo funcione."
+      }
+    ],
+    "actions": [
+      {
+        "key": "spirit-naga_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "La naga hace tres ataques, usando Mordisco o Rayo necrótico en cualquier combinación."
+      },
+      {
+        "key": "spirit-naga_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. 7 (1d6 + 4) de daño perforante más 14 (4d6) de daño de veneno."
+      },
+      {
+        "key": "spirit-naga_necrotic-ray",
+        "name": "Rayo necrótico",
+        "desc": "Tirada de ataque a distancia: +6, alcance 60 pies. 21 (6d6) de daño necrótico."
+      },
+      {
+        "key": "spirit-naga_spellcasting",
+        "name": "Lanzamiento de conjuros",
+        "desc": "La naga lanza uno de los siguientes conjuros, sin necesitar componentes somáticos ni materiales y usando Inteligencia como aptitud mágica (CD de salvación de conjuros 14):\n\n- **A voluntad:** Detectar magia, Mano de mago, Ilusión menor, Respirar bajo el agua\n- **2/día cada uno:** Detectar pensamientos, Puerta dimensional, Inmovilizar persona, Relámpago"
+      }
+    ]
+  },
+  {
+    "id": "sprite",
+    "name": "Duende",
+    "languages": "Común, élfico, silvano",
+    "actions": [
+      {
+        "key": "sprite_needle-sword",
+        "name": "Espada aguja",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 6 (1d4 + 4) de daño perforante."
+      },
+      {
+        "key": "sprite_enchanting-bow",
+        "name": "Arco encantador",
+        "desc": "Tirada de ataque a distancia: +6, alcance 40/160 pies. 1 de daño perforante, y el objetivo tiene el estado Encantado hasta el inicio del siguiente turno del duende."
+      },
+      {
+        "key": "sprite_heart-sight",
+        "name": "Ver corazones",
+        "desc": "Tirada de salvación de Carisma: CD 10, una criatura a 5 pies o menos que el duende pueda ver (los celestiales, los infernales y los muertos vivientes fallan automáticamente la tirada de salvación). Fallo: el duende conoce las emociones y el alineamiento del objetivo."
+      },
+      {
+        "key": "sprite_invisibility",
+        "name": "Invisibilidad",
+        "desc": "El duende se lanza Invisibilidad a sí mismo, sin necesitar componentes de conjuro y usando Carisma como aptitud mágica."
+      }
+    ]
+  },
+  {
+    "id": "spy",
+    "name": "Espía",
+    "languages": "Común y otro idioma",
+    "actions": [
+      {
+        "key": "spy_shortsword",
+        "name": "Espada corta",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño perforante más 7 (2d6) de daño de veneno."
+      },
+      {
+        "key": "spy_hand-crossbow",
+        "name": "Ballesta de mano",
+        "desc": "Tirada de ataque a distancia: +4, alcance 30/120 pies. 5 (1d6 + 2) de daño perforante más 7 (2d6) de daño de veneno."
+      },
+      {
+        "key": "spy_cunning-action",
+        "name": "Acción astuta",
+        "desc": "El espía realiza la acción de Correr, Retirarse o Esconderse."
+      }
+    ]
+  }
+]

@@ -1,0 +1,592 @@
+[
+  {
+    "id": "acid-splash",
+    "name": "Salpicadura ácida",
+    "desc": "Creas una burbuja ácida en un punto dentro del alcance, donde explota en una esfera de 5 pies de radio. Cada criatura que haya en esa esfera debe superar una tirada de salvación de Destreza o sufrir 1d6 de daño de ácido.",
+    "higher": "El daño aumenta en 1d6 cuando alcanzas los niveles 5 (2d6), 11 (3d6) y 17 (4d6).",
+    "range": "60 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "chill-touch",
+    "name": "Toque helado",
+    "desc": "Canalizando el frío de la tumba, haces un ataque de conjuro cuerpo a cuerpo contra un objetivo que esté a tu alcance. Si impactas, el objetivo sufre 1d10 de daño necrótico y no puede recuperar puntos de golpe hasta el final de tu siguiente turno.",
+    "higher": "El daño aumenta en 1d10 cuando alcanzas los niveles 5 (2d10), 11 (3d10) y 17 (4d10).",
+    "range": "Toque",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "dancing-lights",
+    "name": "Luces danzantes",
+    "desc": "Creas hasta cuatro luces del tamaño de una antorcha dentro del alcance y haces que parezcan antorchas, faroles u orbes brillantes que flotan en el aire mientras dure el conjuro. Otra opción es combinar las cuatro luces en una única forma brillante de tamaño Mediano y de aspecto vagamente humano. Sea cual sea la forma que elijas, cada luz emite luz tenue en un radio de 10 pies. Como acción adicional, puedes mover las luces hasta 60 pies a un espacio dentro del alcance. Cada luz debe estar a 20 pies o menos de otra luz creada por este conjuro, y una luz se desvanece si sale del alcance del conjuro.",
+    "material": "un poco de fósforo",
+    "range": "120 pies",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "druidcraft",
+    "name": "Artesanía druídica",
+    "desc": "Susurrando a los espíritus de la naturaleza, creas uno de los siguientes efectos dentro del alcance.\n\n- ***Predictor del tiempo.*** Creas un efecto sensorial Diminuto e inofensivo que predice el tiempo que hará en tu ubicación durante las próximas 24 horas. El efecto podría manifestarse como un orbe dorado si va a hacer cielo despejado, una nube si va a llover, copos de nieve que caen si va a nevar, etc. Este efecto persiste durante 1 asalto.\n- ***Florecer.*** Haces que al instante una flor se abra, una vaina de semillas se abra o un capullo de hoja brote.\n- ***Efecto sensorial.*** Creas un efecto sensorial inofensivo, como hojas que caen, hadas espectrales que bailan, una suave brisa, el sonido de un animal o un leve olor a mofeta. El efecto debe caber en un cubo de 5 pies.\n- ***Juego de fuego.*** Enciendes o apagas una vela, una antorcha o una hoguera.",
+    "range": "30 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "eldritch-blast",
+    "name": "Descarga sobrenatural",
+    "desc": "Lanzas un haz de energía crepitante. Haz un ataque de conjuro a distancia contra una criatura o un objeto dentro del alcance. Si impactas, el objetivo sufre 1d10 de daño de fuerza.",
+    "higher": "El conjuro crea dos haces a nivel 5, tres haces a nivel 11 y cuatro haces a nivel 17. Puedes dirigir los haces al mismo objetivo o a objetivos diferentes. Haz una tirada de ataque independiente por cada haz.",
+    "range": "120 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "elementalism",
+    "name": "Elementalismo",
+    "desc": "Ejerces control sobre los elementos y creas uno de los siguientes efectos dentro del alcance.\n\n***Llamar al aire.*** Creas una brisa lo bastante fuerte como para ondear telas, levantar polvo, agitar hojas y cerrar puertas y postigos abiertos, todo ello en un cubo de 5 pies. Las puertas y postigos que alguien o algo mantenga abiertos no se ven afectados.\n\n***Llamar a la tierra.*** Creas una fina capa de polvo o arena que cubre las superficies en un área de 5 pies de lado, o haces que aparezca una sola palabra con tu letra en un trozo de tierra o arena.\n\n***Llamar al fuego.*** Creas una tenue nube de ascuas inofensivas y humo coloreado y perfumado en un cubo de 5 pies. Tú eliges el color y el aroma, y las ascuas pueden encender velas, antorchas o lámparas en esa área. El aroma del humo persiste durante 1 minuto.\n\n***Llamar al agua.*** Creas una rociada de neblina fresca que humedece ligeramente a las criaturas y objetos que haya en un cubo de 5 pies. Otra opción es crear 1 taza de agua limpia, ya sea en un recipiente abierto o sobre una superficie, y el agua se evapora en 1 minuto.\n\n***Esculpir elemento.*** Haces que la tierra, arena, fuego, humo, neblina o agua que quepa en un cubo de 1 pie adopte una forma tosca (como la de una criatura) durante 1 hora.",
+    "range": "30 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "fire-bolt",
+    "name": "Rayo de fuego",
+    "desc": "Arrojas una mota de fuego contra una criatura o un objeto dentro del alcance. Haz un ataque de conjuro a distancia contra el objetivo. Si impactas, el objetivo sufre 1d10 de daño de fuego. Un objeto inflamable impactado por este conjuro empieza a arder si nadie lo lleva puesto ni lo transporta.",
+    "higher": "El daño aumenta en 1d10 cuando alcanzas los niveles 5 (2d10), 11 (3d10) y 17 (4d10).",
+    "range": "120 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "guidance",
+    "name": "Orientación",
+    "desc": "Tocas a una criatura voluntaria y eliges una habilidad. Hasta que el conjuro termine, la criatura añade 1d4 a cualquier prueba de característica que use la habilidad elegida.",
+    "range": "Toque",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "light",
+    "name": "Luz",
+    "desc": "Tocas un objeto de tamaño Grande o menor que nadie más lleve puesto ni transporte. Hasta que el conjuro termine, el objeto emite luz brillante en un radio de 20 pies y luz tenue 20 pies más allá. La luz puede ser del color que quieras. Cubrir el objeto con algo opaco bloquea la luz. El conjuro termina si lo vuelves a lanzar.",
+    "material": "una luciérnaga o musgo fosforescente",
+    "range": "Toque",
+    "duration": "1 hora"
+  },
+  {
+    "id": "mage-hand",
+    "name": "Mano de mago",
+    "desc": "Una mano espectral y flotante aparece en un punto que elijas dentro del alcance. La mano dura mientras dure el conjuro. La mano se desvanece si en algún momento se encuentra a más de 30 pies de ti o si vuelves a lanzar este conjuro. Cuando lanzas el conjuro, puedes usar la mano para manipular un objeto, abrir una puerta o un recipiente que no estén cerrados con llave, guardar o sacar un objeto de un recipiente abierto o verter el contenido de un vial. Como acción de Magia en tus turnos posteriores, puedes volver a controlar la mano de este modo. Como parte de esa acción, puedes mover la mano hasta 30 pies. La mano no puede atacar, activar objetos mágicos ni transportar más de 10 libras.",
+    "range": "30 pies",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "mending",
+    "name": "Reparar",
+    "desc": "Este conjuro repara una única rotura o desgarrón en un objeto que toques, como un eslabón roto de una cadena, las dos mitades de una llave rota, una capa desgarrada o un odre que gotea. Siempre que la rotura o el desgarrón no mida más de 1 pie en ninguna dimensión, lo reparas sin dejar rastro del daño anterior. Este conjuro puede reparar físicamente un objeto mágico, pero no puede devolverle la magia a dicho objeto.",
+    "material": "dos piedras imán",
+    "range": "Toque",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "message",
+    "name": "Mensaje",
+    "desc": "Señalas a una criatura dentro del alcance y susurras un mensaje. El objetivo (y solo el objetivo) oye el mensaje y puede responder con un susurro que solo tú puedes oír. Puedes lanzar este conjuro a través de objetos sólidos si conoces al objetivo y sabes que está al otro lado de la barrera. El silencio mágico; 1 pie de piedra, metal o madera; o una fina lámina de plomo bloquean el conjuro.",
+    "material": "un hilo de cobre",
+    "range": "120 pies",
+    "duration": "1 asalto"
+  },
+  {
+    "id": "minor-illusion",
+    "name": "Ilusión menor",
+    "desc": "Creas un sonido o la imagen de un objeto dentro del alcance que permanece mientras dure el conjuro. Consulta las descripciones siguientes para conocer los efectos de cada uno. La ilusión termina si vuelves a lanzar este conjuro. Si una criatura realiza la acción de Estudiar para examinar el sonido o la imagen, puede determinar que se trata de una ilusión si supera una prueba de Inteligencia (Investigación) contra tu CD de salvación de conjuros. Si una criatura discierne la ilusión como lo que es, la ilusión se vuelve tenue para esa criatura.\n\n**_Sonido._** Si creas un sonido, su volumen puede ir desde un susurro hasta un grito. Puede ser tu voz, la voz de otra persona, el rugido de un león, un redoble de tambores o cualquier otro sonido que elijas. El sonido continúa sin cesar mientras dure el conjuro, o puedes emitir sonidos aislados en momentos distintos antes de que el conjuro termine.\n\n**_Imagen._** Si creas la imagen de un objeto —como una silla, unas huellas embarradas o un cofre pequeño—, no puede ser mayor que un cubo de 5 pies. La imagen no puede crear sonido, luz, olor ni ningún otro efecto sensorial. La interacción física con la imagen revela que es una ilusión, ya que las cosas pueden atravesarla.",
+    "material": "un poco de vellón",
+    "range": "30 pies",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "poison-spray",
+    "name": "Rociada venenosa",
+    "desc": "Rocías una neblina tóxica sobre una criatura dentro del alcance. Haz un ataque de conjuro a distancia contra el objetivo. Si impactas, el objetivo sufre 1d12 de daño de veneno.",
+    "higher": "El daño aumenta en 1d12 cuando alcanzas los niveles 5 (2d12), 11 (3d12) y 17 (4d12).",
+    "range": "30 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "prestidigitation",
+    "name": "Prestidigitación",
+    "desc": "Creas un efecto mágico dentro del alcance. Elige el efecto entre las opciones siguientes. Si lanzas este conjuro varias veces, puedes tener activos a la vez hasta tres de sus efectos no instantáneos.\n\n**_Efecto sensorial._** Creas un efecto sensorial instantáneo e inofensivo, como una lluvia de chispas, una ráfaga de aire, unas tenues notas musicales o un olor extraño.\n\n**_Juego de fuego._** Enciendes o apagas al instante una vela, una antorcha o una pequeña hoguera.\n\n**_Limpiar o ensuciar._** Limpias o ensucias al instante un objeto de no más de 1 pie cúbico.\n\n**_Sensación menor._** Enfrías, calientas o das sabor a hasta 1 pie cúbico de material inerte durante 1 hora.\n\n**_Marca mágica._** Haces que un color, una pequeña marca o un símbolo aparezca en un objeto o una superficie durante 1 hora.\n\n**_Creación menor._** Creas una baratija no mágica o una imagen ilusoria que quepa en tu mano. Dura hasta el final de tu siguiente turno. Una baratija no puede infligir daño y no tiene valor monetario.",
+    "range": "10 pies",
+    "duration": "1 hora"
+  },
+  {
+    "id": "produce-flame",
+    "name": "Producir llama",
+    "desc": "Una llama parpadeante aparece en tu mano y permanece allí mientras dure el conjuro. Mientras está ahí, la llama no emite calor ni prende nada, y emite luz brillante en un radio de 20 pies y luz tenue 20 pies más allá. El conjuro termina si lo vuelves a lanzar. Hasta que el conjuro termine, puedes realizar una acción de Magia para arrojar fuego a una criatura o un objeto que esté a 60 pies o menos de ti. Haz un ataque de conjuro a distancia. Si impactas, el objetivo sufre 1d8 de daño de fuego.",
+    "higher": "El daño aumenta en 1d8 cuando alcanzas los niveles 5 (2d8), 11 (3d8) y 17 (4d8).",
+    "range": "Personal",
+    "duration": "10 minutos"
+  },
+  {
+    "id": "ray-of-frost",
+    "name": "Rayo de escarcha",
+    "desc": "Un gélido rayo de luz blanca azulada sale disparado hacia una criatura dentro del alcance. Haz un ataque de conjuro a distancia contra el objetivo. Si impactas, sufre 1d8 de daño de frío y su velocidad se reduce en 10 pies hasta el inicio de tu siguiente turno.",
+    "higher": "El daño aumenta en 1d8 cuando alcanzas los niveles 5 (2d8), 11 (3d8) y 17 (4d8).",
+    "range": "60 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "resistance",
+    "name": "Resistencia",
+    "desc": "Tocas a una criatura voluntaria y eliges un tipo de daño: ácido, contundente, frío, fuego, relámpago, necrótico, perforante, veneno, radiante, cortante o trueno. Cuando la criatura sufra daño del tipo elegido antes de que el conjuro termine, reduce en 1d4 el daño total sufrido. Una criatura solo puede beneficiarse de este conjuro una vez por turno.",
+    "range": "Toque",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "sacred-flame",
+    "name": "Llama sagrada",
+    "desc": "Un resplandor similar a una llama desciende sobre una criatura que puedas ver dentro del alcance. El objetivo debe superar una tirada de salvación de Destreza o sufrir 1d8 de daño radiante. El objetivo no obtiene ningún beneficio de la media cobertura ni de la cobertura de tres cuartos contra esta salvación.",
+    "higher": "El daño aumenta en 1d8 cuando alcanzas los niveles 5 (2d8), 11 (3d8) y 17 (4d8).",
+    "range": "60 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "shillelagh",
+    "name": "Shillelagh",
+    "desc": "Un garrote o un bastón que estés sosteniendo se imbuye del poder de la naturaleza. Mientras dure el conjuro, puedes usar tu aptitud mágica en lugar de tu Fuerza para las tiradas de ataque y de daño de los ataques cuerpo a cuerpo que hagas con esa arma, y el dado de daño del arma pasa a ser un d8. Si el ataque inflige daño, puede ser daño de fuerza o del tipo de daño normal del arma (a tu elección). El conjuro termina antes si lo vuelves a lanzar o si sueltas el arma.",
+    "higher": "El dado de daño cambia cuando alcanzas los niveles 5 (d10), 11 (d12) y 17 (2d6).",
+    "material": "muérdago",
+    "range": "Personal",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "shocking-grasp",
+    "name": "Agarre electrizante",
+    "desc": "Un relámpago surge de ti hacia una criatura a la que intentas tocar. Haz un ataque de conjuro cuerpo a cuerpo contra el objetivo. Si impactas, el objetivo sufre 1d8 de daño de relámpago y no puede realizar ataques de oportunidad hasta el inicio de su siguiente turno.",
+    "higher": "El daño aumenta en 1d8 cuando alcanzas los niveles 5 (2d8), 11 (3d8) y 17 (4d8).",
+    "range": "Toque",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "sorcerous-burst",
+    "name": "Estallido hechicero",
+    "desc": "Lanzas energía hechicera contra una criatura o un objeto dentro del alcance. Haz un ataque de conjuro a distancia contra el objetivo. Si impactas, el objetivo sufre 1d8 de daño del tipo que elijas: ácido, frío, fuego, relámpago, veneno, psíquico o trueno. Si sacas un 8 en un d8 de este conjuro, puedes tirar otro d8 y sumarlo al daño. Cuando lanzas este conjuro, el número máximo de estos d8 que puedes sumar al daño del conjuro es igual a tu modificador por aptitud mágica.",
+    "higher": "El daño aumenta en 1d8 cuando alcanzas los niveles 5 (2d8), 11 (3d8) y 17 (4d8).",
+    "range": "120 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "spare-the-dying",
+    "name": "Piedad con los moribundos",
+    "desc": "Elige una criatura dentro del alcance que tenga 0 puntos de golpe y no esté muerta. La criatura pasa a estar Estable.",
+    "higher": "El alcance se duplica cuando alcanzas los niveles 5 (30 pies), 11 (60 pies) y 17 (120 pies).",
+    "range": "15 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "starry-wisp",
+    "name": "Chispa estelar",
+    "desc": "Lanzas una mota de luz contra una criatura o un objeto dentro del alcance. Haz un ataque de conjuro a distancia contra el objetivo. Si impactas, el objetivo sufre 1d8 de daño radiante y, hasta el final de tu siguiente turno, emite luz tenue en un radio de 10 pies y no puede beneficiarse del estado Invisible.",
+    "higher": "El daño aumenta en 1d8 cuando alcanzas los niveles 5 (2d8), 11 (3d8) y 17 (4d8).",
+    "range": "60 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "thaumaturgy",
+    "name": "Taumaturgia",
+    "desc": "Manifiestas un prodigio menor dentro del alcance. Creas uno de los efectos siguientes dentro del alcance. Si lanzas este conjuro varias veces, puedes tener activos a la vez hasta tres de sus efectos de 1 minuto.\n\n**_Ojos alterados._** Alteras el aspecto de tus ojos durante 1 minuto.\n\n**_Voz atronadora._** Tu voz retumba con hasta el triple de su volumen normal durante 1 minuto. Durante ese tiempo, tienes ventaja en las pruebas de Carisma (Intimidación).\n\n**_Juego de fuego._** Haces que las llamas parpadeen, se aviven, se atenúen o cambien de color durante 1 minuto.\n\n**_Mano invisible._** Haces que al instante una puerta o una ventana que no esté cerrada con llave se abra de golpe o se cierre de un portazo.\n\n**_Sonido fantasmal._** Creas un sonido instantáneo que se origina en un punto de tu elección dentro del alcance, como el retumbar de un trueno, el graznido de un cuervo o unos susurros ominosos.\n\n**_Temblores._** Provocas temblores inofensivos en el suelo durante 1 minuto.",
+    "range": "30 pies",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "true-strike",
+    "name": "Golpe certero",
+    "desc": "Guiado por un destello de perspicacia mágica, realizas un ataque con el arma usada en el lanzamiento del conjuro. El ataque usa tu aptitud mágica para las tiradas de ataque y de daño en lugar de usar Fuerza o Destreza. Si el ataque inflige daño, puede ser daño radiante o del tipo de daño normal del arma (a tu elección).",
+    "higher": "Tanto si infliges daño radiante como del tipo de daño normal del arma, el ataque inflige daño radiante adicional cuando alcanzas los niveles 5 (1d6), 11 (2d6) y 17 (3d6).",
+    "material": "un arma con la que tengas competencia y que valga 1+ pc",
+    "range": "Personal",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "vicious-mockery",
+    "name": "Burla dañina",
+    "desc": "Sueltas una retahíla de insultos impregnados de sutiles encantamientos contra una criatura que puedas ver u oír dentro del alcance. El objetivo debe superar una tirada de salvación de Sabiduría o sufrir 1d6 de daño psíquico y tener desventaja en la siguiente tirada de ataque que haga antes del final de su siguiente turno.",
+    "higher": "El daño aumenta en 1d6 cuando alcanzas los niveles 5 (2d6), 11 (3d6) y 17 (4d6).",
+    "range": "60 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "alarm",
+    "name": "Alarma",
+    "desc": "Estableces una alarma contra intrusos. Elige una puerta, una ventana o un área dentro del alcance que no sea mayor que un cubo de 20 pies. Hasta que el conjuro termine, una alarma te avisa cada vez que una criatura toca el área protegida o entra en ella. Cuando lanzas el conjuro, puedes designar criaturas que no activarán la alarma. También eliges si la alarma es audible o mental:\n\n**Alarma audible.** La alarma produce el sonido de una campanilla durante 10 segundos a 60 pies o menos del área protegida.\n\n**Alarma mental.** Recibes un aviso mental si estás a 1 milla o menos del área protegida. Este aviso te despierta si estás dormido.",
+    "material": "una campana y un hilo de plata",
+    "range": "30 pies",
+    "duration": "8 horas"
+  },
+  {
+    "id": "animal-friendship",
+    "name": "Amistad animal",
+    "desc": "Elige como objetivo a una bestia que puedas ver dentro del alcance. El objetivo debe superar una tirada de salvación de Sabiduría o tener el estado Encantado mientras dure el conjuro. Si tú o uno de tus aliados infligís daño al objetivo, el conjuro termina.",
+    "higher": "Puedes elegir como objetivo a una bestia adicional por cada nivel del espacio de conjuro por encima de 1.",
+    "material": "un bocado de comida",
+    "range": "30 pies",
+    "duration": "24 horas"
+  },
+  {
+    "id": "bane",
+    "name": "Perdición",
+    "desc": "Hasta tres criaturas de tu elección que puedas ver dentro del alcance deben hacer cada una una tirada de salvación de Carisma. Cada vez que un objetivo que haya fallado esta salvación haga una tirada de ataque o una tirada de salvación antes de que el conjuro termine, debe restar 1d4 a la tirada de ataque o de salvación.",
+    "higher": "Puedes elegir como objetivo a una criatura adicional por cada nivel del espacio de conjuro por encima de 1.",
+    "material": "una gota de sangre",
+    "range": "30 pies",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "bless",
+    "name": "Bendecir",
+    "desc": "Bendices a hasta tres criaturas dentro del alcance. Cada vez que un objetivo haga una tirada de ataque o una tirada de salvación antes de que el conjuro termine, añade 1d4 a la tirada de ataque o de salvación.",
+    "higher": "Puedes elegir como objetivo a una criatura adicional por cada nivel del espacio de conjuro por encima de 1.",
+    "material": "un símbolo sagrado que valga 5+ po",
+    "range": "30 pies",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "burning-hands",
+    "name": "Manos ardientes",
+    "desc": "Una fina lámina de llamas brota de ti. Cada criatura que haya en un cono de 15 pies hace una tirada de salvación de Destreza; si la falla, sufre 3d6 de daño de fuego, o la mitad de ese daño si la supera. Los objetos inflamables que haya en el cono y que nadie lleve puestos ni transporte empiezan a arder.",
+    "higher": "El daño aumenta en 1d6 por cada nivel del espacio de conjuro por encima de 1.",
+    "range": "Personal",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "charm-person",
+    "name": "Hechizar persona",
+    "desc": "Un humanoide que puedas ver dentro del alcance hace una tirada de salvación de Sabiduría. La hace con ventaja si tú o tus aliados estáis luchando contra él. Si falla la salvación, el objetivo tiene el estado Encantado hasta que el conjuro termine o hasta que tú o tus aliados le inflijáis daño. La criatura Encantada es Amistosa contigo. Cuando el conjuro termina, el objetivo sabe que lo has Encantado.",
+    "higher": "Puedes elegir como objetivo a una criatura adicional por cada nivel del espacio de conjuro por encima de 1.",
+    "range": "30 pies",
+    "duration": "1 hora"
+  },
+  {
+    "id": "chromatic-orb",
+    "name": "Orbe cromático",
+    "desc": "Arrojas un orbe de energía contra un objetivo dentro del alcance. Elige ácido, frío, fuego, relámpago, veneno o trueno como tipo de orbe que creas y, a continuación, haz un ataque de conjuro a distancia contra el objetivo. Si impactas, el objetivo sufre 3d8 de daño del tipo elegido. Si sacas el mismo número en dos o más de los d8, el orbe salta a un objetivo diferente de tu elección que esté a 30 pies o menos del objetivo. Haz una tirada de ataque contra el nuevo objetivo y haz una nueva tirada de daño. El orbe no puede volver a saltar a menos que lances el conjuro con un espacio de conjuro de nivel 2+.",
+    "higher": "El daño aumenta en 1d8 por cada nivel del espacio de conjuro por encima de 1. El orbe puede saltar un número máximo de veces igual al nivel del espacio gastado, y una criatura solo puede ser elegida como objetivo una vez en cada lanzamiento de este conjuro.",
+    "material": "un diamante que valga 50+ po",
+    "range": "90 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "color-spray",
+    "name": "Rociada de color",
+    "desc": "Lanzas una deslumbrante sucesión de destellos de luz de colores. Cada criatura que haya en un cono de 15 pies que se origina en ti debe superar una tirada de salvación de Constitución o tener el estado Cegado hasta el final de tu siguiente turno.",
+    "material": "una pizca de arena de colores",
+    "range": "Personal",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "command",
+    "name": "Orden imperiosa",
+    "desc": "Pronuncias una orden de una sola palabra a una criatura que puedas ver dentro del alcance. El objetivo debe superar una tirada de salvación de Sabiduría o cumplir la orden en su siguiente turno. Elige la orden entre estas opciones:\n\n- **Suelta.** El objetivo suelta lo que esté sosteniendo y, a continuación, termina su turno.\n- **Huye.** El objetivo dedica su turno a alejarse de ti por el medio más rápido disponible.\n- **Arrástrate.** El objetivo tiene el estado Derribado y, a continuación, termina su turno.\n- **Alto.** En su turno, el objetivo no se mueve y no realiza ninguna acción ni acción adicional.",
+    "higher": "Puedes afectar a una criatura adicional por cada nivel del espacio de conjuro por encima de 1.",
+    "range": "60 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "comprehend-languages",
+    "name": "Comprensión idiomática",
+    "desc": "Mientras dure el conjuro, entiendes el significado literal de cualquier idioma que oigas o que veas expresado por signos. También entiendes cualquier idioma escrito que veas, pero debes estar tocando la superficie en la que estén escritas las palabras. Se tarda aproximadamente 1 minuto en leer una página de texto. Este conjuro no descifra símbolos ni mensajes secretos.",
+    "material": "una pizca de hollín y sal",
+    "range": "Personal",
+    "duration": "1 hora"
+  },
+  {
+    "id": "create-or-destroy-water",
+    "name": "Crear o destruir agua",
+    "desc": "Haces una de las siguientes cosas:\n\n**Crear agua.** Creas hasta 10 galones de agua limpia dentro del alcance en un recipiente abierto. Otra opción es que el agua caiga como lluvia en un cubo de 30 pies dentro del alcance, extinguiendo las llamas expuestas que haya allí.\n\n**Destruir agua.** Destruyes hasta 10 galones de agua que haya en un recipiente abierto dentro del alcance. Otra opción es destruir la niebla que haya en un cubo de 30 pies dentro del alcance.",
+    "higher": "Creas o destruyes 10 galones de agua adicionales, o el tamaño del cubo aumenta en 5 pies, por cada nivel del espacio de conjuro por encima de 1.",
+    "material": "una mezcla de agua y arena",
+    "range": "30 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "cure-wounds",
+    "name": "Curar heridas",
+    "desc": "Una criatura que toques recupera un número de puntos de golpe igual a 2d8 más tu modificador por aptitud mágica.",
+    "higher": "La curación aumenta en 2d8 por cada nivel del espacio de conjuro por encima de 1.",
+    "range": "Toque",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "detect-evil-and-good",
+    "name": "Detectar el bien y el mal",
+    "desc": "Mientras dure el conjuro, percibes la ubicación de cualquier aberración, celestial, elemental, hada, infernal o muerto viviente que esté a 30 pies o menos de ti. También percibes si el conjuro Santificar está activo allí y, en tal caso, dónde. El conjuro queda bloqueado por 1 pie de piedra, tierra o madera; 1 pulgada de metal; o una fina lámina de plomo.",
+    "range": "Personal",
+    "duration": "10 minutos"
+  },
+  {
+    "id": "detect-magic",
+    "name": "Detectar magia",
+    "desc": "Mientras dure el conjuro, percibes la presencia de efectos mágicos a 30 pies o menos de ti. Si percibes tales efectos, puedes realizar la acción de Magia para ver un aura tenue alrededor de cualquier criatura u objeto visible de la zona que porte la magia y, si un efecto fue creado por un conjuro, averiguas la escuela de magia de ese conjuro. El conjuro queda bloqueado por 1 pie de piedra, tierra o madera; 1 pulgada de metal; o una fina lámina de plomo.",
+    "range": "Personal",
+    "duration": "10 minutos"
+  },
+  {
+    "id": "detect-poison-and-disease",
+    "name": "Detectar venenos y enfermedades",
+    "desc": "Mientras dure el conjuro, percibes la ubicación de venenos, criaturas venenosas o ponzoñosas y contagios mágicos a 30 pies o menos de ti. En cada caso, percibes de qué tipo de veneno, criatura o contagio se trata. El conjuro queda bloqueado por 1 pie de piedra, tierra o madera; 1 pulgada de metal; o una fina lámina de plomo.",
+    "material": "una hoja de tejo",
+    "range": "Personal",
+    "duration": "10 minutos"
+  },
+  {
+    "id": "disguise-self",
+    "name": "Disfrazarse",
+    "desc": "Haces que tu aspecto —incluidos tu ropa, tu armadura, tus armas y demás pertenencias que lleves encima— sea distinto hasta que el conjuro termine. Puedes parecer 1 pie más bajo o más alto y puedes aparentar ser más pesado o más ligero. Debes adoptar una forma que tenga la misma disposición básica de extremidades que tú. Por lo demás, la extensión de la ilusión queda a tu criterio. Los cambios que produce este conjuro no resisten una inspección física. Por ejemplo, si usas este conjuro para añadir un sombrero a tu atuendo, los objetos atraviesan el sombrero y cualquiera que lo toque no notará nada. Para discernir que estás disfrazado, una criatura debe realizar la acción de Estudiar para examinar tu aspecto y superar una prueba de Inteligencia (Investigación) contra tu CD de salvación de conjuros.",
+    "range": "Personal",
+    "duration": "1 hora"
+  },
+  {
+    "id": "dissonant-whispers",
+    "name": "Susurros disonantes",
+    "desc": "Una criatura de tu elección que puedas ver dentro del alcance oye una melodía discordante en su mente. El objetivo hace una tirada de salvación de Sabiduría. Si la falla, sufre 3d6 de daño psíquico y debe usar de inmediato su reacción, si la tiene disponible, para alejarse de ti tanto como pueda, siguiendo la ruta más segura. Si la supera, el objetivo solo sufre la mitad del daño.",
+    "range": "60 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "divine-favor",
+    "name": "Favor divino",
+    "desc": "Hasta que el conjuro termine, tus ataques con armas infligen 1d4 de daño radiante adicional al impactar.",
+    "range": "Personal",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "divine-smite",
+    "name": "Castigo divino",
+    "desc": "El objetivo sufre 2d8 de daño radiante adicional por el ataque. El daño aumenta en 1d8 si el objetivo es un infernal o un muerto viviente.",
+    "higher": "El daño aumenta en 1d8 por cada nivel del espacio de conjuro por encima de 1.",
+    "range": "Personal",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "ensnaring-strike",
+    "name": "Golpe apresador",
+    "desc": "Cuando impactas al objetivo, aparecen sobre él unas enredaderas que lo sujetan, y el objetivo hace una tirada de salvación de Fuerza. Una criatura de tamaño Grande o mayor tiene ventaja en esta salvación. Si la falla, el objetivo tiene el estado Apresado hasta que el conjuro termine. Si la supera, las enredaderas se marchitan y el conjuro termina. Mientras esté Apresado, el objetivo sufre 1d6 de daño perforante al inicio de cada uno de sus turnos. El objetivo o una criatura que esté a su alcance puede realizar una acción para hacer una prueba de Fuerza (Atletismo) contra tu CD de salvación de conjuros. Si la supera, el conjuro termina.",
+    "higher": "El daño aumenta en 1d6 por cada nivel del espacio de conjuro por encima de 1.",
+    "range": "Personal",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "entangle",
+    "name": "Enmarañar",
+    "desc": "Unas plantas que se aferran brotan del suelo en un cuadrado de 20 pies dentro del alcance. Mientras dure el conjuro, estas plantas convierten el suelo del área en terreno difícil. Desaparecen cuando el conjuro termina. Cada criatura (aparte de ti) que esté en el área cuando lanzas el conjuro debe superar una tirada de salvación de Fuerza o tener el estado Apresado hasta que el conjuro termine. Una criatura Apresada puede realizar una acción para hacer una prueba de Fuerza (Atletismo) contra tu CD de salvación de conjuros. Si la supera, se libera de las plantas y deja de estar Apresada por ellas.",
+    "range": "90 pies",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "expeditious-retreat",
+    "name": "Retirada expeditiva",
+    "desc": "Realizas la acción de Correr y, hasta que el conjuro termine, puedes volver a realizar esa acción como acción adicional.",
+    "range": "Personal",
+    "duration": "10 minutos"
+  },
+  {
+    "id": "faerie-fire",
+    "name": "Fuego feérico",
+    "desc": "Los objetos que haya en un cubo de 20 pies dentro del alcance quedan perfilados por una luz azul, verde o violeta (a tu elección). Cada criatura que esté en el cubo también queda perfilada si falla una tirada de salvación de Destreza. Mientras dure el conjuro, los objetos y las criaturas afectadas emiten luz tenue en un radio de 10 pies y no pueden beneficiarse del estado Invisible. Las tiradas de ataque contra una criatura o un objeto afectados tienen ventaja si el atacante puede verlos.",
+    "range": "60 pies",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "false-life",
+    "name": "Falsa vida",
+    "desc": "Obtienes 2d4 + 4 puntos de golpe temporales.",
+    "higher": "Obtienes 5 puntos de golpe temporales adicionales por cada nivel del espacio de conjuro por encima de 1.",
+    "material": "una gota de alcohol",
+    "range": "Personal",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "feather-fall",
+    "name": "Caída de pluma",
+    "desc": "Elige hasta cinco criaturas que estén cayendo dentro del alcance. La velocidad de descenso de una criatura que esté cayendo se reduce a 60 pies por asalto hasta que el conjuro termine. Si una criatura toca el suelo antes de que el conjuro termine, no sufre daño por la caída y el conjuro termina para esa criatura.",
+    "material": "una pluma pequeña o un poco de plumón",
+    "reaction": "que realizas cuando tú o una criatura que puedas ver a 60 pies o menos de ti caéis",
+    "range": "60 pies",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "find-familiar",
+    "name": "Encontrar familiar",
+    "desc": "Obtienes los servicios de un familiar, un espíritu que adopta la forma animal que elijas: Murciélago, Gato, Rana, Halcón, Lagarto, Pulpo, Búho, Rata, Cuervo, Araña, Comadreja u otra bestia que tenga un valor de desafío de 0. El familiar aparece en un espacio desocupado dentro del alcance y tiene el perfil de la forma elegida (consulta «Monstruos»), aunque es un celestial, un hada o un infernal (a tu elección) en lugar de una bestia. Tu familiar actúa de forma independiente, pero obedece tus órdenes.\n\n**_Conexión telepática._** Mientras tu familiar esté a 100 pies o menos de ti, puedes comunicarte con él telepáticamente. Además, como acción adicional, puedes ver a través de los ojos del familiar y oír lo que oye hasta el inicio de tu siguiente turno, obteniendo los beneficios de cualquier sentido especial que tenga.\n\nPor último, cuando lanzas un conjuro con un alcance de toque, tu familiar puede transmitir el toque. Tu familiar debe estar a 100 pies o menos de ti y debe usar una reacción para transmitir el toque cuando lanzas el conjuro.\n\n**_Combate._** El familiar es un aliado tuyo y de tus aliados. Tira su propia iniciativa y actúa en su propio turno. Un familiar no puede atacar, pero puede realizar otras acciones con normalidad.\n\n**_Desaparición del familiar._** Cuando el familiar queda reducido a 0 puntos de golpe, desaparece. Reaparece después de que vuelvas a lanzar este conjuro. Como acción de Magia, puedes despedir temporalmente al familiar a una dimensión de bolsillo. Otra opción es despedirlo para siempre. Como acción de Magia mientras está despedido temporalmente, puedes hacer que reaparezca en un espacio desocupado a 30 pies o menos de ti. Cada vez que el familiar queda reducido a 0 puntos de golpe o desaparece en la dimensión de bolsillo, deja en su espacio todo lo que llevara puesto o transportara.\n\n**_Un único familiar._** No puedes tener más de un familiar a la vez. Si lanzas este conjuro mientras tienes un familiar, en su lugar haces que adopte una nueva forma válida.",
+    "material": "incienso encendido que valga 10+ po, que el conjuro consume",
+    "range": "10 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "floating-disk",
+    "name": "Disco flotante",
+    "desc": "Este conjuro crea un plano de fuerza circular y horizontal, de 3 pies de diámetro y 1 pulgada de grosor, que flota a 3 pies del suelo en un espacio desocupado de tu elección que puedas ver dentro del alcance. El disco permanece mientras dure el conjuro y puede soportar hasta 500 libras. Si se le coloca más peso encima, el conjuro termina y todo lo que haya sobre el disco cae al suelo. El disco permanece inmóvil mientras estés a 20 pies o menos de él. Si te alejas más de 20 pies de él, el disco te sigue para mantenerse a 20 pies o menos de ti. Puede desplazarse por terreno irregular, subir o bajar escaleras, pendientes y similares, pero no puede salvar un cambio de altura de 10 pies o más. Por ejemplo, el disco no puede cruzar un foso de 10 pies de profundidad, ni podría salir de un foso así si se hubiera creado en el fondo. Si te alejas más de 100 pies del disco (normalmente porque no puede rodear un obstáculo para seguirte), el conjuro termina.",
+    "material": "una gota de mercurio",
+    "range": "30 pies",
+    "duration": "1 hora"
+  },
+  {
+    "id": "fog-cloud",
+    "name": "Nube de niebla",
+    "desc": "Creas una esfera de niebla de 20 pies de radio centrada en un punto dentro del alcance. El área de la esfera está muy oscura. La niebla permanece mientras dure el conjuro o hasta que un viento fuerte (como el creado por Ráfaga de viento) la disperse.",
+    "higher": "El radio de la niebla aumenta en 20 pies por cada nivel del espacio de conjuro por encima de 1.",
+    "range": "120 pies",
+    "duration": "1 hora"
+  },
+  {
+    "id": "goodberry",
+    "name": "Bayas buenas",
+    "desc": "Diez bayas aparecen en tu mano y quedan imbuidas de magia mientras dure el conjuro. Una criatura puede realizar una acción adicional para comerse una baya. Comerse una baya restablece 1 punto de golpe, y la baya proporciona alimento suficiente para sustentar a una criatura durante un día. Las bayas que no se hayan comido desaparecen cuando el conjuro termina.",
+    "material": "una ramita de muérdago",
+    "range": "Personal",
+    "duration": "24 horas"
+  },
+  {
+    "id": "grease",
+    "name": "Grasa",
+    "desc": "Una grasa no inflamable cubre el suelo en un cuadrado de 10 pies centrado en un punto dentro del alcance y lo convierte en terreno difícil mientras dure el conjuro. Cuando aparece la grasa, cada criatura que esté de pie en su área debe superar una tirada de salvación de Destreza o tener el estado Derribado. Una criatura que entre en el área o termine su turno en ella también debe superar esa salvación o caer Derribada.",
+    "material": "un trozo de corteza de cerdo o de mantequilla",
+    "range": "60 pies",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "guiding-bolt",
+    "name": "Saeta guía",
+    "desc": "Arrojas un haz de luz hacia una criatura dentro del alcance. Haz un ataque de conjuro a distancia contra el objetivo. Si impactas, sufre 4d6 de daño radiante, y la siguiente tirada de ataque que se haga contra él antes del final de tu siguiente turno tiene ventaja.",
+    "higher": "El daño aumenta en 1d6 por cada nivel del espacio de conjuro por encima de 1.",
+    "range": "120 pies",
+    "duration": "1 asalto"
+  },
+  {
+    "id": "healing-word",
+    "name": "Palabra curativa",
+    "desc": "Una criatura de tu elección que puedas ver dentro del alcance recupera puntos de golpe iguales a 2d4 más tu modificador por aptitud mágica.",
+    "higher": "La curación aumenta en 2d4 por cada nivel del espacio de conjuro por encima de 1.",
+    "range": "60 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "hellish-rebuke",
+    "name": "Reprensión infernal",
+    "desc": "La criatura que te ha dañado queda rodeada momentáneamente de llamas verdes. Hace una tirada de salvación de Destreza; si la falla, sufre 2d10 de daño de fuego, o la mitad de ese daño si la supera.",
+    "higher": "El daño aumenta en 1d10 por cada nivel del espacio de conjuro por encima de 1.",
+    "reaction": "que realizas en respuesta a sufrir daño de una criatura que puedas ver a 60 pies o menos de ti",
+    "range": "60 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "heroism",
+    "name": "Heroísmo",
+    "desc": "Una criatura voluntaria que toques se imbuye de valentía. Hasta que el conjuro termine, la criatura es inmune al estado Asustado y obtiene puntos de golpe temporales iguales a tu modificador por aptitud mágica al inicio de cada uno de sus turnos.",
+    "higher": "Puedes elegir como objetivo a una criatura adicional por cada nivel del espacio de conjuro por encima de 1.",
+    "range": "Toque",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "hex",
+    "name": "Maleficio",
+    "desc": "Lanzas una maldición sobre una criatura que puedas ver dentro del alcance. Hasta que el conjuro termine, infliges 1d6 de daño necrótico adicional al objetivo cada vez que lo impactes con una tirada de ataque. Además, elige una característica cuando lances el conjuro. El objetivo tiene desventaja en las pruebas de característica que haga con la característica elegida. Si el objetivo queda reducido a 0 puntos de golpe antes de que este conjuro termine, puedes realizar una acción adicional en un turno posterior para maldecir a una nueva criatura.",
+    "higher": "Tu concentración puede durar más con un espacio de conjuro de nivel 2 (hasta 4 horas), 3–4 (hasta 8 horas) o 5+ (24 horas).",
+    "material": "el ojo petrificado de un tritón",
+    "range": "90 pies",
+    "duration": "1 hora"
+  },
+  {
+    "id": "hideous-laughter",
+    "name": "Risa horrible",
+    "desc": "Una criatura de tu elección que puedas ver dentro del alcance hace una tirada de salvación de Sabiduría. Si la falla, tiene los estados Derribado e Incapacitado mientras dure el conjuro. Durante ese tiempo, se ríe sin control si es capaz de reír, y no puede poner fin por sí misma al estado Derribado. Al final de cada uno de sus turnos y cada vez que sufra daño, hace otra tirada de salvación de Sabiduría. El objetivo tiene ventaja en la salvación si esta se debe al daño. Si la supera, el conjuro termina.",
+    "higher": "Puedes elegir como objetivo a una criatura adicional por cada nivel del espacio de conjuro por encima de 1.",
+    "material": "una tarta y una pluma",
+    "range": "30 pies",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "hunters-mark",
+    "name": "Marca del cazador",
+    "desc": "Marcas mágicamente a una criatura que puedas ver dentro del alcance como tu presa. Hasta que el conjuro termine, infliges 1d6 de daño de fuerza adicional al objetivo cada vez que lo impactes con una tirada de ataque. También tienes ventaja en cualquier prueba de Sabiduría (Percepción o Supervivencia) que hagas para encontrarlo. Si el objetivo queda reducido a 0 puntos de golpe antes de que este conjuro termine, puedes realizar una acción adicional para trasladar la marca a una nueva criatura que puedas ver dentro del alcance.",
+    "higher": "Tu concentración puede durar más con un espacio de conjuro de nivel 3–4 (hasta 8 horas) o 5+ (hasta 24 horas).",
+    "range": "90 pies",
+    "duration": "1 hora"
+  },
+  {
+    "id": "ice-knife",
+    "name": "Cuchillo de hielo",
+    "desc": "Creas un fragmento de hielo y lo arrojas contra una criatura dentro del alcance. Haz un ataque de conjuro a distancia contra el objetivo. Si impactas, el objetivo sufre 1d10 de daño perforante. Tanto si impactas como si fallas, el fragmento explota a continuación. El objetivo y cada criatura que esté a 5 pies o menos de él deben superar una tirada de salvación de Destreza o sufrir 2d6 de daño de frío.",
+    "higher": "El daño de frío aumenta en 1d6 por cada nivel del espacio de conjuro por encima de 1.",
+    "material": "una gota de agua o un trozo de hielo",
+    "range": "60 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "identify",
+    "name": "Identificar",
+    "desc": "Tocas un objeto durante todo el lanzamiento del conjuro. Si el objeto es un objeto mágico o algún otro objeto imbuido de magia, averiguas sus propiedades y cómo usarlas, si requiere sintonización y cuántas cargas tiene, si es que tiene alguna. Averiguas si hay conjuros en curso que estén afectando al objeto y cuáles son. Si el objeto fue creado por un conjuro, averiguas el nombre de ese conjuro. Si, en cambio, tocas a una criatura durante todo el lanzamiento, averiguas qué conjuros en curso la están afectando en ese momento, si los hay.",
+    "material": "una perla que valga 100+ po",
+    "range": "Toque",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "illusory-script",
+    "name": "Escritura ilusoria",
+    "desc": "Escribes en un pergamino, un papel u otro material adecuado y lo imbuyes de una ilusión que permanece mientras dure el conjuro. Para ti y para las criaturas que designes al lanzar el conjuro, la escritura parece normal, parece escrita de tu puño y letra y transmite el significado que pretendías al escribir el texto. Para todos los demás, la escritura parece estar redactada en una grafía desconocida o mágica que resulta ininteligible. Otra opción es que la ilusión altere el significado, la caligrafía y el idioma del texto, aunque el idioma debe ser uno que conozcas. Si el conjuro se disipa, tanto la escritura original como la ilusión desaparecen. Una criatura que tenga visión verdadera puede leer el mensaje oculto.",
+    "material": "tinta que valga 10+ po, que el conjuro consume",
+    "range": "Toque",
+    "duration": "10 días"
+  },
+  {
+    "id": "inflict-wounds",
+    "name": "Infligir heridas",
+    "desc": "Una criatura que toques hace una tirada de salvación de Constitución; si la falla, sufre 2d10 de daño necrótico, o la mitad de ese daño si la supera.",
+    "higher": "El daño aumenta en 1d10 por cada nivel del espacio de conjuro por encima de 1.",
+    "range": "Toque",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "jump",
+    "name": "Salto",
+    "desc": "Tocas a una criatura voluntaria. Una vez en cada uno de sus turnos hasta que el conjuro termine, esa criatura puede saltar hasta 30 pies gastando 10 pies de movimiento.",
+    "higher": "Puedes elegir como objetivo a una criatura adicional por cada nivel del espacio de conjuro por encima de 1.",
+    "range": "Toque",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "longstrider",
+    "name": "Zancada prodigiosa",
+    "desc": "Tocas a una criatura. La velocidad del objetivo aumenta en 10 pies hasta que el conjuro termine.",
+    "higher": "Puedes elegir como objetivo a una criatura adicional por cada nivel del espacio de conjuro por encima de 1.",
+    "material": "una pizca de tierra",
+    "range": "Toque",
+    "duration": "1 hora"
+  },
+  {
+    "id": "mage-armor",
+    "name": "Armadura de mago",
+    "desc": "Tocas a una criatura voluntaria que no lleve armadura. Hasta que el conjuro termine, la CA base del objetivo pasa a ser 13 más su modificador por Destreza. El conjuro termina antes si el objetivo se pone una armadura.",
+    "material": "un trozo de cuero curtido",
+    "range": "Toque",
+    "duration": "8 horas"
+  },
+  {
+    "id": "magic-missile",
+    "name": "Proyectil mágico",
+    "desc": "Creas tres dardos brillantes de fuerza mágica. Cada dardo alcanza a una criatura de tu elección que puedas ver dentro del alcance. Un dardo inflige 1d4 + 1 de daño de fuerza a su objetivo. Todos los dardos alcanzan a la vez, y puedes dirigirlos para que impacten a una criatura o a varias.",
+    "higher": "El conjuro crea un dardo más por cada nivel del espacio de conjuro por encima de 1.",
+    "range": "120 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "protection-from-evil-and-good",
+    "name": "Protección contra el bien y el mal",
+    "desc": "Hasta que el conjuro termine, una criatura voluntaria que toques queda protegida contra las criaturas que sean aberraciones, celestiales, elementales, hadas, infernales o muertos vivientes. La protección otorga varios beneficios. Las criaturas de esos tipos tienen desventaja en las tiradas de ataque contra el objetivo. Además, el objetivo no puede ser poseído por ellas ni recibir de ellas los estados Encantado o Asustado. Si el objetivo ya está poseído, Encantado o Asustado por una de esas criaturas, tiene ventaja en cualquier nueva tirada de salvación contra el efecto correspondiente.",
+    "material": "un frasco de agua bendita que valga 25+ po, que el conjuro consume",
+    "range": "Toque",
+    "duration": "10 minutos"
+  },
+  {
+    "id": "purify-food-and-drink",
+    "name": "Purificar comida y bebida",
+    "desc": "Eliminas el veneno y la putrefacción de la comida y la bebida no mágicas que haya en una esfera de 5 pies de radio centrada en un punto dentro del alcance.",
+    "range": "10 pies",
+    "duration": "Instantánea"
+  }
+]

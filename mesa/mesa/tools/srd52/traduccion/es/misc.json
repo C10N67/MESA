@@ -1,0 +1,411 @@
+{
+  "species": [
+    {
+      "id": "dragonborn",
+      "name": "Dracónido",
+      "traits": [
+        {
+          "name": "Tamaño",
+          "desc": "Mediano (entre 5 y 7 pies de altura, aproximadamente)"
+        },
+        {
+          "name": "Velocidad",
+          "desc": "30 pies"
+        },
+        {
+          "name": "Ascendencia dracónica",
+          "desc": "Tu linaje procede de un dragón progenitor. Elige el tipo de dragón de la tabla «Ancestros dracónicos». Tu elección afecta a tus rasgos Arma de aliento y Resistencia al daño, así como a tu aspecto.\n\nTabla: Ancestros dracónicos\n\n| Dragón | Tipo de daño |\n|---|---|\n| Negro | Ácido |\n| Azul | Relámpago |\n| Latón |Fuego |\n| Bronce | Relámpago |\n| Cobre | Ácido|\n|Oro|Fuego|\n|Verde|Veneno|\n|Rojo|Fuego|\n|Plata|Frío|\n|Blanco|Frío|"
+        },
+        {
+          "name": "Arma de aliento",
+          "desc": "Cuando realizas la acción de Atacar en tu turno, puedes sustituir uno de tus ataques por una exhalación de energía mágica en forma de cono de 15 pies o de línea de 30 pies de largo y 5 pies de ancho (eliges la forma cada vez). Cada criatura en esa área debe hacer una tirada de salvación de Destreza (CD 8 más tu modificador de Constitución y tu bonificador por competencia). Si falla la salvación, la criatura recibe 1d10 de daño del tipo determinado por tu rasgo Ascendencia dracónica. Si la supera, recibe la mitad de ese daño. Este daño aumenta en 1d10 cuando alcanzas los niveles de personaje 5 (2d10), 11 (3d10) y 17 (4d10).\n\nPuedes usar este Arma de aliento un número de veces igual a tu bonificador por competencia, y recuperas todos los usos gastados cuando terminas un descanso largo."
+        },
+        {
+          "name": "Resistencia al daño",
+          "desc": "Tienes resistencia al tipo de daño determinado por tu rasgo Ascendencia dracónica."
+        },
+        {
+          "name": "Visión en la oscuridad",
+          "desc": "Tienes visión en la oscuridad con un alcance de 60 pies"
+        },
+        {
+          "name": "Vuelo dracónico",
+          "desc": "Cuando alcanzas el nivel de personaje 5, puedes canalizar magia dracónica para concederte la capacidad de volar temporalmente. Como acción adicional, te brotan en la espalda unas alas espectrales que duran 10 minutos o hasta que las repliegues (no requiere acción) o tengas el estado Incapacitado. Durante ese tiempo, tienes una velocidad de vuelo igual a tu velocidad. Tus alas parecen estar hechas de la misma energía que tu Arma de aliento. Una vez que usas este rasgo, no puedes volver a usarlo hasta que terminas un descanso largo."
+        }
+      ]
+    },
+    {
+      "id": "dwarf",
+      "name": "Enano",
+      "traits": [
+        {
+          "name": "Tamaño",
+          "desc": "Mediano (entre 4 y 5 pies de altura, aproximadamente) "
+        },
+        {
+          "name": "Velocidad",
+          "desc": "30 pies"
+        },
+        {
+          "name": "Visión en la oscuridad",
+          "desc": "Tienes visión en la oscuridad con un alcance de 120 pies."
+        },
+        {
+          "name": "Resiliencia enana",
+          "desc": "Tienes resistencia al daño de veneno. También tienes ventaja en las tiradas de salvación que hagas para evitar el estado Envenenado o ponerle fin."
+        },
+        {
+          "name": "Dureza enana",
+          "desc": "Tus puntos de golpe máximos aumentan en 1, y vuelven a aumentar en 1 cada vez que subes de nivel."
+        },
+        {
+          "name": "Afinidad con la piedra",
+          "desc": "Como acción adicional, obtienes sentido de la vibración con un alcance de 60 pies durante 10 minutos. Debes estar sobre una superficie de piedra o tocando una superficie de piedra para usar este sentido de la vibración. La piedra puede ser natural o trabajada.\n\nPuedes usar esta acción adicional un número de veces igual a tu bonificador por competencia, y recuperas todos los usos gastados cuando terminas un descanso largo."
+        }
+      ]
+    },
+    {
+      "id": "elf",
+      "name": "Elfo",
+      "traits": [
+        {
+          "name": "Tamaño",
+          "desc": "Mediano (entre 5 y 6 pies de altura, aproximadamente)"
+        },
+        {
+          "name": "Velocidad",
+          "desc": "30 pies"
+        },
+        {
+          "name": "Visión en la oscuridad",
+          "desc": "Tienes visión en la oscuridad con un alcance de 60 pies."
+        },
+        {
+          "name": "Linaje élfico",
+          "desc": "Formas parte de un linaje que te otorga capacidades sobrenaturales. Elige un linaje de la tabla «Linajes élficos». Obtienes el beneficio de nivel 1 de ese linaje.\n\nCuando alcanzas los niveles de personaje 3 y 5, aprendes un conjuro de nivel superior, como se indica en la tabla. Siempre tienes ese conjuro preparado. Puedes lanzarlo una vez sin gastar un espacio de conjuro, y recuperas la capacidad de lanzarlo de esa forma cuando terminas un descanso largo. También puedes lanzar el conjuro usando cualquier espacio de conjuro que tengas del nivel apropiado.\n\nTabla: Linajes élficos\n\n|Linaje|Nivel 1|Nivel 3|Nivel 5|\n|---|---|---|---|\n|Drow|El alcance de tu visión en la oscuridad aumenta a 120 pies. También conoces el truco Luces danzantes.|Fuego feérico|Oscuridad|\n|Alto elfo|Conoces el truco Prestidigitación. Cada vez que terminas un descanso largo, puedes sustituir ese truco por otro truco distinto de la lista de conjuros de mago.|Detectar magia|Paso brumoso|\n|Elfo de los bosques|Tu velocidad aumenta a 35 pies. También conoces el truco Artesanía druídica.|Zancada prodigiosa|Pasar sin dejar rastro|\n\nInteligencia, Sabiduría o Carisma es tu aptitud mágica para los conjuros que lances con este rasgo (eliges la característica al seleccionar el linaje)."
+        },
+        {
+          "name": "Ascendencia feérica",
+          "desc": "Tienes ventaja en las tiradas de salvación que hagas para evitar el estado Encantado o ponerle fin."
+        },
+        {
+          "name": "Sentidos agudos",
+          "desc": "Tienes competencia en la habilidad Perspicacia, Percepción o Supervivencia."
+        },
+        {
+          "name": "Trance",
+          "desc": "No necesitas dormir, y la magia no puede hacer que te duermas. Puedes terminar un descanso largo en 4 horas si pasas esas horas en una meditación similar al trance, durante la cual permaneces consciente."
+        }
+      ]
+    },
+    {
+      "id": "gnome",
+      "name": "Gnomo",
+      "traits": [
+        {
+          "name": "Tamaño",
+          "desc": "Pequeño (entre 3 y 4 pies de altura, aproximadamente)"
+        },
+        {
+          "name": "Velocidad",
+          "desc": "30 pies"
+        },
+        {
+          "name": "Visión en la oscuridad",
+          "desc": "Tienes visión en la oscuridad con un alcance de 60 pies."
+        },
+        {
+          "name": "Astucia gnoma",
+          "desc": "Tienes ventaja en las tiradas de salvación de Inteligencia, Sabiduría y Carisma."
+        },
+        {
+          "name": "Linaje gnomo",
+          "desc": "Formas parte de un linaje que te otorga capacidades sobrenaturales. Elige una de las siguientes opciones; elijas la que elijas, Inteligencia, Sabiduría o Carisma es tu aptitud mágica para los conjuros que lances con este rasgo (eliges la característica al seleccionar el linaje):\n\n**Gnomo de los bosques.** Conoces el truco *Ilusión menor*. Además, siempre tienes preparado el conjuro *Hablar con los animales*. Puedes lanzarlo sin gastar un espacio de conjuro un número de veces igual a tu bonificador por competencia, y recuperas todos los usos gastados cuando terminas un descanso largo. También puedes usar cualquier espacio de conjuro que tengas para lanzar el conjuro.\n\n**Gnomo de las rocas.** Conoces los trucos *Reparar* y *Prestidigitación*. Además, puedes pasar 10 minutos lanzando *Prestidigitación* para crear un dispositivo mecánico Diminuto (CA 5, 1 PG), como un juguete, un encendedor o una caja de música. Cuando creas el dispositivo, determinas su función eligiendo uno de los efectos de *Prestidigitación*; el dispositivo produce ese efecto cada vez que tú u otra criatura realizáis una acción adicional para activarlo con un toque. Si el efecto elegido tiene opciones, eliges una de ellas para el dispositivo al crearlo. Por ejemplo, si eliges el efecto de encender o apagar del conjuro, determinas si el dispositivo enciende o apaga fuego; el dispositivo no hace ambas cosas. Puedes tener tres de estos dispositivos a la vez, y cada uno se desmorona 8 horas después de su creación o cuando lo desmontas con un toque como acción de Usar."
+        }
+      ]
+    },
+    {
+      "id": "goliath",
+      "name": "Goliat",
+      "traits": [
+        {
+          "name": "Tamaño",
+          "desc": "Mediano (entre 7 y 8 pies de altura, aproximadamente)"
+        },
+        {
+          "name": "Velocidad",
+          "desc": "35 pies"
+        },
+        {
+          "name": "Ascendencia de gigante",
+          "desc": "Desciendes de gigantes. Elige uno de los siguientes beneficios, un don sobrenatural de tu ascendencia; puedes usar el beneficio elegido un número de veces igual a tu bonificador por competencia, y recuperas todos los usos gastados cuando terminas un descanso largo:\n\n- **Paseo de las nubes (gigante de las nubes)**. Como acción adicional, te teletransportas mágicamente hasta 30 pies a un espacio desocupado que puedas ver.\n- **Quemadura del fuego (gigante de fuego)**. Cuando impactas a un objetivo con una tirada de ataque y le infliges daño, también puedes infligir 1d10 de daño de fuego a ese objetivo.\n- **Frío de la escarcha (gigante de escarcha)**. Cuando impactas a un objetivo con una tirada de ataque y le infliges daño, también puedes infligir 1d6 de daño de frío a ese objetivo y reducir su velocidad en 10 pies hasta el comienzo de tu siguiente turno.\n- **Derrumbe de las colinas (gigante de las colinas)**. Cuando impactas a una criatura Grande o más pequeña con una tirada de ataque y le infliges daño, puedes darle a ese objetivo el estado Derribado.\n- **Aguante de la piedra (gigante de piedra)**. Cuando recibes daño, puedes usar una reacción para tirar 1d12. Suma tu modificador de Constitución al resultado y reduce el daño en ese total.\n- **Trueno de la tormenta (gigante de las tormentas)**. Cuando recibes daño de una criatura que está a 60 pies o menos de ti, puedes usar una reacción para infligir 1d8 de daño de trueno a esa criatura."
+        },
+        {
+          "name": "Forma grande",
+          "desc": "A partir del nivel de personaje 5, puedes cambiar tu tamaño a Grande como acción adicional si estás en un espacio lo bastante amplio. Esta transformación dura 10 minutos o hasta que le pongas fin (no requiere acción). Mientras dura, tienes ventaja en las pruebas de Fuerza, y tu velocidad aumenta en 10 pies. Una vez que usas este rasgo, no puedes volver a usarlo hasta que terminas un descanso largo."
+        },
+        {
+          "name": "Complexión poderosa",
+          "desc": "Tienes ventaja en cualquier prueba de característica que hagas para poner fin al estado Agarrado. Además, cuentas como si fueras de un tamaño mayor a la hora de determinar tu capacidad de carga."
+        }
+      ]
+    },
+    {
+      "id": "halfling",
+      "name": "Mediano",
+      "traits": [
+        {
+          "name": "Tamaño",
+          "desc": "Pequeño (entre 2 y 3 pies de altura, aproximadamente) "
+        },
+        {
+          "name": "Velocidad",
+          "desc": "30 pies"
+        },
+        {
+          "name": "Valiente",
+          "desc": "Tienes ventaja en las tiradas de salvación que hagas para evitar el estado Asustado o ponerle fin."
+        },
+        {
+          "name": "Agilidad de mediano",
+          "desc": "Puedes moverte a través del espacio de cualquier criatura que sea de un tamaño mayor que el tuyo, pero no puedes detenerte en ese mismo espacio."
+        },
+        {
+          "name": "Suerte",
+          "desc": "Cuando sacas un 1 en el d20 de una prueba de d20, puedes volver a tirar el dado, y debes usar la nueva tirada."
+        },
+        {
+          "name": "Sigiloso por naturaleza",
+          "desc": "Puedes realizar la acción de Esconderse incluso cuando solo te oculta una criatura que sea al menos de un tamaño mayor que el tuyo."
+        }
+      ]
+    },
+    {
+      "id": "human",
+      "name": "Humano",
+      "traits": [
+        {
+          "name": "Tamaño",
+          "desc": "Mediano (entre 4 y 7 pies de altura, aproximadamente) o Pequeño (entre 2 y 4 pies de altura, aproximadamente), a elegir cuando seleccionas esta especie"
+        },
+        {
+          "name": "Velocidad",
+          "desc": "30 pies"
+        },
+        {
+          "name": "Ingenioso",
+          "desc": "Obtienes Inspiración heroica cada vez que terminas un descanso largo."
+        },
+        {
+          "name": "Hábil",
+          "desc": "Obtienes competencia en una habilidad de tu elección."
+        },
+        {
+          "name": "Versátil",
+          "desc": "Obtienes una dote de origen de tu elección (consulta «Dotes»). Se recomienda Habilidoso."
+        }
+      ]
+    },
+    {
+      "id": "orc",
+      "name": "Orco",
+      "traits": [
+        {
+          "name": "Tamaño",
+          "desc": "Mediano (entre 6 y 7 pies de altura, aproximadamente)"
+        },
+        {
+          "name": "Velocidad",
+          "desc": "30 pies"
+        },
+        {
+          "name": "Subidón de adrenalina",
+          "desc": "Puedes realizar la acción de Correr como acción adicional. Cuando lo haces, obtienes una cantidad de puntos de golpe temporales igual a tu bonificador por competencia.\n\nPuedes usar este rasgo un número de veces igual a tu bonificador por competencia, y recuperas todos los usos gastados cuando terminas un descanso corto o largo."
+        },
+        {
+          "name": "Visión en la oscuridad",
+          "desc": "Tienes visión en la oscuridad con un alcance de 120 pies."
+        },
+        {
+          "name": "Aguante incansable",
+          "desc": "Cuando tus puntos de golpe se reducen a 0 pero no mueres en el acto, puedes quedarte con 1 punto de golpe en su lugar. Una vez que usas este rasgo, no puedes volver a hacerlo hasta que terminas un descanso largo."
+        }
+      ]
+    },
+    {
+      "id": "tiefling",
+      "name": "Tiefling",
+      "traits": [
+        {
+          "name": "Tamaño",
+          "desc": "Mediano (entre 4 y 7 pies de altura, aproximadamente) o Pequeño (entre 3 y 4 pies de altura, aproximadamente), a elegir cuando seleccionas esta especie"
+        },
+        {
+          "name": "Velocidad",
+          "desc": "30 pies"
+        },
+        {
+          "name": "Visión en la oscuridad",
+          "desc": "Tienes visión en la oscuridad con un alcance de 60 pies."
+        },
+        {
+          "name": "Legado infernal",
+          "desc": "Has recibido un legado que te otorga capacidades sobrenaturales. Elige un legado de la tabla «Legados infernales». Obtienes el beneficio de nivel 1 del legado elegido.\n\nCuando alcanzas los niveles de personaje 3 y 5, aprendes un conjuro de nivel superior, como se indica en la tabla. Siempre tienes ese conjuro preparado. Puedes lanzarlo una vez sin gastar un espacio de conjuro, y recuperas la capacidad de lanzarlo de esa forma cuando terminas un descanso largo. También puedes lanzar el conjuro usando cualquier espacio de conjuro que tengas del nivel apropiado.\n\nInteligencia, Sabiduría o Carisma es tu aptitud mágica para los conjuros que lances con este rasgo (eliges la característica al seleccionar el legado).\n\n**Tabla: Legados infernales**\n\n|Legado|Nivel 1|Nivel 3|Nivel 5|\n|---|---|---|---|\n|Abisal|Tienes resistencia al daño de veneno. También conoces el truco Rociada venenosa.|Rayo nauseabundo|Inmovilizar persona|\n|Ctónico|Tienes resistencia al daño necrótico. También conoces el truco Toque helado.|Falsa vida|Rayo debilitador|\n|Infernal|Tienes resistencia al daño de fuego. También conoces el truco Rayo de fuego.|Reprensión infernal|Oscuridad|"
+        },
+        {
+          "name": "Presencia de otro mundo",
+          "desc": "Conoces el truco *Taumaturgia*. Cuando lo lanzas con este rasgo, el conjuro usa la misma aptitud mágica que usas para tu rasgo Legado infernal."
+        }
+      ]
+    }
+  ],
+  "weaponProperties": [
+    {
+      "id": "ammunition-wp",
+      "name": "Munición",
+      "desc": "Solo puedes usar un arma con la propiedad munición para hacer un ataque a distancia si tienes munición que disparar con ella. El tipo de munición necesario se especifica junto al alcance del arma. Cada ataque gasta una pieza de munición. Sacar la munición forma parte del ataque (necesitas una mano libre para cargar un arma de una mano). Tras un combate, puedes pasar 1 minuto recuperando la mitad de la munición (redondeando hacia abajo) que usaste en el combate; el resto se pierde."
+    },
+    {
+      "id": "cleave-mastery",
+      "name": "Hendir",
+      "desc": "Si impactas a una criatura con una tirada de ataque cuerpo a cuerpo usando esta arma, puedes hacer una tirada de ataque cuerpo a cuerpo con el arma contra una segunda criatura que esté a 5 pies o menos de la primera y que también esté a tu alcance. Si impactas, la segunda criatura recibe el daño del arma, pero no sumes tu modificador de característica a ese daño a menos que dicho modificador sea negativo. Solo puedes hacer este ataque adicional una vez por turno."
+    },
+    {
+      "id": "finesse-wp",
+      "name": "Sutil",
+      "desc": "Cuando hagas un ataque con un arma sutil, usa el modificador que prefieras, el de Fuerza o el de Destreza, para las tiradas de ataque y de daño. Debes usar el mismo modificador para ambas tiradas."
+    },
+    {
+      "id": "graze-mastery",
+      "name": "Rozar",
+      "desc": "Si tu tirada de ataque con esta arma falla contra una criatura, puedes infligir a esa criatura un daño igual al modificador de característica que usaste para hacer la tirada de ataque. Este daño es del mismo tipo que el que inflige el arma, y solo puede aumentarse aumentando el modificador de característica."
+    },
+    {
+      "id": "heavy-wp",
+      "name": "Pesada",
+      "desc": "Tienes desventaja en las tiradas de ataque con un arma pesada si es un arma cuerpo a cuerpo y tu puntuación de Fuerza no es de al menos 13, o si es un arma a distancia y tu puntuación de Destreza no es de al menos 13."
+    },
+    {
+      "id": "light-wp",
+      "name": "Ligera",
+      "desc": "Cuando realizas la acción de Atacar en tu turno y atacas con un arma ligera, puedes hacer un ataque adicional como acción adicional más adelante en ese mismo turno. Ese ataque adicional debe hacerse con otra arma ligera distinta, y no sumas tu modificador de característica al daño del ataque adicional a menos que dicho modificador sea negativo."
+    },
+    {
+      "id": "loading-wp",
+      "name": "Recarga",
+      "desc": "Solo puedes disparar una pieza de munición de un arma con recarga cuando usas una acción, una acción adicional o una reacción para dispararla, independientemente del número de ataques que puedas hacer normalmente."
+    },
+    {
+      "id": "nick-mastery",
+      "name": "Mella",
+      "desc": "Cuando haces el ataque adicional de la propiedad ligera, puedes hacerlo como parte de la acción de Atacar en lugar de como acción adicional. Solo puedes hacer este ataque adicional una vez por turno."
+    },
+    {
+      "id": "push-mastery",
+      "name": "Empujar",
+      "desc": "Si impactas a una criatura con esta arma, puedes empujarla hasta 10 pies en línea recta alejándola de ti si es Grande o más pequeña."
+    },
+    {
+      "id": "reach-wp",
+      "name": "Gran alcance",
+      "desc": "Un arma con gran alcance añade 5 pies a tu alcance cuando atacas con ella, así como al determinar tu alcance para los ataques de oportunidad con ella."
+    },
+    {
+      "id": "sap-mastery",
+      "name": "Debilitar",
+      "desc": "Si impactas a una criatura con esta arma, esa criatura tiene desventaja en su siguiente tirada de ataque antes del comienzo de tu siguiente turno."
+    },
+    {
+      "id": "slow-mastery",
+      "name": "Ralentizar",
+      "desc": "Si impactas a una criatura con esta arma y le infliges daño, puedes reducir su velocidad en 10 pies hasta el comienzo de tu siguiente turno. Si la criatura recibe más de un impacto de armas con esta propiedad, la reducción de velocidad no supera los 10 pies."
+    },
+    {
+      "id": "thrown-wp",
+      "name": "Arrojadiza",
+      "desc": "Si un arma tiene la propiedad arrojadiza, puedes lanzarla para hacer un ataque a distancia, y puedes desenvainarla como parte del ataque. Si el arma es un arma cuerpo a cuerpo, usa para las tiradas de ataque y de daño el mismo modificador de característica que usarías para un ataque cuerpo a cuerpo con ella."
+    },
+    {
+      "id": "topple-mastery",
+      "name": "Derribar",
+      "desc": "Si impactas a una criatura con esta arma, puedes obligarla a hacer una tirada de salvación de Constitución (CD 8 más el modificador de característica usado para hacer la tirada de ataque y tu bonificador por competencia). Si falla la salvación, la criatura tiene el estado Derribado."
+    },
+    {
+      "id": "two-handed-wp",
+      "name": "A dos manos",
+      "desc": "Un arma a dos manos requiere las dos manos cuando atacas con ella."
+    },
+    {
+      "id": "versatile-wp",
+      "name": "Versátil",
+      "desc": "Un arma versátil puede usarse con una o con dos manos. Junto a la propiedad aparece un valor de daño entre paréntesis. El arma inflige ese daño cuando se usa con dos manos para hacer un ataque cuerpo a cuerpo."
+    },
+    {
+      "id": "vex-mastery",
+      "name": "Fastidiar",
+      "desc": "Si impactas a una criatura con esta arma y le infliges daño, tienes ventaja en tu siguiente tirada de ataque contra esa criatura antes del final de tu siguiente turno."
+    }
+  ],
+  "conditions": [
+    {
+      "id": "blinded",
+      "desc": "Mientras tienes el estado Cegado, sufres los siguientes efectos.\n * No puedes ver. No puedes ver y fallas automáticamente cualquier prueba de característica que requiera la vista.\n * Ataques afectados. Las tiradas de ataque contra ti tienen ventaja, y tus tiradas de ataque tienen desventaja."
+    },
+    {
+      "id": "charmed",
+      "desc": "Mientras tienes el estado Encantado, sufres los siguientes efectos. \n* No puedes dañar a quien te encanta. No puedes atacar a quien te ha encantado ni elegirlo como objetivo de capacidades que causen daño o de efectos mágicos. \n* Ventaja social. Quien te ha encantado tiene ventaja en cualquier prueba de característica para interactuar socialmente contigo."
+    },
+    {
+      "id": "deafened",
+      "desc": "Mientras tienes el estado Ensordecido, sufres el siguiente efecto.\n* No puedes oír. No puedes oír y fallas automáticamente cualquier prueba de característica que requiera el oído."
+    },
+    {
+      "id": "exhaustion",
+      "desc": "Mientras tienes el estado Agotamiento, sufres los siguientes efectos. \n* Niveles de Agotamiento. Este estado es acumulativo. Cada vez que lo recibes, obtienes 1 nivel de Agotamiento. Mueres si tu nivel de Agotamiento llega a 6.\n* Pruebas de d20 afectadas. Cuando haces una prueba de d20, a la tirada se le resta el doble de tu nivel de Agotamiento.\n* Velocidad reducida. Tu velocidad se reduce en un número de pies igual a 5 veces tu nivel de Agotamiento.\n* Eliminar niveles de Agotamiento. Terminar un descanso largo elimina 1 de tus niveles de Agotamiento. Cuando tu nivel de Agotamiento llega a 0, el estado termina."
+    },
+    {
+      "id": "frightened",
+      "desc": "Mientras tienes el estado Asustado, sufres los siguientes efectos. \n* Pruebas de característica y ataques afectados. Tienes desventaja en las pruebas de característica y en las tiradas de ataque mientras la fuente de tu miedo esté en tu línea de visión. \n * No puedes acercarte. No puedes acercarte voluntariamente a la fuente de tu miedo."
+    },
+    {
+      "id": "grappled",
+      "desc": "Mientras tienes el estado Agarrado, sufres los siguientes efectos. \n* Velocidad 0. Tu velocidad es 0 y no puede aumentar. \n* Ataques afectados. Tienes desventaja en las tiradas de ataque contra cualquier objetivo que no sea quien te agarra. \n* Desplazable. Quien te agarra puede arrastrarte o llevarte consigo cuando se mueve, pero cada pie de movimiento le cuesta 1 pie adicional, a menos que seas Diminuto o seas al menos dos tamaños más pequeño que esa criatura."
+    },
+    {
+      "id": "incapacitated",
+      "desc": "Mientras tienes el estado Incapacitado, sufres los siguientes efectos. \n* Inactivo. No puedes realizar ninguna acción, acción adicional ni reacción. \n* Sin concentración. Tu concentración se rompe. \n* Sin habla. No puedes hablar. \n* Sorprendido. Si estás Incapacitado cuando tiras iniciativa, tienes desventaja en la tirada."
+    },
+    {
+      "id": "invisible",
+      "desc": "Mientras tienes el estado Invisible, sufres los siguientes efectos. \n* Sorpresa. Si eres Invisible cuando tiras iniciativa, tienes ventaja en la tirada. \n* Oculto. No te afecta ningún efecto que requiera ver a su objetivo, a menos que el creador del efecto pueda verte de algún modo. Cualquier equipo que lleves puesto o transportes también queda oculto.\n*Ataques afectados. Las tiradas de ataque contra ti tienen desventaja, y tus tiradas de ataque tienen ventaja. Si una criatura puede verte de algún modo, no obtienes este beneficio contra ella."
+    },
+    {
+      "id": "paralyzed",
+      "desc": "Mientras tienes el estado Paralizado, sufres los siguientes efectos. \n* Incapacitado. Tienes el estado Incapacitado. \n* Velocidad 0. Tu velocidad es 0 y no puede aumentar. \n* Tiradas de salvación afectadas. Fallas automáticamente las tiradas de salvación de Fuerza y Destreza. \n* Ataques afectados. Las tiradas de ataque contra ti tienen ventaja.\n* Impactos críticos automáticos. Cualquier tirada de ataque que te impacte es un impacto crítico si el atacante está a 5 pies o menos de ti."
+    },
+    {
+      "id": "petrified",
+      "desc": "Mientras tienes el estado Petrificado, sufres los siguientes efectos. \n* Convertido en sustancia inanimada. Te transformas, junto con cualquier objeto no mágico que lleves puesto o transportes, en una sustancia sólida e inanimada (normalmente piedra). Tu peso se multiplica por diez y dejas de envejecer. \n* Incapacitado. Tienes el estado Incapacitado. \n* Velocidad 0. Tu velocidad es 0 y no puede aumentar.\n* Ataques afectados. Las tiradas de ataque contra ti tienen ventaja. \n* Tiradas de salvación afectadas. Fallas automáticamente las tiradas de salvación de Fuerza y Destreza. \n* Resistencia al daño. Tienes resistencia a todo el daño. \n* Inmunidad al veneno. Tienes inmunidad al estado Envenenado."
+    },
+    {
+      "id": "poisoned",
+      "desc": "Mientras tienes el estado Envenenado, sufres el siguiente efecto. \n* Pruebas de característica y ataques afectados. Tienes desventaja en las tiradas de ataque y en las pruebas de característica."
+    },
+    {
+      "id": "prone",
+      "desc": "Mientras tienes el estado Derribado, sufres los siguientes efectos. \n* Movimiento restringido. Tus únicas opciones de movimiento son arrastrarte o gastar una cantidad de movimiento igual a la mitad de tu velocidad (redondeando hacia abajo) para levantarte y poner así fin al estado. Si tu velocidad es 0, no puedes levantarte. \n* Ataques afectados. Tienes desventaja en las tiradas de ataque. Una tirada de ataque contra ti tiene ventaja si el atacante está a 5 pies o menos de ti. En caso contrario, esa tirada de ataque tiene desventaja."
+    },
+    {
+      "id": "restrained",
+      "desc": "Mientras tienes el estado Apresado, sufres los siguientes efectos.\n* Velocidad 0. Tu velocidad es 0 y no puede aumentar.\n* Ataques afectados. Las tiradas de ataque contra ti tienen ventaja, y tus tiradas de ataque tienen desventaja. \n* Tiradas de salvación afectadas. Tienes desventaja en las tiradas de salvación de Destreza."
+    },
+    {
+      "id": "stunned",
+      "desc": "Mientras tienes el estado Aturdido, sufres los siguientes efectos. \n* Incapacitado. Tienes el estado Incapacitado. \n* Tiradas de salvación afectadas. Fallas automáticamente las tiradas de salvación de Fuerza y Destreza. \n* Ataques afectados. Las tiradas de ataque contra ti tienen ventaja."
+    },
+    {
+      "id": "unconscious",
+      "desc": "Mientras tienes el estado Inconsciente, sufres los siguientes efectos. \n* Inerte. Tienes los estados Incapacitado y Derribado, y sueltas lo que estés sujetando. Cuando este estado termina, sigues Derribado. \n* Velocidad 0. Tu velocidad es 0 y no puede aumentar.\n* Ataques afectados. Las tiradas de ataque contra ti tienen ventaja. \n* Tiradas de salvación afectadas. Fallas automáticamente las tiradas de salvación de Fuerza y Destreza. \n* Impactos críticos automáticos. Cualquier tirada de ataque que te impacte es un impacto crítico si el atacante está a 5 pies o menos de ti. Desprevenido. No eres consciente de lo que te rodea."
+    }
+  ]
+}

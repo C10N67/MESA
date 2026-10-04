@@ -1,0 +1,1333 @@
+[
+ {
+  "id": "giant-crocodile",
+  "name": "Cocodrilo gigante",
+  "traits": [
+   {
+    "name": "Contener la respiración",
+    "desc": "El cocodrilo puede contener la respiración durante 1 hora."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-crocodile_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El cocodrilo hace un ataque de Mordisco y un ataque de Cola."
+   },
+   {
+    "key": "giant-crocodile_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +8, alcance 5 pies. 21 (3d10 + 5) de daño perforante. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Agarrado (CD 15 para escapar). Mientras está Agarrado, el objetivo tiene el estado Apresado y no puede ser objetivo de la Cola del cocodrilo."
+   },
+   {
+    "key": "giant-crocodile_tail",
+    "name": "Cola",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +8, alcance 10 pies. 18 (3d8 + 5) de daño contundente. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "giant-eagle",
+  "name": "Águila gigante",
+  "languages": "Celestial; entiende el común y el primordial (aurano) pero no los habla",
+  "actions": [
+   {
+    "key": "giant-eagle_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El águila hace dos ataques de Desgarrar."
+   },
+   {
+    "key": "giant-eagle_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 5 (1d4 + 3) de daño cortante más 3 (1d6) de daño radiante."
+   }
+  ]
+ },
+ {
+  "id": "giant-elk",
+  "name": "Alce gigante",
+  "languages": "Celestial; entiende el común, el élfico y el silvano pero no los habla",
+  "actions": [
+   {
+    "key": "giant-elk_ram",
+    "name": "Embestida",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 10 pies. 11 (2d6 + 4) de daño contundente más 5 (2d4) de daño radiante. Si el objetivo es una criatura Enorme o más pequeña y el alce se ha movido 20 pies o más en línea recta hacia él inmediatamente antes del impacto, el objetivo recibe 5 (2d4) de daño contundente adicional y tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "giant-fire-beetle",
+  "name": "Escarabajo de fuego gigante",
+  "traits": [
+   {
+    "name": "Iluminación",
+    "desc": "El escarabajo emite luz brillante en un radio de 10 pies y luz tenue 10 pies más allá."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-fire-beetle_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +1, alcance 5 pies. 1 de daño de fuego."
+   }
+  ]
+ },
+ {
+  "id": "giant-fly",
+  "name": "Mosca gigante"
+ },
+ {
+  "id": "giant-frog",
+  "name": "Rana gigante",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "La rana puede respirar aire y agua."
+   },
+   {
+    "name": "Salto sin carrerilla",
+    "desc": "El salto de longitud de la rana es de hasta 20 pies y su salto de altura, de hasta 10 pies, con o sin carrerilla."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-frog_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 5 (1d6 + 2) de daño perforante. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Agarrado (CD 11 para escapar)."
+   },
+   {
+    "key": "giant-frog_swallow",
+    "name": "Tragar",
+    "desc": "La rana se traga a un objetivo Pequeño o más pequeño al que esté agarrando. Mientras está tragado, el objetivo no está Agarrado, pero tiene los estados Cegado y Apresado, y tiene cobertura total contra los ataques y otros efectos procedentes del exterior de la rana. Mientras tiene tragado al objetivo, la rana no puede usar Mordisco y, si la rana muere, el objetivo tragado deja de estar Apresado y puede escapar del cadáver usando 5 pies de movimiento, saliendo con el estado Derribado. Al final del siguiente turno de la rana, el objetivo tragado recibe 5 (2d4) de daño de ácido. Si ese daño no lo mata, la rana lo regurgita, lo que hace que salga Derribado."
+   }
+  ]
+ },
+ {
+  "id": "giant-goat",
+  "name": "Cabra gigante",
+  "actions": [
+   {
+    "key": "giant-goat_ram",
+    "name": "Embestida",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 6 (1d6 + 3) de daño contundente. Si el objetivo es una criatura Grande o más pequeña y la cabra se ha movido 20 pies o más en línea recta hacia él inmediatamente antes del impacto, el objetivo recibe 5 (2d4) de daño contundente adicional y tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "giant-hyena",
+  "name": "Hiena gigante",
+  "actions": [
+   {
+    "key": "giant-hyena_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 10 (2d6 + 3) de daño perforante."
+   },
+   {
+    "key": "giant-hyena_rampage-1-day",
+    "name": "Desenfreno",
+    "desc": "Inmediatamente después de infligir daño a una criatura que ya estuviera maltrecha, la hiena puede moverse hasta la mitad de su velocidad y hace un ataque de Mordisco."
+   }
+  ]
+ },
+ {
+  "id": "giant-lizard",
+  "name": "Lagarto gigante",
+  "traits": [
+   {
+    "name": "Trepar como una araña",
+    "desc": "El lagarto puede trepar por superficies difíciles, incluso por los techos, sin necesidad de hacer una prueba de característica."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-lizard_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 6 (1d8 + 2) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "giant-octopus",
+  "name": "Pulpo gigante",
+  "traits": [
+   {
+    "name": "Respirar bajo el agua",
+    "desc": "El pulpo solo puede respirar bajo el agua. Puede contener la respiración durante 1 hora fuera del agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-octopus_tentacles",
+    "name": "Tentáculos",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 10 pies. 10 (2d6 + 3) de daño contundente. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Agarrado (CD 13 para escapar) por los ocho tentáculos. Mientras está Agarrado, el objetivo tiene el estado Apresado."
+   },
+   {
+    "key": "giant-octopus_ink-cloud",
+    "name": "Nube de tinta",
+    "desc": "_Desencadenante:_ El pulpo recibe daño mientras está bajo el agua. _Respuesta:_ El pulpo libera tinta que llena un cubo de 10 pies centrado en sí mismo, y el pulpo se mueve hasta su velocidad nadando. El cubo está muy oscuro durante 1 minuto o hasta que una corriente fuerte o un efecto similar disperse la tinta."
+   }
+  ]
+ },
+ {
+  "id": "giant-owl",
+  "name": "Búho gigante",
+  "languages": "Celestial; entiende el común, el élfico y el silvano pero no los habla",
+  "traits": [
+   {
+    "name": "Vuelo rasante",
+    "desc": "El búho no provoca ataques de oportunidad cuando sale volando del alcance de un enemigo."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-owl_talons",
+    "name": "Garras",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 7 (1d10 + 2) de daño cortante."
+   },
+   {
+    "key": "giant-owl_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "El búho lanza uno de los siguientes conjuros, sin necesitar componentes de conjuro y usando Sabiduría como aptitud mágica:\n\n- **A voluntad:** Detectar el bien y el mal, Detectar magia\n- **1/día cada uno:** Clarividencia"
+   }
+  ]
+ },
+ {
+  "id": "giant-rat",
+  "name": "Rata gigante",
+  "traits": [
+   {
+    "name": "Tácticas de manada",
+    "desc": "La rata tiene ventaja en las tiradas de ataque contra una criatura si al menos uno de los aliados de la rata está a 5 pies o menos de la criatura y dicho aliado no tiene el estado Incapacitado."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-rat_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 5 (1d4 + 3) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "giant-scorpion",
+  "name": "Escorpión gigante",
+  "actions": [
+   {
+    "key": "giant-scorpion_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El escorpión hace dos ataques de Garra y un ataque de Aguijón."
+   },
+   {
+    "key": "giant-scorpion_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 6 (1d6 + 3) de daño contundente. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Agarrado (CD 13 para escapar) por una de sus dos garras."
+   },
+   {
+    "key": "giant-scorpion_sting",
+    "name": "Aguijón",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 7 (1d8 + 3) de daño perforante más 11 (2d10) de daño de veneno."
+   }
+  ]
+ },
+ {
+  "id": "giant-seahorse",
+  "name": "Caballito de mar gigante",
+  "traits": [
+   {
+    "name": "Respirar bajo el agua",
+    "desc": "El caballito de mar solo puede respirar bajo el agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-seahorse_ram",
+    "name": "Embestida",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 9 (2d6 + 2) de daño contundente, o 11 (2d8 + 2) de daño contundente si el caballito de mar se ha movido 20 pies o más en línea recta hacia el objetivo inmediatamente antes del impacto."
+   },
+   {
+    "key": "giant-seahorse_bubble-dash",
+    "name": "Carrera burbujeante",
+    "desc": "Mientras está bajo el agua, el caballito de mar se mueve hasta la mitad de su velocidad nadando sin provocar ataques de oportunidad."
+   }
+  ]
+ },
+ {
+  "id": "giant-shark",
+  "name": "Tiburón gigante",
+  "traits": [
+   {
+    "name": "Respirar bajo el agua",
+    "desc": "El tiburón solo puede respirar bajo el agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-shark_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El tiburón hace dos ataques de Mordisco."
+   },
+   {
+    "key": "giant-shark_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +9 (con ventaja si el objetivo no tiene todos sus puntos de golpe), alcance 5 pies. 22 (3d10 + 6) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "giant-spider",
+  "name": "Araña gigante",
+  "traits": [
+   {
+    "name": "Trepar como una araña",
+    "desc": "La araña puede trepar por superficies difíciles, incluso por los techos, sin necesidad de hacer una prueba de característica."
+   },
+   {
+    "name": "Caminante de telarañas",
+    "desc": "La araña ignora las restricciones de movimiento causadas por telarañas y conoce la ubicación de cualquier otra criatura que esté en contacto con la misma telaraña."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-spider_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 7 (1d8 + 3) de daño perforante más 7 (2d6) de daño de veneno."
+   },
+   {
+    "key": "giant-spider_web",
+    "name": "Telaraña",
+    "desc": "Tirada de salvación de Destreza: CD 13, una criatura que la araña pueda ver a 60 pies o menos. Fallo: El objetivo tiene el estado Apresado hasta que se destruya la telaraña (CA 10; PG 5; vulnerabilidad al daño de fuego; inmunidad al daño de veneno y psíquico)."
+   }
+  ]
+ },
+ {
+  "id": "giant-toad",
+  "name": "Sapo gigante",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "El sapo puede respirar aire y agua."
+   },
+   {
+    "name": "Salto sin carrerilla",
+    "desc": "El salto de longitud del sapo es de hasta 20 pies y su salto de altura, de hasta 10 pies, con o sin carrerilla."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-toad_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño perforante más 5 (2d4) de daño de veneno. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Agarrado (CD 12 para escapar)."
+   },
+   {
+    "key": "giant-toad_swallow",
+    "name": "Tragar",
+    "desc": "El sapo se traga a un objetivo Mediano o más pequeño al que esté agarrando. Mientras está tragado, el objetivo no está Agarrado, pero tiene los estados Cegado y Apresado, y tiene cobertura total contra los ataques y otros efectos procedentes del exterior del sapo. Además, el objetivo recibe 10 (3d6) de daño de ácido al final de cada uno de los turnos del sapo. El sapo solo puede tener tragado a un objetivo a la vez y no puede usar Mordisco mientras tenga un objetivo tragado. Si el sapo muere, la criatura tragada deja de estar Apresada y puede escapar del cadáver usando 5 pies de movimiento, saliendo con el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "giant-venomous-snake",
+  "name": "Serpiente venenosa gigante",
+  "actions": [
+   {
+    "key": "giant-venomous-snake_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 10 pies. 6 (1d4 + 4) de daño perforante más 4 (1d8) de daño de veneno."
+   }
+  ]
+ },
+ {
+  "id": "giant-vulture",
+  "name": "Buitre gigante",
+  "languages": "Entiende el común pero no lo habla",
+  "traits": [
+   {
+    "name": "Tácticas de manada",
+    "desc": "El buitre tiene ventaja en las tiradas de ataque contra una criatura si al menos uno de los aliados de el buitre está a 5 pies o menos de la criatura y dicho aliado no tiene el estado Incapacitado."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-vulture_gouge",
+    "name": "Picotazo",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 9 (2d6 + 2) de daño perforante, y el objetivo tiene el estado Envenenado hasta el final de su siguiente turno."
+   }
+  ]
+ },
+ {
+  "id": "giant-wasp",
+  "name": "Avispa gigante",
+  "traits": [
+   {
+    "name": "Vuelo rasante",
+    "desc": "La avispa no provoca ataques de oportunidad cuando sale volando del alcance de un enemigo."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-wasp_sting",
+    "name": "Aguijón",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño perforante más 5 (2d4) de daño de veneno."
+   }
+  ]
+ },
+ {
+  "id": "giant-weasel",
+  "name": "Comadreja gigante",
+  "actions": [
+   {
+    "key": "giant-weasel_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 5 (1d4 + 3) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "giant-wolf-spider",
+  "name": "Araña lobo gigante",
+  "traits": [
+   {
+    "name": "Trepar como una araña",
+    "desc": "La araña puede trepar por superficies difíciles, incluso por los techos, sin necesidad de hacer una prueba de característica."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-wolf-spider_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 5 (1d4 + 3) de daño perforante más 5 (2d4) de daño de veneno."
+   }
+  ]
+ },
+ {
+  "id": "gibbering-mouther",
+  "name": "Farfullador",
+  "traits": [
+   {
+    "name": "Terreno aberrante",
+    "desc": "El suelo en una emanación de 10 pies que se origina en el farfullador es terreno difícil."
+   },
+   {
+    "name": "Farfulleo",
+    "desc": "El farfullador balbucea de forma incoherente mientras no tenga el estado Incapacitado. Tirada de salvación de Sabiduría: CD 10, cualquier criatura que empiece su turno a 20 pies o menos del farfullador mientras este balbucea. Fallo: El objetivo tira 1d8 para determinar qué hace durante el turno actual:\n\n- 1-4: El objetivo no hace nada.\n- 5-6: El objetivo no realiza ninguna acción ni acción adicional y usa todo su movimiento para desplazarse en una dirección aleatoria.\n- 7-8: El objetivo hace un ataque cuerpo a cuerpo contra una criatura determinada al azar que esté a su alcance, o no hace nada si no puede hacer tal ataque."
+   }
+  ],
+  "actions": [
+   {
+    "key": "gibbering-mouther_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +2, alcance 5 pies. 7 (2d6) de daño perforante. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Derribado. El objetivo muere si este ataque lo reduce a 0 puntos de golpe. Su cuerpo es entonces absorbido por el farfullador, que solo deja atrás el equipo."
+   },
+   {
+    "key": "gibbering-mouther_blinding-spittle",
+    "name": "Escupitajo cegador",
+    "desc": "Tirada de salvación de Destreza: CD 10, cada criatura en una esfera de 10 pies de radio centrada en un punto a 30 pies o menos. Fallo: 7 (2d6) de daño radiante, y el objetivo tiene el estado Cegado hasta el final del siguiente turno del farfullador."
+   }
+  ]
+ },
+ {
+  "id": "glabrezu",
+  "name": "Glabrezu",
+  "languages": "Abisal; telepatía 120 pies",
+  "traits": [
+   {
+    "name": "Restauración demoníaca",
+    "desc": "Si el glabrezu muere fuera del Abismo, su cuerpo se disuelve en icor y obtiene un cuerpo nuevo al instante, reviviendo con todos sus puntos de golpe en algún lugar del Abismo."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "El glabrezu tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "glabrezu_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El glabrezu hace dos ataques de Pinza y usa Aporrear o Lanzamiento de conjuros."
+   },
+   {
+    "key": "glabrezu_pincer",
+    "name": "Pinza",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +9, alcance 10 pies. 16 (2d10 + 5) de daño cortante. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Agarrado (CD 15 para escapar) por una de sus dos pinzas."
+   },
+   {
+    "key": "glabrezu_pummel",
+    "name": "Aporrear",
+    "desc": "Tirada de salvación de Destreza: CD 17, una criatura Agarrada por el glabrezu. Fallo: 15 (3d6 + 5) de daño contundente. Éxito: mitad de daño."
+   },
+   {
+    "key": "glabrezu_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "El glabrezu lanza uno de los siguientes conjuros, sin necesitar componentes materiales y usando Inteligencia como aptitud mágica (CD de salvación de conjuros 16):\n\n- **A voluntad:** Oscuridad, Detectar magia, Disipar magia\n- **1/día cada uno:** Confusión, Volar, Palabra de poder: aturdir"
+   }
+  ]
+ },
+ {
+  "id": "gladiator",
+  "name": "Gladiador",
+  "languages": "Común",
+  "actions": [
+   {
+    "key": "gladiator_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El gladiador hace tres ataques de Lanza. Puede sustituir un ataque por un uso de Golpe con escudo."
+   },
+   {
+    "key": "gladiator_spear",
+    "name": "Lanza",
+    "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +7, alcance 5 pies o alcance 20/60 pies. 11 (2d6 + 4) de daño perforante."
+   },
+   {
+    "key": "gladiator_shield-bash",
+    "name": "Golpe con escudo",
+    "desc": "Tirada de salvación de Fuerza: CD 15, una criatura a 5 pies o menos que el gladiador pueda ver. Fallo: 9 (2d4 + 4) de daño contundente. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Derribado."
+   },
+   {
+    "key": "gladiator_parry",
+    "name": "Parada",
+    "desc": "_Desencadenante:_ Al gladiador lo impacta una tirada de ataque cuerpo a cuerpo mientras empuña un arma. _Respuesta:_ El gladiador suma 3 a su CA contra ese ataque, lo que puede hacer que falle."
+   }
+  ]
+ },
+ {
+  "id": "gnoll-warrior",
+  "name": "Guerrero gnoll",
+  "languages": "Gnoll",
+  "actions": [
+   {
+    "key": "gnoll-warrior_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño perforante."
+   },
+   {
+    "key": "gnoll-warrior_bone-bow",
+    "name": "Arco de hueso",
+    "desc": "Tirada de ataque a distancia: +3, alcance 150/600 pies. 6 (1d10 + 1) de daño perforante."
+   },
+   {
+    "key": "gnoll-warrior_rampage-1-day",
+    "name": "Desenfreno",
+    "desc": "Inmediatamente después de infligir daño a una criatura que ya esté maltrecha, el gnoll se mueve hasta la mitad de su velocidad y hace un ataque de Desgarrar."
+   }
+  ]
+ },
+ {
+  "id": "goat",
+  "name": "Cabra",
+  "actions": [
+   {
+    "key": "goat_ram",
+    "name": "Embestida",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +2, alcance 5 pies. 1 de daño contundente, o 2 (1d4) de daño contundente si la cabra se ha movido 20 pies o más en línea recta hacia el objetivo inmediatamente antes del impacto."
+   }
+  ]
+ },
+ {
+  "id": "goblin-boss",
+  "name": "Jefe goblin",
+  "languages": "Común, goblin",
+  "actions": [
+   {
+    "key": "goblin-boss_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El goblin hace dos ataques, usando Cimitarra o Arco corto en cualquier combinación."
+   },
+   {
+    "key": "goblin-boss_scimitar",
+    "name": "Cimitarra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño cortante, más 2 (1d4) de daño cortante si la tirada de ataque tenía ventaja."
+   },
+   {
+    "key": "goblin-boss_shortbow",
+    "name": "Arco corto",
+    "desc": "Tirada de ataque a distancia: +4, alcance 80/320 pies. 5 (1d6 + 2) de daño perforante, más 2 (1d4) de daño perforante si la tirada de ataque tenía ventaja."
+   },
+   {
+    "key": "goblin-boss_nimble-escape",
+    "name": "Huida ágil",
+    "desc": "El goblin realiza la acción de Retirarse o Esconderse."
+   },
+   {
+    "key": "goblin-boss_redirect-attack",
+    "name": "Redirigir ataque",
+    "desc": "_Desencadenante:_ Una criatura que el goblin puede ver hace una tirada de ataque contra él. _Respuesta:_ El goblin elige a un aliado Pequeño o Mediano a 5 pies o menos de sí mismo. El goblin y ese aliado intercambian sus posiciones, y el aliado pasa a ser el objetivo del ataque en su lugar."
+   }
+  ]
+ },
+ {
+  "id": "goblin-minion",
+  "name": "Esbirro goblin",
+  "languages": "Común, goblin",
+  "actions": [
+   {
+    "key": "goblin-minion_dagger",
+    "name": "Daga",
+    "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +4, alcance 5 pies o alcance 20/60 pies. 4 (1d4 + 2) de daño perforante."
+   },
+   {
+    "key": "goblin-minion_nimble-escape",
+    "name": "Huida ágil",
+    "desc": "El goblin realiza la acción de Retirarse o Esconderse."
+   }
+  ]
+ },
+ {
+  "id": "goblin-warrior",
+  "name": "Guerrero goblin",
+  "languages": "Común, goblin",
+  "actions": [
+   {
+    "key": "goblin-warrior_scimitar",
+    "name": "Cimitarra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño cortante, más 2 (1d4) de daño cortante si la tirada de ataque tenía ventaja."
+   },
+   {
+    "key": "goblin-warrior_shortbow",
+    "name": "Arco corto",
+    "desc": "Tirada de ataque a distancia: +4, alcance 80/320 pies. 5 (1d6 + 2) de daño perforante, más 2 (1d4) de daño perforante si la tirada de ataque tenía ventaja."
+   },
+   {
+    "key": "goblin-warrior_nimble-escape",
+    "name": "Huida ágil",
+    "desc": "El goblin realiza la acción de Retirarse o Esconderse."
+   }
+  ]
+ },
+ {
+  "id": "gold-dragon-wyrmling",
+  "name": "Cría de dragón de oro",
+  "languages": "Dracónico",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "El dragón puede respirar aire y agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "gold-dragon-wyrmling_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace dos ataques de Desgarrar."
+   },
+   {
+    "key": "gold-dragon-wyrmling_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 9 (1d10 + 4) de daño cortante."
+   },
+   {
+    "key": "gold-dragon-wyrmling_fire-breath",
+    "name": "Aliento de fuego",
+    "desc": "Tirada de salvación de Destreza: CD 13, cada criatura en un cono de 15 pies. Fallo: 22 (4d10) de daño de fuego. Éxito: mitad de daño."
+   },
+   {
+    "key": "gold-dragon-wyrmling_weakening-breath",
+    "name": "Aliento debilitante",
+    "desc": "Tirada de salvación de Fuerza: CD 13, cada criatura en un cono de 15 pies que no esté afectada actualmente por este aliento. Fallo: El objetivo tiene desventaja en las pruebas de d20 basadas en Fuerza y resta 2 (1d4) a sus tiradas de daño. Repite la tirada de salvación al final de cada uno de sus turnos, y el efecto termina sobre sí mismo si tiene éxito. Al cabo de 1 minuto, tiene éxito automáticamente."
+   }
+  ]
+ },
+ {
+  "id": "gorgon",
+  "name": "Gorgona",
+  "actions": [
+   {
+    "key": "gorgon_gore",
+    "name": "Cornada",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +8, alcance 5 pies. 18 (2d12 + 5) de daño perforante. Si el objetivo es una criatura Grande o más pequeña y la gorgona se ha movido 20 pies o más en línea recta hacia él inmediatamente antes del impacto, el objetivo tiene el estado Derribado."
+   },
+   {
+    "key": "gorgon_petrifying-breath",
+    "name": "Aliento petrificante",
+    "desc": "Tirada de salvación de Constitución: CD 15, cada criatura en un cono de 30 pies. Primer fallo: El objetivo tiene el estado Apresado y repite la tirada de salvación al final de su siguiente turno si sigue Apresado, y el efecto termina sobre sí mismo si tiene éxito. Segundo fallo: El objetivo tiene el estado Petrificado en lugar del estado Apresado."
+   },
+   {
+    "key": "gorgon_trample",
+    "name": "Pisotear",
+    "desc": "Tirada de salvación de Destreza: CD 16, una criatura a 5 pies o menos que tenga el estado Derribado. Fallo: 16 (2d10 + 5) de daño contundente. Éxito: mitad de daño."
+   }
+  ]
+ },
+ {
+  "id": "gray-ooze",
+  "name": "Cieno gris",
+  "traits": [
+   {
+    "name": "Amorfo",
+    "desc": "El cieno puede moverse a través de un espacio de tan solo 1 pulgada de ancho sin gastar movimiento adicional para hacerlo."
+   },
+   {
+    "name": "Forma corrosiva",
+    "desc": "La munición no mágica se destruye inmediatamente después de impactar al cieno e infligirle cualquier daño. Cualquier arma no mágica sufre un penalizador acumulativo de -1 a las tiradas de ataque inmediatamente después de infligir daño al cieno y entrar en contacto con él. El arma se destruye si el penalizador llega a -5. El penalizador puede eliminarse lanzando el conjuro Reparar sobre el arma. El cieno puede corroer metal o madera no mágicos de 2 pulgadas de grosor en 1 asalto."
+   }
+  ],
+  "actions": [
+   {
+    "key": "gray-ooze_pseudopod",
+    "name": "Seudópodo",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 10 (2d8 + 1) de daño de ácido. La armadura no mágica que lleve puesta el objetivo sufre un penalizador de -1 a la CA que proporciona. La armadura se destruye si el penalizador reduce su CA a 10. El penalizador puede eliminarse lanzando el conjuro Reparar sobre la armadura."
+   }
+  ]
+ },
+ {
+  "id": "green-dragon-wyrmling",
+  "name": "Cría de dragón verde",
+  "languages": "Dracónico",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "El dragón puede respirar aire y agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "green-dragon-wyrmling_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace dos ataques de Desgarrar."
+   },
+   {
+    "key": "green-dragon-wyrmling_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 7 (1d10 + 2) de daño cortante más 3 (1d6) de daño de veneno."
+   },
+   {
+    "key": "green-dragon-wyrmling_poison-breath",
+    "name": "Aliento venenoso",
+    "desc": "Tirada de salvación de Constitución: CD 11, cada criatura en un cono de 15 pies. Fallo: 21 (6d6) de daño de veneno. Éxito: mitad de daño."
+   }
+  ]
+ },
+ {
+  "id": "green-hag",
+  "name": "Saga verde",
+  "languages": "Común, élfico, silvano",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "La saga puede respirar aire y agua."
+   },
+   {
+    "name": "Imitación",
+    "desc": "La saga puede imitar sonidos de animales y voces de humanoides. Una criatura que oiga los sonidos puede darse cuenta de que son imitaciones solo si supera una prueba de Sabiduría (Perspicacia) CD 14."
+   }
+  ],
+  "actions": [
+   {
+    "key": "green-hag_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "La saga hace dos ataques de Garra."
+   },
+   {
+    "key": "green-hag_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 8 (1d8 + 4) de daño cortante más 3 (1d6) de daño de veneno."
+   },
+   {
+    "key": "green-hag_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "La saga lanza uno de los siguientes conjuros, sin necesitar componentes materiales y usando Sabiduría como aptitud mágica (CD de salvación de conjuros 12, +4 para impactar con ataques de conjuro):\n\n- **A voluntad:** Luces danzantes, Disfrazarse, Invisibilidad, Ilusión menor, Rayo nauseabundo"
+   }
+  ]
+ },
+ {
+  "id": "grick",
+  "name": "Grick",
+  "actions": [
+   {
+    "key": "grick_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El grick hace un ataque de Pico y un ataque de Tentáculos."
+   },
+   {
+    "key": "grick_beak",
+    "name": "Pico",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 9 (2d6 + 2) de daño perforante."
+   },
+   {
+    "key": "grick_tentacles",
+    "name": "Tentáculos",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 7 (1d10 + 2) de daño cortante. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Agarrado (CD 12 para escapar) por los cuatro tentáculos."
+   }
+  ]
+ },
+ {
+  "id": "griffon",
+  "name": "Grifo",
+  "actions": [
+   {
+    "key": "griffon_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El grifo hace dos ataques de Desgarrar."
+   },
+   {
+    "key": "griffon_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 8 (1d8 + 4) de daño perforante. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Agarrado (CD 14 para escapar) por las dos garras delanteras del grifo."
+   }
+  ]
+ },
+ {
+  "id": "grimlock",
+  "name": "Grimlock",
+  "actions": [
+   {
+    "key": "grimlock_bone-cudgel",
+    "name": "Porra de hueso",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 6 (1d6 + 3) de daño contundente más 2 (1d4) de daño psíquico."
+   }
+  ]
+ },
+ {
+  "id": "guard",
+  "name": "Guardia",
+  "languages": "Común",
+  "actions": [
+   {
+    "key": "guard_spear",
+    "name": "Lanza",
+    "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +3, alcance 5 pies o alcance 20/60 pies. 4 (1d6 + 1) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "guard-captain",
+  "name": "Capitán de la guardia",
+  "languages": "Común",
+  "actions": [
+   {
+    "key": "guard-captain_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El guardia hace dos ataques, usando Jabalina o Espada larga en cualquier combinación."
+   },
+   {
+    "key": "guard-captain_javelin",
+    "name": "Jabalina",
+    "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +6, alcance 5 pies o alcance 30/120 pies. 14 (3d6 + 4) de daño perforante."
+   },
+   {
+    "key": "guard-captain_longsword",
+    "name": "Espada larga",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 15 (2d10 + 4) de daño cortante."
+   }
+  ]
+ },
+ {
+  "id": "guardian-naga",
+  "name": "Naga guardiana",
+  "languages": "Celestial, común",
+  "traits": [
+   {
+    "name": "Restauración celestial",
+    "desc": "Si la naga muere, vuelve a la vida en 1d6 días y recupera todos sus puntos de golpe, a menos que se lance Disipar el bien y el mal sobre sus restos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "guardian-naga_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "La naga hace dos ataques de Mordisco. Puede sustituir cualquier ataque por un uso de Escupitajo venenoso."
+   },
+   {
+    "key": "guardian-naga_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +8, alcance 10 pies. 17 (2d12 + 4) de daño perforante más 22 (4d10) de daño de veneno."
+   },
+   {
+    "key": "guardian-naga_poisonous-spittle",
+    "name": "Escupitajo venenoso",
+    "desc": "Tirada de salvación de Constitución: CD 16, una criatura que la naga pueda ver a 60 pies o menos. Fallo: 31 (7d8) de daño de veneno, y el objetivo tiene el estado Cegado hasta el comienzo del siguiente turno de la naga. Éxito: solo mitad de daño."
+   },
+   {
+    "key": "guardian-naga_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "La naga lanza uno de los siguientes conjuros, sin necesitar componentes somáticos ni materiales y usando Sabiduría como aptitud mágica (CD de salvación de conjuros 16):\n\n- **A voluntad:** Taumaturgia\n- **1/día cada uno:** Clarividencia, Curar heridas, Golpe flamígero, Geas, Visión verdadera"
+   }
+  ]
+ },
+ {
+  "id": "half-dragon",
+  "name": "Semidragón",
+  "languages": "Común, dracónico",
+  "traits": [
+   {
+    "name": "Origen dracónico",
+    "desc": "El semidragón está emparentado con un tipo de dragón asociado a uno de los siguientes tipos de daño (a elección del DM): ácido, frío, fuego, relámpago o veneno. Esta elección afecta a otros aspectos del bloque de estadísticas."
+   }
+  ],
+  "actions": [
+   {
+    "key": "half-dragon_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El semidragón hace dos ataques de Garra."
+   },
+   {
+    "key": "half-dragon_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. 6 (1d4 + 4) de daño cortante más 7 (2d6) de daño del tipo elegido para el rasgo Origen dracónico."
+   },
+   {
+    "key": "half-dragon_dragon's-breath",
+    "name": "Aliento de dragón",
+    "desc": "Tirada de salvación de Destreza: CD 14, cada criatura en un cono de 30 pies. Fallo: 28 (8d6) de daño del tipo elegido para el rasgo Origen dracónico. Éxito: mitad de daño."
+   },
+   {
+    "key": "half-dragon_leap",
+    "name": "Salto",
+    "desc": "El semidragón salta hasta 30 pies gastando 10 pies de movimiento."
+   }
+  ]
+ },
+ {
+  "id": "harpy",
+  "name": "Arpía",
+  "languages": "Común",
+  "actions": [
+   {
+    "key": "harpy_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 6 (2d4 + 1) de daño cortante."
+   },
+   {
+    "key": "harpy_luring-song",
+    "name": "Canción seductora",
+    "desc": "La arpía canta una melodía mágica, que dura hasta que termine la concentración de la arpía en ella. Tirada de salvación de Sabiduría: CD 11, cada humanoide y gigante en una emanación de 300 pies que se origina en la arpía cuando empieza la canción. Fallo: El objetivo tiene el estado Encantado hasta que termine la canción y repite la tirada de salvación al final de cada uno de sus turnos. Mientras está Encantado, el objetivo tiene el estado Incapacitado e ignora la Canción seductora de otras arpías. Si el objetivo está a más de 5 pies de la arpía, se mueve en su turno hacia ella por la ruta más directa, intentando colocarse a 5 pies o menos de la arpía. No evita los ataques de oportunidad; sin embargo, antes de moverse hacia un terreno dañino (como lava o un foso) y siempre que reciba daño de una fuente que no sea la arpía, el objetivo repite la tirada de salvación. Éxito: El objetivo es inmune a la Canción seductora de esta arpía durante 24 horas."
+   }
+  ]
+ },
+ {
+  "id": "hawk",
+  "name": "Halcón",
+  "actions": [
+   {
+    "key": "hawk_talons",
+    "name": "Garras",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 1 de daño cortante."
+   }
+  ]
+ },
+ {
+  "id": "hell-hound",
+  "name": "Sabueso infernal",
+  "languages": "Entiende el infernal pero no lo habla",
+  "traits": [
+   {
+    "name": "Tácticas de manada",
+    "desc": "El sabueso tiene ventaja en las tiradas de ataque contra una criatura si al menos uno de los aliados de el sabueso está a 5 pies o menos de la criatura y dicho aliado no tiene el estado Incapacitado."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hell-hound_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El sabueso hace dos ataques de Mordisco."
+   },
+   {
+    "key": "hell-hound_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 7 (1d8 + 3) de daño perforante más 3 (1d6) de daño de fuego."
+   },
+   {
+    "key": "hell-hound_fire-breath",
+    "name": "Aliento de fuego",
+    "desc": "Tirada de salvación de Destreza: CD 12, cada criatura en un cono de 15 pies. Fallo: 17 (5d6) de daño de fuego. Éxito: mitad de daño."
+   }
+  ]
+ },
+ {
+  "id": "hezrou",
+  "name": "Hezrou",
+  "languages": "Abisal; telepatía 120 pies",
+  "traits": [
+   {
+    "name": "Restauración demoníaca",
+    "desc": "Si el hezrou muere fuera del Abismo, su cuerpo se disuelve en icor y obtiene un cuerpo nuevo al instante, reviviendo con todos sus puntos de golpe en algún lugar del Abismo."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "El hezrou tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   },
+   {
+    "name": "Hedor",
+    "desc": "Tirada de salvación de Constitución: CD 16, cualquier criatura que empiece su turno en una emanación de 10 pies que se origina en el hezrou. Fallo: El objetivo tiene el estado Envenenado hasta el comienzo de su siguiente turno."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hezrou_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El hezrou hace tres ataques de Desgarrar."
+   },
+   {
+    "key": "hezrou_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 6 (1d4 + 4) de daño cortante más 9 (2d8) de daño de veneno."
+   },
+   {
+    "key": "hezrou_leap",
+    "name": "Salto",
+    "desc": "El hezrou salta hasta 30 pies gastando 10 pies de movimiento."
+   }
+  ]
+ },
+ {
+  "id": "hill-giant",
+  "name": "Gigante de las colinas",
+  "languages": "Gigante",
+  "actions": [
+   {
+    "key": "hill-giant_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El gigante hace dos ataques, usando Garrote de árbol o Lanzar basura en cualquier combinación."
+   },
+   {
+    "key": "hill-giant_tree-club",
+    "name": "Garrote de árbol",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +8, alcance 10 pies. 18 (3d8 + 5) de daño contundente. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Derribado."
+   },
+   {
+    "key": "hill-giant_trash-lob",
+    "name": "Lanzar basura",
+    "desc": "Tirada de ataque a distancia: +8, alcance 60/240 pies. 16 (2d10 + 5) de daño contundente, y el objetivo tiene el estado Envenenado hasta el final de su siguiente turno."
+   }
+  ]
+ },
+ {
+  "id": "hippogriff",
+  "name": "Hipogrifo",
+  "traits": [
+   {
+    "name": "Vuelo rasante",
+    "desc": "El hipogrifo no provoca ataques de oportunidad cuando sale volando del alcance de un enemigo."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hippogriff_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El hipogrifo hace dos ataques de Desgarrar."
+   },
+   {
+    "key": "hippogriff_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 7 (1d8 + 3) de daño cortante."
+   }
+  ]
+ },
+ {
+  "id": "hippopotamus",
+  "name": "Hipopótamo",
+  "traits": [
+   {
+    "name": "Contener la respiración",
+    "desc": "El hipopótamo puede contener la respiración durante 10 minutos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hippopotamus_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El hipopótamo hace dos ataques de Mordisco."
+   },
+   {
+    "key": "hippopotamus_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 16 (2d10 + 5) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "hobgoblin-captain",
+  "name": "Capitán trasgo",
+  "languages": "Común, goblin",
+  "traits": [
+   {
+    "name": "Aura de autoridad",
+    "desc": "Mientras están en una emanación de 10 pies que se origina en el trasgo, el trasgo y sus aliados tienen ventaja en las tiradas de ataque y en las tiradas de salvación, siempre que el trasgo no tenga el estado Incapacitado."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hobgoblin-captain_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El trasgo hace dos ataques, usando Espadón o Arco largo en cualquier combinación."
+   },
+   {
+    "key": "hobgoblin-captain_greatsword",
+    "name": "Espadón",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 9 (2d6 + 2) de daño cortante más 3 (1d6) de daño de veneno."
+   },
+   {
+    "key": "hobgoblin-captain_longbow",
+    "name": "Arco largo",
+    "desc": "Tirada de ataque a distancia: +4, alcance 150/600 pies. 6 (1d8 + 2) de daño perforante más 5 (2d4) de daño de veneno."
+   }
+  ]
+ },
+ {
+  "id": "hobgoblin-warrior",
+  "name": "Guerrero trasgo",
+  "languages": "Común, goblin",
+  "traits": [
+   {
+    "name": "Tácticas de manada",
+    "desc": "El trasgo tiene ventaja en las tiradas de ataque contra una criatura si al menos uno de los aliados de el trasgo está a 5 pies o menos de la criatura y dicho aliado no tiene el estado Incapacitado."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hobgoblin-warrior_longsword",
+    "name": "Espada larga",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 12 (2d10 + 1) de daño cortante."
+   },
+   {
+    "key": "hobgoblin-warrior_longbow",
+    "name": "Arco largo",
+    "desc": "Tirada de ataque a distancia: +3, alcance 150/600 pies. 5 (1d8 + 1) de daño perforante más 7 (3d4) de daño de veneno."
+   }
+  ]
+ },
+ {
+  "id": "homunculus",
+  "name": "Homúnculo",
+  "languages": "Entiende el común y otro idioma pero no los habla",
+  "traits": [
+   {
+    "name": "Vínculo telepático",
+    "desc": "Mientras el homúnculo esté en el mismo plano de existencia que su amo, ambos pueden comunicarse telepáticamente entre sí."
+   }
+  ],
+  "actions": [
+   {
+    "key": "homunculus_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 1 de daño perforante, y el objetivo queda sujeto al siguiente efecto. Tirada de salvación de Constitución: CD 12. Fallo: El objetivo tiene el estado Envenenado hasta el final del siguiente turno del homúnculo. Fallo por 5 o más: El objetivo tiene el estado Envenenado durante 1 minuto. Mientras está Envenenado, el objetivo tiene el estado Inconsciente, que termina antes si el objetivo recibe cualquier daño."
+   }
+  ]
+ },
+ {
+  "id": "horned-devil",
+  "name": "Diablo astado",
+  "languages": "Infernal; telepatía 120 pies",
+  "traits": [
+   {
+    "name": "Restauración diabólica",
+    "desc": "Si el diablo muere fuera de los Nueve Infiernos, su cuerpo desaparece en una humareda sulfurosa y obtiene un cuerpo nuevo al instante, reviviendo con todos sus puntos de golpe en algún lugar de los Nueve Infiernos."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "El diablo tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "horned-devil_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El diablo hace tres ataques, usando Horca abrasadora o Arrojar llamas en cualquier combinación. Puede sustituir un ataque por un uso de Cola infernal."
+   },
+   {
+    "key": "horned-devil_searing-fork",
+    "name": "Horca abrasadora",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +10, alcance 10 pies. 15 (2d8 + 6) de daño perforante más 9 (2d8) de daño de fuego."
+   },
+   {
+    "key": "horned-devil_hurl-flame",
+    "name": "Arrojar llamas",
+    "desc": "Tirada de ataque a distancia: +8, alcance 150 pies. 26 (5d8 + 4) de daño de fuego. Si el objetivo es un objeto inflamable que nadie lleve puesto ni transporte, empieza a arder."
+   },
+   {
+    "key": "horned-devil_infernal-tail",
+    "name": "Cola infernal",
+    "desc": "Tirada de salvación de Destreza: CD 17, una criatura que el diablo pueda ver a 10 pies o menos. Fallo: 10 (1d8 + 6) de daño necrótico, y el objetivo recibe una herida infernal si no tiene ya una. Mientras está herido, el objetivo pierde 10 (3d6) puntos de golpe al comienzo de cada uno de sus turnos. La herida se cierra al cabo de 1 minuto, después de que un conjuro le restablezca puntos de golpe al objetivo o después de que el objetivo o una criatura a 5 pies o menos de él realice una acción para restañar la herida, lo cual consigue superando una prueba de Sabiduría (Medicina) CD 17."
+   }
+  ]
+ },
+ {
+  "id": "hunter-shark",
+  "name": "Tiburón cazador",
+  "traits": [
+   {
+    "name": "Respirar bajo el agua",
+    "desc": "El tiburón solo puede respirar bajo el agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hunter-shark_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6 (con ventaja si el objetivo no tiene todos sus puntos de golpe), alcance 5 pies. 14 (3d6 + 4) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "hydra",
+  "name": "Hidra",
+  "traits": [
+   {
+    "name": "Contener la respiración",
+    "desc": "La hidra puede contener la respiración durante 1 hora."
+   },
+   {
+    "name": "Múltiples cabezas",
+    "desc": "La hidra tiene cinco cabezas. Siempre que la hidra recibe 25 de daño o más en un solo turno, una de sus cabezas muere. La hidra muere si todas sus cabezas están muertas. Al final de cada uno de sus turnos en el que tenga al menos una cabeza viva, a la hidra le crecen dos cabezas por cada una de sus cabezas que haya muerto desde su último turno, a menos que haya recibido daño de fuego desde su último turno. La hidra recupera 20 puntos de golpe cuando le crecen cabezas nuevas."
+   },
+   {
+    "name": "Cabezas reactivas",
+    "desc": "Por cada cabeza que la hidra tenga además de la primera, obtiene una reacción adicional que solo puede usar para ataques de oportunidad."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hydra_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "La hidra hace tantos ataques de Mordisco como cabezas tiene."
+   },
+   {
+    "key": "hydra_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +8, alcance 10 pies. 10 (1d10 + 5) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "hyena",
+  "name": "Hiena",
+  "traits": [
+   {
+    "name": "Tácticas de manada",
+    "desc": "La hiena tiene ventaja en las tiradas de ataque contra una criatura si al menos uno de los aliados de la hiena está a 5 pies o menos de la criatura y dicho aliado no tiene el estado Incapacitado."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hyena_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +2, alcance 5 pies. 3 (1d6) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "ice-devil",
+  "name": "Diablo de hielo",
+  "languages": "Infernal; telepatía 120 pies",
+  "traits": [
+   {
+    "name": "Restauración diabólica",
+    "desc": "Si el diablo muere fuera de los Nueve Infiernos, su cuerpo desaparece en una humareda sulfurosa y obtiene un cuerpo nuevo al instante, reviviendo con todos sus puntos de golpe en algún lugar de los Nueve Infiernos."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "El diablo tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ice-devil_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El diablo hace tres ataques de Lanza de hielo. Puede sustituir un ataque por un ataque de Cola."
+   },
+   {
+    "key": "ice-devil_ice-spear",
+    "name": "Lanza de hielo",
+    "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +10, alcance 5 pies o alcance 30/120 pies. 14 (2d8 + 5) de daño perforante más 10 (3d6) de daño de frío. Hasta el final de su siguiente turno, el objetivo no puede realizar acciones adicionales ni reacciones, su velocidad se reduce en 10 pies y puede moverse o realizar una acción en su turno, pero no ambas cosas. Impacto o fallo: La lanza vuelve mágicamente a la mano del diablo inmediatamente después de un ataque a distancia."
+   },
+   {
+    "key": "ice-devil_tail",
+    "name": "Cola",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +10, alcance 10 pies. 15 (3d6 + 5) de daño contundente más 18 (4d8) de daño de frío."
+   },
+   {
+    "key": "ice-devil_ice-wall",
+    "name": "Muro de hielo",
+    "desc": "El diablo lanza Muro de hielo (versión de nivel 8), sin necesitar componentes de conjuro y usando Inteligencia como aptitud mágica (CD de salvación de conjuros 17).\n\n- **A voluntad:**"
+   }
+  ]
+ },
+ {
+  "id": "ice-mephit",
+  "name": "Mefit de hielo",
+  "languages": "Primordial (acuano, aurano)",
+  "traits": [
+   {
+    "name": "Estallido mortal",
+    "desc": "El mefit explota cuando muere. Tirada de salvación de Constitución: CD 10, cada criatura en una emanación de 5 pies que se origina en el mefit. Fallo: 5 (2d4) de daño de frío. Éxito: mitad de daño."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ice-mephit_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 3 (1d4 + 1) de daño cortante más 2 (1d4) de daño de frío."
+   },
+   {
+    "key": "ice-mephit_frost-breath",
+    "name": "Aliento de escarcha",
+    "desc": "Tirada de salvación de Constitución: CD 10, cada criatura en un cono de 15 pies. Fallo: 7 (3d4) de daño de frío. Éxito: mitad de daño."
+   },
+   {
+    "key": "ice-mephit_fog-cloud",
+    "name": "Nube de niebla",
+    "desc": "El mefit lanza Nube de niebla, sin necesitar componentes de conjuro y usando Carisma como aptitud mágica.\n\n- **A voluntad:**\n- **1/día cada uno:** Nube de niebla"
+   }
+  ]
+ },
+ {
+  "id": "imp",
+  "name": "Diablillo",
+  "languages": "Común, infernal",
+  "traits": [
+   {
+    "name": "Resistencia mágica",
+    "desc": "El diablillo tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "imp_sting",
+    "name": "Aguijón",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 6 (1d6 + 3) de daño perforante más 7 (2d6) de daño de veneno."
+   },
+   {
+    "key": "imp_shape-shift",
+    "name": "Cambiar de forma",
+    "desc": "El diablillo cambia de forma para parecerse a una rata (velocidad 20 pies), un cuervo (20 pies, volar 60 pies) o una araña (20 pies, trepar 20 pies), o vuelve a su forma verdadera. Sus estadísticas son las mismas en cada forma, salvo su velocidad. El equipo que lleve puesto o transporte no se transforma."
+   },
+   {
+    "key": "imp_invisibility",
+    "name": "Invisibilidad",
+    "desc": "El diablillo se lanza Invisibilidad a sí mismo, sin necesitar componentes de conjuro y usando Carisma como aptitud mágica.\n\n- **A voluntad:** Invisibilidad"
+   }
+  ]
+ },
+ {
+  "id": "incubus",
+  "name": "Íncubo",
+  "languages": "Abisal, común, infernal; telepatía 60 pies",
+  "traits": [
+   {
+    "name": "Forma de súcubo",
+    "desc": "Cuando el íncubo termina un descanso largo, puede cambiar de forma para convertirse en un Súcubo, usando ese bloque de estadísticas en lugar de este. El equipo que lleve puesto o transporte no se transforma."
+   }
+  ],
+  "actions": [
+   {
+    "key": "incubus_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El íncubo hace dos ataques de Toque inquieto."
+   },
+   {
+    "key": "incubus_restless-touch",
+    "name": "Toque inquieto",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 15 (3d6 + 5) de daño psíquico, y el objetivo queda maldito durante 24 horas o hasta que el íncubo muera. Hasta que termine la maldición, el objetivo no obtiene ningún beneficio al terminar descansos cortos."
+   },
+   {
+    "key": "incubus_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "El íncubo lanza uno de los siguientes conjuros, sin necesitar componentes materiales y usando Carisma como aptitud mágica (CD de salvación de conjuros 15):\n\n- **A voluntad:** Disfrazarse, Excursión etérea\n- **1/día cada uno:** Sueño, Patrón hipnótico"
+   },
+   {
+    "key": "incubus_nightmare-recharge-6",
+    "name": "Pesadilla",
+    "desc": "Tirada de salvación de Sabiduría: CD 15, una criatura que el íncubo pueda ver a 60 pies o menos. Fallo: Si el objetivo tiene 20 puntos de golpe o menos, tiene el estado Inconsciente durante 1 hora, hasta que reciba daño o hasta que una criatura a 5 pies o menos de él realice una acción para despertarlo. De lo contrario, el objetivo recibe 18 (4d8) de daño psíquico."
+   }
+  ]
+ }
+]

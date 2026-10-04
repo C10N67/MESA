@@ -1,0 +1,1181 @@
+[
+ {
+  "id": "cockatrice",
+  "name": "Cocatriz",
+  "actions": [
+   {
+    "key": "cockatrice_petrifying-bite",
+    "name": "Mordisco petrificante",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 3 (1d4 + 1) de daño perforante. Si el objetivo es una criatura, queda sometido al siguiente efecto. Tirada de salvación de Constitución: CD 11. Primer fallo: El objetivo tiene el estado Apresado. El objetivo repite la tirada de salvación al final de su siguiente turno si sigue Apresado, y el efecto termina para él si tiene éxito. Segundo fallo: El objetivo tiene el estado Petrificado, en lugar del estado Apresado, durante 24 horas."
+   }
+  ]
+ },
+ {
+  "id": "commoner",
+  "name": "Plebeyo",
+  "languages": "Común",
+  "traits": [
+   {
+    "name": "Formación",
+    "desc": "El plebeyo tiene competencia en una habilidad a elección del DM y tiene ventaja siempre que hace una prueba de característica usando esa habilidad."
+   }
+  ],
+  "actions": [
+   {
+    "key": "commoner_club",
+    "name": "Garrote",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +2, alcance 5 pies. 2 (1d4) de daño contundente."
+   }
+  ]
+ },
+ {
+  "id": "constrictor-snake",
+  "name": "Serpiente constrictora",
+  "actions": [
+   {
+    "key": "constrictor-snake_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 6 (1d8 + 2) de daño perforante."
+   },
+   {
+    "key": "constrictor-snake_constrict",
+    "name": "Constreñir",
+    "desc": "Tirada de salvación de Fuerza: CD 12, una criatura Mediana o más pequeña que la serpiente pueda ver a 5 pies o menos. Fallo: 7 (3d4) de daño contundente, y el objetivo tiene el estado Agarrado (CD 12 para escapar)."
+   }
+  ]
+ },
+ {
+  "id": "copper-dragon-wyrmling",
+  "name": "Cría de dragón de cobre",
+  "languages": "Dracónico",
+  "actions": [
+   {
+    "key": "copper-dragon-wyrmling_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 7 (1d10 + 2) de daño cortante."
+   },
+   {
+    "key": "copper-dragon-wyrmling_acid-breath",
+    "name": "Aliento de ácido",
+    "desc": "Tirada de salvación de Destreza: CD 11, cada criatura en una línea de 20 pies de largo y 5 pies de ancho. Fallo: 18 (4d8) de daño de ácido. Éxito: mitad de daño."
+   },
+   {
+    "key": "copper-dragon-wyrmling_slowing-breath",
+    "name": "Aliento ralentizador",
+    "desc": "Tirada de salvación de Constitución: CD 11, cada criatura en un cono de 15 pies. Fallo: El objetivo no puede llevar a cabo reacciones; su velocidad se reduce a la mitad; y puede realizar una acción o una acción adicional en su turno, pero no ambas. Este efecto dura hasta el final de su siguiente turno."
+   }
+  ]
+ },
+ {
+  "id": "couatl",
+  "name": "Couatl",
+  "languages": "Todos; telepatía 120 pies",
+  "traits": [
+   {
+    "name": "Mente protegida",
+    "desc": "Los pensamientos del couatl no pueden leerse por ningún medio, y otras criaturas solo pueden comunicarse telepáticamente con él si se lo permite."
+   }
+  ],
+  "actions": [
+   {
+    "key": "couatl_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 11 (1d12 + 5) de daño perforante, y el objetivo tiene el estado Envenenado hasta el final del siguiente turno del couatl."
+   },
+   {
+    "key": "couatl_constrict",
+    "name": "Constreñir",
+    "desc": "Tirada de salvación de Fuerza: CD 15, una criatura Mediana o más pequeña que el couatl pueda ver a 5 pies o menos. Fallo: 8 (1d6 + 5) de daño contundente. El objetivo tiene el estado Agarrado (CD 13 para escapar), y tiene el estado Apresado hasta que termine el agarre."
+   },
+   {
+    "key": "couatl_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "El couatl lanza uno de los siguientes conjuros, sin necesidad de componentes y usando Sabiduría como aptitud mágica (CD de salvación de conjuros 15):\n\n- **A voluntad:** Detectar el bien y el mal, Detectar magia, Detectar pensamientos, Cambiar de forma\n- **1/día cada uno:** Crear comida y agua, Sueño, Restablecimiento mayor, Escudriñar, Dormir"
+   },
+   {
+    "key": "couatl_divine-aid-2-day",
+    "name": "Ayuda divina",
+    "desc": "El couatl lanza Bendecir, Restablecimiento menor o Santuario, sin necesidad de componentes y usando la misma aptitud mágica que en Lanzamiento de conjuros."
+   }
+  ]
+ },
+ {
+  "id": "crab",
+  "name": "Cangrejo",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "El cangrejo puede respirar aire y agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "crab_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +2, alcance 5 pies. 1 de daño contundente."
+   }
+  ]
+ },
+ {
+  "id": "crocodile",
+  "name": "Cocodrilo",
+  "traits": [
+   {
+    "name": "Contener la respiración",
+    "desc": "El cocodrilo puede contener la respiración durante 1 hora."
+   }
+  ],
+  "actions": [
+   {
+    "key": "crocodile_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 6 (1d8 + 2) de daño perforante. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Agarrado (CD 12 para escapar). Mientras esté Agarrado, el objetivo tiene el estado Apresado."
+   }
+  ]
+ },
+ {
+  "id": "cultist",
+  "name": "Sectario",
+  "languages": "Común",
+  "actions": [
+   {
+    "key": "cultist_ritual-sickle",
+    "name": "Hoz ritual",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 3 (1d4 + 1) de daño cortante más 1 de daño necrótico."
+   }
+  ]
+ },
+ {
+  "id": "cultist-fanatic",
+  "name": "Fanático sectario",
+  "languages": "Común",
+  "actions": [
+   {
+    "key": "cultist-fanatic_pact-blade",
+    "name": "Hoja del pacto",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 6 (1d8 + 2) de daño cortante más 7 (2d6) de daño necrótico."
+   },
+   {
+    "key": "cultist-fanatic_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "El sectario lanza uno de los siguientes conjuros, usando Sabiduría como aptitud mágica (CD de salvación de conjuros 12, +4 para impactar con ataques de conjuro):\n\n- **A voluntad:** Luz, Taumaturgia\n- **1/día cada uno:** Inmovilizar persona\n- **2/día cada uno:** Orden imperiosa"
+   },
+   {
+    "key": "cultist-fanatic_spiritual-weapon-2-day",
+    "name": "Arma espiritual",
+    "desc": "El sectario lanza el conjuro Arma espiritual, usando la misma aptitud mágica que en Lanzamiento de conjuros."
+   }
+  ]
+ },
+ {
+  "id": "darkmantle",
+  "name": "Manto oscuro",
+  "actions": [
+   {
+    "key": "darkmantle_crush",
+    "name": "Aplastar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 6 (1d6 + 3) de daño contundente, y el manto oscuro se adhiere al objetivo. Si el objetivo es una criatura Mediana o más pequeña y el manto oscuro tenía ventaja en la tirada de ataque, cubre al objetivo, que tiene el estado Cegado y se está asfixiando mientras el manto oscuro siga adherido de este modo. Mientras está adherido a un objetivo, el manto oscuro solo puede atacar a ese objetivo, pero tiene ventaja en sus tiradas de ataque. Su velocidad pasa a ser 0, no puede beneficiarse de ningún bonificador a su velocidad y se mueve con el objetivo. Una criatura puede llevar a cabo una acción para intentar soltarse del manto oscuro, y lo consigue si supera una prueba de Fuerza (Atletismo) CD 13. En su turno, el manto oscuro puede soltarse usando 5 pies de movimiento."
+   },
+   {
+    "key": "darkmantle_darkness-aura",
+    "name": "Aura de oscuridad",
+    "desc": "Una oscuridad mágica llena una emanación de 15 pies que se origina en el manto oscuro. Este efecto dura mientras el manto oscuro mantenga la concentración en él, hasta 10 minutos. La visión en la oscuridad no puede penetrar en esta zona, y ninguna luz puede iluminarla."
+   }
+  ]
+ },
+ {
+  "id": "death-dog",
+  "name": "Perro de la muerte",
+  "actions": [
+   {
+    "key": "death-dog_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El perro de la muerte hace dos ataques de Mordisco."
+   },
+   {
+    "key": "death-dog_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 4 (1d4 + 2) de daño perforante. Si el objetivo es una criatura, queda sometido al siguiente efecto. Tirada de salvación de Constitución: CD 12. Primer fallo: El objetivo tiene el estado Envenenado. Mientras esté Envenenado, los puntos de golpe máximos del objetivo no vuelven a la normalidad al terminar un descanso largo, y repite la tirada de salvación cada 24 horas que transcurran, y el efecto termina para él si tiene éxito. Fallos posteriores: Los puntos de golpe máximos del objetivo Envenenado se reducen en 5 (1d10)."
+   }
+  ]
+ },
+ {
+  "id": "deer",
+  "name": "Ciervo",
+  "traits": [
+   {
+    "name": "Ágil",
+    "desc": "El ciervo no provoca ataques de oportunidad cuando sale del alcance de un enemigo."
+   }
+  ],
+  "actions": [
+   {
+    "key": "deer_ram",
+    "name": "Embestida",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +2, alcance 5 pies. 2 (1d4) de daño contundente."
+   }
+  ]
+ },
+ {
+  "id": "deva",
+  "name": "Deva",
+  "languages": "Todos; telepatía 120 pies",
+  "traits": [
+   {
+    "name": "Restauración exaltada",
+    "desc": "Si el deva muere fuera del Monte Celestia, su cuerpo desaparece y obtiene un nuevo cuerpo al instante, reviviendo con todos sus puntos de golpe en algún lugar del Monte Celestia."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "El deva tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "deva_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El deva hace dos ataques de Maza sagrada."
+   },
+   {
+    "key": "deva_holy-mace",
+    "name": "Maza sagrada",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +8, alcance 5 pies. 7 (1d6 + 4) de daño contundente más 18 (4d8) de daño radiante."
+   },
+   {
+    "key": "deva_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "El deva lanza uno de los siguientes conjuros, sin necesidad de componentes materiales y usando Carisma como aptitud mágica (CD de salvación de conjuros 17):\n\n- **A voluntad:** Detectar el bien y el mal, Cambiar de forma\n- **1/día cada uno:** Comunión, Revivir a los muertos"
+   },
+   {
+    "key": "deva_divine-aid-2-day",
+    "name": "Ayuda divina",
+    "desc": "El deva lanza Curar heridas, Restablecimiento menor o Levantar maldición, usando la misma aptitud mágica que en Lanzamiento de conjuros."
+   }
+  ]
+ },
+ {
+  "id": "dire-wolf",
+  "name": "Lobo terrible",
+  "traits": [
+   {
+    "name": "Tácticas de manada",
+    "desc": "El lobo tiene ventaja en una tirada de ataque contra una criatura si al menos uno de los aliados del lobo está a 5 pies o menos de la criatura y ese aliado no tiene el estado Incapacitado."
+   }
+  ],
+  "actions": [
+   {
+    "key": "dire-wolf_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 8 (1d10 + 3) de daño perforante. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "djinni",
+  "name": "Djinni",
+  "languages": "Primordial (aurano)",
+  "traits": [
+   {
+    "name": "Restauración elemental",
+    "desc": "Si el djinni muere fuera del plano elemental del Aire, su cuerpo se disuelve en niebla y obtiene un nuevo cuerpo en 1d4 días, reviviendo con todos sus puntos de golpe en algún lugar del plano del Aire."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "El djinni tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   },
+   {
+    "name": "Deseos",
+    "desc": "El djinni tiene un 30 por ciento de probabilidades de conocer el conjuro Deseo. Si el djinni lo conoce, solo puede lanzarlo en nombre de una criatura que no sea un genio y que exprese un deseo de un modo que el djinni pueda entender. Si el djinni lanza el conjuro para la criatura, no sufre ninguno de los efectos del esfuerzo del conjuro. Una vez que el djinni lo ha lanzado tres veces, no puede volver a hacerlo durante 365 días."
+   }
+  ],
+  "actions": [
+   {
+    "key": "djinni_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El djinni hace tres ataques, usando Hoja de tormenta o Rayo de tormenta en cualquier combinación."
+   },
+   {
+    "key": "djinni_storm-blade",
+    "name": "Hoja de tormenta",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +9, alcance 5 pies. 12 (2d6 + 5) de daño cortante más 7 (2d6) de daño de relámpago."
+   },
+   {
+    "key": "djinni_storm-bolt",
+    "name": "Rayo de tormenta",
+    "desc": "Tirada de ataque a distancia: +9, alcance 120 pies. 13 (3d8) de daño de trueno. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Derribado."
+   },
+   {
+    "key": "djinni_create-whirlwind",
+    "name": "Crear torbellino",
+    "desc": "El djinni conjura un torbellino en un punto que pueda ver a 120 pies o menos. El torbellino llena un cilindro de 20 pies de radio y 60 pies de altura centrado en ese punto. El torbellino dura hasta que termine la concentración del djinni en él. El djinni puede mover el torbellino hasta 20 pies al principio de cada uno de sus turnos. Siempre que el torbellino entre en el espacio de una criatura o una criatura entre en el torbellino, esa criatura queda sometida al siguiente efecto. Tirada de salvación de Fuerza: CD 17 (una criatura solo hace esta tirada de salvación una vez por turno, y el djinni no se ve afectado). Fallo: Mientras esté en el torbellino, el objetivo tiene el estado Apresado y se mueve con el torbellino. Al principio de cada uno de sus turnos, el objetivo Apresado recibe 21 (6d6) de daño de trueno. Al final de cada uno de sus turnos, el objetivo repite la tirada de salvación, y el efecto termina para él si tiene éxito."
+   },
+   {
+    "key": "djinni_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "El djinni lanza uno de los siguientes conjuros, sin necesidad de componentes materiales y usando Carisma como aptitud mágica (CD de salvación de conjuros 17):\n\n- **A voluntad:** Detectar el bien y el mal, Detectar magia\n- **2/día cada uno:** Crear comida y agua, Don de lenguas, Caminar con el viento\n- **1/día cada uno:** Creación, Forma gaseosa, Invisibilidad, Imagen mayor, Desplazamiento entre planos"
+   }
+  ]
+ },
+ {
+  "id": "doppelganger",
+  "name": "Doppelganger",
+  "languages": "Común y otros tres idiomas",
+  "actions": [
+   {
+    "key": "doppelganger_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El doppelganger hace dos ataques de Golpe y usa Rostro inquietante si está disponible."
+   },
+   {
+    "key": "doppelganger_slam",
+    "name": "Golpe",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6 (con ventaja durante el primer asalto de cada combate), alcance 5 pies. 11 (2d6 + 4) de daño contundente."
+   },
+   {
+    "key": "doppelganger_unsettling-visage",
+    "name": "Rostro inquietante",
+    "desc": "Tirada de salvación de Sabiduría: CD 12, cada criatura en una emanación de 15 pies que se origina en el doppelganger y que pueda ver al doppelganger. Fallo: El objetivo tiene el estado Asustado y repite la tirada de salvación al final de cada uno de sus turnos, y el efecto termina para él si tiene éxito. Después de 1 minuto, tiene éxito automáticamente."
+   },
+   {
+    "key": "doppelganger_read-thoughts",
+    "name": "Leer pensamientos",
+    "desc": "El doppelganger lanza Detectar pensamientos, sin necesidad de componentes y usando Carisma como aptitud mágica (CD de salvación de conjuros 12).\n\n- **A voluntad:** Detectar pensamientos"
+   },
+   {
+    "key": "doppelganger_shape-shift",
+    "name": "Cambiar de forma",
+    "desc": "El doppelganger cambia de forma a un humanoide Mediano o Pequeño, o vuelve a su forma verdadera. Sus estadísticas de juego, salvo su tamaño, son las mismas en cada forma. El equipo que lleve puesto o porte no se transforma."
+   }
+  ]
+ },
+ {
+  "id": "draft-horse",
+  "name": "Caballo de tiro",
+  "actions": [
+   {
+    "key": "draft-horse_hooves",
+    "name": "Pezuñas",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 6 (1d4 + 4) de daño contundente."
+   }
+  ]
+ },
+ {
+  "id": "dragon-turtle",
+  "name": "Tortuga dragón",
+  "languages": "Dracónico, primordial (acuano)",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "El dragón puede respirar aire y agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "dragon-turtle_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace tres ataques de Mordisco. Puede sustituir un ataque por un ataque de Cola."
+   },
+   {
+    "key": "dragon-turtle_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +13, alcance 15 pies. 23 (3d10 + 7) de daño perforante más 7 (2d6) de daño de fuego. Estar bajo el agua no otorga resistencia a este daño de fuego."
+   },
+   {
+    "key": "dragon-turtle_tail",
+    "name": "Cola",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +13, alcance 15 pies. 18 (2d10 + 7) de daño contundente. Si el objetivo es una criatura Enorme o más pequeña, tiene el estado Derribado."
+   },
+   {
+    "key": "dragon-turtle_steam-breath",
+    "name": "Aliento de vapor",
+    "desc": "Tirada de salvación de Constitución: CD 19, cada criatura en un cono de 60 pies. Fallo: 56 (16d6) de daño de fuego. Éxito: mitad de daño. Fallo o éxito: Estar bajo el agua no otorga resistencia a este daño de fuego."
+   }
+  ]
+ },
+ {
+  "id": "dretch",
+  "name": "Dretch",
+  "languages": "Abisal; telepatía 60 pies (solo funciona con criaturas que entienden el abisal)",
+  "actions": [
+   {
+    "key": "dretch_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 4 (1d6 + 1) de daño cortante."
+   },
+   {
+    "key": "dretch_fetid-cloud-1-day",
+    "name": "Nube fétida",
+    "desc": "Tirada de salvación de Constitución: CD 11, cada criatura en una emanación de 10 pies que se origina en el dretch. Fallo: El objetivo tiene el estado Envenenado hasta el final de su siguiente turno. Mientras esté Envenenada, la criatura puede realizar una acción o una acción adicional en su turno, pero no ambas, y no puede llevar a cabo reacciones."
+   }
+  ]
+ },
+ {
+  "id": "drider",
+  "name": "Drider",
+  "languages": "Élfico, infracomún",
+  "traits": [
+   {
+    "name": "Trepar como una araña",
+    "desc": "El drider puede trepar por superficies difíciles, incluso boca abajo por los techos, sin necesidad de hacer una prueba de característica."
+   },
+   {
+    "name": "Sensibilidad a la luz solar",
+    "desc": "Mientras está bajo la luz del sol, el drider tiene desventaja en las pruebas de característica y en las tiradas de ataque."
+   },
+   {
+    "name": "Caminante de telarañas",
+    "desc": "El drider ignora las restricciones de movimiento causadas por las telarañas, y conoce la ubicación de cualquier otra criatura en contacto con la misma telaraña."
+   }
+  ],
+  "actions": [
+   {
+    "key": "drider_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El drider hace tres ataques, usando Pata delantera o Estallido de veneno en cualquier combinación."
+   },
+   {
+    "key": "drider_foreleg",
+    "name": "Pata delantera",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. 13 (2d8 + 4) de daño perforante."
+   },
+   {
+    "key": "drider_poison-burst",
+    "name": "Estallido de veneno",
+    "desc": "Tirada de ataque a distancia: +6, alcance 120 pies. 13 (3d6 + 3) de daño de veneno."
+   },
+   {
+    "key": "drider_magic-of-the-spider-queen-recharge-5-6",
+    "name": "Magia de la Reina Araña",
+    "desc": "El drider lanza Oscuridad, Fuego feérico o Telaraña, sin necesidad de componentes materiales y usando Sabiduría como aptitud mágica (CD de salvación de conjuros 14)."
+   }
+  ]
+ },
+ {
+  "id": "druid",
+  "name": "Druida",
+  "languages": "Común, druídico, silvano",
+  "actions": [
+   {
+    "key": "druid_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El druida hace dos ataques, usando Bastón de enredaderas o Fuego fatuo verdoso en cualquier combinación."
+   },
+   {
+    "key": "druid_vine-staff",
+    "name": "Bastón de enredaderas",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 7 (1d8 + 3) de daño contundente más 2 (1d4) de daño de veneno."
+   },
+   {
+    "key": "druid_verdant-wisp",
+    "name": "Fuego fatuo verdoso",
+    "desc": "Tirada de ataque a distancia: +5, alcance 90 pies. 10 (3d6) de daño radiante."
+   },
+   {
+    "key": "druid_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "El druida lanza uno de los siguientes conjuros, usando Sabiduría como aptitud mágica (CD de salvación de conjuros 13):\n\n- **A voluntad:** Artesanía druídica, Hablar con los animales\n- **2/día cada uno:** Enmarañar, Ola atronadora\n- **1/día cada uno:** Mensajero animal, Zancada prodigiosa, Rayo de luna"
+   }
+  ]
+ },
+ {
+  "id": "dryad",
+  "name": "Dríade",
+  "languages": "Élfico, silvano",
+  "traits": [
+   {
+    "name": "Resistencia mágica",
+    "desc": "La dríade tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   },
+   {
+    "name": "Hablar con bestias y plantas",
+    "desc": "La dríade puede comunicarse con bestias y plantas como si compartieran un idioma."
+   }
+  ],
+  "actions": [
+   {
+    "key": "dryad_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "La dríade hace un ataque de Latigazo de enredadera o de Estallido de espinas, y puede usar Lanzamiento de conjuros para lanzar Hechizar monstruo."
+   },
+   {
+    "key": "dryad_vine-lash",
+    "name": "Latigazo de enredadera",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 10 pies. 8 (1d8 + 4) de daño cortante."
+   },
+   {
+    "key": "dryad_thorn-burst",
+    "name": "Estallido de espinas",
+    "desc": "Tirada de ataque a distancia: +6, alcance 60 pies. 7 (1d6 + 4) de daño perforante."
+   },
+   {
+    "key": "dryad_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "La dríade lanza uno de los siguientes conjuros, sin necesidad de componentes materiales y usando Carisma como aptitud mágica (CD de salvación de conjuros 14):\n\n- **A voluntad:** Amistad animal, Hechizar monstruo, Artesanía druídica\n- **1/día cada uno:** Enmarañar, Pasar sin dejar rastro"
+   },
+   {
+    "key": "dryad_tree-stride",
+    "name": "Zancada arbórea",
+    "desc": "Si está a 5 pies o menos de un árbol Grande o mayor, la dríade se teletransporta a un espacio desocupado a 5 pies o menos de un segundo árbol Grande o mayor que esté a 60 pies o menos del árbol anterior."
+   }
+  ]
+ },
+ {
+  "id": "dust-mephit",
+  "name": "Mefit de polvo",
+  "languages": "Primordial (aurano, terrano)",
+  "traits": [
+   {
+    "name": "Estallido mortal",
+    "desc": "El mefit explota cuando muere. Tirada de salvación de Destreza: CD 10, cada criatura en una emanación de 5 pies que se origina en el mefit. Fallo: 5 (2d4) de daño contundente. Éxito: mitad de daño."
+   }
+  ],
+  "actions": [
+   {
+    "key": "dust-mephit_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 4 (1d4 + 2) de daño cortante."
+   },
+   {
+    "key": "dust-mephit_blinding-breath",
+    "name": "Aliento cegador",
+    "desc": "Tirada de salvación de Destreza: CD 10, cada criatura en un cono de 15 pies. Fallo: El objetivo tiene el estado Cegado hasta el final del siguiente turno del mefit."
+   },
+   {
+    "key": "dust-mephit_sleep-1-day",
+    "name": "Dormir",
+    "desc": "El mefit lanza el conjuro Dormir, sin necesidad de componentes y usando Carisma como aptitud mágica (CD de salvación de conjuros 10)."
+   }
+  ]
+ },
+ {
+  "id": "eagle",
+  "name": "Águila",
+  "actions": [
+   {
+    "key": "eagle_talons",
+    "name": "Garras",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 4 (1d4 + 2) de daño cortante."
+   }
+  ]
+ },
+ {
+  "id": "earth-elemental",
+  "name": "Elemental de tierra",
+  "languages": "Primordial (terrano)",
+  "traits": [
+   {
+    "name": "Deslizarse por la tierra",
+    "desc": "El elemental puede excavar a través de tierra y piedra no mágicas y sin trabajar. Mientras lo hace, el elemental no altera el material por el que se mueve."
+   },
+   {
+    "name": "Monstruo de asedio",
+    "desc": "El elemental inflige el doble de daño a objetos y estructuras."
+   }
+  ],
+  "actions": [
+   {
+    "key": "earth-elemental_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El elemental hace dos ataques, usando Golpe o Lanzar roca en cualquier combinación."
+   },
+   {
+    "key": "earth-elemental_slam",
+    "name": "Golpe",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +8, alcance 10 pies. 14 (2d8 + 5) de daño contundente."
+   },
+   {
+    "key": "earth-elemental_rock-launch",
+    "name": "Lanzar roca",
+    "desc": "Tirada de ataque a distancia: +8, alcance 60 pies. 8 (1d6 + 5) de daño contundente. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "efreeti",
+  "name": "Efreeti",
+  "languages": "Primordial (ignano)",
+  "traits": [
+   {
+    "name": "Restauración elemental",
+    "desc": "Si el efreeti muere fuera del plano elemental del Fuego, su cuerpo se disuelve en ceniza y obtiene un nuevo cuerpo en 1d4 días, reviviendo con todos sus puntos de golpe en algún lugar del plano del Fuego."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "El efreeti tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   },
+   {
+    "name": "Deseos",
+    "desc": "El efreeti tiene un 30 por ciento de probabilidades de conocer el conjuro Deseo. Si el efreeti lo conoce, solo puede lanzarlo en nombre de una criatura que no sea un genio y que exprese un deseo de un modo que el efreeti pueda entender. Si el efreeti lanza el conjuro para la criatura, no sufre ninguno de los efectos del esfuerzo del conjuro. Una vez que el efreeti lo ha lanzado tres veces, no puede volver a hacerlo durante 365 días."
+   }
+  ],
+  "actions": [
+   {
+    "key": "efreeti_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El efreeti hace tres ataques, usando Hoja ardiente o Arrojar llamas en cualquier combinación."
+   },
+   {
+    "key": "efreeti_heated-blade",
+    "name": "Hoja ardiente",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +10, alcance 5 pies. 13 (2d6 + 6) de daño cortante más 13 (2d12) de daño de fuego."
+   },
+   {
+    "key": "efreeti_hurl-flame",
+    "name": "Arrojar llamas",
+    "desc": "Tirada de ataque a distancia: +8, alcance 120 pies. 24 (7d6) de daño de fuego."
+   },
+   {
+    "key": "efreeti_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "El efreeti lanza uno de los siguientes conjuros, sin necesidad de componentes materiales y usando Carisma como aptitud mágica (CD de salvación de conjuros 16):\n\n- **A voluntad:** Detectar magia, Elementalismo\n- **1/día cada uno:** Forma gaseosa, Invisibilidad, Imagen mayor, Desplazamiento entre planos, Don de lenguas, Muro de fuego"
+   }
+  ]
+ },
+ {
+  "id": "elephant",
+  "name": "Elefante",
+  "actions": [
+   {
+    "key": "elephant_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El elefante hace dos ataques de Cornada."
+   },
+   {
+    "key": "elephant_gore",
+    "name": "Cornada",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +8, alcance 5 pies. 15 (2d8 + 6) de daño perforante. Si el objetivo es una criatura Enorme o más pequeña y el elefante se ha movido 20 pies o más en línea recta hacia él inmediatamente antes del impacto, el objetivo tiene el estado Derribado."
+   },
+   {
+    "key": "elephant_trample",
+    "name": "Pisotear",
+    "desc": "Tirada de salvación de Destreza: CD 16, una criatura a 5 pies o menos que tenga el estado Derribado. Fallo: 17 (2d10 + 6) de daño contundente. Éxito: mitad de daño."
+   }
+  ]
+ },
+ {
+  "id": "elk",
+  "name": "Alce",
+  "actions": [
+   {
+    "key": "elk_ram",
+    "name": "Embestida",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 6 (1d6 + 3) de daño contundente. Si el objetivo es una criatura Grande o más pequeña y el alce se ha movido 20 pies o más en línea recta hacia él inmediatamente antes del impacto, el objetivo recibe 3 (1d6) de daño contundente adicional y tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "erinyes",
+  "name": "Erinia",
+  "languages": "Infernal; telepatía 120 pies",
+  "traits": [
+   {
+    "name": "Restauración diabólica",
+    "desc": "Si la erinia muere fuera de los Nueve Infiernos, su cuerpo desaparece en un humo sulfuroso y obtiene un nuevo cuerpo al instante, reviviendo con todos sus puntos de golpe en algún lugar de los Nueve Infiernos."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "La erinia tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   },
+   {
+    "name": "Cuerda mágica",
+    "desc": "La erinia tiene una cuerda mágica. Mientras la porte, la erinia puede usar la acción Cuerda enredadora. La cuerda tiene CA 20, 90 PG e inmunidad al daño de veneno y psíquico. La cuerda se convierte en polvo si se reduce a 0 puntos de golpe, si está a 5 pies o más de la erinia durante 1 hora o más, o si la erinia muere. Si la cuerda está dañada o destruida, la erinia puede restaurarla por completo al terminar un descanso corto o largo."
+   }
+  ],
+  "actions": [
+   {
+    "key": "erinyes_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "La erinia hace tres ataques de Espada marchitadora y puede usar Cuerda enredadora."
+   },
+   {
+    "key": "erinyes_withering-sword",
+    "name": "Espada marchitadora",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +8, alcance 5 pies. 13 (2d8 + 4) de daño cortante más 11 (2d10) de daño necrótico."
+   },
+   {
+    "key": "erinyes_entangling-rope",
+    "name": "Cuerda enredadora",
+    "desc": "Tirada de salvación de Fuerza: CD 16, una criatura que la erinia pueda ver a 120 pies o menos. Fallo: 14 (4d6) de daño de fuerza, y el objetivo tiene el estado Apresado hasta que la cuerda sea destruida, la erinia use una acción adicional para liberar al objetivo o la erinia vuelva a usar Cuerda enredadora."
+   },
+   {
+    "key": "erinyes_parry",
+    "name": "Parada",
+    "desc": "_Desencadenante:_ La erinia recibe un impacto de una tirada de ataque cuerpo a cuerpo mientras empuña un arma. _Respuesta:_ La erinia suma 4 a su CA contra ese ataque, lo que puede hacer que falle."
+   }
+  ]
+ },
+ {
+  "id": "ettercap",
+  "name": "Ettercap",
+  "traits": [
+   {
+    "name": "Trepar como una araña",
+    "desc": "El ettercap puede trepar por superficies difíciles, incluso boca abajo por los techos, sin necesidad de hacer una prueba de característica."
+   },
+   {
+    "name": "Caminante de telarañas",
+    "desc": "El ettercap ignora las restricciones de movimiento causadas por las telarañas, y conoce la ubicación de cualquier otra criatura en contacto con la misma telaraña."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ettercap_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El ettercap hace un ataque de Mordisco y un ataque de Garra."
+   },
+   {
+    "key": "ettercap_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño perforante más 2 (1d4) de daño de veneno, y el objetivo tiene el estado Envenenado hasta el principio del siguiente turno del ettercap."
+   },
+   {
+    "key": "ettercap_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 7 (2d4 + 2) de daño cortante."
+   },
+   {
+    "key": "ettercap_web-strand",
+    "name": "Hebra de telaraña",
+    "desc": "Tirada de salvación de Destreza: CD 12, una criatura Grande o más pequeña que el ettercap pueda ver a 30 pies o menos. Fallo: El objetivo tiene el estado Apresado hasta que la telaraña sea destruida (CA 10; 5 PG; vulnerabilidad al daño de fuego; inmunidad al daño contundente, de veneno y psíquico)."
+   },
+   {
+    "key": "ettercap_reel",
+    "name": "Recoger",
+    "desc": "El ettercap tira de una criatura a 30 pies o menos de él que esté Apresada por su Hebra de telaraña y la acerca hasta 25 pies en línea recta hacia sí mismo."
+   }
+  ]
+ },
+ {
+  "id": "ettin",
+  "name": "Ettin",
+  "languages": "Gigante",
+  "actions": [
+   {
+    "key": "ettin_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El ettin hace un ataque de Hacha de batalla y un ataque de Lucero del alba."
+   },
+   {
+    "key": "ettin_battleaxe",
+    "name": "Hacha de batalla",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 14 (2d8 + 5) de daño cortante. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Derribado."
+   },
+   {
+    "key": "ettin_morningstar",
+    "name": "Lucero del alba",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 14 (2d8 + 5) de daño perforante, y el objetivo tiene desventaja en la siguiente tirada de ataque que haga antes del final de su siguiente turno."
+   }
+  ]
+ },
+ {
+  "id": "fire-elemental",
+  "name": "Elemental de fuego",
+  "languages": "Primordial (ignano)",
+  "traits": [
+   {
+    "name": "Aura de fuego",
+    "desc": "Al final de cada uno de los turnos del elemental, cada criatura en una emanación de 10 pies que se origina en el elemental recibe 5 (1d10) de daño de fuego. Las criaturas y los objetos inflamables que haya en la emanación empiezan a arder."
+   },
+   {
+    "name": "Forma de fuego",
+    "desc": "El elemental puede moverse a través de un espacio de solo 1 pulgada de ancho sin gastar movimiento adicional para ello, y puede entrar en el espacio de una criatura y detenerse allí. La primera vez que entra en el espacio de una criatura en un turno, esa criatura recibe 5 (1d10) de daño de fuego."
+   },
+   {
+    "name": "Iluminación",
+    "desc": "El elemental emite luz brillante en un radio de 30 pies y luz tenue 30 pies más allá."
+   },
+   {
+    "name": "Susceptibilidad al agua",
+    "desc": "El elemental recibe 3 (1d6) de daño de frío por cada 5 pies que se mueva por el agua o por cada galón de agua que le salpique."
+   }
+  ],
+  "actions": [
+   {
+    "key": "fire-elemental_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El elemental hace dos ataques de Quemar."
+   },
+   {
+    "key": "fire-elemental_burn",
+    "name": "Quemar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 10 (2d6 + 3) de daño de fuego. Si el objetivo es una criatura o un objeto inflamable, empieza a arder."
+   }
+  ]
+ },
+ {
+  "id": "fire-giant",
+  "name": "Gigante de fuego",
+  "languages": "Gigante",
+  "actions": [
+   {
+    "key": "fire-giant_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El gigante hace dos ataques, usando Espada flamígera o Lanzamiento de martillo en cualquier combinación."
+   },
+   {
+    "key": "fire-giant_flame-sword",
+    "name": "Espada flamígera",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +11, alcance 10 pies. 21 (4d6 + 7) de daño cortante más 10 (3d6) de daño de fuego."
+   },
+   {
+    "key": "fire-giant_hammer-throw",
+    "name": "Lanzamiento de martillo",
+    "desc": "Tirada de ataque a distancia: +11, alcance 60/240 pies. 23 (3d10 + 7) de daño contundente más 4 (1d8) de daño de fuego, y el objetivo es empujado hasta 15 pies en línea recta alejándose del gigante y tiene desventaja en la siguiente tirada de ataque que haga antes del final de su siguiente turno."
+   }
+  ]
+ },
+ {
+  "id": "flesh-golem",
+  "name": "Gólem de carne",
+  "languages": "Entiende el común y otro idioma, pero no los habla",
+  "traits": [
+   {
+    "name": "Aversión al fuego",
+    "desc": "Si el gólem recibe daño de fuego, tiene desventaja en las tiradas de ataque y en las pruebas de característica hasta el final de su siguiente turno."
+   },
+   {
+    "name": "Enloquecido",
+    "desc": "Siempre que el gólem empiece su turno Maltrecho, tira 1d6. Con un 6, el gólem enloquece. En cada uno de sus turnos mientras está enloquecido, el gólem ataca a la criatura más cercana que pueda ver. Si no hay ninguna criatura lo bastante cerca como para moverse hasta ella y atacarla, el gólem ataca a un objeto. Una vez que el gólem enloquece, sigue así hasta que es destruido o deja de estar Maltrecho. El creador del gólem, si está a 60 pies o menos del gólem enloquecido, puede intentar calmarlo llevando a cabo una acción para hacer una prueba de Carisma (Persuasión) CD 15; el gólem debe poder oír a su creador. Si la prueba tiene éxito, el gólem deja de estar enloquecido hasta el principio de su siguiente turno, momento en el que vuelve a tirar por el rasgo Enloquecido si sigue Maltrecho."
+   },
+   {
+    "name": "Forma inmutable",
+    "desc": "El gólem no puede cambiar de forma."
+   },
+   {
+    "name": "Absorción de relámpagos",
+    "desc": "Siempre que el gólem sufra daño de relámpago, recupera un número de puntos de golpe igual al daño de relámpago infligido."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "El gólem tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "flesh-golem_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El gólem hace dos ataques de Golpe."
+   },
+   {
+    "key": "flesh-golem_slam",
+    "name": "Golpe",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 13 (2d8 + 4) de daño contundente más 4 (1d8) de daño de relámpago."
+   }
+  ]
+ },
+ {
+  "id": "flying-snake",
+  "name": "Serpiente voladora",
+  "traits": [
+   {
+    "name": "Vuelo rasante",
+    "desc": "La serpiente no provoca ataques de oportunidad cuando sale volando del alcance de un enemigo."
+   }
+  ],
+  "actions": [
+   {
+    "key": "flying-snake_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 1 de daño perforante más 5 (2d4) de daño de veneno."
+   }
+  ]
+ },
+ {
+  "id": "frog",
+  "name": "Rana",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "La rana puede respirar aire y agua."
+   },
+   {
+    "name": "Salto sin carrerilla",
+    "desc": "El salto de longitud de la rana es de hasta 10 pies y su salto de altura, de hasta 5 pies, con o sin carrerilla."
+   }
+  ],
+  "actions": [
+   {
+    "key": "frog_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 1 de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "frost-giant",
+  "name": "Gigante de escarcha",
+  "languages": "Gigante",
+  "actions": [
+   {
+    "key": "frost-giant_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El gigante hace dos ataques, usando Hacha de escarcha o Gran arco en cualquier combinación."
+   },
+   {
+    "key": "frost-giant_frost-axe",
+    "name": "Hacha de escarcha",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +9, alcance 10 pies. 19 (2d12 + 6) de daño cortante más 9 (2d8) de daño de frío."
+   },
+   {
+    "key": "frost-giant_great-bow",
+    "name": "Gran arco",
+    "desc": "Tirada de ataque a distancia: +9, alcance 150/600 pies. 17 (2d10 + 6) de daño perforante más 7 (2d6) de daño de frío, y la velocidad del objetivo se reduce en 10 pies hasta el final de su siguiente turno."
+   },
+   {
+    "key": "frost-giant_war-cry-recharge-5-6",
+    "name": "Grito de guerra",
+    "desc": "El gigante o una criatura de su elección que pueda verlo u oírlo obtiene 16 (2d10 + 5) puntos de golpe temporales y tiene ventaja en las tiradas de ataque hasta el principio del siguiente turno del gigante."
+   }
+  ]
+ },
+ {
+  "id": "gargoyle",
+  "name": "Gárgola",
+  "languages": "Primordial (terrano)",
+  "traits": [
+   {
+    "name": "Vuelo rasante",
+    "desc": "La gárgola no provoca ataques de oportunidad cuando sale volando del alcance de un enemigo."
+   }
+  ],
+  "actions": [
+   {
+    "key": "gargoyle_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "La gárgola hace dos ataques de Garra."
+   },
+   {
+    "key": "gargoyle_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 7 (2d4 + 2) de daño cortante."
+   }
+  ]
+ },
+ {
+  "id": "gelatinous-cube",
+  "name": "Cubo gelatinoso",
+  "traits": [
+   {
+    "name": "Cubo de cieno",
+    "desc": "El cubo llena todo su espacio y es transparente. Otras criaturas pueden entrar en ese espacio, pero una criatura que lo haga queda sometida a Engullir del cubo y tiene desventaja en la tirada de salvación. Las criaturas que están dentro del cubo tienen cobertura total, y el cubo puede contener en su interior a una criatura Grande o hasta cuatro criaturas Medianas o Pequeñas a la vez. Como acción, una criatura a 5 pies o menos del cubo puede sacar del cubo a una criatura o un objeto si supera una prueba de Fuerza (Atletismo) CD 12, y quien tira de ella recibe 10 (3d6) de daño de ácido."
+   },
+   {
+    "name": "Transparente",
+    "desc": "Incluso cuando el cubo está a plena vista, una criatura debe superar una prueba de Sabiduría (Percepción) CD 15 para percatarse del cubo si no ha visto al cubo moverse o actuar de algún otro modo."
+   }
+  ],
+  "actions": [
+   {
+    "key": "gelatinous-cube_pseudopod",
+    "name": "Seudópodo",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 12 (3d6 + 2) de daño de ácido."
+   },
+   {
+    "key": "gelatinous-cube_engulf",
+    "name": "Engullir",
+    "desc": "El cubo se mueve hasta su velocidad sin provocar ataques de oportunidad. El cubo puede moverse a través de los espacios de criaturas Grandes o más pequeñas si tiene sitio en su interior para contenerlas (consulta el rasgo Cubo de cieno). Tirada de salvación de Destreza: CD 12, cada criatura en cuyo espacio entre el cubo por primera vez durante este movimiento. Fallo: 10 (3d6) de daño de ácido, y el objetivo queda engullido. Un objetivo engullido se está asfixiando, no puede lanzar conjuros con componente verbal, tiene el estado Apresado y recibe 10 (3d6) de daño de ácido al principio de cada uno de los turnos del cubo. Cuando el cubo se mueve, el objetivo engullido se mueve con él. Un objetivo engullido puede intentar escapar llevando a cabo una acción para hacer una prueba de Fuerza (Atletismo) CD 12. Si la prueba tiene éxito, el objetivo escapa y entra en el espacio desocupado más cercano. Éxito: mitad de daño, y el objetivo se mueve a un espacio desocupado a 5 pies o menos del cubo. Si no hay ningún espacio desocupado, el objetivo falla la tirada de salvación en su lugar."
+   }
+  ]
+ },
+ {
+  "id": "ghast",
+  "name": "Ghast",
+  "languages": "Común",
+  "traits": [
+   {
+    "name": "Hedor",
+    "desc": "Tirada de salvación de Constitución: CD 10, cualquier criatura que empiece su turno en una emanación de 5 pies que se origina en el ghast. Fallo: El objetivo tiene el estado Envenenado hasta el principio de su siguiente turno. Éxito: El objetivo es inmune al Hedor de este ghast durante 24 horas."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ghast_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 7 (1d8 + 3) de daño perforante más 9 (2d8) de daño necrótico."
+   },
+   {
+    "key": "ghast_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 10 (2d6 + 3) de daño cortante. Si el objetivo es una criatura que no sea un muerto viviente, queda sometido al siguiente efecto. Tirada de salvación de Constitución: CD 10. Fallo: El objetivo tiene el estado Paralizado hasta el final de su siguiente turno."
+   }
+  ]
+ },
+ {
+  "id": "ghost",
+  "name": "Fantasma",
+  "languages": "Común y otro idioma",
+  "traits": [
+   {
+    "name": "Visión etérea",
+    "desc": "El fantasma puede ver hasta 60 pies en el plano Etéreo cuando está en el plano Material."
+   },
+   {
+    "name": "Movimiento incorpóreo",
+    "desc": "El fantasma puede moverse a través de otras criaturas y objetos como si fueran terreno difícil. Recibe 5 (1d10) de daño de fuerza si termina su turno dentro de un objeto."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ghost_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El fantasma hace dos ataques de Toque marchitador."
+   },
+   {
+    "key": "ghost_withering-touch",
+    "name": "Toque marchitador",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 19 (3d10 + 3) de daño necrótico."
+   },
+   {
+    "key": "ghost_horrific-visage",
+    "name": "Rostro horripilante",
+    "desc": "Tirada de salvación de Sabiduría: CD 13, cada criatura en un cono de 60 pies que pueda ver al fantasma y no sea un muerto viviente. Fallo: 10 (2d6 + 3) de daño psíquico, y el objetivo tiene el estado Asustado hasta el principio del siguiente turno del fantasma. Éxito: El objetivo es inmune al Rostro horripilante de este fantasma durante 24 horas."
+   },
+   {
+    "key": "ghost_possession",
+    "name": "Posesión",
+    "desc": "Tirada de salvación de Carisma: CD 13, un humanoide que el fantasma pueda ver a 5 pies o menos. Fallo: El objetivo queda poseído por el fantasma; el fantasma desaparece, y el objetivo tiene el estado Incapacitado y pierde el control de su cuerpo. Ahora el fantasma controla el cuerpo, pero el objetivo conserva la consciencia. El fantasma no puede ser objetivo de ningún ataque, conjuro u otro efecto, salvo los que tengan como objetivo específicamente a muertos vivientes. Las estadísticas de juego del fantasma son las mismas, salvo que usa la velocidad del objetivo poseído, así como los modificadores de Fuerza, Destreza y Constitución del objetivo. La posesión dura hasta que el cuerpo se queda a 0 puntos de golpe o el fantasma lo abandona como acción adicional. Cuando la posesión termina, el fantasma aparece en un espacio desocupado a 5 pies o menos del objetivo, y el objetivo es inmune a la Posesión de este fantasma durante 24 horas. Éxito: El objetivo es inmune a la Posesión de este fantasma durante 24 horas."
+   },
+   {
+    "key": "ghost_etherealness",
+    "name": "Excursión etérea",
+    "desc": "El fantasma lanza el conjuro Excursión etérea, sin necesidad de componentes y usando Carisma como aptitud mágica. El fantasma es visible en el plano Material mientras está en la Frontera Etérea y viceversa, pero no puede afectar ni ser afectado por nada que esté en el otro plano.\n\n- **A voluntad:** Excursión etérea"
+   }
+  ]
+ },
+ {
+  "id": "ghoul",
+  "name": "Necrófago",
+  "languages": "Común",
+  "actions": [
+   {
+    "key": "ghoul_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El necrófago hace dos ataques de Mordisco."
+   },
+   {
+    "key": "ghoul_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño perforante más 3 (1d6) de daño necrótico."
+   },
+   {
+    "key": "ghoul_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 4 (1d4 + 2) de daño cortante. Si el objetivo es una criatura que no sea un muerto viviente ni un elfo, queda sometido al siguiente efecto. Tirada de salvación de Constitución: CD 10. Fallo: El objetivo tiene el estado Paralizado hasta el final de su siguiente turno."
+   }
+  ]
+ },
+ {
+  "id": "giant-ape",
+  "name": "Simio gigante",
+  "actions": [
+   {
+    "key": "giant-ape_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El simio hace dos ataques de Puño."
+   },
+   {
+    "key": "giant-ape_fist",
+    "name": "Puño",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +9, alcance 10 pies. 22 (3d10 + 6) de daño contundente."
+   },
+   {
+    "key": "giant-ape_boulder-toss",
+    "name": "Arrojar peñasco",
+    "desc": "El simio arroja un peñasco a un punto que pueda ver a 90 pies o menos. Tirada de salvación de Destreza: CD 17, cada criatura en una esfera de 5 pies de radio centrada en ese punto. Fallo: 24 (7d6) de daño contundente. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Derribado. Éxito: solo mitad de daño."
+   },
+   {
+    "key": "giant-ape_leap",
+    "name": "Saltar",
+    "desc": "El simio salta hasta 30 pies gastando 10 pies de movimiento."
+   }
+  ]
+ },
+ {
+  "id": "giant-badger",
+  "name": "Tejón gigante",
+  "actions": [
+   {
+    "key": "giant-badger_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 6 (2d4 + 1) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "giant-bat",
+  "name": "Murciélago gigante",
+  "actions": [
+   {
+    "key": "giant-bat_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 6 (1d6 + 3) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "giant-boar",
+  "name": "Jabalí gigante",
+  "traits": [
+   {
+    "name": "Furia sangrienta",
+    "desc": "El jabalí tiene ventaja en las tiradas de ataque cuerpo a cuerpo mientras está Maltrecho."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-boar_gore",
+    "name": "Cornada",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 10 (2d6 + 3) de daño perforante. Si el objetivo es una criatura Grande o más pequeña y el jabalí se ha movido 20 pies o más en línea recta hacia él inmediatamente antes del impacto, el objetivo recibe 7 (2d6) de daño perforante adicional y tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "giant-centipede",
+  "name": "Ciempiés gigante",
+  "actions": [
+   {
+    "key": "giant-centipede_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 4 (1d4 + 2) de daño perforante, y el objetivo tiene el estado Envenenado hasta el principio del siguiente turno del ciempiés."
+   }
+  ]
+ },
+ {
+  "id": "giant-constrictor-snake",
+  "name": "Serpiente constrictora gigante",
+  "actions": [
+   {
+    "key": "giant-constrictor-snake_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "La serpiente hace un ataque de Mordisco y usa Constreñir."
+   },
+   {
+    "key": "giant-constrictor-snake_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 10 pies. 11 (2d6 + 4) de daño perforante."
+   },
+   {
+    "key": "giant-constrictor-snake_constrict",
+    "name": "Constreñir",
+    "desc": "Tirada de salvación de Fuerza: CD 14, una criatura Grande o más pequeña que la serpiente pueda ver a 10 pies o menos. Fallo: 13 (2d8 + 4) de daño contundente, y el objetivo tiene el estado Agarrado (CD 14 para escapar)."
+   }
+  ]
+ },
+ {
+  "id": "giant-crab",
+  "name": "Cangrejo gigante",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "El cangrejo puede respirar aire y agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-crab_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 4 (1d6 + 1) de daño contundente. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Agarrado (CD 11 para escapar) por una de sus dos pinzas."
+   }
+  ]
+ }
+]

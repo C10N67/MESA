@@ -743,6 +743,7 @@ const EN = {
   "Aspecto": "Appearance",
   "Manual": "Manual",
   "Manual de D&D": "D&D manual",
+  "Manual de D&D 5.5": "D&D 5.5 manual", "Buscar en todo el manual": "Search the whole manual", "D&D 5.5 (2024)": "D&D 5.5 (2024)", "Otras ediciones": "Other editions", "Qué es la 5.5": "What 5.5 is", "Chuleta": "Cheat sheet", "Chuleta de la 5.5": "5.5 cheat sheet", "Reglamento": "Rules", "Especies": "Species", "Criaturas": "Creatures", "Armas y armaduras": "Weapons and armor", "Cómo usar este manual": "How to use this manual", "Nombre (también en inglés)": "Name (Spanish or English)", "Todos los niveles": "All levels", "Todas las clases": "All classes", "Todas las escuelas": "All schools", "Concentración": "Concentration", "Ritual": "Ritual", "Animales": "Animals", "Cualquier desafío": "Any challenge", "Por nombre": "By name", "Por desafío": "By challenge", "Tiempo de lanzamiento": "Casting time", "Componentes": "Components", "Duración": "Duration", "Inmunidades": "Immunities", "Vulnerable a": "Vulnerable to", "Desafío": "Challenge", "Acciones adicionales": "Bonus actions", "Reacciones": "Reactions", "Acciones legendarias": "Legendary actions", "Propiedades de las armas": "Weapon properties", "Maestrías": "Masteries", "Armaduras y escudo": "Armor and shield", "Cargando…": "Loading…", "Buscando en el reglamento y los catálogos…": "Searching the rules and catalogs…",
   "Ficha en blanco": "Blank sheet",
   "Media fija": "Fixed average",
   "Tirar los dados": "Roll the dice",

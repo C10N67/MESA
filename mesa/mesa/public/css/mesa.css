@@ -1512,6 +1512,61 @@ ul.plain b { color: var(--vellum); }
 .man-table th, .man-table td { border: 1px solid var(--edge); padding: 6px 9px; text-align: left; vertical-align: top; }
 .man-table thead th { background: var(--stone-2); color: var(--gold-soft); font-weight: 600; }
 .man-table tbody th { font-weight: 600; color: var(--vellum); background: rgba(255, 255, 255, .02); }
+/* El índice del manual en grupos: la 5.5 arriba, las demás ediciones abajo */
+.man-group { margin: 10px 4px 2px; font-size: 10.5px; text-transform: uppercase; letter-spacing: .1em; color: var(--dim); }
+.man-group:first-child { margin-top: 0; }
+.man-group:empty { margin: 8px 0 0; border-top: 1px solid var(--edge); }
+.man-page h5 { font-family: var(--serif); font-size: 15px; color: var(--vellum); margin: 16px 0 4px; }
+.man-page ol { padding-left: 22px; margin: 6px 0; }
+.man-caption { margin: 12px 0 -4px; font-size: 12.5px !important; font-weight: 600; color: var(--gold-soft) !important; }
+.linkish { border: 0; background: none; padding: 0; color: var(--gold-soft); font: inherit; text-decoration: underline; cursor: pointer; }
+
+/* Catálogos del SRD 5.2: filtros, entradas plegables y fichas */
+.srd-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 6px; position: sticky; top: -18px; z-index: 1; padding: 8px 0; background: var(--stone); }
+.srd-filters input[type=search] { flex: 1 1 100%; width: auto; min-width: 0; }
+.srd-filters select { flex: 1 1 140px; width: auto; min-width: 0; }
+.srd-filters .check { font-size: 13px; white-space: nowrap; }
+.srd-count { margin: 0 0 6px; font-size: 12.5px !important; color: var(--dim) !important; }
+.srd-list h4 small { color: var(--dim); font-family: var(--sans); font-size: 12px; font-weight: 400; }
+details.srd { border: 1px solid var(--edge); border-radius: 10px; margin: 6px 0; background: rgba(255, 255, 255, .015); }
+details.srd[open] { border-color: rgba(200, 155, 74, .45); background: rgba(200, 155, 74, .04); }
+details.srd > summary {
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; padding: 8px 12px; cursor: pointer;
+  list-style: none; font-size: 14.5px;
+}
+details.srd > summary::-webkit-details-marker { display: none; }
+details.srd > summary::before { content: "▸"; color: var(--dim); font-size: 11px; transition: transform .15s; }
+details.srd[open] > summary::before { transform: rotate(90deg); }
+details.srd > summary b { color: var(--vellum); font-family: var(--serif); font-size: 15.5px; }
+.srd-tags { color: var(--dim); font-size: 12.5px; }
+.srd-flag { margin-left: auto; font: 700 10.5px/18px var(--sans); width: 18px; text-align: center; border-radius: 5px; background: var(--stone-3); color: var(--gold-soft); }
+.srd-flag + .srd-flag { margin-left: 0; }
+.srd-body { padding: 0 14px 12px; }
+.srd-body:empty { display: none; }
+.srd-sub { margin: 0 0 8px; font-style: italic; color: var(--dim) !important; }
+.srd-meta { display: grid; grid-template-columns: max-content 1fr; gap: 3px 12px; margin: 8px 0; font-size: 13.5px; }
+.srd-meta dt { color: var(--gold-soft); font-weight: 600; }
+.srd-meta dd { margin: 0; color: #d9d1c0; }
+.srd-abil { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; margin: 10px 0; }
+.srd-abil div { display: grid; justify-items: center; padding: 6px 2px; border: 1px solid var(--edge); border-radius: 8px; background: var(--stone-2); }
+.srd-abil b { font-size: 11px; letter-spacing: .06em; color: var(--gold-soft); }
+.srd-abil span { font: 600 17px/1.2 var(--serif); color: var(--vellum); }
+.srd-abil small { font-size: 10.5px; color: var(--dim); text-align: center; }
+.srd-part { border-bottom: 1px solid rgba(200, 155, 74, .4); padding-bottom: 2px; color: var(--gold-soft) !important; }
+.srd-intro { font-size: 13.5px !important; color: var(--dim) !important; }
+.srd-act { margin: 6px 0; }
+.srd-act > p:first-of-type { display: inline; }
+.srd-act b i { color: var(--vellum); }
+.srd-en { margin-top: 10px; font-size: 12px !important; color: var(--dim) !important; }
+.srd-jump { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 4px; }
+.srd-jump button { border: 1px solid var(--edge); background: var(--stone-2); color: var(--vellum); border-radius: 99px; padding: 3px 10px; font-size: 12.5px; cursor: pointer; }
+.srd-jump button:hover { border-color: rgba(200, 155, 74, .5); }
+.srd-cond h4 { display: flex; align-items: center; gap: 8px; }
+.srd-cond-ico { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--tone); color: #fff; }
+@media (max-width: 600px) {
+  .srd-abil { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .srd-meta { grid-template-columns: minmax(0, 34%) 1fr; gap: 3px 8px; font-size: 13px; }
+}
 .man-conds { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; font-size: 14px; }
 .man-conds dt { font-weight: 600; color: var(--vellum); }
 .man-conds dd { margin: 0; color: #cfc6b4; }
@@ -1520,6 +1575,8 @@ ul.plain b { color: var(--vellum); }
   .man-nav { border-right: 0; border-bottom: 1px solid var(--edge); }
   .man-nav nav { display: flex; overflow-x: auto; }
   .man-nav nav button { white-space: nowrap; }
+  .man-group { white-space: nowrap; align-self: center; margin: 0 2px 0 6px; }
+  .man-group:empty { display: none; }
   .man-conds { grid-template-columns: 1fr; }
 }
 /* Hijos flexibles que no deben ensanchar la ventana */

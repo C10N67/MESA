@@ -1,0 +1,529 @@
+[
+ {
+  "id": "white-dragon-wyrmling",
+  "name": "Cría de dragón blanco",
+  "languages": "Dracónico",
+  "traits": [
+   {
+    "name": "Caminar sobre el hielo",
+    "desc": "El dragón puede desplazarse por superficies heladas y trepar por ellas sin necesidad de hacer una prueba de característica. Además, el terreno difícil compuesto de hielo o nieve no le cuesta movimiento adicional."
+   }
+  ],
+  "actions": [
+   {
+    "key": "white-dragon-wyrmling_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace dos ataques de Desgarrar."
+   },
+   {
+    "key": "white-dragon-wyrmling_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 6 (1d8 + 2) de daño cortante más 2 (1d4) de daño de frío."
+   },
+   {
+    "key": "white-dragon-wyrmling_cold-breath",
+    "name": "Aliento de frío",
+    "desc": "Tirada de salvación de Constitución: CD 12, cada criatura en un cono de 15 pies. Fallo: 22 (5d8) de daño de frío. Éxito: mitad de daño."
+   }
+  ]
+ },
+ {
+  "id": "wight",
+  "name": "Tumulario",
+  "languages": "Común y otro idioma",
+  "traits": [
+   {
+    "name": "Sensibilidad a la luz solar",
+    "desc": "Mientras está bajo la luz del sol, el tumulario tiene desventaja en las pruebas de característica y en las tiradas de ataque."
+   }
+  ],
+  "actions": [
+   {
+    "key": "wight_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El tumulario hace dos ataques, usando Espada necrótica o Arco necrótico en cualquier combinación. Puede sustituir un ataque por un uso de Drenar vida."
+   },
+   {
+    "key": "wight_necrotic-sword",
+    "name": "Espada necrótica",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 6 (1d8 + 2) de daño cortante más 4 (1d8) de daño necrótico."
+   },
+   {
+    "key": "wight_necrotic-bow",
+    "name": "Arco necrótico",
+    "desc": "Tirada de ataque a distancia: +4, alcance 150/600 pies. 6 (1d8 + 2) de daño perforante más 4 (1d8) de daño necrótico."
+   },
+   {
+    "key": "wight_life-drain",
+    "name": "Drenar vida",
+    "desc": "Tirada de salvación de Constitución: CD 13, una criatura a 5 pies o menos. Fallo: 6 (1d8 + 2) de daño necrótico, y los puntos de golpe máximos del objetivo se reducen en una cantidad igual al daño recibido. Un humanoide al que mate este ataque se alza 24 horas después como un Zombi bajo el control del tumulario, a menos que el humanoide vuelva a la vida o su cuerpo sea destruido. El tumulario no puede tener más de doce zombis bajo su control a la vez."
+   }
+  ]
+ },
+ {
+  "id": "will-o-wisp",
+  "name": "Fuego fatuo",
+  "languages": "Común y otro idioma",
+  "traits": [
+   {
+    "name": "Efímero",
+    "desc": "El fuego fatuo no puede llevar puesto ni transportar nada."
+   },
+   {
+    "name": "Iluminación",
+    "desc": "El fuego fatuo emite luz brillante en un radio de 20 pies y luz tenue en 20 pies adicionales."
+   },
+   {
+    "name": "Movimiento incorpóreo",
+    "desc": "El fuego fatuo puede atravesar otras criaturas y objetos como si fueran terreno difícil. Recibe 5 (1d10) de daño de fuerza si termina su turno dentro de un objeto."
+   }
+  ],
+  "actions": [
+   {
+    "key": "will-o-wisp_shock",
+    "name": "Descarga",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 11 (2d8 + 2) de daño de relámpago."
+   },
+   {
+    "key": "will-o-wisp_consume-life",
+    "name": "Consumir vida",
+    "desc": "Tirada de salvación de Constitución: CD 10, una criatura viva que el fuego fatuo pueda ver a 5 pies o menos y que tenga 0 puntos de golpe. Fallo: el objetivo muere y el fuego fatuo recupera 10 (3d6) puntos de golpe."
+   },
+   {
+    "key": "will-o-wisp_vanish",
+    "name": "Desvanecerse",
+    "desc": "El fuego fatuo y su luz tienen el estado Invisible hasta que termine la concentración del fuego fatuo en este efecto, que termina antes de tiempo inmediatamente después de que el fuego fatuo haga una tirada de ataque o use Consumir vida."
+   }
+  ]
+ },
+ {
+  "id": "winter-wolf",
+  "name": "Lobo invernal",
+  "languages": "Común, gigante",
+  "traits": [
+   {
+    "name": "Tácticas de manada",
+    "desc": "El lobo tiene ventaja en una tirada de ataque contra una criatura si al menos uno de los aliados del lobo está a 5 pies o menos de la criatura y el aliado no tiene el estado Incapacitado."
+   }
+  ],
+  "actions": [
+   {
+    "key": "winter-wolf_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 11 (2d6 + 4) de daño perforante. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Derribado."
+   },
+   {
+    "key": "winter-wolf_cold-breath",
+    "name": "Aliento de frío",
+    "desc": "Tirada de salvación de Constitución: CD 12, cada criatura en un cono de 15 pies. Fallo: 18 (4d8) de daño de frío. Éxito: mitad de daño."
+   }
+  ]
+ },
+ {
+  "id": "wolf",
+  "name": "Lobo",
+  "traits": [
+   {
+    "name": "Tácticas de manada",
+    "desc": "El lobo tiene ventaja en las tiradas de ataque contra una criatura si al menos uno de los aliados del lobo está a 5 pies o menos de la criatura y el aliado no tiene el estado Incapacitado."
+   }
+  ],
+  "actions": [
+   {
+    "key": "wolf_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño perforante. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "worg",
+  "name": "Huargo",
+  "languages": "Goblin, huargo",
+  "actions": [
+   {
+    "key": "worg_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 7 (1d8 + 3) de daño perforante, y la siguiente tirada de ataque que se haga contra el objetivo antes del inicio del siguiente turno del huargo tiene ventaja."
+   }
+  ]
+ },
+ {
+  "id": "wraith",
+  "name": "Espectro",
+  "languages": "Común y otros dos idiomas",
+  "traits": [
+   {
+    "name": "Movimiento incorpóreo",
+    "desc": "El espectro puede atravesar otras criaturas y objetos como si fueran terreno difícil. Recibe 5 (1d10) de daño de fuerza si termina su turno dentro de un objeto."
+   },
+   {
+    "name": "Sensibilidad a la luz solar",
+    "desc": "Mientras está bajo la luz del sol, el espectro tiene desventaja en las pruebas de característica y en las tiradas de ataque."
+   }
+  ],
+  "actions": [
+   {
+    "key": "wraith_life-drain",
+    "name": "Drenar vida",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 21 (4d8 + 3) de daño necrótico. Si el objetivo es una criatura, sus puntos de golpe máximos se reducen en una cantidad igual al daño recibido."
+   },
+   {
+    "key": "wraith_create-specter",
+    "name": "Crear aparición",
+    "desc": "El espectro elige como objetivo un cadáver de humanoide a 10 pies o menos de sí mismo que no lleve muerto más de 1 minuto. El espíritu del objetivo se alza como una Aparición en el espacio de su cadáver o en el espacio desocupado más cercano. La aparición está bajo el control del espectro. El espectro no puede tener más de siete apariciones bajo su control a la vez."
+   }
+  ]
+ },
+ {
+  "id": "wyvern",
+  "name": "Guiverno",
+  "actions": [
+   {
+    "key": "wyvern_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El guiverno hace un ataque de Mordisco y un ataque de Aguijón."
+   },
+   {
+    "key": "wyvern_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 13 (2d8 + 4) de daño perforante."
+   },
+   {
+    "key": "wyvern_sting",
+    "name": "Aguijón",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. 11 (2d6 + 4) de daño perforante más 24 (7d6) de daño de veneno, y el objetivo tiene el estado Envenenado hasta el inicio del siguiente turno del guiverno."
+   }
+  ]
+ },
+ {
+  "id": "xorn",
+  "name": "Xorn",
+  "languages": "Primordial (terrano)",
+  "traits": [
+   {
+    "name": "Deslizarse por la tierra",
+    "desc": "El xorn puede excavar a través de tierra y piedra no mágicas y sin trabajar. Mientras lo hace, el xorn no altera el material por el que se desplaza."
+   },
+   {
+    "name": "Sentir tesoros",
+    "desc": "El xorn puede determinar con precisión la ubicación de metales y piedras preciosos a 60 pies o menos de sí mismo."
+   }
+  ],
+  "actions": [
+   {
+    "key": "xorn_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El xorn hace un ataque de Mordisco y tres ataques de Garra."
+   },
+   {
+    "key": "xorn_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 17 (4d6 + 3) de daño perforante."
+   },
+   {
+    "key": "xorn_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 8 (1d10 + 3) de daño cortante."
+   },
+   {
+    "key": "xorn_charge",
+    "name": "Carga",
+    "desc": "El xorn se mueve hasta su velocidad o su velocidad de excavar en línea recta hacia un enemigo que pueda percibir."
+   }
+  ]
+ },
+ {
+  "id": "young-black-dragon",
+  "name": "Dragón negro joven",
+  "languages": "Común, dracónico",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "El dragón puede respirar aire y agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "young-black-dragon_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace tres ataques de Desgarrar."
+   },
+   {
+    "key": "young-black-dragon_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. 9 (2d4 + 4) de daño cortante más 3 (1d6) de daño de ácido."
+   },
+   {
+    "key": "young-black-dragon_acid-breath",
+    "name": "Aliento de ácido",
+    "desc": "Tirada de salvación de Destreza: CD 14, cada criatura en una línea de 30 pies de largo y 5 pies de ancho. Fallo: 49 (14d6) de daño de ácido. Éxito: mitad de daño."
+   }
+  ]
+ },
+ {
+  "id": "young-blue-dragon",
+  "name": "Dragón azul joven",
+  "languages": "Común, dracónico",
+  "actions": [
+   {
+    "key": "young-blue-dragon_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace tres ataques de Desgarrar."
+   },
+   {
+    "key": "young-blue-dragon_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +9, alcance 10 pies. 12 (2d6 + 5) de daño cortante más 5 (1d10) de daño de relámpago."
+   },
+   {
+    "key": "young-blue-dragon_lightning-breath",
+    "name": "Aliento de relámpago",
+    "desc": "Tirada de salvación de Destreza: CD 16, cada criatura en una línea de 60 pies de largo y 5 pies de ancho. Fallo: 55 (10d10) de daño de relámpago. Éxito: mitad de daño."
+   }
+  ]
+ },
+ {
+  "id": "young-brass-dragon",
+  "name": "Dragón de latón joven",
+  "languages": "Común, dracónico",
+  "actions": [
+   {
+    "key": "young-brass-dragon_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace tres ataques de Desgarrar. Puede sustituir dos ataques por un uso de Aliento de sueño."
+   },
+   {
+    "key": "young-brass-dragon_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. 15 (2d10 + 4) de daño cortante."
+   },
+   {
+    "key": "young-brass-dragon_fire-breath",
+    "name": "Aliento de fuego",
+    "desc": "Tirada de salvación de Destreza: CD 14, cada criatura en una línea de 40 pies de largo y 5 pies de ancho. Fallo: 38 (11d6) de daño de fuego. Éxito: mitad de daño."
+   },
+   {
+    "key": "young-brass-dragon_sleep-breath",
+    "name": "Aliento de sueño",
+    "desc": "Tirada de salvación de Constitución: CD 14, cada criatura en un cono de 30 pies. Fallo: el objetivo tiene el estado Incapacitado hasta el final de su siguiente turno, momento en el que repite la tirada de salvación. Segundo fallo: el objetivo tiene el estado Inconsciente durante 1 minuto. Este efecto termina para el objetivo si recibe daño o si una criatura a 5 pies o menos de él usa una acción para despertarlo."
+   }
+  ]
+ },
+ {
+  "id": "young-bronze-dragon",
+  "name": "Dragón de bronce joven",
+  "languages": "Común, dracónico",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "El dragón puede respirar aire y agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "young-bronze-dragon_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace tres ataques de Desgarrar. Puede sustituir un ataque por un uso de Aliento de repulsión."
+   },
+   {
+    "key": "young-bronze-dragon_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +8, alcance 10 pies. 16 (2d10 + 5) de daño cortante."
+   },
+   {
+    "key": "young-bronze-dragon_lightning-breath",
+    "name": "Aliento de relámpago",
+    "desc": "Tirada de salvación de Destreza: CD 15, cada criatura en una línea de 60 pies de largo y 5 pies de ancho. Fallo: 49 (9d10) de daño de relámpago. Éxito: mitad de daño."
+   },
+   {
+    "key": "young-bronze-dragon_repulsion-breath",
+    "name": "Aliento de repulsión",
+    "desc": "Tirada de salvación de Fuerza: CD 15, cada criatura en un cono de 30 pies. Fallo: el objetivo es empujado hasta 40 pies en línea recta alejándose del dragón y tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "young-copper-dragon",
+  "name": "Dragón de cobre joven",
+  "languages": "Común, dracónico",
+  "actions": [
+   {
+    "key": "young-copper-dragon_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace tres ataques de Desgarrar. Puede sustituir un ataque por un uso de Aliento ralentizador."
+   },
+   {
+    "key": "young-copper-dragon_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. 15 (2d10 + 4) de daño cortante."
+   },
+   {
+    "key": "young-copper-dragon_acid-breath",
+    "name": "Aliento de ácido",
+    "desc": "Tirada de salvación de Destreza: CD 14, cada criatura en una línea de 40 pies de largo y 5 pies de ancho. Fallo: 40 (9d8) de daño de ácido. Éxito: mitad de daño."
+   },
+   {
+    "key": "young-copper-dragon_slowing-breath",
+    "name": "Aliento ralentizador",
+    "desc": "Tirada de salvación de Constitución: CD 14, cada criatura en un cono de 30 pies. Fallo: el objetivo no puede llevar a cabo reacciones; su velocidad se reduce a la mitad, y puede llevar a cabo una acción o una acción adicional en su turno, pero no ambas. Este efecto dura hasta el final de su siguiente turno."
+   }
+  ]
+ },
+ {
+  "id": "young-gold-dragon",
+  "name": "Dragón de oro joven",
+  "languages": "Común, dracónico",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "El dragón puede respirar aire y agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "young-gold-dragon_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace tres ataques de Desgarrar. Puede sustituir un ataque por un uso de Aliento debilitador."
+   },
+   {
+    "key": "young-gold-dragon_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +10, alcance 10 pies. 17 (2d10 + 6) de daño cortante."
+   },
+   {
+    "key": "young-gold-dragon_fire-breath",
+    "name": "Aliento de fuego",
+    "desc": "Tirada de salvación de Destreza: CD 17, cada criatura en un cono de 30 pies. Fallo: 55 (10d10) de daño de fuego. Éxito: mitad de daño."
+   },
+   {
+    "key": "young-gold-dragon_weakening-breath",
+    "name": "Aliento debilitador",
+    "desc": "Tirada de salvación de Fuerza: CD 17, cada criatura en un cono de 30 pies que no esté afectada en ese momento por este aliento. Fallo: el objetivo tiene desventaja en las pruebas de d20 basadas en la Fuerza y resta 3 (1d6) a sus tiradas de daño. Repite la tirada de salvación al final de cada uno de sus turnos y, si tiene éxito, el efecto termina para él. Pasado 1 minuto, tiene éxito automáticamente."
+   }
+  ]
+ },
+ {
+  "id": "young-green-dragon",
+  "name": "Dragón verde joven",
+  "languages": "Común, dracónico",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "El dragón puede respirar aire y agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "young-green-dragon_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace tres ataques de Desgarrar."
+   },
+   {
+    "key": "young-green-dragon_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. 11 (2d6 + 4) de daño cortante más 7 (2d6) de daño de veneno."
+   },
+   {
+    "key": "young-green-dragon_poison-breath",
+    "name": "Aliento venenoso",
+    "desc": "Tirada de salvación de Constitución: CD 14, cada criatura en un cono de 30 pies. Fallo: 42 (12d6) de daño de veneno. Éxito: mitad de daño."
+   }
+  ]
+ },
+ {
+  "id": "young-red-dragon",
+  "name": "Dragón rojo joven",
+  "languages": "Común, dracónico",
+  "actions": [
+   {
+    "key": "young-red-dragon_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace tres ataques de Desgarrar."
+   },
+   {
+    "key": "young-red-dragon_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +10, alcance 10 pies. 13 (2d6 + 6) de daño cortante más 3 (1d6) de daño de fuego."
+   },
+   {
+    "key": "young-red-dragon_fire-breath",
+    "name": "Aliento de fuego",
+    "desc": "Tirada de salvación de Destreza: CD 17, cada criatura en un cono de 30 pies. Fallo: 56 (16d6) de daño de fuego. Éxito: mitad de daño."
+   }
+  ]
+ },
+ {
+  "id": "young-silver-dragon",
+  "name": "Dragón de plata joven",
+  "languages": "Común, dracónico",
+  "actions": [
+   {
+    "key": "young-silver-dragon_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace tres ataques de Desgarrar. Puede sustituir un ataque por un uso de Aliento paralizante."
+   },
+   {
+    "key": "young-silver-dragon_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +10, alcance 10 pies. 15 (2d8 + 6) de daño cortante."
+   },
+   {
+    "key": "young-silver-dragon_cold-breath",
+    "name": "Aliento de frío",
+    "desc": "Tirada de salvación de Constitución: CD 17, cada criatura en un cono de 30 pies. Fallo: 49 (11d8) de daño de frío. Éxito: mitad de daño."
+   },
+   {
+    "key": "young-silver-dragon_paralyzing-breath",
+    "name": "Aliento paralizante",
+    "desc": "Tirada de salvación de Constitución: CD 17, cada criatura en un cono de 30 pies. Primer fallo: el objetivo tiene el estado Incapacitado hasta el final de su siguiente turno, cuando repite la tirada de salvación. Segundo fallo: el objetivo tiene el estado Paralizado y repite la tirada de salvación al final de cada uno de sus turnos; si tiene éxito, el efecto termina para él. Pasado 1 minuto, tiene éxito automáticamente."
+   }
+  ]
+ },
+ {
+  "id": "young-white-dragon",
+  "name": "Dragón blanco joven",
+  "languages": "Común, dracónico",
+  "traits": [
+   {
+    "name": "Caminar sobre el hielo",
+    "desc": "El dragón puede desplazarse por superficies heladas y trepar por ellas sin necesidad de hacer una prueba de característica. Además, el terreno difícil compuesto de hielo o nieve no le cuesta movimiento adicional."
+   }
+  ],
+  "actions": [
+   {
+    "key": "young-white-dragon_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace tres ataques de Desgarrar."
+   },
+   {
+    "key": "young-white-dragon_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. 9 (2d4 + 4) de daño cortante más 2 (1d4) de daño de frío."
+   },
+   {
+    "key": "young-white-dragon_cold-breath",
+    "name": "Aliento de frío",
+    "desc": "Tirada de salvación de Constitución: CD 15, cada criatura en un cono de 30 pies. Fallo: 40 (9d8) de daño de frío. Éxito: mitad de daño."
+   }
+  ]
+ },
+ {
+  "id": "zombie",
+  "name": "Zombi",
+  "languages": "Entiende el común y otro idioma pero no los habla",
+  "traits": [
+   {
+    "name": "Fortaleza de muerto viviente",
+    "desc": "Si el daño reduce al zombi a 0 puntos de golpe, este hace una tirada de salvación de Constitución (CD 5 más el daño recibido), a menos que el daño sea radiante o provenga de un impacto crítico. Si supera la tirada de salvación, el zombi se queda con 1 punto de golpe en su lugar."
+   }
+  ],
+  "actions": [
+   {
+    "key": "zombie_slam",
+    "name": "Golpe",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 5 (1d8 + 1) de daño contundente."
+   }
+  ]
+ }
+]

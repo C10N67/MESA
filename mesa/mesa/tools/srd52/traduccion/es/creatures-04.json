@@ -1,0 +1,1242 @@
+[
+  {
+    "id": "invisible-stalker",
+    "name": "Acechador invisible",
+    "languages": "Común, primordial (aurano)",
+    "traits": [
+      {
+        "name": "Forma de aire",
+        "desc": "El acechador puede entrar en el espacio de un enemigo y detenerse allí. Puede moverse a través de un espacio de solo 1 pulgada de ancho sin gastar movimiento adicional para hacerlo."
+      },
+      {
+        "name": "Invisibilidad",
+        "desc": "El acechador tiene el estado Invisible."
+      }
+    ],
+    "actions": [
+      {
+        "key": "invisible-stalker_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El acechador hace tres ataques de Zarpazo de viento. Puede sustituir un ataque por un uso de Vórtice."
+      },
+      {
+        "key": "invisible-stalker_wind-swipe",
+        "name": "Zarpazo de viento",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 11 (2d6 + 4) de daño de fuerza."
+      },
+      {
+        "key": "invisible-stalker_vortex",
+        "name": "Vórtice",
+        "desc": "Tirada de salvación de Constitución: CD 14, una criatura Grande o más pequeña en el espacio del acechador. Fallo: 7 (1d8 + 3) de daño de trueno, y el objetivo tiene el estado Agarrado (CD 13 para escapar). Hasta que termine el agarre, el objetivo no puede lanzar conjuros con componente verbal y recibe 7 (2d6) de daño de trueno al comienzo de cada uno de los turnos del acechador."
+      }
+    ]
+  },
+  {
+    "id": "iron-golem",
+    "name": "Gólem de hierro",
+    "languages": "Entiende el común y otros dos idiomas pero no los habla",
+    "traits": [
+      {
+        "name": "Absorción de fuego",
+        "desc": "Siempre que el gólem sufre daño de fuego, recupera una cantidad de puntos de golpe igual al daño de fuego infligido."
+      },
+      {
+        "name": "Forma inmutable",
+        "desc": "El gólem no puede cambiar de forma."
+      },
+      {
+        "name": "Resistencia mágica",
+        "desc": "El gólem tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+      }
+    ],
+    "actions": [
+      {
+        "key": "iron-golem_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El gólem hace dos ataques, usando Brazo con cuchillas o Descarga ígnea en cualquier combinación."
+      },
+      {
+        "key": "iron-golem_bladed-arm",
+        "name": "Brazo con cuchillas",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +12, alcance 10 pies. 20 (3d8 + 7) de daño cortante más 10 (3d6) de daño de fuego."
+      },
+      {
+        "key": "iron-golem_fiery-bolt",
+        "name": "Descarga ígnea",
+        "desc": "Tirada de ataque a distancia: +10, alcance 120 pies. 36 (8d8) de daño de fuego."
+      },
+      {
+        "key": "iron-golem_poison-breath",
+        "name": "Aliento venenoso",
+        "desc": "Tirada de salvación de Constitución: CD 18, cada criatura en un cono de 60 pies. Fallo: 55 (10d10) de daño de veneno. Éxito: mitad de daño."
+      }
+    ]
+  },
+  {
+    "id": "jackal",
+    "name": "Chacal",
+    "actions": [
+      {
+        "key": "jackal_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +1, alcance 5 pies. 1 (1d4 - 1) de daño perforante."
+      }
+    ]
+  },
+  {
+    "id": "killer-whale",
+    "name": "Orca",
+    "traits": [
+      {
+        "name": "Contener la respiración",
+        "desc": "La orca puede contener la respiración durante 30 minutos."
+      }
+    ],
+    "actions": [
+      {
+        "key": "killer-whale_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 21 (5d6 + 4) de daño perforante."
+      }
+    ]
+  },
+  {
+    "id": "knight",
+    "name": "Caballero",
+    "languages": "Común y otro idioma",
+    "actions": [
+      {
+        "key": "knight_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El caballero hace dos ataques, usando Espadón o Ballesta pesada en cualquier combinación."
+      },
+      {
+        "key": "knight_greatsword",
+        "name": "Espadón",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 10 (2d6 + 3) de daño cortante más 4 (1d8) de daño radiante."
+      },
+      {
+        "key": "knight_heavy-crossbow",
+        "name": "Ballesta pesada",
+        "desc": "Tirada de ataque a distancia: +2, alcance 100/400 pies. 11 (2d10) de daño perforante más 4 (1d8) de daño radiante."
+      },
+      {
+        "key": "knight_parry",
+        "name": "Parada",
+        "desc": "_Desencadenante:_ El caballero recibe un impacto de una tirada de ataque cuerpo a cuerpo mientras empuña un arma. _Respuesta:_ El caballero suma 2 a su CA contra ese ataque, lo que puede hacer que falle."
+      }
+    ]
+  },
+  {
+    "id": "kobold-warrior",
+    "name": "Guerrero kobold",
+    "languages": "Común, dracónico",
+    "traits": [
+      {
+        "name": "Tácticas de manada",
+        "desc": "El kobold tiene ventaja en una tirada de ataque contra una criatura si al menos uno de los aliados del kobold está a 5 pies o menos de la criatura y el aliado no tiene el estado Incapacitado."
+      },
+      {
+        "name": "Sensibilidad a la luz solar",
+        "desc": "Mientras está bajo la luz del sol, el kobold tiene desventaja en las pruebas de característica y en las tiradas de ataque."
+      }
+    ],
+    "actions": [
+      {
+        "key": "kobold-warrior_dagger",
+        "name": "Daga",
+        "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +4, alcance 5 pies o alcance 20/60 pies. 4 (1d4 + 2) de daño perforante."
+      }
+    ]
+  },
+  {
+    "id": "kraken",
+    "name": "Kraken",
+    "languages": "Entiende el abisal, el celestial, el infernal y el primordial pero no los habla; telepatía 120 pies",
+    "traits": [
+      {
+        "name": "Anfibio",
+        "desc": "El kraken puede respirar aire y agua."
+      },
+      {
+        "name": "Resistencia legendaria (4/día, o 5/día en la guarida)",
+        "desc": "Si el kraken falla una tirada de salvación, puede elegir tener éxito en su lugar."
+      },
+      {
+        "name": "Monstruo de asedio",
+        "desc": "El kraken inflige el doble de daño a objetos y estructuras."
+      }
+    ],
+    "actions": [
+      {
+        "key": "kraken_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El kraken hace dos ataques de Tentáculo y usa Lanzar, Golpe de relámpago o Tragar."
+      },
+      {
+        "key": "kraken_tentacle",
+        "name": "Tentáculo",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +17, alcance 30 pies. 24 (4d6 + 10) de daño contundente. El objetivo tiene el estado Agarrado (CD 20 para escapar) por uno de sus diez tentáculos, y tiene el estado Apresado hasta que termine el agarre."
+      },
+      {
+        "key": "kraken_fling",
+        "name": "Lanzar",
+        "desc": "El kraken arroja a una criatura Grande o más pequeña que tenga Agarrada a un espacio que pueda ver a 60 pies o menos de sí mismo y que no esté en el aire. Tirada de salvación de Destreza: CD 25, la criatura arrojada y cada criatura en el espacio de destino. Fallo: 18 (4d8) de daño contundente, y el objetivo tiene el estado Derribado. Éxito: solo mitad de daño."
+      },
+      {
+        "key": "kraken_lightning-strike",
+        "name": "Golpe de relámpago",
+        "desc": "Tirada de salvación de Destreza: CD 23, una criatura que el kraken pueda ver a 120 pies o menos. Fallo: 33 (6d10) de daño de relámpago. Éxito: mitad de daño."
+      },
+      {
+        "key": "kraken_swallow",
+        "name": "Tragar",
+        "desc": "Tirada de salvación de Destreza: CD 25, una criatura Agarrada por el kraken (puede tener hasta cuatro criaturas tragadas a la vez). Fallo: 23 (3d8 + 10) de daño perforante. Si el objetivo es Grande o más pequeño, es tragado y deja de estar Agarrado. Una criatura tragada tiene el estado Apresado, tiene cobertura total contra ataques y otros efectos del exterior del kraken, y recibe 24 (7d6) de daño de ácido al comienzo de cada uno de sus turnos. Si el kraken recibe 50 o más de daño en un solo turno de una criatura que esté en su interior, el kraken debe superar una tirada de salvación de Constitución CD 25 al final de ese turno o regurgitar a todas las criaturas tragadas, que caen cada una en un espacio a 10 pies o menos del kraken con el estado Derribado. Si el kraken muere, las criaturas tragadas dejan de tener el estado Apresado y pueden escapar del cadáver usando 15 pies de movimiento, saliendo Derribadas."
+      },
+      {
+        "key": "kraken_storm-bolt",
+        "name": "Descarga de tormenta",
+        "desc": "El kraken usa Golpe de relámpago."
+      },
+      {
+        "key": "kraken_toxic-ink",
+        "name": "Tinta tóxica",
+        "desc": "Tirada de salvación de Constitución: CD 23, cada criatura en una emanación de 15 pies que se origina en el kraken mientras está bajo el agua. Fallo: El objetivo tiene los estados Cegado y Envenenado hasta el final del siguiente turno del kraken. A continuación, el kraken se mueve hasta su velocidad. Fallo o éxito: El kraken no puede volver a realizar esta acción hasta el comienzo de su siguiente turno."
+      }
+    ]
+  },
+  {
+    "id": "lamia",
+    "name": "Lamia",
+    "languages": "Abisal, común",
+    "actions": [
+      {
+        "key": "lamia_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "La lamia hace dos ataques de Garra. Puede sustituir un ataque por un uso de Toque corruptor."
+      },
+      {
+        "key": "lamia_claw",
+        "name": "Garra",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 7 (1d8 + 3) de daño cortante más 7 (2d6) de daño psíquico."
+      },
+      {
+        "key": "lamia_corrupting-touch",
+        "name": "Toque corruptor",
+        "desc": "Tirada de salvación de Sabiduría: CD 13, una criatura que la lamia pueda ver a 5 pies o menos. Fallo: 13 (3d8) de daño psíquico, y el objetivo queda maldito durante 1 hora. Hasta que termine la maldición, el objetivo tiene los estados Encantado y Envenenado."
+      },
+      {
+        "key": "lamia_spellcasting",
+        "name": "Lanzamiento de conjuros",
+        "desc": "La lamia lanza uno de los siguientes conjuros, sin necesitar componentes materiales y usando Carisma como aptitud mágica (CD de salvación de conjuros 13):\n\n- **A voluntad:** Disfrazarse, Ilusión menor\n- **1/día cada uno:** Geas, Imagen mayor, Escudriñar"
+      },
+      {
+        "key": "lamia_leap",
+        "name": "Salto",
+        "desc": "La lamia salta hasta 30 pies gastando 10 pies de movimiento."
+      }
+    ]
+  },
+  {
+    "id": "lemure",
+    "name": "Lémur",
+    "languages": "Entiende el infernal pero no lo habla",
+    "traits": [
+      {
+        "name": "Restauración infernal",
+        "desc": "Si el lémur muere en los Nueve Infiernos, revive con todos sus puntos de golpe en 1d10 días, a menos que lo mate una criatura bajo los efectos de un conjuro de Bendecir o que sus restos sean rociados con agua bendita."
+      }
+    ],
+    "actions": [
+      {
+        "key": "lemure_vile-slime",
+        "name": "Limo vil",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +2, alcance 5 pies. 2 (1d4) de daño de veneno."
+      }
+    ]
+  },
+  {
+    "id": "lich",
+    "name": "Liche",
+    "languages": "Todos",
+    "traits": [
+      {
+        "name": "Resistencia legendaria (4/día, o 5/día en la guarida)",
+        "desc": "Si el liche falla una tirada de salvación, puede elegir tener éxito en su lugar."
+      },
+      {
+        "name": "Filacteria",
+        "desc": "Si es destruido, el liche se vuelve a formar en 1d10 días si tiene una filacteria, reviviendo con todos sus puntos de golpe. El nuevo cuerpo aparece en un espacio desocupado dentro de la guarida del liche."
+      }
+    ],
+    "actions": [
+      {
+        "key": "lich_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El liche hace tres ataques, usando Estallido sobrenatural o Toque paralizante en cualquier combinación."
+      },
+      {
+        "key": "lich_eldritch-burst",
+        "name": "Estallido sobrenatural",
+        "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +12, alcance 5 pies o alcance 120 pies. 31 (4d12 + 5) de daño de fuerza."
+      },
+      {
+        "key": "lich_paralyzing-touch",
+        "name": "Toque paralizante",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +12, alcance 5 pies. 15 (3d6 + 5) de daño de frío, y el objetivo tiene el estado Paralizado hasta el comienzo del siguiente turno del liche."
+      },
+      {
+        "key": "lich_spellcasting",
+        "name": "Lanzamiento de conjuros",
+        "desc": "El liche lanza uno de los siguientes conjuros, usando Inteligencia como aptitud mágica (CD de salvación de conjuros 20):\n\n- **A voluntad:** Detectar magia, Detectar pensamientos, Disipar magia, Bola de fuego, Invisibilidad, Relámpago, Mano de mago, Prestidigitación\n- **2/día cada uno:** Animar a los muertos, Puerta dimensional, Desplazamiento entre planos\n- **1/día cada uno:** Relámpago en cadena, Dedo de la muerte, Palabra de poder: matar, Escudriñar"
+      },
+      {
+        "key": "lich_deathly-teleport",
+        "name": "Teletransporte mortífero",
+        "desc": "El liche se teletransporta hasta 60 pies a un espacio desocupado que pueda ver, y cada criatura a 10 pies o menos del espacio que ha abandonado recibe 11 (2d10) de daño necrótico."
+      },
+      {
+        "key": "lich_disrupt-life",
+        "name": "Perturbar la vida",
+        "desc": "Tirada de salvación de Constitución: CD 20, cada criatura que no sea un muerto viviente en una emanación de 20 pies que se origina en el liche. Fallo: 31 (9d6) de daño necrótico. Éxito: mitad de daño. Fallo o éxito: El liche no puede volver a realizar esta acción hasta el comienzo de su siguiente turno."
+      },
+      {
+        "key": "lich_frightening-gaze",
+        "name": "Mirada aterradora",
+        "desc": "El liche lanza Miedo, usando la misma aptitud mágica que en Lanzamiento de conjuros. El liche no puede volver a realizar esta acción hasta el comienzo de su siguiente turno."
+      },
+      {
+        "key": "lich_protective-magic",
+        "name": "Magia protectora",
+        "desc": "El liche lanza Contraconjuro o Escudo en respuesta al desencadenante del conjuro, usando la misma aptitud mágica que en Lanzamiento de conjuros."
+      }
+    ]
+  },
+  {
+    "id": "lion",
+    "name": "León",
+    "traits": [
+      {
+        "name": "Tácticas de manada",
+        "desc": "El león tiene ventaja en una tirada de ataque contra una criatura si al menos uno de los aliados del león está a 5 pies o menos de la criatura y el aliado no tiene el estado Incapacitado."
+      },
+      {
+        "name": "Salto con carrerilla",
+        "desc": "Con una carrerilla de 10 pies, el león puede hacer un salto de longitud de hasta 25 pies."
+      }
+    ],
+    "actions": [
+      {
+        "key": "lion_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El león hace dos ataques de Desgarrar. Puede sustituir un ataque por un uso de Rugido."
+      },
+      {
+        "key": "lion_rend",
+        "name": "Desgarrar",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 7 (1d8 + 3) de daño cortante."
+      },
+      {
+        "key": "lion_roar",
+        "name": "Rugido",
+        "desc": "Tirada de salvación de Sabiduría: CD 11, una criatura a 15 pies o menos. Fallo: El objetivo tiene el estado Asustado hasta el comienzo del siguiente turno del león."
+      }
+    ]
+  },
+  {
+    "id": "lizard",
+    "name": "Lagarto",
+    "traits": [
+      {
+        "name": "Trepar como una araña",
+        "desc": "El lagarto puede trepar por superficies difíciles, incluso por los techos, sin necesidad de hacer una prueba de característica."
+      }
+    ],
+    "actions": [
+      {
+        "key": "lizard_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +2, alcance 5 pies. 1 de daño perforante."
+      }
+    ]
+  },
+  {
+    "id": "mage",
+    "name": "Mago",
+    "languages": "Común y tres idiomas cualesquiera",
+    "actions": [
+      {
+        "key": "mage_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El mago hace tres ataques de Estallido arcano."
+      },
+      {
+        "key": "mage_arcane-burst",
+        "name": "Estallido arcano",
+        "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +6, alcance 5 pies o alcance 120 pies. 16 (3d8 + 3) de daño de fuerza."
+      },
+      {
+        "key": "mage_spellcasting",
+        "name": "Lanzamiento de conjuros",
+        "desc": "El mago lanza uno de los siguientes conjuros, usando Inteligencia como aptitud mágica (CD de salvación de conjuros 14):\n\n- **A voluntad:** Detectar magia, Luz, Armadura de mago, Mano de mago, Prestidigitación\n- **2/día cada uno:** Bola de fuego, Invisibilidad\n- **1/día cada uno:** Cono de frío, Volar"
+      },
+      {
+        "key": "mage_misty-step-3-day",
+        "name": "Paso brumoso",
+        "desc": "El mago lanza Paso brumoso, usando la misma aptitud mágica que en Lanzamiento de conjuros."
+      },
+      {
+        "key": "mage_protective-magic",
+        "name": "Magia protectora",
+        "desc": "El mago lanza Contraconjuro o Escudo en respuesta al desencadenante del conjuro, usando la misma aptitud mágica que en Lanzamiento de conjuros."
+      }
+    ]
+  },
+  {
+    "id": "magma-mephit",
+    "name": "Mefit de magma",
+    "languages": "Primordial (ignano, terrano)",
+    "traits": [
+      {
+        "name": "Estallido mortal",
+        "desc": "El mefit explota cuando muere. Tirada de salvación de Destreza: CD 11, cada criatura en una emanación de 5 pies que se origina en el mefit. Fallo: 7 (2d6) de daño de fuego. Éxito: mitad de daño."
+      }
+    ],
+    "actions": [
+      {
+        "key": "magma-mephit_claw",
+        "name": "Garra",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 3 (1d4 + 1) de daño cortante más 3 (1d6) de daño de fuego."
+      },
+      {
+        "key": "magma-mephit_fire-breath",
+        "name": "Aliento de fuego",
+        "desc": "Tirada de salvación de Destreza: CD 11, cada criatura en un cono de 15 pies. Fallo: 7 (2d6) de daño de fuego. Éxito: mitad de daño."
+      }
+    ]
+  },
+  {
+    "id": "magmin",
+    "name": "Magmin",
+    "languages": "Primordial (ignano)",
+    "traits": [
+      {
+        "name": "Estallido mortal",
+        "desc": "El magmin explota cuando muere. Tirada de salvación de Destreza: CD 11, cada criatura en una emanación de 10 pies que se origina en el magmin. Fallo: 7 (2d6) de daño de fuego. Éxito: mitad de daño."
+      }
+    ],
+    "actions": [
+      {
+        "key": "magmin_touch",
+        "name": "Toque",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 7 (2d4 + 2) de daño de fuego. Si el objetivo es una criatura o un objeto inflamable que nadie lleve puesto ni transporte, empieza a arder."
+      },
+      {
+        "key": "magmin_ignited-illumination",
+        "name": "Iluminación ígnea",
+        "desc": "El magmin se prende fuego o extingue sus llamas. Mientras está en llamas, el magmin emite luz brillante en un radio de 10 pies y luz tenue en 10 pies adicionales."
+      }
+    ]
+  },
+  {
+    "id": "mammoth",
+    "name": "Mamut",
+    "actions": [
+      {
+        "key": "mammoth_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El mamut hace dos ataques de Cornada."
+      },
+      {
+        "key": "mammoth_gore",
+        "name": "Cornada",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +10, alcance 10 pies. 18 (2d10 + 7) de daño perforante. Si el objetivo es una criatura Enorme o más pequeña y el mamut se ha movido 20 pies o más en línea recta hacia ella inmediatamente antes del impacto, el objetivo tiene el estado Derribado."
+      },
+      {
+        "key": "mammoth_trample",
+        "name": "Pisotear",
+        "desc": "Tirada de salvación de Destreza: CD 18, una criatura a 5 pies o menos que tenga el estado Derribado. Fallo: 29 (4d10 + 7) de daño contundente. Éxito: mitad de daño."
+      }
+    ]
+  },
+  {
+    "id": "manticore",
+    "name": "Mantícora",
+    "languages": "Común",
+    "actions": [
+      {
+        "key": "manticore_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "La mantícora hace tres ataques, usando Desgarrar o Púa de la cola en cualquier combinación."
+      },
+      {
+        "key": "manticore_rend",
+        "name": "Desgarrar",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 7 (1d8 + 3) de daño cortante."
+      },
+      {
+        "key": "manticore_tail-spike",
+        "name": "Púa de la cola",
+        "desc": "Tirada de ataque a distancia: +5, alcance 100/200 pies. 7 (1d8 + 3) de daño perforante."
+      }
+    ]
+  },
+  {
+    "id": "marilith",
+    "name": "Marilith",
+    "languages": "Abisal; telepatía 120 pies",
+    "traits": [
+      {
+        "name": "Restauración demoníaca",
+        "desc": "Si la marilith muere fuera del Abismo, su cuerpo se disuelve en icor y obtiene un nuevo cuerpo al instante, reviviendo con todos sus puntos de golpe en algún lugar del Abismo."
+      },
+      {
+        "name": "Resistencia mágica",
+        "desc": "La marilith tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+      },
+      {
+        "name": "Reactiva",
+        "desc": "La marilith puede realizar una reacción en cada turno de combate."
+      }
+    ],
+    "actions": [
+      {
+        "key": "marilith_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "La marilith hace seis ataques de Hoja del pacto y usa Constreñir."
+      },
+      {
+        "key": "marilith_pact-blade",
+        "name": "Hoja del pacto",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +10, alcance 5 pies. 10 (1d10 + 5) de daño cortante más 7 (2d6) de daño necrótico."
+      },
+      {
+        "key": "marilith_constrict",
+        "name": "Constreñir",
+        "desc": "Tirada de salvación de Fuerza: CD 17, una criatura Mediana o más pequeña que la marilith pueda ver a 5 pies o menos. Fallo: 15 (2d10 + 4) de daño contundente. El objetivo tiene el estado Agarrado (CD 14 para escapar), y tiene el estado Apresado hasta que termine el agarre."
+      },
+      {
+        "key": "marilith_teleport-recharge-5-6",
+        "name": "Teletransporte",
+        "desc": "La marilith se teletransporta hasta 120 pies a un espacio desocupado que pueda ver."
+      },
+      {
+        "key": "marilith_parry",
+        "name": "Parada",
+        "desc": "_Desencadenante:_ La marilith recibe un impacto de una tirada de ataque cuerpo a cuerpo mientras empuña un arma. _Respuesta:_ La marilith suma 5 a su CA contra ese ataque, lo que puede hacer que falle."
+      }
+    ]
+  },
+  {
+    "id": "mastiff",
+    "name": "Mastín",
+    "actions": [
+      {
+        "key": "mastiff_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 4 (1d6 + 1) de daño perforante. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Derribado."
+      }
+    ]
+  },
+  {
+    "id": "medusa",
+    "name": "Medusa",
+    "languages": "Común y otro idioma",
+    "actions": [
+      {
+        "key": "medusa_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "La medusa hace dos ataques de Garra y un ataque de Cabellera de serpientes, o hace tres ataques de Rayo venenoso."
+      },
+      {
+        "key": "medusa_claw",
+        "name": "Garra",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 10 (2d6 + 3) de daño cortante."
+      },
+      {
+        "key": "medusa_snake-hair",
+        "name": "Cabellera de serpientes",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 5 (1d4 + 3) de daño perforante más 14 (4d6) de daño de veneno."
+      },
+      {
+        "key": "medusa_poison-ray",
+        "name": "Rayo venenoso",
+        "desc": "Tirada de ataque a distancia: +5, alcance 150 pies. 11 (2d8 + 2) de daño de veneno."
+      },
+      {
+        "key": "medusa_petrifying-gaze-recharge-5-6",
+        "name": "Mirada petrificadora",
+        "desc": "Tirada de salvación de Constitución: CD 13, cada criatura en un cono de 30 pies. Si la medusa ve su reflejo en el cono, la medusa debe hacer esta tirada de salvación. Primer fallo: El objetivo tiene el estado Apresado y repite la tirada de salvación al final de su siguiente turno si sigue Apresado, poniendo fin al efecto sobre sí mismo si tiene éxito. Segundo fallo: El objetivo tiene el estado Petrificado en lugar del estado Apresado."
+      }
+    ]
+  },
+  {
+    "id": "merfolk-skirmisher",
+    "name": "Hostigador sirénido",
+    "languages": "Común, primordial (acuano)",
+    "traits": [
+      {
+        "name": "Anfibio",
+        "desc": "El sirénido puede respirar aire y agua."
+      }
+    ],
+    "actions": [
+      {
+        "key": "merfolk-skirmisher_ocean-spear",
+        "name": "Lanza oceánica",
+        "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +2, alcance 5 pies o alcance 20/60 pies. 3 (1d6) de daño perforante más 2 (1d4) de daño de frío. Si el objetivo es una criatura, su velocidad se reduce en 10 pies hasta el final de su siguiente turno. Impacto o fallo: La lanza vuelve mágicamente a la mano del sirénido inmediatamente después de un ataque a distancia."
+      }
+    ]
+  },
+  {
+    "id": "merrow",
+    "name": "Merrow",
+    "languages": "Abisal, primordial (acuano)",
+    "traits": [
+      {
+        "name": "Anfibio",
+        "desc": "El merrow puede respirar aire y agua."
+      }
+    ],
+    "actions": [
+      {
+        "key": "merrow_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El merrow hace dos ataques, usando Mordisco, Garra o Arpón en cualquier combinación."
+      },
+      {
+        "key": "merrow_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 6 (1d4 + 4) de daño perforante, y el objetivo tiene el estado Envenenado hasta el final del siguiente turno del merrow."
+      },
+      {
+        "key": "merrow_claw",
+        "name": "Garra",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 9 (2d4 + 4) de daño cortante."
+      },
+      {
+        "key": "merrow_harpoon",
+        "name": "Arpón",
+        "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +6, alcance 5 pies o alcance 20/60 pies. 11 (2d6 + 4) de daño perforante. Si el objetivo es una criatura Grande o más pequeña, el merrow atrae al objetivo hasta 15 pies en línea recta hacia sí mismo."
+      }
+    ]
+  },
+  {
+    "id": "mimic",
+    "name": "Mímico",
+    "traits": [
+      {
+        "name": "Adhesivo (solo en forma de objeto)",
+        "desc": "El mímico se adhiere a todo lo que lo toca. Una criatura Enorme o más pequeña adherida al mímico tiene el estado Agarrado (CD 13 para escapar). Las pruebas de característica hechas para escapar de este agarre tienen desventaja."
+      }
+    ],
+    "actions": [
+      {
+        "key": "mimic_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +5 (con ventaja si el objetivo está Agarrado por el mímico), alcance 5 pies. 7 (1d8 + 3) de daño perforante —o 12 (2d8 + 3) de daño perforante si el objetivo está Agarrado por el mímico— más 4 (1d8) de daño de ácido."
+      },
+      {
+        "key": "mimic_pseudopod",
+        "name": "Pseudópodo",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 7 (1d8 + 3) de daño contundente más 4 (1d8) de daño de ácido. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Agarrado (CD 13 para escapar). Las pruebas de característica hechas para escapar de este agarre tienen desventaja."
+      },
+      {
+        "key": "mimic_shape-shift",
+        "name": "Cambiar de forma",
+        "desc": "El mímico cambia de forma para parecerse a un objeto Mediano o Pequeño conservando su perfil de juego, o vuelve a su verdadera forma de masa amorfa. El equipo que lleve puesto o transporte no se transforma."
+      }
+    ]
+  },
+  {
+    "id": "minotaur-skeleton",
+    "name": "Esqueleto de minotauro",
+    "languages": "Entiende el abisal pero no lo habla",
+    "actions": [
+      {
+        "key": "minotaur-skeleton_gore",
+        "name": "Cornada",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 11 (2d6 + 4) de daño perforante. Si el objetivo es una criatura Grande o más pequeña y el esqueleto se ha movido 20 pies o más en línea recta hacia ella inmediatamente antes del impacto, el objetivo recibe 9 (2d8) de daño perforante adicional y tiene el estado Derribado."
+      },
+      {
+        "key": "minotaur-skeleton_slam",
+        "name": "Golpe",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 15 (2d10 + 4) de daño contundente."
+      }
+    ]
+  },
+  {
+    "id": "minotaur-of-baphomet",
+    "name": "Minotauro de Baphomet",
+    "languages": "Abisal",
+    "actions": [
+      {
+        "key": "minotaur-of-baphomet_abyssal-glaive",
+        "name": "Guja abisal",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 10 pies. 10 (1d12 + 4) de daño cortante más 10 (3d6) de daño necrótico."
+      },
+      {
+        "key": "minotaur-of-baphomet_gore",
+        "name": "Cornada",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 18 (4d6 + 4) de daño perforante. Si el objetivo es una criatura Grande o más pequeña y el minotauro se ha movido 10 pies o más en línea recta hacia ella inmediatamente antes del impacto, el objetivo recibe 10 (3d6) de daño perforante adicional y tiene el estado Derribado."
+      }
+    ]
+  },
+  {
+    "id": "mule",
+    "name": "Mula",
+    "traits": [
+      {
+        "name": "Bestia de carga",
+        "desc": "La mula cuenta como si fuera de un tamaño mayor a efectos de determinar su capacidad de carga."
+      }
+    ],
+    "actions": [
+      {
+        "key": "mule_hooves",
+        "name": "Pezuñas",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 4 (1d4 + 2) de daño contundente."
+      }
+    ]
+  },
+  {
+    "id": "mummy",
+    "name": "Momia",
+    "languages": "Común y otros dos idiomas",
+    "actions": [
+      {
+        "key": "mummy_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "La momia hace dos ataques de Puño putrefacto y usa Mirada pavorosa."
+      },
+      {
+        "key": "mummy_rotting-fist",
+        "name": "Puño putrefacto",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 8 (1d10 + 3) de daño contundente más 10 (3d6) de daño necrótico. Si el objetivo es una criatura, queda maldito. Mientras está maldito, el objetivo no puede recuperar puntos de golpe, su máximo de puntos de golpe no vuelve a la normalidad al terminar un descanso largo y su máximo de puntos de golpe se reduce en 10 (3d6) por cada 24 horas que transcurran. Una criatura muere y se convierte en polvo si este ataque reduce sus puntos de golpe a 0."
+      },
+      {
+        "key": "mummy_dreadful-glare",
+        "name": "Mirada pavorosa",
+        "desc": "Tirada de salvación de Sabiduría: CD 11, una criatura que la momia pueda ver a 60 pies o menos. Fallo: El objetivo tiene el estado Asustado hasta el final del siguiente turno de la momia. Éxito: El objetivo es inmune a la Mirada pavorosa de esta momia durante 24 horas."
+      }
+    ]
+  },
+  {
+    "id": "mummy-lord",
+    "name": "Señor momia",
+    "languages": "Común y otros tres idiomas",
+    "traits": [
+      {
+        "name": "Resistencia legendaria (3/día, o 4/día en la guarida)",
+        "desc": "Si la momia falla una tirada de salvación, puede elegir tener éxito en su lugar."
+      },
+      {
+        "name": "Resistencia mágica",
+        "desc": "La momia tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+      },
+      {
+        "name": "Restauración de muerto viviente",
+        "desc": "Si es destruida, la momia obtiene un nuevo cuerpo en 24 horas si su corazón está intacto, reviviendo con todos sus puntos de golpe. El nuevo cuerpo aparece en un espacio desocupado dentro de la guarida de la momia. El corazón es un objeto Diminuto que tiene CA 17, PG 10 e inmunidad a todo el daño excepto al de fuego."
+      }
+    ],
+    "actions": [
+      {
+        "key": "mummy-lord_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "La momia hace un ataque de Puño putrefacto o de Canalizar energía negativa, y usa Mirada pavorosa."
+      },
+      {
+        "key": "mummy-lord_rotting-fist",
+        "name": "Puño putrefacto",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +9, alcance 5 pies. 15 (2d10 + 4) de daño contundente más 10 (3d6) de daño necrótico. Si el objetivo es una criatura, queda maldito. Mientras está maldito, el objetivo no puede recuperar puntos de golpe, no obtiene ningún beneficio al terminar un descanso largo y su máximo de puntos de golpe se reduce en 10 (3d6) por cada 24 horas que transcurran. Una criatura muere y se convierte en polvo si este ataque reduce sus puntos de golpe a 0."
+      },
+      {
+        "key": "mummy-lord_channel-negative-energy",
+        "name": "Canalizar energía negativa",
+        "desc": "Tirada de ataque a distancia: +9, alcance 60 pies. 25 (6d6 + 4) de daño necrótico."
+      },
+      {
+        "key": "mummy-lord_dreadful-glare",
+        "name": "Mirada pavorosa",
+        "desc": "Tirada de salvación de Sabiduría: CD 17, una criatura que la momia pueda ver a 60 pies o menos. Fallo: 25 (6d6 + 4) de daño psíquico, y el objetivo tiene el estado Paralizado hasta el final del siguiente turno de la momia."
+      },
+      {
+        "key": "mummy-lord_spellcasting",
+        "name": "Lanzamiento de conjuros",
+        "desc": "La momia lanza uno de los siguientes conjuros, sin necesitar componentes materiales y usando Sabiduría como aptitud mágica (CD de salvación de conjuros 17, +9 para impactar con ataques de conjuro):\n\n- **A voluntad:** Disipar magia, Taumaturgia\n- **1/día cada uno:** Animar a los muertos, Dañar, Plaga de insectos"
+      },
+      {
+        "key": "mummy-lord_glare",
+        "name": "Mirada",
+        "desc": "La momia usa Mirada pavorosa. La momia no puede volver a realizar esta acción hasta el comienzo de su siguiente turno."
+      },
+      {
+        "key": "mummy-lord_necrotic-strike",
+        "name": "Golpe necrótico",
+        "desc": "La momia hace un ataque de Puño putrefacto o de Canalizar energía negativa."
+      },
+      {
+        "key": "mummy-lord_dread-command",
+        "name": "Orden pavorosa",
+        "desc": "La momia lanza Orden imperiosa (versión de nivel 2), usando la misma aptitud mágica que en Lanzamiento de conjuros. La momia no puede volver a realizar esta acción hasta el comienzo de su siguiente turno."
+      },
+      {
+        "key": "mummy-lord_whirlwind-of-sand",
+        "name": "Torbellino de arena",
+        "desc": "_Desencadenante:_ La momia recibe un impacto de una tirada de ataque. _Respuesta:_ La momia suma 2 a su CA contra el ataque, lo que puede hacer que el ataque falle, y la momia se teletransporta hasta 60 pies a un espacio desocupado que pueda ver. Cada criatura de su elección que pueda ver a 5 pies o menos de su espacio de destino tiene el estado Cegado hasta el final del siguiente turno de la momia."
+      }
+    ]
+  },
+  {
+    "id": "nalfeshnee",
+    "name": "Nalfeshnee",
+    "languages": "Abisal; telepatía 120 pies",
+    "traits": [
+      {
+        "name": "Restauración demoníaca",
+        "desc": "Si el nalfeshnee muere fuera del Abismo, su cuerpo se disuelve en icor y obtiene un nuevo cuerpo al instante, reviviendo con todos sus puntos de golpe en algún lugar del Abismo."
+      },
+      {
+        "name": "Resistencia mágica",
+        "desc": "El nalfeshnee tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+      }
+    ],
+    "actions": [
+      {
+        "key": "nalfeshnee_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El nalfeshnee hace tres ataques de Desgarrar."
+      },
+      {
+        "key": "nalfeshnee_rend",
+        "name": "Desgarrar",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +10, alcance 10 pies. 16 (2d10 + 5) de daño cortante más 11 (2d10) de daño de fuerza."
+      },
+      {
+        "key": "nalfeshnee_teleport",
+        "name": "Teletransporte",
+        "desc": "El nalfeshnee se teletransporta hasta 120 pies a un espacio desocupado que pueda ver."
+      },
+      {
+        "key": "nalfeshnee_horror-nimbus-recharge-5-6",
+        "name": "Nimbo de horror",
+        "desc": "Tirada de salvación de Sabiduría: CD 15, cada criatura en una emanación de 15 pies que se origina en el nalfeshnee. Fallo: 28 (8d6) de daño psíquico, y el objetivo tiene el estado Asustado durante 1 minuto, hasta que reciba daño o hasta que termine su turno sin tener al nalfeshnee en su línea de visión. Éxito: El objetivo es inmune al Nimbo de horror de este nalfeshnee durante 24 horas."
+      },
+      {
+        "key": "nalfeshnee-pursuit",
+        "name": "Persecución",
+        "desc": "_Desencadenante:_ Otra criatura que el nalfeshnee pueda ver termina su movimiento a 120 pies o menos del nalfeshnee. _Respuesta:_ El nalfeshnee usa Teletransporte, pero su espacio de destino debe estar a 10 pies o menos de la criatura desencadenante."
+      }
+    ]
+  },
+  {
+    "id": "night-hag",
+    "name": "Saga nocturna",
+    "languages": "Abisal, común, infernal, primordial",
+    "traits": [
+      {
+        "name": "Resistencia mágica",
+        "desc": "La saga tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+      },
+      {
+        "name": "Bolsa de almas",
+        "desc": "La saga tiene una bolsa de almas. Mientras sostiene o lleva la bolsa, la saga puede usar su acción Acoso de pesadilla. La bolsa tiene CA 15, PG 20 y resistencia a todo el daño. La bolsa se convierte en polvo si sus puntos de golpe se reducen a 0. Si la bolsa es destruida, las almas que contenga quedan liberadas. La saga puede crear una nueva bolsa al cabo de 7 días."
+      }
+    ],
+    "actions": [
+      {
+        "key": "night-hag_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "La saga hace dos ataques de Garra."
+      },
+      {
+        "key": "night-hag_claw",
+        "name": "Garra",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 13 (2d8 + 4) de daño cortante."
+      },
+      {
+        "key": "night-hag_spellcasting",
+        "name": "Lanzamiento de conjuros",
+        "desc": "La saga lanza uno de los siguientes conjuros, sin necesitar componentes materiales y usando Inteligencia como aptitud mágica (CD de salvación de conjuros 14):\n\n- **A voluntad:** Detectar magia, Excursión etérea, Proyectil mágico\n- **2/día cada uno:** Asesino fantasmal, Desplazamiento entre planos"
+      },
+      {
+        "key": "night-hag_nightmare-haunting",
+        "name": "Acoso de pesadilla",
+        "desc": "Mientras está en el Plano Etéreo, la saga lanza Sueño, usando la misma aptitud mágica que en Lanzamiento de conjuros. Solo la saga puede servir como mensajero del conjuro, y el objetivo debe ser una criatura que la saga pueda ver en el Plano Material. El conjuro falla y se desperdicia si el objetivo está bajo el efecto del conjuro Protección contra el bien y el mal o dentro de un conjuro de Círculo mágico. Si el objetivo recibe daño del conjuro Sueño, el máximo de puntos de golpe del objetivo se reduce en una cantidad igual a ese daño. Si el conjuro mata al objetivo, su alma queda atrapada en la bolsa de almas de la saga, y el objetivo no puede ser devuelto a la vida hasta que su alma sea liberada.\n\n- **A voluntad:**\n- **1/día cada uno:** Sueño, Protección contra el bien y el mal, Círculo mágico"
+      },
+      {
+        "key": "night-hag_shape-shift",
+        "name": "Cambiar de forma",
+        "desc": "La saga cambia de forma a un humanoide Pequeño o Mediano, o vuelve a su verdadera forma. Aparte de su tamaño, su perfil de juego es el mismo en todas sus formas. El equipo que lleve puesto o transporte no se transforma."
+      }
+    ]
+  },
+  {
+    "id": "nightmare",
+    "name": "Pesadilla",
+    "languages": "Entiende el abisal, el común y el infernal pero no los habla",
+    "traits": [
+      {
+        "name": "Conferir resistencia al fuego",
+        "desc": "La pesadilla puede otorgar resistencia al daño de fuego a un jinete mientras este la monta."
+      },
+      {
+        "name": "Iluminación",
+        "desc": "La pesadilla emite luz brillante en un radio de 10 pies y luz tenue en 10 pies adicionales."
+      }
+    ],
+    "actions": [
+      {
+        "key": "nightmare_hooves",
+        "name": "Pezuñas",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 13 (2d8 + 4) de daño contundente más 10 (3d6) de daño de fuego."
+      },
+      {
+        "key": "nightmare_ethereal-stride",
+        "name": "Zancada etérea",
+        "desc": "La pesadilla y hasta tres criaturas voluntarias a 5 pies o menos de ella se teletransportan del Plano Material al Plano Etéreo, o viceversa."
+      }
+    ]
+  },
+  {
+    "id": "noble",
+    "name": "Noble",
+    "languages": "Común y otros dos idiomas",
+    "actions": [
+      {
+        "key": "noble_rapier",
+        "name": "Estoque",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 5 (1d8 + 1) de daño perforante."
+      },
+      {
+        "key": "noble_parry",
+        "name": "Parada",
+        "desc": "_Desencadenante_: El noble recibe un impacto de una tirada de ataque cuerpo a cuerpo mientras empuña un arma. _Respuesta:_ El noble suma 2 a su CA contra ese ataque, lo que puede hacer que falle."
+      }
+    ]
+  },
+  {
+    "id": "ochre-jelly",
+    "name": "Jalea ocre",
+    "traits": [
+      {
+        "name": "Amorfa",
+        "desc": "La jalea puede moverse a través de un espacio de solo 1 pulgada de ancho sin gastar movimiento adicional para hacerlo."
+      },
+      {
+        "name": "Trepar como una araña",
+        "desc": "La jalea puede trepar por superficies difíciles, incluso por los techos, sin necesidad de hacer una prueba de característica."
+      }
+    ],
+    "actions": [
+      {
+        "key": "ochre-jelly_pseudopod",
+        "name": "Pseudópodo",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 12 (3d6 + 2) de daño de ácido."
+      },
+      {
+        "key": "ochre-jelly_split",
+        "name": "Dividirse",
+        "desc": "_Desencadenante:_ Mientras la jalea es Grande o Mediana y tiene 10 puntos de golpe o más, queda Maltrecha o sufre daño de relámpago o cortante. _Respuesta:_ La jalea se divide en dos nuevas Jaleas ocres. Cada nueva jalea es un tamaño más pequeña que la jalea original y actúa en su iniciativa. Los puntos de golpe de la jalea original se reparten a partes iguales entre las nuevas jaleas (redondeando hacia abajo)."
+      }
+    ]
+  },
+  {
+    "id": "octopus",
+    "name": "Pulpo",
+    "traits": [
+      {
+        "name": "Compresión",
+        "desc": "El pulpo puede moverse a través de un espacio de solo 1 pulgada de ancho sin gastar movimiento adicional para hacerlo."
+      },
+      {
+        "name": "Respirar bajo el agua",
+        "desc": "El pulpo solo puede respirar bajo el agua."
+      }
+    ],
+    "actions": [
+      {
+        "key": "octopus_tentacles",
+        "name": "Tentáculos",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. Impacto: 1 de daño contundente."
+      },
+      {
+        "key": "octopus_ink-cloud",
+        "name": "Nube de tinta",
+        "desc": "_Desencadenante:_ Una criatura termina su turno a 5 pies o menos del pulpo mientras está bajo el agua. Respuesta: El pulpo libera tinta que llena un cubo de 5 pies centrado en sí mismo, y el pulpo se mueve hasta su velocidad nadando. El cubo está muy oscuro durante 1 minuto o hasta que una corriente fuerte o un efecto similar disperse la tinta."
+      }
+    ]
+  },
+  {
+    "id": "ogre",
+    "name": "Ogro",
+    "languages": "Común, gigante",
+    "actions": [
+      {
+        "key": "ogre_greatclub",
+        "name": "Gran clava",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 13 (2d8 + 4) de daño contundente."
+      },
+      {
+        "key": "ogre_javelin",
+        "name": "Jabalina",
+        "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +6, alcance 5 pies o alcance 30/120 pies. 11 (2d6 + 4) de daño perforante."
+      }
+    ]
+  },
+  {
+    "id": "ogre-zombie",
+    "name": "Zombi ogro",
+    "languages": "Entiende el común y el gigante pero no los habla",
+    "traits": [
+      {
+        "name": "Fortaleza de muerto viviente",
+        "desc": "Si el daño reduce los puntos de golpe del zombi a 0, este hace una tirada de salvación de Constitución (CD 5 más el daño recibido), a menos que el daño sea radiante o proceda de un impacto crítico. Si tiene éxito, los puntos de golpe del zombi bajan a 1 en su lugar."
+      }
+    ],
+    "actions": [
+      {
+        "key": "ogre-zombie_slam",
+        "name": "Golpe",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 13 (2d8 + 4) de daño contundente."
+      }
+    ]
+  },
+  {
+    "id": "oni",
+    "name": "Oni",
+    "languages": "Común, gigante",
+    "traits": [
+      {
+        "name": "Regeneración",
+        "desc": "El oni recupera 10 puntos de golpe al comienzo de cada uno de sus turnos si tiene al menos 1 punto de golpe."
+      }
+    ],
+    "actions": [
+      {
+        "key": "oni_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El oni hace dos ataques de Garra o de Rayo de pesadilla. Puede sustituir un ataque por un uso de Lanzamiento de conjuros."
+      },
+      {
+        "key": "oni_claw",
+        "name": "Garra",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. 10 (1d12 + 4) de daño cortante más 9 (2d8) de daño necrótico."
+      },
+      {
+        "key": "oni_nightmare-ray",
+        "name": "Rayo de pesadilla",
+        "desc": "Tirada de ataque a distancia: +5, alcance 60 pies. 9 (2d6 + 2) de daño psíquico, y el objetivo tiene el estado Asustado hasta el comienzo del siguiente turno del oni."
+      },
+      {
+        "key": "oni_shape-shift",
+        "name": "Cambiar de forma",
+        "desc": "El oni cambia de forma a un humanoide Pequeño o Mediano o a un gigante Grande, o vuelve a su verdadera forma. Aparte de su tamaño, su perfil de juego es el mismo en todas sus formas. El equipo que lleve puesto o transporte no se transforma."
+      },
+      {
+        "key": "oni_spellcasting",
+        "name": "Lanzamiento de conjuros",
+        "desc": "El oni lanza uno de los siguientes conjuros, sin necesitar componentes materiales y usando Carisma como aptitud mágica (CD de salvación de conjuros 13):\n\n- **A voluntad:**\n- **1/día cada uno:** Hechizar persona, Oscuridad, Forma gaseosa, Dormir"
+      },
+      {
+        "key": "oni_invisibility",
+        "name": "Invisibilidad",
+        "desc": "El oni se lanza Invisibilidad a sí mismo, sin necesitar componentes de conjuro y usando la misma aptitud mágica que en Lanzamiento de conjuros."
+      }
+    ]
+  },
+  {
+    "id": "otyugh",
+    "name": "Otyugh",
+    "languages": "Otyugh; telepatía 120 pies (no permite que la criatura receptora responda telepáticamente)",
+    "actions": [
+      {
+        "key": "otyugh_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El otyugh hace un ataque de Mordisco y dos ataques de Tentáculo."
+      },
+      {
+        "key": "otyugh_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 12 (2d8 + 3) de daño perforante, y el objetivo tiene el estado Envenenado. Siempre que el objetivo Envenenado termina un descanso largo, queda sometido al siguiente efecto. Tirada de salvación de Constitución: CD 15. Fallo: El máximo de puntos de golpe del objetivo se reduce en 5 (1d10) y no vuelve a la normalidad hasta que termine el estado Envenenado en el objetivo. Éxito: El estado Envenenado termina."
+      },
+      {
+        "key": "otyugh_tentacle",
+        "name": "Tentáculo",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 10 pies. 12 (2d8 + 3) de daño perforante. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Agarrado (CD 13 para escapar) por uno de sus dos tentáculos."
+      },
+      {
+        "key": "otyugh_tentacle-slam",
+        "name": "Golpe de tentáculos",
+        "desc": "Tirada de salvación de Constitución: CD 14, cada criatura Agarrada por el otyugh. Fallo: 16 (3d8 + 3) de daño contundente, y el objetivo tiene el estado Aturdido hasta el comienzo del siguiente turno del otyugh. Éxito: solo mitad de daño."
+      }
+    ]
+  },
+  {
+    "id": "owl",
+    "name": "Búho",
+    "traits": [
+      {
+        "name": "Vuelo rasante",
+        "desc": "El búho no provoca ataques de oportunidad cuando sale volando del alcance de un enemigo."
+      }
+    ],
+    "actions": [
+      {
+        "key": "owl_talons",
+        "name": "Garras",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 1 de daño cortante."
+      }
+    ]
+  },
+  {
+    "id": "owlbear",
+    "name": "Oso lechuza",
+    "actions": [
+      {
+        "key": "owlbear_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El oso lechuza hace dos ataques de Desgarrar."
+      },
+      {
+        "key": "owlbear_rend",
+        "name": "Desgarrar",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 14 (2d8 + 5) de daño cortante."
+      }
+    ]
+  },
+  {
+    "id": "panther",
+    "name": "Pantera",
+    "actions": [
+      {
+        "key": "panther_rend",
+        "name": "Desgarrar",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 6 (1d6 + 3) de daño cortante."
+      },
+      {
+        "key": "panther_nimble-escape",
+        "name": "Huida ágil",
+        "desc": "La pantera realiza la acción de Retirarse o de Esconderse."
+      }
+    ]
+  },
+  {
+    "id": "pegasus",
+    "name": "Pegaso",
+    "languages": "Entiende el celestial, el común, el élfico y el silvano pero no los habla",
+    "actions": [
+      {
+        "key": "pegasus_hooves",
+        "name": "Pezuñas",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 7 (1d6 + 4) de daño contundente más 5 (2d4) de daño radiante."
+      }
+    ]
+  },
+  {
+    "id": "phase-spider",
+    "name": "Araña de fase",
+    "traits": [
+      {
+        "name": "Vista etérea",
+        "desc": "La araña puede ver hasta 60 pies en el interior del Plano Etéreo mientras está en el Plano Material, y viceversa."
+      },
+      {
+        "name": "Trepar como una araña",
+        "desc": "La araña puede trepar por superficies difíciles, incluso por los techos, sin necesidad de hacer una prueba de característica."
+      },
+      {
+        "name": "Caminante de telarañas",
+        "desc": "La araña ignora las restricciones de movimiento causadas por las telarañas, y conoce la ubicación de cualquier otra criatura que esté en contacto con la misma telaraña."
+      }
+    ],
+    "actions": [
+      {
+        "key": "phase-spider_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "La araña hace dos ataques de Mordisco."
+      },
+      {
+        "key": "phase-spider_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 8 (1d10 + 3) de daño perforante más 9 (2d8) de daño de veneno. Si este daño reduce los puntos de golpe del objetivo a 0, el objetivo queda estable y tiene el estado Envenenado durante 1 hora. Mientras está Envenenado, el objetivo también tiene el estado Paralizado."
+      },
+      {
+        "key": "phase-spider_ethereal-jaunt",
+        "name": "Paseo etéreo",
+        "desc": "La araña se teletransporta del Plano Material al Plano Etéreo, o viceversa."
+      }
+    ]
+  },
+  {
+    "id": "piranha",
+    "name": "Piraña",
+    "traits": [
+      {
+        "name": "Respirar bajo el agua",
+        "desc": "La piraña solo puede respirar bajo el agua."
+      }
+    ],
+    "actions": [
+      {
+        "key": "piranha_bite",
+        "name": "Mordisco",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +5 (con ventaja si el objetivo no tiene todos sus puntos de golpe), alcance 5 pies. 1 de daño perforante."
+      }
+    ]
+  },
+  {
+    "id": "pirate",
+    "name": "Pirata",
+    "languages": "Común y otro idioma",
+    "actions": [
+      {
+        "key": "pirate_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El pirata hace dos ataques de Daga. Puede sustituir un ataque por un uso de Donaire cautivador."
+      },
+      {
+        "key": "pirate_dagger",
+        "name": "Daga",
+        "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +5, alcance 5 pies o alcance 20/60 pies. 5 (1d4 + 3) de daño perforante."
+      },
+      {
+        "key": "pirate_enthralling-panache",
+        "name": "Donaire cautivador",
+        "desc": "Tirada de salvación de Sabiduría: CD 12, una criatura que el pirata pueda ver a 30 pies o menos. Fallo: El objetivo tiene el estado Encantado hasta el comienzo del siguiente turno del pirata."
+      }
+    ]
+  },
+  {
+    "id": "pirate-captain",
+    "name": "Capitán pirata",
+    "languages": "Común y otro idioma",
+    "actions": [
+      {
+        "key": "pirate-captain_multiattack",
+        "name": "Ataque múltiple",
+        "desc": "El pirata hace tres ataques, usando Estoque o Pistola en cualquier combinación."
+      },
+      {
+        "key": "pirate-captain_rapier",
+        "name": "Estoque",
+        "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 13 (2d8 + 4) de daño perforante, y el pirata tiene ventaja en la siguiente tirada de ataque que haga antes del final de este turno."
+      },
+      {
+        "key": "pirate-captain_pistol",
+        "name": "Pistola",
+        "desc": "Tirada de ataque a distancia: +7, alcance 30/90 pies. 15 (2d10 + 4) de daño perforante."
+      },
+      {
+        "key": "pirate-captain_captain's-charm",
+        "name": "Encanto del capitán",
+        "desc": "Tirada de salvación de Sabiduría: CD 14, una criatura que el pirata pueda ver a 30 pies o menos. Fallo: El objetivo tiene el estado Encantado hasta el comienzo del siguiente turno del pirata."
+      },
+      {
+        "key": "pirate-captain_riposte",
+        "name": "Réplica",
+        "desc": "_Desencadenante:_ El pirata recibe un impacto de una tirada de ataque cuerpo a cuerpo mientras empuña un arma. _Respuesta:_ El pirata suma 3 a su CA contra ese ataque, lo que puede hacer que falle. Si el ataque falla, el pirata hace un ataque de Estoque contra la criatura desencadenante si está a su alcance."
+      }
+    ]
+  }
+]

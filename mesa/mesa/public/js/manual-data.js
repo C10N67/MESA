@@ -1,11 +1,16 @@
 /* Mesa · el manual del DM
 
-   Un resumen de cada edición de Dungeons & Dragons, de 1974 a la revisión de
-   2024, y una chuleta de las reglas de la 5.ª edición para tenerla a mano
-   durante la partida. Está escrito aquí, con palabras propias: no copia los
-   manuales oficiales. Las reglas de la 5.ª salen del documento de referencia
-   (SRD 5.1 y SRD 5.2), que Wizards of the Coast publica con licencia
-   Creative Commons CC-BY-4.0.
+   Centrado en la 5.5 (la revisión de 2024): una chuleta para tenerla a mano
+   durante la partida y, en páginas propias (manual.js), el reglamento, los
+   estados, los conjuros, las armas y armaduras, las especies y las criaturas
+   del SRD 5.2, traducidos (public/data/srd52/). Las ediciones anteriores
+   quedan aparte, resumidas con palabras propias.
+
+   Las reglas de la 5.ª salen del documento de referencia (SRD 5.1 y 5.2), que
+   Wizards of the Coast publica con licencia Creative Commons CC-BY-4.0.
+
+   Cada edición puede tener «page»: entonces su contenido lo pinta manual.js
+   (catálogos con filtros) en vez de salir de SECTIONS.
 
    Formato del texto, para no cargar con un intérprete de Markdown entero:
      línea en blanco      párrafo nuevo
@@ -16,28 +21,42 @@
    Todo se escapa antes de pintarlo. */
 
 export const EDITIONS = [
-  { id: "intro", short: "Guía", name: "Cómo leer este manual" },
-  { id: "odd", short: "OD&D", name: "Dungeons & Dragons original (1974)" },
-  { id: "basic", short: "Basic", name: "D&D Básico: Holmes, B/X, BECMI y Rules Cyclopedia (1977–1991)" },
-  { id: "add1", short: "AD&D 1.ª", name: "Advanced Dungeons & Dragons, 1.ª edición (1977–1979)" },
-  { id: "add2", short: "AD&D 2.ª", name: "Advanced Dungeons & Dragons, 2.ª edición (1989)" },
-  { id: "e3", short: "3.0 / 3.5", name: "D&D 3.ª edición y 3.5 (2000 y 2003)" },
-  { id: "e4", short: "4.ª", name: "D&D 4.ª edición (2008)" },
-  { id: "e5", short: "5.ª (2014)", name: "D&D 5.ª edición (2014)" },
-  { id: "e2024", short: "2024", name: "D&D, revisión de 2024 (la «5.5»)" },
-  { id: "quick", short: "Reglas rápidas", name: "Reglas rápidas de la 5.ª (2014 y 2024)" },
-  { id: "compare", short: "Comparativa", name: "Las ediciones, cara a cara" },
-  { id: "credits", short: "Créditos", name: "Fuentes y licencias" }
+  { id: "intro", group: "D&D 5.5 (2024)", short: "Guía", name: "Cómo usar este manual" },
+  { id: "e2024", group: "D&D 5.5 (2024)", short: "Qué es la 5.5", name: "D&D 2024, la «5.5»" },
+  { id: "quick", group: "D&D 5.5 (2024)", short: "Chuleta", name: "Chuleta de la 5.5" },
+  { id: "reglamento", group: "D&D 5.5 (2024)", short: "Reglamento", name: "Reglamento", page: "rules" },
+  { id: "estados", group: "D&D 5.5 (2024)", short: "Estados", name: "Estados", page: "conditions" },
+  { id: "conjuros", group: "D&D 5.5 (2024)", short: "Conjuros", name: "Conjuros", page: "spells" },
+  { id: "equipo", group: "D&D 5.5 (2024)", short: "Armas y armaduras", name: "Armas y armaduras", page: "gear" },
+  { id: "especies", group: "D&D 5.5 (2024)", short: "Especies", name: "Especies", page: "species" },
+  { id: "criaturas", group: "D&D 5.5 (2024)", short: "Criaturas", name: "Criaturas", page: "creatures" },
+  { id: "odd", group: "Otras ediciones", short: "OD&D", name: "Dungeons & Dragons original (1974)" },
+  { id: "basic", group: "Otras ediciones", short: "Basic", name: "D&D Básico: Holmes, B/X, BECMI y Rules Cyclopedia (1977–1991)" },
+  { id: "add1", group: "Otras ediciones", short: "AD&D 1.ª", name: "Advanced Dungeons & Dragons, 1.ª edición (1977–1979)" },
+  { id: "add2", group: "Otras ediciones", short: "AD&D 2.ª", name: "Advanced Dungeons & Dragons, 2.ª edición (1989)" },
+  { id: "e3", group: "Otras ediciones", short: "3.0 / 3.5", name: "D&D 3.ª edición y 3.5 (2000 y 2003)" },
+  { id: "e4", group: "Otras ediciones", short: "4.ª", name: "D&D 4.ª edición (2008)" },
+  { id: "e5", group: "Otras ediciones", short: "5.ª (2014)", name: "D&D 5.ª edición (2014)" },
+  { id: "compare", group: "Otras ediciones", short: "Comparativa", name: "Las ediciones, cara a cara" },
+  { id: "credits", group: "", short: "Créditos", name: "Fuentes y licencias" }
 ];
 
 export const SECTIONS = [
   /* ---------- Guía ---------- */
   { ed: "intro", title: "Para qué sirve", text: `
-Un manual de consulta rápida para el DM: qué trae cada edición de D&D, cómo se resuelven las cosas en cada una y una chuleta de la 5.ª para no tener que abrir el libro en mitad del combate.
+El manual del DM para jugar a la **5.5** (D&D 2024) sin abrir el libro en mitad de la partida:
 
-No sustituye a los libros. Resume con palabras propias lo que hace falta para entender, dirigir o adaptar cada edición; los manuales originales tienen mucho más (tablas completas, monstruos, objetos, ambientación).
+- **Chuleta**: lo que más se consulta en la mesa (CD, acciones, cobertura, descansos, encuentros…).
+- **Reglamento**: las reglas de juego completas del SRD 5.2, traducidas.
+- **Estados**: los quince estados de 2024, con su icono, como salen en el mapa.
+- **Conjuros**: los 339 conjuros y trucos del SRD 5.2, con filtros por nivel, clase, escuela, concentración y ritual.
+- **Armas y armaduras**: tablas con daño, propiedades, maestría, peso y coste.
+- **Especies**: las nueve especies de la 5.5 con todos sus rasgos.
+- **Criaturas**: las 331 fichas del SRD 5.2, animales incluidos, filtrables por tipo y desafío.
 
-Usa el buscador de arriba: busca «salvación», «THAC0», «agarrar», «agotamiento»… y salen las secciones de todas las ediciones donde aparece.` },
+Usa el buscador de arriba: busca «bola de fuego», «lobo», «agarrar», «agotamiento» o el nombre en inglés, y salen el texto, los conjuros, las criaturas y las reglas donde aparece. Las **otras ediciones** de D&D siguen al final del índice, resumidas.
+
+El SRD 5.2 es el reglamento libre de la 5.5: recoge casi todo el Manual del jugador, la Guía del DM y el Manual de monstruos, pero no todo (faltan algunas subclases, conjuros, monstruos y la ambientación).` },
   { ed: "intro", title: "La línea del tiempo", text: `
 | Año | Edición | Editorial | Lo más reconocible |
 | 1974 | D&D original (OD&D) | TSR | Tres librillos; tres clases; todo d6 |
@@ -214,7 +233,7 @@ La edición de 2008, de Rob Heinsoo, Andy Collins y James Wyatt. Rediseñó el j
   { ed: "e5", title: "Qué es", text: `
 La edición de 2014, de Mike Mearls y Jeremy Crawford, tras dos años de pruebas abiertas («D&D Next»). Se propuso juntar lo mejor de todas las anteriores con reglas cortas: es la edición más jugada de la historia. El **SRD 5.1** recoge sus reglas básicas; desde 2023 está publicado con licencia Creative Commons (CC-BY-4.0).
 
-Es la edición para la que está hecha Mesa: la ficha, los ataques, los conjuros, los estados y el bestiario siguen sus reglas.` },
+Mesa la sigue admitiendo: el creador de personajes deja elegir 2014 o 2024, y el bestiario de la mesa sale del SRD 5.1.` },
   { ed: "e5", title: "Personajes", text: `
 - **Clases**: bárbaro, bardo, clérigo, druida, guerrero, monje, paladín, explorador, pícaro, hechicero, brujo y mago (y el artífice, de Eberron). Cada una elige **subclase** a nivel 1, 2 o 3.
 - **Razas**: enano, elfo, mediano, humano, dracónido, gnomo, semielfo, semiorco y tiefling en el Manual del jugador. La raza da las mejoras de característica (desde 2020 se pueden mover libremente con la regla de origen personalizado).
@@ -254,7 +273,7 @@ La revisión de la 5.ª edición: Manual del jugador en septiembre de 2024, Guí
 - **Sorpresa**: quien es sorprendido tira la iniciativa con desventaja (ya no pierde el turno).
 - **Un solo espacio de conjuro por turno.**
 - **Descanso largo**: recuperas todos los PV y todos los dados de golpe.
-- **Ensangrentado**: a la mitad de PV o menos; lo usan algunos rasgos.` },
+- **Maltrecho** (antes «ensangrentado»): a la mitad de PV o menos; lo usan algunos rasgos.` },
   { ed: "e2024", title: "Mezclar 2014 y 2024", text: `
 - Los monstruos y aventuras de 2014 funcionan con personajes de 2024 sin cambios; los personajes de 2024 son algo más fuertes, así que los encuentros pueden necesitar un monstruo más.
 - Un personaje de 2014 puede seguir en una mesa de 2024: basta con decidir si usáis las acciones y el agotamiento nuevos para todos.
@@ -272,19 +291,22 @@ La revisión de la 5.ª edición: Manual del jugador en septiembre de 2024, Guí
 
 **Prueba enfrentada**: los dos tiran; gana el más alto y, si empatan, todo sigue como estaba. **Pasiva**: 10 + modificador (+5 con ventaja, −5 con desventaja); la Percepción pasiva es la más usada.` },
   { ed: "quick", title: "Acciones en combate", text: `
-- **Atacar**: un ataque (más con Ataque adicional).
-- **Lanzar un conjuro** (2024: **Magia**, que también cubre usar objetos mágicos).
-- **Correr**: el doble de movimiento.
-- **Destrabarse**: tu movimiento no provoca ataques de oportunidad.
-- **Esquivar**: los ataques contra ti tienen desventaja y tienes ventaja en salvaciones de Destreza.
-- **Ayudar**: ventaja a un aliado en una prueba o en su próximo ataque.
-- **Ocultarse**: prueba de Destreza (Sigilo).
-- **Preparar**: eliges un disparador y una acción para usarla como reacción.
-- **Buscar**: prueba de Sabiduría (Percepción o Perspicacia…).
-- **Usar un objeto** (2024: **Utilizar**).
-- Solo 2024: **Influir** (pruebas sociales) y **Estudiar** (pruebas de Inteligencia).
+En tu turno: moverte hasta tu velocidad, **una acción**, quizá **una acción adicional** (si algo te la da) e interactuar con un objeto gratis. Una **reacción** por asalto.
 
-**Ataque de oportunidad**: reacción cuando alguien sale de tu alcance sin destrabarse. **Lucha con dos armas** (2014): con dos armas ligeras, la segunda ataca como acción adicional sin sumar el modificador al daño.` },
+- **Atacar**: un ataque con un arma o un golpe sin armas (más con Ataque adicional).
+- **Correr**: tanto movimiento extra como tu velocidad.
+- **Retirarse**: tu movimiento no provoca ataques de oportunidad este turno.
+- **Esquivar**: los ataques contra ti tienen desventaja y tienes ventaja en las salvaciones de Destreza (no si estás Incapacitado o tu velocidad es 0).
+- **Ayudar**: ventaja a un aliado en su próxima prueba con una habilidad o herramienta que domines, o distraes a un enemigo a 5 pies para que el próximo ataque de un aliado contra él tenga ventaja.
+- **Esconderse**: prueba de Destreza (Sigilo) CD 15 fuera de la vista de los enemigos (muy oscuro o con cobertura de tres cuartos o total). Si sale bien, tienes el estado **Invisible** hasta que hagas ruido, ataques o te vean.
+- **Influir**: Carisma o Sabiduría para convencer a un monstruo o PNJ.
+- **Magia**: lanzar un conjuro, usar un objeto mágico o un rasgo mágico.
+- **Preparar**: eliges un desencadenante y una acción (o un conjuro) para hacerla como reacción.
+- **Buscar**: una prueba de Sabiduría (Percepción, Perspicacia, Medicina o Supervivencia).
+- **Estudiar**: una prueba de Inteligencia (Arcanos, Historia, Investigación, Naturaleza o Religión).
+- **Usar**: usar un objeto que no es mágico.
+
+**Ataque de oportunidad**: reacción contra quien sale de tu alcance sin Retirarse. **Luchar con dos armas**: si atacas con un arma ligera, puedes atacar con otra arma ligera como acción adicional, sin sumar tu modificador al daño (con la maestría Mella, ese ataque va dentro de la acción de Atacar).` },
   { ed: "quick", title: "Cobertura, luz y visibilidad", text: `
 | Cobertura | Efecto |
 | Media | +2 a la CA y a las salvaciones de Destreza |
@@ -292,63 +314,64 @@ La revisión de la 5.ª edición: Manual del jugador en septiembre de 2024, Guí
 | Total | No se le puede apuntar directamente |
 
 - **Luz brillante**: se ve con normalidad.
-- **Penumbra** (ligeramente oscuro): desventaja en Percepción con la vista.
-- **Oscuridad** (muy oscuro): como estar cegado para lo que esté dentro.
-- **Visión en la oscuridad**: ve en la oscuridad como en penumbra y en la penumbra como con luz, sin colores.
-- **Atacar a quien no ves**: con desventaja; **atacar sin ser visto**: con ventaja.` },
-  { ed: "quick", title: "Salvaciones de muerte y daño masivo", text: `
-- A 0 PV caes inconsciente. Al empezar tu turno tiras 1d20: **10 o más** es un éxito, menos es un fallo.
-- **Tres éxitos**: estable. **Tres fallos**: muerto.
-- **Un 20**: recuperas 1 PV. **Un 1**: cuenta como dos fallos.
-- Recibir daño a 0 PV es un fallo (un crítico, dos).
-- **Daño masivo**: si el daño que sobra al llegar a 0 iguala o supera tus PV máximos, mueres en el acto.
-- Estabilizar: acción con una prueba de Sabiduría (Medicina) CD 10, o un botiquín de sanador.` },
+- **Luz tenue** (ligeramente oscuro): desventaja en las pruebas de Sabiduría (Percepción) que dependen de la vista.
+- **Oscuridad** (muy oscuro): no ves nada dentro; en la práctica, tienes el estado Cegado para lo que esté allí.
+- **Visión en la oscuridad**: en la oscuridad ve como con luz tenue, y en la luz tenue como con luz brillante, sin colores.
+- **Atacar a quien no ves**: desventaja. **Atacar sin ser visto**: ventaja. **Iniciativa**: quien esté Invisible tira con ventaja; quien sea sorprendido, con desventaja.` },
+  { ed: "quick", title: "A 0 puntos de golpe", text: `
+- A 0 PG caes con el estado **Inconsciente**. Al empezar cada turno haces una **salvación de muerte**: 1d20, **10 o más** es un éxito.
+- **Tres éxitos**: quedas estable. **Tres fallos**: mueres.
+- **Un 20**: recuperas 1 PG. **Un 1**: cuenta como dos fallos.
+- Recibir daño a 0 PG es un fallo (un impacto crítico, dos). Si el daño iguala o supera tus PG máximos, mueres.
+- **Daño masivo**: si al llegar a 0 el daño que sobra iguala o supera tus PG máximos, mueres en el acto.
+- **Estabilizar**: acción de Ayudar con una prueba de Sabiduría (Medicina) CD 10, o un botiquín de sanador.
+- **Maltrecho**: a la mitad de los PG o menos. Algunos rasgos se activan con eso.` },
   { ed: "quick", title: "Concentración", text: `
-- Solo un conjuro de concentración a la vez.
-- Se pierde al lanzar otro de concentración, al quedar incapacitado o al morir.
-- Al recibir daño: salvación de Constitución con CD 10 o la mitad del daño, la mayor (en 2024, como mucho CD 30). Cada fuente de daño, una salvación.` },
+- Solo un conjuro de concentración a la vez: si lanzas otro, el primero termina.
+- Se pierde al quedar **Incapacitado** o al morir.
+- Al recibir daño: salvación de Constitución con CD 10 o la mitad del daño (la mayor), como mucho CD 30. Una salvación por cada fuente de daño.` },
   { ed: "quick", title: "Descansos", text: `
-| | 2014 | 2024 |
-| Descanso corto | 1 hora; gastas dados de golpe para curarte | Igual |
-| Descanso largo | 8 horas (6 durmiendo); todos los PV y la mitad de los dados de golpe; −1 al agotamiento si has comido y bebido | 8 horas; todos los PV y todos los dados de golpe; −1 al agotamiento |
+| Descanso | Dura | Qué recuperas |
+| Corto | 1 hora | Puedes gastar dados de golpe: tiras cada uno y sumas tu Constitución |
+| Largo | 8 horas (6 durmiendo) | Todos los PG y todos los dados de golpe; las características reducidas; −1 nivel de agotamiento |
 
-Un descanso largo, como mucho uno cada 24 horas. Se interrumpe con una hora de actividad intensa (combate, caminar, lanzar conjuros).` },
+El descanso largo se interrumpe si tiras iniciativa, lanzas un conjuro que no sea un truco, recibes daño o haces una hora de esfuerzo físico (caminar, luchar…). Si llevabas una hora o más, cuenta como un descanso corto. Entre un descanso largo y el siguiente tienen que pasar al menos 16 horas.` },
   { ed: "quick", title: "Agotamiento", text: `
-**2014**, efectos que se acumulan:
+Cada nivel de **Agotamiento** resta **2 a todas las pruebas de d20** (ataques, salvaciones y pruebas de característica) y **5 pies a la velocidad**, acumulándose. A nivel 6, mueres. Un descanso largo quita un nivel.
 
-| Nivel | Efecto |
-| 1 | Desventaja en las pruebas de característica |
-| 2 | Velocidad a la mitad |
-| 3 | Desventaja en ataques y salvaciones |
-| 4 | PV máximos a la mitad |
-| 5 | Velocidad 0 |
-| 6 | Muerte |
-
-**2024**: cada nivel, −2 a todas las pruebas d20 y −5 pies de velocidad. A nivel 6, muerte. Un descanso largo quita un nivel.` },
-  { ed: "quick", title: "Estados", conditions: true, text: `
-Los estados de la mesa, tal como los aplica Mesa en la ficha. En 2024 cambian algunos detalles (por ejemplo, invisible también da ventaja a la iniciativa y agotamiento funciona como arriba).` },
+| Nivel | Pruebas de d20 | Velocidad |
+| 1 | −2 | −5 pies |
+| 2 | −4 | −10 pies |
+| 3 | −6 | −15 pies |
+| 4 | −8 | −20 pies |
+| 5 | −10 | −25 pies |
+| 6 | Muerte | — |` },
+  { ed: "quick", title: "Estados", text: `
+Los quince estados de la 5.5, con su texto completo y el icono con el que salen en el mapa, están en la página **Estados** del índice. En Mesa se ponen y se quitan desde el bocadillo de cada ficha del mapa.` },
   { ed: "quick", title: "Agarrar y empujar", text: `
-- **2014**: en lugar de un ataque, prueba de Fuerza (Atletismo) contra Fuerza (Atletismo) o Destreza (Acrobacias) del objetivo. Agarrado: velocidad 0. Empujar: lo derribas o lo apartas 5 pies.
-- **2024**: es una opción del golpe sin armas. El objetivo hace una salvación de Fuerza o Destreza (la que prefiera) con CD 8 + tu Fuerza + tu competencia.
-- Liberarse: acción y prueba de Atletismo o Acrobacias contra la CD del agarre (2024) o contra tu Atletismo (2014).
-- El objetivo no puede ser más de una talla mayor que tú.` },
+Son opciones del **golpe sin armas** (en vez de hacer daño). El objetivo no puede ser más de una talla mayor que tú y tiene que estar a tu alcance.
+
+- **Agarrar**: el objetivo hace una salvación de Fuerza o Destreza (la que prefiera) con **CD 8 + tu modificador de Fuerza + tu bonificador por competencia**. Si falla, tiene el estado **Agarrado**: velocidad 0 y desventaja al atacar a cualquiera que no seas tú. Necesitas una mano libre y moverte con él te cuesta el doble (salvo que sea dos tallas menor).
+- **Escapar**: como acción, prueba de Fuerza (Atletismo) o Destreza (Acrobacias) contra esa misma CD.
+- **Empujar**: misma salvación; si falla, lo apartas 5 pies o lo dejas **Derribado**.` },
   { ed: "quick", title: "Viajes y movimiento", text: `
 | Ritmo | Por minuto | Por hora | Por día | Efecto |
-| Rápido | 400 pies | 4 millas | 30 millas | −5 a la Percepción pasiva |
-| Normal | 300 pies | 3 millas | 24 millas | — |
-| Lento | 200 pies | 2 millas | 18 millas | Puede ir con sigilo |
+| Rápido | 400 pies | 4 millas | 30 millas | Desventaja en Percepción, Supervivencia y Sigilo |
+| Normal | 300 pies | 3 millas | 24 millas | Desventaja en Sigilo |
+| Lento | 200 pies | 2 millas | 18 millas | Ventaja en Percepción y Supervivencia |
 
-- **Terreno difícil**: cada pie cuesta dos.
-- **Saltar**: de longitud, tu Fuerza en pies con carrerilla de 10 (la mitad sin ella); de altura, 3 + tu modificador de Fuerza.
-- **Caer**: 1d6 contundente por cada 10 pies, hasta 20d6. Quedas derribado.
-- **Contener la respiración**: 1 + modificador de Constitución minutos (mínimo 30 segundos).
-- **Carga**: tu Fuerza × 15 libras; empujar, arrastrar o levantar, el doble.` },
+- **Terreno difícil**: cada pie cuesta uno más.
+- **Saltar**: de longitud, tu puntuación de Fuerza en pies con 10 pies de carrerilla (la mitad sin ella); de altura, 3 + tu modificador de Fuerza.
+- **Caer**: 1d6 de daño contundente por cada 10 pies, hasta 20d6, y quedas Derribado.
+- **Contener la respiración**: 1 + tu modificador de Constitución minutos (mínimo 30 segundos); sin aire, ganas un nivel de agotamiento al final de cada turno.
+- **Trepar, nadar y arrastrarse**: cada pie cuesta uno más (salvo con velocidad de trepar o nadar).` },
   { ed: "quick", title: "Conjuros", text: `
-- **Componentes**: verbal (V), somático (S) y material (M). Un canalizador sustituye los materiales sin coste.
-- **Subir de nivel**: un espacio más alto potencia muchos conjuros.
-- **Ritual**: 10 minutos más y no gasta espacio, si el conjuro lo permite y tu clase lo deja.
-- **Un espacio por turno** (2024). En 2014: si lanzas uno como acción adicional, en ese turno solo puedes lanzar además un truco de 1 acción.
-- **CD de salvación** = 8 + competencia + característica. **Ataque de conjuro** = competencia + característica.` },
+- **Un solo espacio de conjuro por turno**; los trucos no gastan espacio.
+- **Componentes**: verbal (V), somático (S) y material (M). Un canalizador sustituye los materiales que no tienen coste ni se gastan.
+- **Nivel superior**: lanzarlo con un espacio más alto lo potencia, si el conjuro lo dice.
+- **Ritual**: 10 minutos más y no gasta espacio, si el conjuro tiene la etiqueta y tu clase lo permite.
+- **CD de salvación** = 8 + bonificador por competencia + modificador de la característica. **Ataque de conjuro** = competencia + característica.
+- **Lanzar con armadura** sin dominarla: no se puede.` },
   { ed: "quick", title: "Subir de nivel", text: `
 | Nivel | PX | Competencia |
 | 1 | 0 | +2 |
@@ -372,12 +395,35 @@ Los estados de la mesa, tal como los aplica Mesa en la ficha. En 2024 cambian al
 | 19 | 305.000 | +6 |
 | 20 | 355.000 | +6 |
 
-Muchas mesas suben por hitos de la historia en vez de por PX. En Mesa, «Subir de nivel» en la ficha abre el creador donde se dejó.` },
+Todas las clases eligen subclase a nivel 3. Mejoras de característica (o una dote) a niveles 4, 8, 12 y 16, y un don épico a nivel 19. En Mesa, «Subir de nivel» en la ficha abre el creador donde se dejó.` },
   { ed: "quick", title: "Preparar encuentros", text: `
-- **2014**: suma los umbrales de PX de los personajes (fácil, media, difícil, mortal), suma los PX de los monstruos y multiplica según cuántos sean (×1,5 con dos, ×2 de tres a seis…). Mesa hace esta cuenta sola en la pestaña de la mesa.
-- **2024**: un presupuesto de PX por personaje según el nivel y la dificultad (baja, moderada o alta), sin multiplicador por número de monstruos.
-- Más enemigos débiles reparten el daño; un solo monstruo grande cae rápido si no tiene acciones legendarias.
-- Varía el terreno: cobertura, alturas, terreno difícil y algo que hacer aparte de pegar.` },
+Suma el presupuesto de PX de cada personaje según su nivel y la dificultad que quieras, y gástalo en monstruos (cada uno cuesta sus PX, sin multiplicadores por número).
+
+| Nivel | Baja | Moderada | Alta |
+| 1 | 50 | 75 | 100 |
+| 2 | 100 | 150 | 200 |
+| 3 | 150 | 225 | 400 |
+| 4 | 250 | 375 | 500 |
+| 5 | 500 | 750 | 1.100 |
+| 6 | 600 | 1.000 | 1.400 |
+| 7 | 750 | 1.300 | 1.700 |
+| 8 | 1.000 | 1.700 | 2.100 |
+| 9 | 1.300 | 2.000 | 2.600 |
+| 10 | 1.600 | 2.300 | 3.100 |
+| 11 | 1.900 | 2.900 | 4.100 |
+| 12 | 2.200 | 3.700 | 4.700 |
+| 13 | 2.600 | 4.200 | 5.400 |
+| 14 | 2.900 | 4.900 | 6.200 |
+| 15 | 3.300 | 5.400 | 7.800 |
+| 16 | 3.800 | 6.100 | 9.800 |
+| 17 | 4.500 | 7.200 | 11.700 |
+| 18 | 5.000 | 8.700 | 14.200 |
+| 19 | 5.500 | 10.700 | 17.200 |
+| 20 | 6.400 | 13.200 | 22.000 |
+
+- Ejemplo: cuatro personajes de nivel 3 en un encuentro moderado tienen 4 × 225 = 900 PX. Un ogro (VD 2, 450 PX) y cuatro lobos (VD 1/4, 50 PX cada uno) gastan 650; con un oso pardo (VD 1, 200 PX) llegas a 850.
+- Más enemigos débiles reparten el daño; un monstruo solo cae rápido si no tiene acciones legendarias.
+- Varía el terreno: cobertura, alturas, terreno difícil y algo que hacer aparte de pegar. Las fichas completas están en **Criaturas**.` },
 
   /* ---------- Comparativa ---------- */
   { ed: "compare", title: "Cómo se resuelve cada cosa", text: `
@@ -402,11 +448,14 @@ Muchas mesas suben por hitos de la historia en vez de por PX. En Mesa, «Subir d
 
   /* ---------- Créditos ---------- */
   { ed: "credits", title: "De dónde sale esto", text: `
-Este manual y el creador de personajes resumen y explican las reglas con palabras propias, para consulta en la mesa. No reproducen el texto de los libros.
-
 **Dungeons & Dragons**, **D&D** y los nombres de sus productos son marcas de Wizards of the Coast LLC. Mesa no está afiliado a Wizards of the Coast ni cuenta con su aprobación.
 
-Este trabajo incluye material del **System Reference Document 5.1** («SRD 5.1») y del **System Reference Document 5.2** («SRD 5.2») de Wizards of the Coast LLC, disponibles en https://www.dndbeyond.com/srd. Los SRD 5.1 y 5.2 se publican con licencia Creative Commons Attribution 4.0 International, CC-BY-4.0 (https://creativecommons.org/licenses/by/4.0/legalcode). Las reglas se han resumido y traducido al español.
+This work includes material from the System Reference Document 5.2 ("SRD 5.2") by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2 is licensed under the Creative Commons Attribution 4.0 International License, available at https://creativecommons.org/licenses/by/4.0/legalcode.
 
-Para las ediciones anteriores a la 5.ª, solo hay descripciones generales de cómo funcionan; para jugarlas hacen falta sus libros, que Wizards sigue vendiendo en PDF e impresión bajo demanda.` }
+Este trabajo incluye material del **System Reference Document 5.2** («SRD 5.2») y del **System Reference Document 5.1** («SRD 5.1») de Wizards of the Coast LLC, disponibles en https://www.dndbeyond.com/srd, con licencia Creative Commons Attribution 4.0 International (CC-BY-4.0).` },
+  { ed: "credits", title: "Qué se ha cambiado", text: `
+- El **reglamento, los estados, los conjuros, las armas y armaduras, las especies y las criaturas** de la 5.5 son el SRD 5.2 **traducido al castellano** para Mesa. No es la traducción oficial de Wizards: los nombres siguen los de los manuales en español cuando se conocen, y los términos de juego se han unificado con los del resto de Mesa (por ejemplo, «DM»).
+- El texto en inglés se ha tomado de los datos del SRD 5.2 que publica **Open5e** (https://github.com/open5e/open5e-api), y los conjuros a los que les faltaban párrafos se han completado con los del sistema **dnd5e de Foundry VTT** (https://github.com/foundryvtt/dnd5e, CC-BY-4.0 en su contenido del SRD). Se han corregido algunas erratas de esos datos.
+- La **chuleta**, la guía y los resúmenes de las ediciones anteriores están escritos con palabras propias, para consulta en la mesa.
+- Para las ediciones anteriores a la 5.ª solo hay descripciones generales de cómo funcionan; para jugarlas hacen falta sus libros, que Wizards sigue vendiendo en PDF e impresión bajo demanda.` }
 ];

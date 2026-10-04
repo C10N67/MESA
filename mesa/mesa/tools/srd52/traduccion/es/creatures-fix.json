@@ -1,0 +1,29 @@
+[
+ {
+  "id": "green-hag",
+  "traits": [
+   {
+    "name": "Magia de aquelarre",
+    "desc": "Mientras esté a 30 pies o menos de al menos dos sagas aliadas, la saga puede lanzar uno de los siguientes conjuros, sin necesitar componentes materiales, usando el tiempo de lanzamiento normal del conjuro y usando Inteligencia como aptitud mágica (CD de salvación de conjuros 11): Augurio, Encontrar familiar, Identificar, Localizar objeto, Escudriñar o Sirviente invisible. La saga debe terminar un descanso largo antes de volver a usar este rasgo para lanzar ese conjuro."
+   }
+  ]
+ },
+ {
+  "id": "night-hag",
+  "traits": [
+   {
+    "name": "Magia de aquelarre",
+    "desc": "Mientras esté a 30 pies o menos de al menos dos sagas aliadas, la saga puede lanzar uno de los siguientes conjuros, sin necesitar componentes materiales, usando el tiempo de lanzamiento normal del conjuro y usando Inteligencia como aptitud mágica (CD de salvación de conjuros 14): Augurio, Encontrar familiar, Identificar, Localizar objeto, Escudriñar o Sirviente invisible. La saga debe terminar un descanso largo antes de volver a usar este rasgo para lanzar ese conjuro."
+   }
+  ]
+ },
+ {
+  "id": "sea-hag",
+  "traits": [
+   {
+    "name": "Magia de aquelarre",
+    "desc": "Mientras esté a 30 pies o menos de al menos dos sagas aliadas, la saga puede lanzar uno de los siguientes conjuros, sin necesitar componentes materiales, usando el tiempo de lanzamiento normal del conjuro y usando Inteligencia como aptitud mágica (CD de salvación de conjuros 11): Augurio, Encontrar familiar, Identificar, Localizar objeto, Escudriñar o Sirviente invisible. La saga debe terminar un descanso largo antes de volver a usar este rasgo para lanzar ese conjuro."
+   }
+  ]
+ }
+]

@@ -1,0 +1,290 @@
+[
+  {
+    "id": "planar-ally",
+    "name": "Aliado planar",
+    "desc": "Suplicas ayuda a una entidad de otro mundo. Debes conocer a ese ser: un dios, un príncipe demoníaco o algún otro ser de poder cósmico. Esa entidad envía un celestial, un elemental o un infernal que le sea leal para ayudarte, y hace que la criatura aparezca en un espacio desocupado dentro del alcance. Si conoces el nombre de una criatura concreta, puedes pronunciarlo al lanzar este conjuro para solicitar a esa criatura, aunque es posible que de todos modos acuda otra distinta (a elección del DM). Cuando la criatura aparece, no está obligada a comportarse de ninguna forma concreta. Puedes pedirle que realice un servicio a cambio de un pago, pero no está obligada a hacerlo. La tarea solicitada puede ir desde algo sencillo (llévanos volando al otro lado del abismo, o ayúdanos a librar una batalla) hasta algo complejo (espía a nuestros enemigos, o protégenos durante nuestra incursión en la mazmorra). Debes poder comunicarte con la criatura para negociar sus servicios. El pago puede adoptar diversas formas. Un celestial podría exigir una cuantiosa donación de oro u objetos mágicos a un templo aliado, mientras que un infernal podría exigir un sacrificio vivo o un regalo en forma de tesoro. Algunas criaturas podrían cambiar su servicio por una misión que emprendas tú. Una tarea que pueda medirse en minutos requiere un pago que valga 100 po por minuto. Una tarea medida en horas requiere 1000 po por hora. Y una tarea medida en días (hasta 10 días) requiere 10 000 po por día. El DM puede ajustar estos pagos en función de las circunstancias en las que lances el conjuro. Si la tarea está en consonancia con la ética de la criatura, el pago podría reducirse a la mitad o incluso no exigirse. Las tareas no peligrosas suelen requerir solo la mitad del pago sugerido, mientras que las tareas especialmente peligrosas podrían requerir un regalo mayor. Las criaturas rara vez aceptan tareas que parezcan suicidas. Cuando la criatura completa la tarea, o cuando expira la duración acordada del servicio, la criatura regresa a su plano natal tras informarte, si es posible. Si no logras acordar un precio por el servicio de la criatura, esta regresa de inmediato a su plano natal.",
+    "range": "60 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "programmed-illusion",
+    "name": "Ilusión programada",
+    "desc": "Creas una ilusión de un objeto, una criatura u otro fenómeno visible dentro del alcance que se activa cuando se produce un desencadenante concreto. Hasta entonces, la ilusión es imperceptible. No puede ser mayor que un cubo de 30 pies, y al lanzar el conjuro decides cómo se comporta la ilusión y qué sonidos emite. Esta actuación programada puede durar hasta 5 minutos. Cuando se produce el desencadenante que hayas especificado, la ilusión cobra existencia y actúa de la manera que hayas descrito. Cuando la ilusión termina su actuación, desaparece y permanece inactiva durante 10 minutos, tras los cuales puede volver a activarse. El desencadenante puede ser tan general o tan detallado como quieras, aunque debe basarse en fenómenos visuales o audibles que se produzcan a 30 pies o menos del área. Por ejemplo, podrías crear una ilusión de ti mismo que aparezca y advierta que se alejen a quienes intenten abrir una puerta con trampa. La interacción física con la imagen revela que es ilusoria, ya que las cosas pueden atravesarla. Una criatura que realice la acción de Estudiar para examinar la imagen puede determinar que es una ilusión si supera una prueba de Inteligencia (Investigación) contra tu CD de salvación de conjuros. Si una criatura descubre la ilusión por lo que es, puede ver a través de la imagen, y cualquier ruido que esta haga le suena hueco.",
+    "material": "polvo de jade que valga 25+ po",
+    "range": "120 pies",
+    "duration": "Hasta que se disipe"
+  },
+  {
+    "id": "sunbeam",
+    "name": "Rayo de sol",
+    "desc": "Lanzas un rayo de sol en una línea de 5 pies de ancho y 60 pies de largo. Cada criatura en la línea hace una tirada de salvación de Constitución. Si falla la tirada, la criatura recibe 6d8 de daño radiante y tiene el estado Cegado hasta el inicio de tu siguiente turno. Si la supera, solo recibe la mitad de ese daño. Hasta que el conjuro termine, puedes realizar una acción de Magia para crear una nueva línea de resplandor. Mientras dure el conjuro, una mota de resplandor brillante reluce sobre ti. Emite luz brillante en un radio de 30 pies y luz tenue 30 pies más allá. Esta luz es luz solar.",
+    "material": "una lupa",
+    "range": "Personal",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "transport-via-plants",
+    "name": "Transporte vegetal",
+    "desc": "Este conjuro crea un vínculo mágico entre una planta inanimada Grande o mayor que esté dentro del alcance y otra planta, a cualquier distancia, en el mismo plano de existencia. Debes haber visto o tocado la planta de destino al menos una vez antes. Mientras dure el conjuro, cualquier criatura puede entrar en la planta objetivo y salir por la planta de destino gastando 5 pies de movimiento.",
+    "range": "10 pies",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "true-seeing",
+    "name": "Visión verdadera",
+    "desc": "Mientras dure el conjuro, la criatura voluntaria que tocas tiene visión verdadera con un alcance de 120 pies.",
+    "material": "polvo de setas que valga 25+ po, que el conjuro consume",
+    "range": "Toque",
+    "duration": "1 hora"
+  },
+  {
+    "id": "wall-of-ice",
+    "name": "Muro de hielo",
+    "desc": "Creas un muro de hielo sobre una superficie sólida dentro del alcance. Puedes darle forma de cúpula semiesférica o de globo con un radio de hasta 10 pies, o bien de superficie plana formada por diez paneles de 10 pies de lado. Cada panel debe ser contiguo a otro panel. Sea cual sea su forma, el muro tiene 1 pie de grosor y dura mientras dure el conjuro. Si el muro atraviesa el espacio de una criatura cuando aparece, la criatura es empujada a uno de los lados del muro (tú eliges cuál) y hace una tirada de salvación de Destreza; recibe 10d6 de daño de frío si falla la tirada, o la mitad de ese daño si la supera. El muro es un objeto que puede sufrir daño y, por tanto, en el que puede abrirse una brecha. Tiene CA 12 y 30 puntos de golpe por cada sección de 10 pies, y tiene inmunidad al daño de frío, de veneno y psíquico, y vulnerabilidad al daño de fuego. Reducir a 0 puntos de golpe una sección de 10 pies del muro la destruye y deja tras de sí una capa de aire gélido en el espacio que ocupaba el muro. Una criatura que se mueva a través de la capa de aire gélido por primera vez en un turno hace una tirada de salvación de Constitución; recibe 5d6 de daño de frío si falla la tirada, o la mitad de ese daño si la supera.",
+    "higher": "El daño que inflige el muro al aparecer aumenta en 2d6, y el daño por atravesar la capa de aire gélido aumenta en 1d6, por cada nivel del espacio de conjuro por encima de 6.",
+    "material": "un trozo de cuarzo",
+    "range": "120 pies",
+    "duration": "10 minutos"
+  },
+  {
+    "id": "wall-of-thorns",
+    "name": "Muro de espinas",
+    "desc": "Creas un muro de maleza enmarañada erizado de espinas afiladas como agujas. El muro aparece dentro del alcance sobre una superficie sólida y dura mientras dure el conjuro. Puedes hacer que el muro mida hasta 60 pies de largo, 10 pies de alto y 5 pies de grosor, o que sea un círculo de 20 pies de diámetro y hasta 20 pies de alto y 5 pies de grosor. El muro bloquea la línea de visión. Cuando aparece el muro, cada criatura en su área hace una tirada de salvación de Destreza; recibe 7d8 de daño perforante si falla la tirada, o la mitad de ese daño si la supera. Una criatura puede moverse a través del muro, aunque de forma lenta y dolorosa. Por cada pie que una criatura se mueva a través del muro, debe gastar 4 pies de movimiento. Además, la primera vez en un turno que una criatura entre en un espacio del muro o termine su turno allí, la criatura hace una tirada de salvación de Destreza; recibe 7d8 de daño cortante si falla la tirada, o la mitad de ese daño si la supera. Una criatura solo hace esta tirada de salvación una vez por turno.",
+    "higher": "Ambos tipos de daño aumentan en 1d8 por cada nivel del espacio de conjuro por encima de 6.",
+    "material": "un puñado de espinas",
+    "range": "120 pies",
+    "duration": "10 minutos"
+  },
+  {
+    "id": "wind-walk",
+    "name": "Caminar con el viento",
+    "desc": "Tú y hasta diez criaturas voluntarias de tu elección dentro del alcance adoptáis formas gaseosas mientras dure el conjuro, con el aspecto de jirones de nube. Mientras está en esta forma de nube, un objetivo tiene una velocidad de vuelo de 300 pies y puede levitar; tiene inmunidad al estado Derribado, y tiene resistencia al daño contundente, perforante y cortante. Las únicas acciones que puede realizar un objetivo en esta forma son la acción de Correr o una acción de Magia para empezar a recuperar su forma normal. Recuperarla lleva 1 minuto, durante el cual el objetivo tiene el estado Aturdido. Hasta que el conjuro termine, el objetivo puede volver a la forma de nube, lo que también requiere una acción de Magia seguida de una transformación de 1 minuto. Si un objetivo está en forma de nube y volando cuando el efecto termina, desciende 60 pies por asalto durante 1 minuto hasta que aterriza, lo que hace sin peligro. Si no puede aterrizar tras 1 minuto, cae la distancia restante.",
+    "material": "una vela",
+    "range": "30 pies",
+    "duration": "8 horas"
+  },
+  {
+    "id": "word-of-recall",
+    "name": "Palabra de regreso",
+    "desc": "Tú y hasta cinco criaturas voluntarias que estén a 5 pies o menos de ti os teletransportáis al instante a un santuario designado previamente. Tú y cualquier criatura que se teletransporte contigo aparecéis en el espacio desocupado más cercano al punto que designaste al preparar tu santuario (consulta más abajo). Si lanzas este conjuro sin haber preparado antes un santuario, el conjuro no tiene ningún efecto. Debes designar un lugar, como un templo, como santuario lanzando allí este conjuro.",
+    "range": "5 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "arcane-sword",
+    "name": "Espada arcana",
+    "desc": "Creas una espada espectral que levita dentro del alcance. Dura mientras dure el conjuro. Cuando aparece la espada, haces un ataque de conjuro cuerpo a cuerpo contra un objetivo que esté a 5 pies o menos de la espada. Si impactas, el objetivo recibe daño de fuerza igual a 4d12 más tu modificador por característica para lanzar conjuros. En tus turnos posteriores, puedes realizar una acción adicional para mover la espada hasta 30 pies a un punto que puedas ver y repetir el ataque contra el mismo objetivo o contra otro distinto.",
+    "material": "una espada en miniatura que valga 250+ po",
+    "range": "90 pies",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "conjure-celestial",
+    "name": "Conjurar celestial",
+    "desc": "Conjuras un espíritu de los Planos Superiores, que se manifiesta como una columna de luz en un cilindro de 10 pies de radio y 40 pies de altura centrado en un punto dentro del alcance. Por cada criatura que puedas ver en el cilindro, elige cuál de estas luces brilla sobre ella: Hasta que el conjuro termine, el cilindro está lleno de luz brillante y, cuando te muevas en tu turno, también puedes mover el cilindro hasta 30 pies. Siempre que el cilindro entre en el espacio de una criatura que puedas ver y siempre que una criatura que puedas ver entre en el cilindro o termine su turno en él, puedes bañarla en una de las luces. Una criatura solo puede verse afectada por este conjuro una vez por turno.",
+    "higher": "La curación y el daño aumentan en 1d12 por cada nivel del espacio de conjuro por encima de 7.",
+    "range": "90 pies",
+    "duration": "10 minutos"
+  },
+  {
+    "id": "delayed-blast-fireball",
+    "name": "Bola de fuego de explosión retardada",
+    "desc": "Un haz de luz amarilla destella desde ti y luego se condensa en un punto elegido dentro del alcance en forma de cuenta brillante mientras dure el conjuro. Cuando el conjuro termina, la cuenta explota, y cada criatura en una esfera de 20 pies de radio centrada en ese punto hace una tirada de salvación de Destreza. Una criatura recibe daño de fuego igual al total de daño acumulado si falla la tirada, o la mitad de ese daño si la supera. El daño base del conjuro es de 12d6, y el daño aumenta en 1d6 cada vez que termina tu turno sin que el conjuro haya terminado. Si una criatura toca la cuenta brillante antes de que el conjuro termine, esa criatura hace una tirada de salvación de Destreza. Si falla la tirada, el conjuro termina y hace que la cuenta explote. Si la supera, la criatura puede lanzar la cuenta hasta 40 pies. Si la cuenta lanzada entra en el espacio de una criatura o choca con un objeto sólido, el conjuro termina y la cuenta explota. Cuando la cuenta explota, los objetos inflamables que haya en la explosión y que nadie lleve puestos ni transporte empiezan a arder.",
+    "higher": "El daño base aumenta en 1d6 por cada nivel del espacio de conjuro por encima de 7.",
+    "material": "una bola de guano de murciélago y azufre",
+    "range": "150 pies",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "divine-word",
+    "name": "Palabra divina",
+    "desc": "Pronuncias una palabra imbuida del poder de los Planos Superiores. Cada criatura de tu elección dentro del alcance hace una tirada de salvación de Carisma. Si falla la tirada, un objetivo que tenga 50 puntos de golpe o menos sufre un efecto basado en sus puntos de golpe actuales, como se muestra en la tabla Efectos de Palabra divina. Independientemente de sus puntos de golpe, un objetivo celestial, elemental, hada o infernal que falle la tirada es devuelto a la fuerza a su plano de origen (si no está ya allí) y no puede regresar al plano actual durante 24 horas por ningún medio salvo un conjuro de Deseo.\n\n| Puntos de golpe | Efecto |\n|---|---|\n| 0–20 | El objetivo muere. |\n| 21–30 | El objetivo tiene los estados Cegado, Ensordecido y Aturdido durante 1 hora. |\n| 31–40 | El objetivo tiene los estados Cegado y Ensordecido durante 10 minutos. |\n| 41–50 | El objetivo tiene el estado Ensordecido durante 1 minuto. |",
+    "range": "30 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "etherealness",
+    "name": "Excursión etérea",
+    "desc": "Entras en las regiones fronterizas del Plano Etéreo, donde se solapa con tu plano actual. Permaneces en el Etéreo Fronterizo mientras dure el conjuro. Durante este tiempo, puedes moverte en cualquier dirección. Si te mueves hacia arriba o hacia abajo, cada pie de movimiento cuesta un pie adicional. Puedes percibir el plano que has abandonado, que se ve gris, y no puedes ver nada en él que esté a más de 60 pies de distancia. Mientras estés en el Plano Etéreo, solo puedes afectar y verte afectado por criaturas, objetos y efectos de ese plano. Las criaturas que no estén en el Plano Etéreo no pueden percibirte ni interactuar contigo a menos que algún rasgo les otorgue la capacidad de hacerlo. Cuando el conjuro termina, regresas al plano que abandonaste, en el punto que corresponde a tu espacio en el Etéreo Fronterizo. Si apareces en un espacio ocupado, eres desplazado al espacio desocupado más cercano y recibes daño de fuerza igual al doble del número de pies que te hayas desplazado. Este conjuro termina al instante si lo lanzas mientras estás en el Plano Etéreo o en un plano que no linde con él, como uno de los Planos Exteriores.",
+    "higher": "Puedes elegir como objetivo a hasta tres criaturas voluntarias (incluido tú) por cada nivel del espacio de conjuro por encima de 7. Las criaturas deben estar a 10 pies o menos de ti cuando lances el conjuro.",
+    "range": "Personal",
+    "duration": "8 horas"
+  },
+  {
+    "id": "finger-of-death",
+    "name": "Dedo de la muerte",
+    "desc": "Desatas energía negativa contra una criatura que puedas ver dentro del alcance. El objetivo hace una tirada de salvación de Constitución; recibe 7d8 + 30 de daño necrótico si falla la tirada, o la mitad de ese daño si la supera. Un humanoide muerto por este conjuro se alza al inicio de tu siguiente turno como un Zombi (consulta «Monstruos») que obedece tus órdenes verbales.",
+    "range": "60 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "fire-storm",
+    "name": "Tormenta de fuego",
+    "desc": "Una tormenta de fuego aparece dentro del alcance. El área de la tormenta está formada por hasta diez cubos de 10 pies, que dispones como quieras. Cada cubo debe ser contiguo a al menos otro cubo. Cada criatura en el área hace una tirada de salvación de Destreza; recibe 7d10 de daño de fuego si falla la tirada, o la mitad de ese daño si la supera. Los objetos inflamables del área que nadie lleve puestos ni transporte empiezan a arder.",
+    "range": "150 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "forcecage",
+    "name": "Jaula de fuerza",
+    "desc": "Una prisión inmóvil, invisible y con forma de cubo, compuesta de fuerza mágica, cobra existencia alrededor de un área que elijas dentro del alcance. La prisión puede ser una jaula o una caja sólida, a tu elección.\n\nUna prisión con forma de jaula puede medir hasta 20 pies de lado y está hecha de barrotes de 1/2 pulgada de diámetro separados 1/2 pulgada entre sí. Una prisión con forma de caja puede medir hasta 10 pies de lado y crea una barrera sólida que impide que la atraviese cualquier materia y bloquea cualquier conjuro lanzado hacia el área o desde ella.\n\nCuando lanzas el conjuro, cualquier criatura que esté completamente dentro del área de la jaula queda atrapada. Las criaturas que solo estén parcialmente dentro del área, o las que sean demasiado grandes para caber en ella, son empujadas desde el centro del área hasta quedar completamente fuera de ella.\n\nUna criatura que esté dentro de la jaula no puede salir de ella por medios no mágicos. Si la criatura intenta usar la teletransportación o el viaje interplanar para salir, primero debe hacer una tirada de salvación de Carisma. Si la supera, la criatura puede usar esa magia para salir de la jaula. Si la falla, la criatura no sale de la jaula y desperdicia el conjuro o efecto. La jaula también se extiende al Plano Etéreo, lo que bloquea el viaje etéreo.\n\nEste conjuro no puede disiparse mediante Disipar magia.",
+    "material": "polvo de rubí que valga 1500+ po, que el conjuro consume",
+    "range": "100 pies",
+    "duration": "1 hora"
+  },
+  {
+    "id": "magnificent-mansion",
+    "name": "Mansión magnífica",
+    "desc": "Conjuras una puerta reluciente dentro del alcance que dura mientras dure el conjuro. La puerta conduce a una morada extradimensional y mide 5 pies de ancho y 10 pies de alto. Tú y cualquier criatura que designes al lanzar el conjuro podéis entrar en la morada extradimensional mientras la puerta permanezca abierta. Puedes abrirla o cerrarla (no requiere acción) si estás a 30 pies o menos de ella. Mientras está cerrada, la puerta es imperceptible. Al otro lado de la puerta hay un magnífico vestíbulo con numerosas estancias más allá. El ambiente de la morada es limpio, fresco y cálido. Puedes crear el plano que quieras para la morada, pero no puede superar 50 cubos contiguos de 10 pies. El lugar está amueblado y decorado como elijas. Contiene comida suficiente para servir un banquete de nueve platos para hasta 100 personas. El mobiliario y los demás objetos creados por este conjuro se disipan en humo si se sacan de él. Un servicio de 100 sirvientes casi transparentes atiende a todos los que entran. Tú determinas el aspecto de estos sirvientes y su atuendo. Son invulnerables y obedecen tus órdenes. Cada sirviente puede realizar las tareas que podría realizar un humano, pero no puede atacar ni realizar ninguna acción que dañe directamente a otra criatura. Así, los sirvientes pueden traer cosas, limpiar, remendar, doblar ropa, encender fuegos, servir comida, escanciar vino, etc. Los sirvientes no pueden salir de la morada. Cuando el conjuro termina, cualquier criatura u objeto que quede dentro del espacio extradimensional es expulsado a los espacios desocupados más cercanos a la entrada.",
+    "material": "una puerta en miniatura que valga 15+ po",
+    "range": "300 pies",
+    "duration": "24 horas"
+  },
+  {
+    "id": "mirage-arcane",
+    "name": "Espejismo arcano",
+    "desc": "Haces que el terreno de un área de hasta 1 milla cuadrada parezca, suene, huela e incluso se sienta al tacto como otro tipo de terreno. Se podría hacer que unos campos abiertos o un camino parecieran un pantano, una colina, una grieta o algún otro terreno abrupto o intransitable. Se puede hacer que un estanque parezca una pradera de hierba, un precipicio una suave pendiente o un barranco sembrado de rocas un camino ancho y liso. Del mismo modo, puedes alterar el aspecto de estructuras o añadirlas donde no las haya. El conjuro no disfraza, oculta ni añade criaturas. La ilusión incluye elementos audibles, visuales, táctiles y olfativos, por lo que puede convertir terreno despejado en terreno difícil (o viceversa) o dificultar de otro modo el movimiento por el área. Cualquier fragmento del terreno ilusorio (como una roca o un palo) que se saque del área del conjuro desaparece de inmediato. Las criaturas con visión verdadera pueden ver a través de la ilusión la verdadera forma del terreno; sin embargo, todos los demás elementos de la ilusión permanecen, así que, aunque la criatura sea consciente de la presencia de la ilusión, puede seguir interactuando físicamente con ella.",
+    "range": "A la vista",
+    "duration": "10 días"
+  },
+  {
+    "id": "plane-shift",
+    "name": "Desplazamiento entre planos",
+    "desc": "Tú y hasta ocho criaturas voluntarias que se den la mano formando un círculo sois transportados a otro plano de existencia. Puedes especificar un destino en términos generales, como una ciudad concreta del Plano Elemental del Fuego o un palacio del segundo nivel de los Nueve Infiernos, y apareces en ese destino o cerca de él, según determine el DM. Como alternativa, si conoces la secuencia de sigilos de un círculo de teletransportación de otro plano de existencia, este conjuro puede llevarte a ese círculo. Si el círculo de teletransportación es demasiado pequeño para contener a todas las criaturas que has transportado, estas aparecen en los espacios desocupados más próximos al círculo.",
+    "material": "una vara metálica bifurcada que valga 250+ po y esté sintonizada con un plano de existencia",
+    "range": "Toque",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "prismatic-spray",
+    "name": "Rociada prismática",
+    "desc": "Ocho rayos de luz destellan desde ti en un cono de 60 pies. Cada criatura en el cono hace una tirada de salvación de Destreza. Por cada objetivo, tira 1d8 para determinar qué rayo de color le afecta, consultando la tabla Rayos prismáticos.\n\n| 1d8 | Rayo |\n|---|---|\n| 1 | **Rojo.** *Salvación fallida:* 12d6 de daño de fuego. *Salvación superada:* La mitad de ese daño. |\n| 2 | **Naranja.** *Salvación fallida:* 12d6 de daño de ácido. *Salvación superada:* La mitad de ese daño. |\n| 3 | **Amarillo.** *Salvación fallida:* 12d6 de daño de relámpago. *Salvación superada:* La mitad de ese daño. |\n| 4 | **Verde.** *Salvación fallida:* 12d6 de daño de veneno. *Salvación superada:* La mitad de ese daño. |\n| 5 | **Azul.** *Salvación fallida:* 12d6 de daño de frío. *Salvación superada:* La mitad de ese daño. |\n| 6 | **Añil.** *Salvación fallida:* El objetivo tiene el estado Apresado y hace una tirada de salvación de Constitución al final de cada uno de sus turnos. Si la supera tres veces, el estado termina. Si la falla tres veces, tiene el estado Petrificado hasta que lo libere un efecto como el conjuro Restablecimiento mayor. Los éxitos y los fallos no tienen por qué ser consecutivos; lleva la cuenta de ambos hasta que el objetivo acumule tres del mismo tipo. |\n| 7 | **Violeta.** *Salvación fallida:* El objetivo tiene el estado Cegado y hace una tirada de salvación de Sabiduría al inicio de tu siguiente turno. Si la supera, el estado termina. Si la falla, el estado termina y la criatura se teletransporta a otro plano de existencia (a elección del DM). |\n| 8 | **Especial.** El objetivo es alcanzado por dos rayos. Tira dos veces y repite cualquier 8. |",
+    "range": "Personal",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "project-image",
+    "name": "Proyectar imagen",
+    "desc": "Creas una copia ilusoria de ti mismo que dura mientras dure el conjuro. La copia puede aparecer en cualquier lugar dentro del alcance que hayas visto antes, independientemente de los obstáculos que haya de por medio. La ilusión tiene tu aspecto y tu voz, pero es intangible. Si la ilusión recibe cualquier daño, desaparece y el conjuro termina. Puedes ver a través de los ojos de la ilusión y oír a través de sus oídos como si estuvieras en su espacio. Como acción de Magia, puedes moverla hasta 60 pies y hacer que gesticule, hable y se comporte de la forma que elijas. Imita tus gestos a la perfección. La interacción física con la imagen revela que es ilusoria, ya que las cosas pueden atravesarla. Una criatura que realice la acción de Estudiar para examinar la imagen puede determinar que es una ilusión si supera una prueba de Inteligencia (Investigación) contra tu CD de salvación de conjuros. Si una criatura descubre la ilusión por lo que es, puede ver a través de la imagen, y cualquier ruido que esta haga le suena hueco.",
+    "material": "una estatuilla de ti mismo que valga 5+ po",
+    "range": "500 millas",
+    "duration": "1 día"
+  },
+  {
+    "id": "regenerate",
+    "name": "Regenerar",
+    "desc": "Una criatura que tocas recupera 4d8 + 15 puntos de golpe. Mientras dure el conjuro, el objetivo recupera 1 punto de golpe al inicio de cada uno de sus turnos, y cualquier parte del cuerpo amputada vuelve a crecer al cabo de 2 minutos.",
+    "material": "una rueda de oraciones",
+    "range": "Toque",
+    "duration": "1 hora"
+  },
+  {
+    "id": "resurrection",
+    "name": "Resurrección",
+    "desc": "Con un toque, revives a una criatura muerta que no lleve muerta más de un siglo, que no haya muerto de vejez y que no fuera un muerto viviente cuando murió. La criatura vuelve a la vida con todos sus puntos de golpe. Este conjuro también neutraliza cualquier veneno que afectara a la criatura en el momento de su muerte. Este conjuro cierra todas las heridas mortales y restaura cualquier parte del cuerpo que falte. Volver de entre los muertos es una dura prueba. El objetivo sufre un penalizador de −4 a las pruebas de d20. Cada vez que el objetivo termina un descanso largo, el penalizador se reduce en 1 hasta llegar a 0. Lanzar este conjuro para revivir a una criatura que lleve muerta 365 días o más te agota. Hasta que termines un descanso largo, no puedes volver a lanzar conjuros y tienes desventaja en las pruebas de d20.",
+    "material": "un diamante que valga 1000+ po, que el conjuro consume",
+    "range": "Toque",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "reverse-gravity",
+    "name": "Invertir la gravedad",
+    "desc": "Este conjuro invierte la gravedad en un cilindro de 50 pies de radio y 100 pies de altura centrado en un punto dentro del alcance. Todas las criaturas y objetos de esa área que no estén anclados al suelo caen hacia arriba y llegan a la parte superior del cilindro. Una criatura puede hacer una tirada de salvación de Destreza para agarrarse a un objeto fijo que tenga a su alcance y evitar así la caída hacia arriba. Si en esta caída hacia arriba se encuentran con un techo o un objeto anclado, las criaturas y los objetos chocan contra él igual que lo harían en una caída hacia abajo. Si una criatura u objeto afectado llega a la parte superior del cilindro sin chocar contra nada, levita allí mientras dure el conjuro. Cuando el conjuro termina, los objetos y las criaturas afectados caen hacia abajo.",
+    "material": "una piedra imán y limaduras de hierro",
+    "range": "100 pies",
+    "duration": "1 minuto"
+  },
+  {
+    "id": "sequester",
+    "name": "Recluir",
+    "desc": "Con un toque, recluyes mágicamente un objeto o una criatura voluntaria. Mientras dure el conjuro, el objetivo tiene el estado Invisible y no puede ser objetivo de conjuros de adivinación, ser detectado mediante magia ni ser observado a distancia con magia. Si el objetivo es una criatura, entra en un estado de animación suspendida; tiene el estado Inconsciente, no envejece y no necesita comida, agua ni aire. Puedes establecer una condición para que el conjuro termine antes. La condición puede ser cualquiera que elijas, pero debe producirse o ser visible a 1 milla o menos del objetivo. Algunos ejemplos son «al cabo de 1000 años» o «cuando la Tarasca despierte». Este conjuro también termina si el objetivo recibe cualquier daño.",
+    "material": "polvo de gemas que valga 5000+ po, que el conjuro consume",
+    "range": "Toque",
+    "duration": "Hasta que se disipe"
+  },
+  {
+    "id": "simulacrum",
+    "name": "Simulacro",
+    "desc": "Creas un simulacro de una bestia o un humanoide que esté a 10 pies o menos de ti durante todo el lanzamiento del conjuro. Terminas el lanzamiento tocando tanto a la criatura como a un montón de hielo o nieve del mismo tamaño que dicha criatura, y el montón se convierte en el simulacro, que es una criatura. Usa las estadísticas de juego de la criatura original en el momento del lanzamiento, salvo que es un constructo, sus puntos de golpe máximos son la mitad y no puede lanzar este conjuro. El simulacro es amistoso contigo y con las criaturas que designes. Obedece tus órdenes y actúa en tu turno en combate. El simulacro no puede subir de nivel ni realizar descansos cortos o largos. Si el simulacro recibe daño, la única forma de restaurar sus puntos de golpe es repararlo mientras realizas un descanso largo, durante el cual gastas componentes que valgan 100 po por cada punto de golpe restaurado. El simulacro debe permanecer a 5 pies o menos de ti para la reparación. El simulacro dura hasta que se queda a 0 puntos de golpe, momento en el que vuelve a ser nieve y se derrite. Si vuelves a lanzar este conjuro, cualquier simulacro que hayas creado con él se destruye al instante.",
+    "material": "polvo de rubí que valga 1500+ po, que el conjuro consume",
+    "range": "Toque",
+    "duration": "Hasta que se disipe"
+  },
+  {
+    "id": "symbol",
+    "name": "Símbolo",
+    "desc": "Inscribes un glifo dañino en una superficie (como una sección de suelo o de pared) o dentro de un objeto que pueda cerrarse (como un libro o un cofre). El glifo puede cubrir un área de no más de 10 pies de diámetro. Si eliges un objeto, este debe permanecer en su sitio; si se mueve más de 10 pies del lugar donde lanzaste este conjuro, el glifo se rompe y el conjuro termina sin haberse activado.\n\nEl glifo es casi imperceptible y, para advertirlo, hay que superar una prueba de Sabiduría (Percepción) contra tu CD de salvación de conjuros.\n\nCuando inscribes el glifo, estableces su desencadenante y eliges qué efecto lleva el símbolo: Muerte, Discordia, Miedo, Dolor, Sueño o Aturdimiento. Cada uno se explica a continuación.\n\n**_Establecer el desencadenante._** Decides qué activa el glifo cuando lanzas el conjuro. En el caso de los glifos inscritos en una superficie, los desencadenantes habituales incluyen tocar o pisar el glifo, retirar otro objeto que lo cubra o acercarse a cierta distancia de él. En el caso de los glifos inscritos dentro de un objeto, los desencadenantes habituales incluyen abrir ese objeto o ver el glifo.\n\nPuedes afinar el desencadenante para que solo lo activen criaturas de ciertos tipos (por ejemplo, el glifo podría configurarse para afectar a aberraciones). También puedes establecer condiciones para las criaturas que no activan el glifo, como las que digan una contraseña determinada.\n\nUna vez activado, el glifo brilla y llena de luz tenue una esfera de 60 pies de radio durante 10 minutos, tras los cuales el conjuro termina. Cada criatura que esté en la esfera cuando se activa el glifo es objetivo de su efecto, al igual que una criatura que entre en la esfera por primera vez en un turno o termine su turno en ella. Una criatura solo es objetivo una vez por turno.\n\n**_Muerte._** Cada objetivo hace una tirada de salvación de Constitución; recibe 10d10 de daño necrótico si falla la tirada, o la mitad de ese daño si la supera.\n\n**_Discordia._** Cada objetivo hace una tirada de salvación de Sabiduría. Si falla la tirada, el objetivo discute con otras criaturas durante 1 minuto. Durante este tiempo, es incapaz de comunicarse de forma significativa y tiene desventaja en las tiradas de ataque y las pruebas de característica.\n\n**_Miedo._** Cada objetivo debe superar una tirada de salvación de Sabiduría o tendrá el estado Asustado durante 1 minuto. Mientras esté Asustado, el objetivo debe alejarse al menos 30 pies del glifo en cada uno de sus turnos, si puede.\n\n**_Dolor._** Cada objetivo debe superar una tirada de salvación de Constitución o tendrá el estado Incapacitado durante 1 minuto.\n\n**_Sueño._** Cada objetivo debe superar una tirada de salvación de Sabiduría o tendrá el estado Inconsciente durante 10 minutos. Una criatura se despierta si recibe daño o si alguien realiza una acción para despertarla zarandeándola.\n\n**_Aturdimiento._** Cada objetivo debe superar una tirada de salvación de Sabiduría o tendrá el estado Aturdido durante 1 minuto.",
+    "material": "polvo de diamante que valga 1000+ po, que el conjuro consume",
+    "range": "Toque",
+    "duration": "Hasta que se disipe o se active"
+  },
+  {
+    "id": "teleport",
+    "name": "Teletransporte",
+    "desc": "Este conjuro te transporta al instante a ti y a hasta ocho criaturas voluntarias que puedas ver dentro del alcance, o a un único objeto que puedas ver dentro del alcance, a un destino que elijas. Si eliges como objetivo un objeto, este debe ser Grande o más pequeño, y no puede estar sujeto ni ser transportado por una criatura que no lo desee. Debes conocer el destino que elijas, y debe estar en el mismo plano de existencia que tú. Tu familiaridad con el destino determina si llegas a él con éxito. El DM tira 1d100 y consulta la tabla Resultado de la teletransportación y las explicaciones que la siguen.\n\n| Familiaridad | Percance | Área similar | Desviado | En el objetivo |\n|---|---|---|---|---|\n| Círculo permanente | — | — | — | 01–00 |\n| Objeto vinculado | — | — | — | 01–00 |\n| Muy familiar | 01–05 | 06–13 | 14–24 | 25–00 |\n| Visto ocasionalmente | 01–33 | 34–43 | 44–53 | 54–00 |\n| Visto una vez o descrito | 01–43 | 44–53 | 54–73 | 74–00 |\n| Destino falso | 01–50 | 51–00 | — | — |\n\n- «Círculo permanente» significa un círculo de teletransportación permanente cuya secuencia de sigilos conoces.\n- «Objeto vinculado» significa que posees un objeto tomado del destino deseado en los últimos seis meses, como un libro de la biblioteca de un mago.\n- «Muy familiar» es un lugar que has visitado a menudo, un lugar que has estudiado detenidamente o un lugar que puedes ver cuando lanzas el conjuro.\n- «Visto ocasionalmente» es un lugar que has visto más de una vez pero con el que no estás muy familiarizado.\n- «Visto una vez o descrito» es un lugar que has visto una vez, posiblemente mediante magia, o un lugar que conoces por la descripción de otra persona, quizá a partir de un mapa.\n- «Destino falso» es un lugar que no existe. Quizá intentaste escudriñar el santuario de un enemigo pero en su lugar viste una ilusión, o intentas teletransportarte a un lugar que ya no existe.\n\n**Percance.** La magia impredecible del conjuro provoca un viaje difícil. Cada criatura que se teletransporta (o el objeto objetivo) recibe 3d10 de daño de fuerza, y el DM vuelve a tirar en la tabla para ver dónde acabáis (pueden producirse varios percances, que infligen daño cada vez).\n\n**Área similar.** Tú y tu grupo (o el objeto objetivo) aparecéis en un área distinta que es visual o temáticamente similar al área objetivo. Aparecéis en el lugar similar más cercano. Si te diriges al laboratorio de tu casa, por ejemplo, podrías aparecer en el laboratorio de otra persona en la misma ciudad.\n\n**Desviado.** Tú y tu grupo (o el objeto objetivo) aparecéis a 2d12 millas del destino en una dirección aleatoria. Tira 1d8 para determinar la dirección: 1, este; 2, sureste; 3, sur; 4, suroeste; 5, oeste; 6, noroeste; 7, norte; u 8, noreste.\n\n**En el objetivo.** Tú y tu grupo (o el objeto objetivo) aparecéis donde pretendíais.",
+    "range": "10 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "animal-shapes",
+    "name": "Formas animales",
+    "desc": "Elige cualquier número de criaturas voluntarias que puedas ver dentro del alcance. Cada objetivo cambia de forma a una bestia Grande o más pequeña de tu elección que tenga un valor de desafío de 4 o inferior. Puedes elegir una forma distinta para cada objetivo. En turnos posteriores, puedes realizar una acción de Magia para volver a transformar a los objetivos. Las estadísticas de juego de un objetivo se sustituyen por las de la bestia elegida, pero el objetivo conserva su tipo de criatura; sus puntos de golpe; sus dados de golpe; su alineamiento; su capacidad de comunicarse, y sus puntuaciones de Inteligencia, Sabiduría y Carisma. Las acciones del objetivo están limitadas por la anatomía de la forma de bestia, y no puede lanzar conjuros. El equipo del objetivo se funde con la nueva forma, y el objetivo no puede usar nada de ese equipo mientras esté en esa forma. El objetivo obtiene un número de puntos de golpe temporales igual a los puntos de golpe de la primera forma que adopte. Si queda alguno de estos puntos de golpe temporales cuando el conjuro termina, desaparecen. La transformación dura mientras dure el conjuro o hasta que el objetivo la termine como acción adicional.",
+    "range": "30 pies",
+    "duration": "24 horas"
+  },
+  {
+    "id": "antimagic-field",
+    "name": "Campo antimagia",
+    "desc": "Un aura de antimagia te rodea en una emanación de 10 pies. Nadie puede lanzar conjuros, realizar acciones de Magia ni crear otros efectos mágicos dentro del aura, y esas cosas no pueden tener como objetivo ni afectar de ningún otro modo a nada que esté dentro de ella. Las propiedades mágicas de los objetos mágicos no funcionan dentro del aura ni sobre nada que esté dentro de ella. Las áreas de efecto creadas por conjuros u otra magia no pueden extenderse al interior del aura, y nadie puede teletransportarse dentro o fuera de ella ni usar allí el viaje planar. Los portales se cierran temporalmente mientras están en el aura. Los conjuros en curso, salvo los lanzados por un artefacto o una deidad, quedan suprimidos en el área. Mientras un efecto está suprimido, no funciona, pero el tiempo que pasa suprimido cuenta para su duración.",
+    "material": "limaduras de hierro",
+    "range": "Personal",
+    "duration": "1 hora"
+  },
+  {
+    "id": "antipathysympathy",
+    "name": "Antipatía/simpatía",
+    "desc": "Al lanzar el conjuro, elige si crea antipatía o simpatía, y elige como objetivo una criatura u objeto que sea Enorme o más pequeño. Luego especifica un tipo de criatura, como dragones rojos, goblins o vampiros. Una criatura del tipo elegido hace una tirada de salvación de Sabiduría cuando se acerca a 120 pies o menos del objetivo. Tu elección de antipatía o simpatía determina qué le ocurre a una criatura cuando falla esa tirada de salvación:\n\n**Antipatía**. La criatura tiene el estado Asustado. La criatura Asustada debe usar su movimiento en sus turnos para alejarse lo más posible del objetivo, desplazándose por la ruta más segura.\n\n**Simpatía**. La criatura tiene el estado Encantado. La criatura Encantada debe usar su movimiento en sus turnos para acercarse lo más posible al objetivo, desplazándose por la ruta más segura. Si la criatura está a 5 pies o menos del objetivo, no puede alejarse voluntariamente. Si el objetivo daña a la criatura Encantada, esa criatura puede hacer una tirada de salvación de Sabiduría para terminar el efecto, como se describe a continuación.\n\n**Terminar el efecto**. Si la criatura Asustada o Encantada termina su turno a más de 120 pies del objetivo, la criatura hace una tirada de salvación de Sabiduría. Si la supera, la criatura deja de estar afectada por el objetivo. Una criatura que supere la tirada de salvación contra este efecto es inmune a él durante 1 minuto, tras el cual puede volver a verse afectada.",
+    "material": "una mezcla de vinagre y miel",
+    "range": "60 pies",
+    "duration": "10 días"
+  },
+  {
+    "id": "befuddlement",
+    "name": "Desconcierto",
+    "desc": "Atacas con una descarga la mente de una criatura que puedas ver dentro del alcance. El objetivo hace una tirada de salvación de Inteligencia. Si falla la tirada, el objetivo recibe 10d12 de daño psíquico y no puede lanzar conjuros ni realizar la acción de Magia. Al final de cada periodo de 30 días, el objetivo repite la tirada de salvación y, si la supera, el efecto termina. El efecto también puede terminarse mediante los conjuros Restablecimiento mayor, Curar o Deseo. Si supera la tirada, el objetivo solo recibe la mitad de ese daño.",
+    "material": "un llavero sin llaves",
+    "range": "150 pies",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "clone",
+    "name": "Clon",
+    "desc": "Tocas a una criatura o al menos 1 pulgada cúbica de su carne. Un duplicado inerte de esa criatura se forma dentro del recipiente usado en el lanzamiento del conjuro y termina de crecer al cabo de 120 días; eliges si el clon terminado tiene la misma edad que la criatura o es más joven. El clon permanece inerte y perdura indefinidamente mientras nadie perturbe su recipiente. Si la criatura original muere después de que el clon termine de formarse, el alma de la criatura se transfiere al clon si el alma es libre y está dispuesta a regresar. El clon es físicamente idéntico al original y tiene la misma personalidad, los mismos recuerdos y las mismas capacidades, pero nada del equipo del original. Los restos originales de la criatura, si los hay, se vuelven inertes y no pueden revivirse, ya que el alma de la criatura está en otra parte.",
+    "material": "un diamante que valga 1000+ po, que el conjuro consume, y un recipiente sellable que valga 2000+ po y sea lo bastante grande para contener a la criatura que se va a clonar",
+    "range": "Toque",
+    "duration": "Instantánea"
+  },
+  {
+    "id": "control-weather",
+    "name": "Controlar el clima",
+    "desc": "Tomas el control del clima a 5 millas o menos de ti mientras dure el conjuro. Debes estar al aire libre para lanzar este conjuro, y termina antes si entras en un lugar cerrado. Cuando lanzas el conjuro, cambias las condiciones climáticas actuales, que determina el DM. Puedes cambiar la precipitación, la temperatura y el viento. Las nuevas condiciones tardan 1d4 × 10 minutos en surtir efecto. Una vez que lo hacen, puedes volver a cambiar las condiciones. Cuando el conjuro termina, el clima vuelve gradualmente a la normalidad. Cuando cambies las condiciones climáticas, busca una condición actual en las tablas siguientes y cambia su fase en uno, hacia arriba o hacia abajo. Al cambiar el viento, puedes cambiar su dirección. Tabla: Precipitación | Fase | Condición | |-------|--------------------------------------------| | 1 | Despejado | | 2 | Nubes ligeras | | 3 | Cubierto o niebla baja | | 4 | Lluvia, granizo o nieve | | 5 | Lluvia torrencial, granizada intensa o ventisca | Tabla: Temperatura | Fase | Condición | |-------------|-----------| | 1 | Ola de calor | | 2 | Caluroso | | 3 | Templado | | 4 | Fresco | | 5 | Frío | | 6 | Gélido | Tabla: Viento | Fase | Condición | |-------|---------------| | 1 | Calma | | 2 | Viento moderado | | 3 | Viento fuerte | | 4 | Vendaval | | 5 | Tormenta |",
+    "material": "incienso encendido",
+    "range": "Personal",
+    "duration": "8 horas"
+  },
+  {
+    "id": "demiplane",
+    "name": "Semiplano",
+    "desc": "Creas una puerta sombría Mediana sobre una superficie sólida y plana que puedas ver dentro del alcance. Esta puerta puede abrirse y cerrarse, y conduce a un semiplano que es una sala vacía de 30 pies en cada dimensión, hecha de madera o de piedra (a tu elección). Cuando el conjuro termina, la puerta desaparece, y cualquier objeto que haya dentro del semiplano permanece allí. Cualquier criatura que haya dentro también permanece, a menos que opte por ser expulsada a través de la puerta mientras esta desaparece, en cuyo caso cae con el estado Derribado en los espacios desocupados más cercanos al lugar que ocupaba la puerta. Cada vez que lanzas este conjuro, puedes crear un semiplano nuevo o conectar la puerta sombría a un semiplano que hayas creado con un lanzamiento anterior de este conjuro. Además, si conoces la naturaleza y el contenido de un semiplano creado por otra criatura al lanzar este conjuro, puedes conectar la puerta sombría a ese semiplano en su lugar.",
+    "range": "60 pies",
+    "duration": "1 hora"
+  },
+  {
+    "id": "dominate-monster",
+    "name": "Dominar monstruo",
+    "desc": "Una criatura que puedas ver dentro del alcance debe superar una tirada de salvación de Sabiduría o tendrá el estado Encantado mientras dure el conjuro. El objetivo tiene ventaja en la tirada de salvación si tú o tus aliados estáis luchando contra él. Siempre que el objetivo reciba daño, repite la tirada de salvación y, si la supera, el conjuro termina para él. Tienes un vínculo telepático con el objetivo Encantado mientras ambos estéis en el mismo plano de existencia. En tu turno, puedes usar este vínculo para darle órdenes al objetivo (no requiere acción), como «Ataca a esa criatura», «Muévete allí» o «Trae ese objeto». El objetivo hace todo lo posible por obedecer en su turno. Si completa una orden y no recibe más indicaciones tuyas, actúa y se mueve como quiera, centrándose en protegerse. Puedes ordenar al objetivo que realice una reacción, pero debes realizar tu propia reacción para hacerlo.",
+    "higher": "Tu concentración puede durar más con un espacio de conjuro de nivel 9 (hasta 8 horas).",
+    "range": "60 pies",
+    "duration": "1 hora"
+  }
+]

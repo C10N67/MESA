@@ -1,0 +1,1242 @@
+[
+ {
+  "id": "invisible-stalker",
+  "name": "Invisible Stalker",
+  "languages": "Common, Primordial (Auran)",
+  "traits": [
+   {
+    "name": "Air Form",
+    "desc": "The stalker can enter an enemy's space and stop there. It can move through a space as narrow as 1 inch without expending extra movement to do so."
+   },
+   {
+    "name": "Invisibility",
+    "desc": "The stalker has the Invisible condition."
+   }
+  ],
+  "actions": [
+   {
+    "key": "invisible-stalker_multiattack",
+    "name": "Multiattack",
+    "desc": "The stalker makes three Wind Swipe attacks. It can replace one attack with a use of Vortex."
+   },
+   {
+    "key": "invisible-stalker_wind-swipe",
+    "name": "Wind Swipe",
+    "desc": "Melee Attack Roll: +7, reach 5 ft. 11 (2d6 + 4) Force damage."
+   },
+   {
+    "key": "invisible-stalker_vortex",
+    "name": "Vortex",
+    "desc": "Constitution Saving Throw: DC 14, one Large or smaller creature in the stalker's space. Failure: 7 (1d8 + 3) Thunder damage, and the target has the Grappled condition (escape DC 13). Until the grapple ends, the target can't cast spells with a Verbal component and takes 7 (2d6) Thunder damage at the start of each of the stalker's turns."
+   }
+  ]
+ },
+ {
+  "id": "iron-golem",
+  "name": "Iron Golem",
+  "languages": "Understands Common plus two other languages but can't speak",
+  "traits": [
+   {
+    "name": "Fire Absorption",
+    "desc": "Whenever the golem is subjected to Fire damage, it regains a number of Hit Points equal to the Fire damage dealt."
+   },
+   {
+    "name": "Immutable Form",
+    "desc": "The golem can't shape-shift."
+   },
+   {
+    "name": "Magic Resistance",
+    "desc": "The golem has Advantage on saving throws against spells and other magical effects."
+   }
+  ],
+  "actions": [
+   {
+    "key": "iron-golem_multiattack",
+    "name": "Multiattack",
+    "desc": "The golem makes two attacks, using Bladed Arm or Fiery Bolt in any combination."
+   },
+   {
+    "key": "iron-golem_bladed-arm",
+    "name": "Bladed Arm",
+    "desc": "Melee Attack Roll: +12, reach 10 ft. 20 (3d8 + 7) Slashing damage plus 10 (3d6) Fire damage."
+   },
+   {
+    "key": "iron-golem_fiery-bolt",
+    "name": "Fiery Bolt",
+    "desc": "Ranged Attack Roll: +10, range 120 ft. 36 (8d8) Fire damage."
+   },
+   {
+    "key": "iron-golem_poison-breath",
+    "name": "Poison Breath",
+    "desc": "Constitution Saving Throw: DC 18, each creature in a 60-foot Cone. Failure: 55 (10d10) Poison damage. Success: Half damage."
+   }
+  ]
+ },
+ {
+  "id": "jackal",
+  "name": "Jackal",
+  "actions": [
+   {
+    "key": "jackal_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +1, reach 5 ft. 1 (1d4 - 1) Piercing damage."
+   }
+  ]
+ },
+ {
+  "id": "killer-whale",
+  "name": "Killer Whale",
+  "traits": [
+   {
+    "name": "Hold Breath",
+    "desc": "The whale can hold its breath for 30 minutes."
+   }
+  ],
+  "actions": [
+   {
+    "key": "killer-whale_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 21 (5d6 + 4) Piercing damage."
+   }
+  ]
+ },
+ {
+  "id": "knight",
+  "name": "Knight",
+  "languages": "Common plus one other language",
+  "actions": [
+   {
+    "key": "knight_multiattack",
+    "name": "Multiattack",
+    "desc": "The knight makes two attacks, using Greatsword or Heavy Crossbow in any combination."
+   },
+   {
+    "key": "knight_greatsword",
+    "name": "Greatsword",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 10 (2d6 + 3) Slashing damage plus 4 (1d8) Radiant damage."
+   },
+   {
+    "key": "knight_heavy-crossbow",
+    "name": "Heavy Crossbow",
+    "desc": "Ranged Attack Roll: +2, range 100/400 ft. 11 (2d10) Piercing damage plus 4 (1d8) Radiant damage."
+   },
+   {
+    "key": "knight_parry",
+    "name": "Parry",
+    "desc": "_Trigger:_ The knight is hit by a melee attack roll while holding a weapon. _Response:_ The knight adds 2 to its AC against that attack, possibly causing it to miss."
+   }
+  ]
+ },
+ {
+  "id": "kobold-warrior",
+  "name": "Kobold Warrior",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Pack Tactics",
+    "desc": "The kobold has Advantage on an attack roll against a creature if at least one of the kobold's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition."
+   },
+   {
+    "name": "Sunlight Sensitivity",
+    "desc": "While in sunlight, the kobold has Disadvantage on ability checks and attack rolls."
+   }
+  ],
+  "actions": [
+   {
+    "key": "kobold-warrior_dagger",
+    "name": "Dagger",
+    "desc": "Melee or Ranged Attack Roll: +4, reach 5 ft. or range 20/60 ft. 4 (1d4 + 2) Piercing damage."
+   }
+  ]
+ },
+ {
+  "id": "kraken",
+  "name": "Kraken",
+  "languages": "Understands Abyssal, Celestial, Infernal, And Primordial but can't speak; telepathy 120 ft.",
+  "traits": [
+   {
+    "name": "Amphibious",
+    "desc": "The kraken can breathe air and water."
+   },
+   {
+    "name": "Legendary Resistance (4/Day, or 5/Day in Lair)",
+    "desc": "If the kraken fails a saving throw, it can choose to succeed instead."
+   },
+   {
+    "name": "Siege Monster",
+    "desc": "The kraken deals double damage to objects and structures."
+   }
+  ],
+  "actions": [
+   {
+    "key": "kraken_multiattack",
+    "name": "Multiattack",
+    "desc": "The kraken makes two Tentacle attacks and uses Fling, Lightning Strike, or Swallow."
+   },
+   {
+    "key": "kraken_tentacle",
+    "name": "Tentacle",
+    "desc": "Melee Attack Roll: +17, reach 30 ft. 24 (4d6 + 10) Bludgeoning damage. The target has the Grappled condition (escape DC 20) from one of ten tentacles, and it has the Restrained condition until the grapple ends."
+   },
+   {
+    "key": "kraken_fling",
+    "name": "Fling",
+    "desc": "The kraken throws a Large or smaller creature Grappled by it to a space it can see within 60 feet of itself that isn't in the air. Dexterity Saving Throw: DC 25, the creature thrown and each creature in the destination space. Failure: 18 (4d8) Bludgeoning damage, and the target has the Prone condition. Success: Half damage only."
+   },
+   {
+    "key": "kraken_lightning-strike",
+    "name": "Lightning Strike",
+    "desc": "Dexterity Saving Throw: DC 23, one creature the kraken can see within 120 feet. Failure: 33 (6d10) Lightning damage. Success: Half damage."
+   },
+   {
+    "key": "kraken_swallow",
+    "name": "Swallow",
+    "desc": "Dexterity Saving Throw: DC 25, one creature Grappled by the kraken (it can have up to four creatures swallowed at a time). Failure: 23 (3d8 + 10) Piercing damage. If the target is Large or smaller, it is swallowed and no longer Grappled. A swallowed creature has the Restrained condition, has Cover|XPHB|Total Cover against attacks and other effects outside the kraken, and takes 24 (7d6) Acid damage at the start of each of its turns. If the kraken takes 50 damage or more on a single turn from a creature inside it, the kraken must succeed on a DC 25 Constitution saving throw at the end of that turn or regurgitate all swallowed creatures, each of which falls in a space within 10 feet of the kraken with the Prone condition. If the kraken dies, any swallowed creature no longer has the Restrained condition and can escape from the corpse using 15 feet of movement, exiting Prone."
+   },
+   {
+    "key": "kraken_storm-bolt",
+    "name": "Storm Bolt",
+    "desc": "The kraken uses Lightning Strike."
+   },
+   {
+    "key": "kraken_toxic-ink",
+    "name": "Toxic Ink",
+    "desc": "Constitution Saving Throw: DC 23, each creature in a 15-foot Emanation originating from the kraken while it is underwater. Failure: The target has the Blinded and Poisoned conditions until the end of the kraken's next turn. The kraken then moves up to its Speed. Failure or Success: The kraken can't take this action again until the start of its next turn."
+   }
+  ]
+ },
+ {
+  "id": "lamia",
+  "name": "Lamia",
+  "languages": "Abyssal, Common",
+  "actions": [
+   {
+    "key": "lamia_multiattack",
+    "name": "Multiattack",
+    "desc": "The lamia makes two Claw attacks. It can replace one attack with a use of Corrupting Touch."
+   },
+   {
+    "key": "lamia_claw",
+    "name": "Claw",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 7 (1d8 + 3) Slashing damage plus 7 (2d6) Psychic damage."
+   },
+   {
+    "key": "lamia_corrupting-touch",
+    "name": "Corrupting Touch",
+    "desc": "Wisdom Saving Throw: DC 13, one creature the lamia can see within 5 feet. Failure: 13 (3d8) Psychic damage, and the target is cursed for 1 hour. Until the curse ends, the target has the Charmed and Poisoned conditions."
+   },
+   {
+    "key": "lamia_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The lamia casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 13):\n\n- **At Will:** Disguise Self, Minor Illusion\n- **1/Day Each:** Geas, Major Image, Scrying"
+   },
+   {
+    "key": "lamia_leap",
+    "name": "Leap",
+    "desc": "The lamia jumps up to 30 feet by spending 10 feet of movement."
+   }
+  ]
+ },
+ {
+  "id": "lemure",
+  "name": "Lemure",
+  "languages": "Understands Infernal but can't speak",
+  "traits": [
+   {
+    "name": "Hellish Restoration",
+    "desc": "If the lemure dies in the Nine Hells, it revives with all its Hit Points in 1d10 days unless it is killed by a creature under the effects of a Bless spell or its remains are sprinkled with Holy Water."
+   }
+  ],
+  "actions": [
+   {
+    "key": "lemure_vile-slime",
+    "name": "Vile Slime",
+    "desc": "Melee Attack Roll: +2, reach 5 ft. 2 (1d4) Poison damage."
+   }
+  ]
+ },
+ {
+  "id": "lich",
+  "name": "Lich",
+  "languages": "All",
+  "traits": [
+   {
+    "name": "Legendary Resistance (4/Day, or 5/Day in Lair)",
+    "desc": "If the lich fails a saving throw, it can choose to succeed instead."
+   },
+   {
+    "name": "Spirit Jar",
+    "desc": "If destroyed, the lich reforms in 1d10 days if it has a spirit jar, reviving with all its Hit Points. The new body appears in an unoccupied space within the lich's lair."
+   }
+  ],
+  "actions": [
+   {
+    "key": "lich_multiattack",
+    "name": "Multiattack",
+    "desc": "The lich makes three attacks, using Eldritch Burst or Paralyzing Touch in any combination."
+   },
+   {
+    "key": "lich_eldritch-burst",
+    "name": "Eldritch Burst",
+    "desc": "Melee or Ranged Attack Roll: +12, reach 5 ft. or range 120 ft. 31 (4d12 + 5) Force damage."
+   },
+   {
+    "key": "lich_paralyzing-touch",
+    "name": "Paralyzing Touch",
+    "desc": "Melee Attack Roll: +12, reach 5 ft. 15 (3d6 + 5) Cold damage, and the target has the Paralyzed condition until the start of the lich's next turn."
+   },
+   {
+    "key": "lich_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The lich casts one of the following spells, using Intelligence as the spellcasting ability (spell save DC 20):\n\n- **At Will:** Detect Magic, Detect Thoughts, Dispel Magic, Fireball, Invisibility, Lightning Bolt, Mage Hand, Prestidigitation\n- **2/Day Each:** Animate Dead, Dimension Door, Plane Shift\n- **1/Day Each:** Chain Lightning, Finger of Death, Power Word Kill, Scrying"
+   },
+   {
+    "key": "lich_deathly-teleport",
+    "name": "Deathly Teleport",
+    "desc": "The lich teleports up to 60 feet to an unoccupied space it can see, and each creature within 10 feet of the space it left takes 11 (2d10) Necrotic damage."
+   },
+   {
+    "key": "lich_disrupt-life",
+    "name": "Disrupt Life",
+    "desc": "Constitution Saving Throw: DC 20, each creature that isn't an Undead in a 20-foot Emanation originating from the lich. Failure: 31 (9d6) Necrotic damage. Success: Half damage. Failure or Success: The lich can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "lich_frightening-gaze",
+    "name": "Frightening Gaze",
+    "desc": "The lich casts Fear, using the same spellcasting ability as Spellcasting. The lich can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "lich_protective-magic",
+    "name": "Protective Magic",
+    "desc": "The lich casts Counterspell or Shield in response to the spell's trigger, using the same spellcasting ability as Spellcasting."
+   }
+  ]
+ },
+ {
+  "id": "lion",
+  "name": "Lion",
+  "traits": [
+   {
+    "name": "Pack Tactics",
+    "desc": "The lion has Advantage on an attack roll against a creature if at least one of the lion's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition."
+   },
+   {
+    "name": "Running Leap",
+    "desc": "With a 10-foot running start, the lion can Long Jump up to 25 feet."
+   }
+  ],
+  "actions": [
+   {
+    "key": "lion_multiattack",
+    "name": "Multiattack",
+    "desc": "The lion makes two Rend attacks. It can replace one attack with a use of Roar."
+   },
+   {
+    "key": "lion_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 7 (1d8 + 3) Slashing damage."
+   },
+   {
+    "key": "lion_roar",
+    "name": "Roar",
+    "desc": "Wisdom Saving Throw: DC 11, one creature within 15 feet. Failure: The target has the Frightened condition until the start of the lion's next turn."
+   }
+  ]
+ },
+ {
+  "id": "lizard",
+  "name": "Lizard",
+  "traits": [
+   {
+    "name": "Spider Climb",
+    "desc": "The lizard can climb difficult surfaces, including along ceilings, without needing to make an ability check."
+   }
+  ],
+  "actions": [
+   {
+    "key": "lizard_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +2, reach 5 ft. 1 Piercing damage."
+   }
+  ]
+ },
+ {
+  "id": "mage",
+  "name": "Mage",
+  "languages": "Common and any three languages",
+  "actions": [
+   {
+    "key": "mage_multiattack",
+    "name": "Multiattack",
+    "desc": "The mage makes three Arcane Burst attacks."
+   },
+   {
+    "key": "mage_arcane-burst",
+    "name": "Arcane Burst",
+    "desc": "Melee or Ranged Attack Roll: +6, reach 5 ft. or range 120 ft. 16 (3d8 + 3) Force damage."
+   },
+   {
+    "key": "mage_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The mage casts one of the following spells, using Intelligence as the spellcasting ability (spell save DC 14):\n\n- **At Will:** Detect Magic, Light, Mage Armor, Mage Hand, Prestidigitation\n- **2/Day Each:** Fireball, Invisibility\n- **1/Day Each:** Cone of Cold, Fly"
+   },
+   {
+    "key": "mage_misty-step-3-day",
+    "name": "Misty Step",
+    "desc": "The mage casts Misty Step, using the same spellcasting ability as Spellcasting."
+   },
+   {
+    "key": "mage_protective-magic",
+    "name": "Protective Magic",
+    "desc": "The mage casts Counterspell or Shield in response to the spell's trigger, using the same spellcasting ability as Spellcasting."
+   }
+  ]
+ },
+ {
+  "id": "magma-mephit",
+  "name": "Magma Mephit",
+  "languages": "Primordial (Ignan, Terran)",
+  "traits": [
+   {
+    "name": "Death Burst",
+    "desc": "The mephit explodes when it dies. Dexterity Saving Throw: DC 11, each creature in a 5-foot Emanation originating from the mephit. Failure: 7 (2d6) Fire damage. Success: Half damage."
+   }
+  ],
+  "actions": [
+   {
+    "key": "magma-mephit_claw",
+    "name": "Claw",
+    "desc": "Melee Attack Roll: +3, reach 5 ft. 3 (1d4 + 1) Slashing damage plus 3 (1d6) Fire damage."
+   },
+   {
+    "key": "magma-mephit_fire-breath",
+    "name": "Fire Breath",
+    "desc": "Dexterity Saving Throw: DC 11, each creature in a 15-foot Cone. Failure: 7 (2d6) Fire damage. Success: Half damage."
+   }
+  ]
+ },
+ {
+  "id": "magmin",
+  "name": "Magmin",
+  "languages": "Primordial (Ignan)",
+  "traits": [
+   {
+    "name": "Death Burst",
+    "desc": "The magmin explodes when it dies. Dexterity Saving Throw: DC 11, each creature in a 10-foot Emanation originating from the magmin. Failure: 7 (2d6) Fire damage. Success: Half damage."
+   }
+  ],
+  "actions": [
+   {
+    "key": "magmin_touch",
+    "name": "Touch",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. 7 (2d4 + 2) Fire damage. If the target is a creature or a flammable object that isn't being worn or carried, it starts burning."
+   },
+   {
+    "key": "magmin_ignited-illumination",
+    "name": "Ignited Illumination",
+    "desc": "The magmin sets itself ablaze or extinguishes its flames. While ablaze, the magmin sheds Bright Light in a 10-foot radius and Dim Light for an additional 10 feet."
+   }
+  ]
+ },
+ {
+  "id": "mammoth",
+  "name": "Mammoth",
+  "actions": [
+   {
+    "key": "mammoth_multiattack",
+    "name": "Multiattack",
+    "desc": "The mammoth makes two Gore attacks."
+   },
+   {
+    "key": "mammoth_gore",
+    "name": "Gore",
+    "desc": "Melee Attack Roll: +10, reach 10 ft. 18 (2d10 + 7) Piercing damage. If the target is a Huge or smaller creature and the mammoth moved 20+ feet straight toward it immediately before the hit, the target has the Prone condition."
+   },
+   {
+    "key": "mammoth_trample",
+    "name": "Trample",
+    "desc": "Dexterity Saving Throw: DC 18, one creature within 5 feet that has the Prone condition. Failure: 29 (4d10 + 7) Bludgeoning damage. Success: Half damage."
+   }
+  ]
+ },
+ {
+  "id": "manticore",
+  "name": "Manticore",
+  "languages": "Common",
+  "actions": [
+   {
+    "key": "manticore_multiattack",
+    "name": "Multiattack",
+    "desc": "The manticore makes three attacks, using Rend or Tail Spike in any combination."
+   },
+   {
+    "key": "manticore_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 7 (1d8 + 3) Slashing damage."
+   },
+   {
+    "key": "manticore_tail-spike",
+    "name": "Tail Spike",
+    "desc": "Ranged Attack Roll: +5, range 100/200 ft. 7 (1d8 + 3) Piercing damage."
+   }
+  ]
+ },
+ {
+  "id": "marilith",
+  "name": "Marilith",
+  "languages": "Abyssal; telepathy 120 ft.",
+  "traits": [
+   {
+    "name": "Demonic Restoration",
+    "desc": "If the marilith dies outside the Abyss, its body dissolves into ichor, and it gains a new body instantly, reviving with all its Hit Points somewhere in the Abyss."
+   },
+   {
+    "name": "Magic Resistance",
+    "desc": "The marilith has Advantage on saving throws against spells and other magical effects."
+   },
+   {
+    "name": "Reactive",
+    "desc": "The marilith can take one Reaction on every turn of combat."
+   }
+  ],
+  "actions": [
+   {
+    "key": "marilith_multiattack",
+    "name": "Multiattack",
+    "desc": "The marilith makes six Pact Blade attacks and uses Constrict."
+   },
+   {
+    "key": "marilith_pact-blade",
+    "name": "Pact Blade",
+    "desc": "Melee Attack Roll: +10, reach 5 ft. 10 (1d10 + 5) Slashing damage plus 7 (2d6) Necrotic damage."
+   },
+   {
+    "key": "marilith_constrict",
+    "name": "Constrict",
+    "desc": "Strength Saving Throw: DC 17, one Medium or smaller creature the marilith can see within 5 feet. Failure: 15 (2d10 + 4) Bludgeoning damage. The target has the Grappled condition (escape DC 14), and it has the Restrained condition until the grapple ends."
+   },
+   {
+    "key": "marilith_teleport-recharge-5-6",
+    "name": "Teleport",
+    "desc": "The marilith teleports up to 120 feet to an unoccupied space it can see."
+   },
+   {
+    "key": "marilith_parry",
+    "name": "Parry",
+    "desc": "_Trigger:_ The marilith is hit by a melee attack roll while holding a weapon. _Response:_ The marilith adds 5 to its AC against that attack, possibly causing it to miss."
+   }
+  ]
+ },
+ {
+  "id": "mastiff",
+  "name": "Mastiff",
+  "actions": [
+   {
+    "key": "mastiff_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +3, reach 5 ft. 4 (1d6 + 1) Piercing damage. If the target is a Medium or smaller creature, it has the Prone condition."
+   }
+  ]
+ },
+ {
+  "id": "medusa",
+  "name": "Medusa",
+  "languages": "Common plus one other language",
+  "actions": [
+   {
+    "key": "medusa_multiattack",
+    "name": "Multiattack",
+    "desc": "The medusa makes two Claw attacks and one Snake Hair attack, or it makes three Poison Ray attacks."
+   },
+   {
+    "key": "medusa_claw",
+    "name": "Claw",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 10 (2d6 + 3) Slashing damage."
+   },
+   {
+    "key": "medusa_snake-hair",
+    "name": "Snake Hair",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 5 (1d4 + 3) Piercing damage plus 14 (4d6) Poison damage."
+   },
+   {
+    "key": "medusa_poison-ray",
+    "name": "Poison Ray",
+    "desc": "Ranged Attack Roll: +5, range 150 ft. 11 (2d8 + 2) Poison damage."
+   },
+   {
+    "key": "medusa_petrifying-gaze-recharge-5-6",
+    "name": "Petrifying Gaze",
+    "desc": "Constitution Saving Throw: DC 13, each creature in a 30-foot Cone. If the medusa sees its reflection in the Cone, the medusa must make this save. First Failure The target has the Restrained condition and repeats the save at the end of its next turn if it is still Restrained, ending the effect on itself on a success. Second Failure The target has the Petrified condition instead of the Restrained condition."
+   }
+  ]
+ },
+ {
+  "id": "merfolk-skirmisher",
+  "name": "Merfolk Skirmisher",
+  "languages": "Common, Primordial (Aquan)",
+  "traits": [
+   {
+    "name": "Amphibious",
+    "desc": "The merfolk can breathe air and water."
+   }
+  ],
+  "actions": [
+   {
+    "key": "merfolk-skirmisher_ocean-spear",
+    "name": "Ocean Spear",
+    "desc": "Melee or Ranged Attack Roll: +2, reach 5 ft. or range 20/60 ft. 3 (1d6) Piercing damage plus 2 (1d4) Cold damage. If the target is a creature, its Speed decreases by 10 feet until the end of its next turn. HitomThe spear magically returns to the merfolk's hand immediately after a ranged attack."
+   }
+  ]
+ },
+ {
+  "id": "merrow",
+  "name": "Merrow",
+  "languages": "Abyssal, Primordial (Aquan)",
+  "traits": [
+   {
+    "name": "Amphibious",
+    "desc": "The merrow can breathe air and water."
+   }
+  ],
+  "actions": [
+   {
+    "key": "merrow_multiattack",
+    "name": "Multiattack",
+    "desc": "The merrow makes two attacks, using Bite, Claw, or Harpoon in any combination."
+   },
+   {
+    "key": "merrow_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 6 (1d4 + 4) Piercing damage, and the target has the Poisoned condition until the end of the merrow's next turn."
+   },
+   {
+    "key": "merrow_claw",
+    "name": "Claw",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 9 (2d4 + 4) Slashing damage."
+   },
+   {
+    "key": "merrow_harpoon",
+    "name": "Harpoon",
+    "desc": "Melee or Ranged Attack Roll: +6, reach 5 ft. or range 20/60 ft. 11 (2d6 + 4) Piercing damage. If the target is a Large or smaller creature, the merrow pulls the target up to 15 feet straight toward itself."
+   }
+  ]
+ },
+ {
+  "id": "mimic",
+  "name": "Mimic",
+  "traits": [
+   {
+    "name": "Adhesive (Object Form Only)",
+    "desc": "The mimic adheres to anything that touches it. A Huge or smaller creature adhered to the mimic has the Grappled condition (escape DC 13). Ability checks made to escape this grapple have Disadvantage."
+   }
+  ],
+  "actions": [
+   {
+    "key": "mimic_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +5 (with Advantage if the target is Grappled by the mimic), reach 5 ft. 7 (1d8 + 3) Piercing damage—or 12 (2d8 + 3) Piercing damage if the target is Grappled by the mimic—plus 4 (1d8) Acid damage."
+   },
+   {
+    "key": "mimic_pseudopod",
+    "name": "Pseudopod",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 7 (1d8 + 3) Bludgeoning damage plus 4 (1d8) Acid damage. If the target is a Large or smaller creature, it has the Grappled condition (escape DC 13). Ability checks made to escape this grapple have Disadvantage."
+   },
+   {
+    "key": "mimic_shape-shift",
+    "name": "Shape-Shift",
+    "desc": "The mimic shape-shifts to resemble a Medium or Small object while retaining its game statistics, or it returns to its true blob form. Any equipment it is wearing or carrying isn't transformed."
+   }
+  ]
+ },
+ {
+  "id": "minotaur-skeleton",
+  "name": "Minotaur Skeleton",
+  "languages": "Understands Abyssal but can't speak",
+  "actions": [
+   {
+    "key": "minotaur-skeleton_gore",
+    "name": "Gore",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 11 (2d6 + 4) Piercing damage. If the target is a Large or smaller creature and the skeleton moved 20+ feet straight toward it immediately before the hit, the target takes an extra 9 (2d8) Piercing damage and has the Prone condition."
+   },
+   {
+    "key": "minotaur-skeleton_slam",
+    "name": "Slam",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 15 (2d10 + 4) Bludgeoning damage."
+   }
+  ]
+ },
+ {
+  "id": "minotaur-of-baphomet",
+  "name": "Minotaur of Baphomet",
+  "languages": "Abyssal",
+  "actions": [
+   {
+    "key": "minotaur-of-baphomet_abyssal-glaive",
+    "name": "Abyssal Glaive",
+    "desc": "Melee Attack Roll: +6, reach 10 ft. 10 (1d12 + 4) Slashing damage plus 10 (3d6) Necrotic damage."
+   },
+   {
+    "key": "minotaur-of-baphomet_gore",
+    "name": "Gore",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 18 (4d6 + 4) Piercing damage. If the target is a Large or smaller creature and the minotaur moved 10+ feet straight toward it immediately before the hit, the target takes an extra 10 (3d6) Piercing damage and has the Prone condition."
+   }
+  ]
+ },
+ {
+  "id": "mule",
+  "name": "Mule",
+  "traits": [
+   {
+    "name": "Beast of Burden",
+    "desc": "The mule counts as one size larger for the purpose of determining its carrying capacity."
+   }
+  ],
+  "actions": [
+   {
+    "key": "mule_hooves",
+    "name": "Hooves",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. 4 (1d4 + 2) Bludgeoning damage."
+   }
+  ]
+ },
+ {
+  "id": "mummy",
+  "name": "Mummy",
+  "languages": "Common plus two other languages",
+  "actions": [
+   {
+    "key": "mummy_multiattack",
+    "name": "Multiattack",
+    "desc": "The mummy makes two Rotting Fist attacks and uses Dreadful Glare."
+   },
+   {
+    "key": "mummy_rotting-fist",
+    "name": "Rotting Fist",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 8 (1d10 + 3) Bludgeoning damage plus 10 (3d6) Necrotic damage. If the target is a creature, it is cursed. While cursed, the target can't regain Hit Points, its Hit Point maximum doesn't return to normal when finishing a Long Rest, and its Hit Point maximum decreases by 10 (3d6) every 24 hours that elapse. A creature dies and turns to dust if reduced to 0 Hit Points by this attack."
+   },
+   {
+    "key": "mummy_dreadful-glare",
+    "name": "Dreadful Glare",
+    "desc": "Wisdom Saving Throw: DC 11, one creature the mummy can see within 60 feet. Failure: The target has the Frightened condition until the end of the mummy's next turn. Success: The target is immune to this mummy's Dreadful Glare for 24 hours."
+   }
+  ]
+ },
+ {
+  "id": "mummy-lord",
+  "name": "Mummy Lord",
+  "languages": "Common plus three other languages",
+  "traits": [
+   {
+    "name": "Legendary Resistance (3/Day, or 4/Day in Lair)",
+    "desc": "If the mummy fails a saving throw, it can choose to succeed instead."
+   },
+   {
+    "name": "Magic Resistance",
+    "desc": "The mummy has Advantage on saving throws against spells and other magical effects."
+   },
+   {
+    "name": "Undead Restoration",
+    "desc": "If destroyed, the mummy gains a new body in 24 hours if its heart is intact, reviving with all its Hit Points. The new body appears in an unoccupied space within the mummy's lair. The heart is a Tiny object that has AC 17, HP 10, and Immunity to all damage except Fire."
+   }
+  ],
+  "actions": [
+   {
+    "key": "mummy-lord_multiattack",
+    "name": "Multiattack",
+    "desc": "The mummy makes one Rotting Fist or Channel Negative Energy attack, and it uses Dreadful Glare."
+   },
+   {
+    "key": "mummy-lord_rotting-fist",
+    "name": "Rotting Fist",
+    "desc": "Melee Attack Roll: +9, reach 5 ft. 15 (2d10 + 4) Bludgeoning damage plus 10 (3d6) Necrotic damage. If the target is a creature, it is cursed. While cursed, the target can't regain Hit Points, it gains no benefit from finishing a Long Rest, and its Hit Point maximum decreases by 10 (3d6) every 24 hours that elapse. A creature dies and turns to dust if reduced to 0 Hit Points by this attack."
+   },
+   {
+    "key": "mummy-lord_channel-negative-energy",
+    "name": "Channel Negative Energy",
+    "desc": "Ranged Attack Roll: +9, range 60 ft. 25 (6d6 + 4) Necrotic damage."
+   },
+   {
+    "key": "mummy-lord_dreadful-glare",
+    "name": "Dreadful Glare",
+    "desc": "Wisdom Saving Throw: DC 17, one creature the mummy can see within 60 feet. Failure: 25 (6d6 + 4) Psychic damage, and the target has the Paralyzed condition until the end of the mummy's next turn."
+   },
+   {
+    "key": "mummy-lord_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The mummy casts one of the following spells, requiring no Material components and using Wisdom as the spellcasting ability (spell save DC 17, +9 to hit with spell attacks):\n\n- **At Will:** Dispel Magic, Thaumaturgy\n- **1/Day Each:** Animate Dead, Harm, Insect Plague"
+   },
+   {
+    "key": "mummy-lord_glare",
+    "name": "Glare",
+    "desc": "The mummy uses Dreadful Glare. The mummy can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "mummy-lord_necrotic-strike",
+    "name": "Necrotic Strike",
+    "desc": "The mummy makes one Rotting Fist or Channel Negative Energy attack."
+   },
+   {
+    "key": "mummy-lord_dread-command",
+    "name": "Dread Command",
+    "desc": "The mummy casts Command (level 2 version), using the same spellcasting ability as Spellcasting. The mummy can't take this action again until the start of its next turn."
+   },
+   {
+    "key": "mummy-lord_whirlwind-of-sand",
+    "name": "Whirlwind of Sand",
+    "desc": "_Trigger:_ The mummy is hit by an attack roll. _Response:_ The mummy adds 2 to its AC against the attack, possibly causing the attack to miss, and the mummy teleports up to 60 feet to an unoccupied space it can see. Each creature of its choice that it can see within 5 feet of its destination space has the Blinded condition until the end of the mummy’s next turn."
+   }
+  ]
+ },
+ {
+  "id": "nalfeshnee",
+  "name": "Nalfeshnee",
+  "languages": "Abyssal; telepathy 120 ft.",
+  "traits": [
+   {
+    "name": "Demonic Restoration",
+    "desc": "If the nalfeshnee dies outside the Abyss, its body dissolves into ichor, and it gains a new body instantly, reviving with all its Hit Points somewhere in the Abyss."
+   },
+   {
+    "name": "Magic Resistance",
+    "desc": "The nalfeshnee has Advantage on saving throws against spells and other magical effects."
+   }
+  ],
+  "actions": [
+   {
+    "key": "nalfeshnee_multiattack",
+    "name": "Multiattack",
+    "desc": "The nalfeshnee makes three Rend attacks."
+   },
+   {
+    "key": "nalfeshnee_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +10, reach 10 ft. 16 (2d10 + 5) Slashing damage plus 11 (2d10) Force damage."
+   },
+   {
+    "key": "nalfeshnee_teleport",
+    "name": "Teleport",
+    "desc": "The nalfeshnee teleports up to 120 feet to an unoccupied space it can see."
+   },
+   {
+    "key": "nalfeshnee_horror-nimbus-recharge-5-6",
+    "name": "Horror Nimbus",
+    "desc": "Wisdom Saving Throw: DC 15, each creature in a 15-foot Emanation originating from the nalfeshnee. Failure: 28 (8d6) Psychic damage, and the target has the Frightened condition for 1 minute, until it takes damage, or until it ends its turn with the nalfeshnee out of line of sight. Success: The target is immune to this nalfeshnee's Horror Nimbus for 24 hours."
+   },
+   {
+    "key": "nalfeshnee-pursuit",
+    "name": "Pursuit",
+    "desc": "_Trigger:_ Another creature the nalfeshnee can see ends its move within 120 feet of the nalfeshnee. _Response:_ The nalfeshnee uses Teleport, but its destination space must be within 10 feet of the triggering creature."
+   }
+  ]
+ },
+ {
+  "id": "night-hag",
+  "name": "Night Hag",
+  "languages": "Abyssal, Common, Infernal, Primordial",
+  "traits": [
+   {
+    "name": "Magic Resistance",
+    "desc": "The hag has Advantage on saving throws against spells and other magical effects."
+   },
+   {
+    "name": "Soul Bag",
+    "desc": "The hag has a soul bag. While holding or carrying the bag, the hag can use its Nightmare Haunting action. The bag has AC 15, HP 20, and Resistance to all damage. The bag turns to dust if reduced to 0 Hit Points. If the bag is destroyed, any souls the bag is holding are released. The hag can create a new bag after 7 days."
+   }
+  ],
+  "actions": [
+   {
+    "key": "night-hag_multiattack",
+    "name": "Multiattack",
+    "desc": "The hag makes two Claw attacks."
+   },
+   {
+    "key": "night-hag_claw",
+    "name": "Claw",
+    "desc": "Melee Attack Roll: +7, reach 5 ft. 13 (2d8 + 4) Slashing damage."
+   },
+   {
+    "key": "night-hag_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The hag casts one of the following spells, requiring no Material components and using Intelligence as the spellcasting ability (spell save DC 14):\n\n- **At Will:** Detect Magic, Etherealness, Magic Missile\n- **2/Day Each:** Phantasmal Killer, Plane Shift"
+   },
+   {
+    "key": "night-hag_nightmare-haunting",
+    "name": "Nightmare Haunting",
+    "desc": "While on the Ethereal Plane, the hag casts Dream, using the same spellcasting ability as Spellcasting. Only the hag can serve as the spell's messenger, and the target must be a creature the hag can see on the Material Plane. The spell fails and is wasted if the target is under the effect of the Protection from Evil and Good spell or within a Magic Circle spell. If the target takes damage from the Dream spell, the target's Hit Point maximum decreases by an amount equal to that damage. If the spell kills the target, its soul is trapped in the hag's soul bag, and the target can't be raised from the dead until its soul is released.\n\n- **At Will:**\n- **1/Day Each:** Dream, Protection from Evil and Good, Magic Circle"
+   },
+   {
+    "key": "night-hag_shape-shift",
+    "name": "Shape-Shift",
+    "desc": "The hag shape-shifts into a Small or Medium Humanoid, or it returns to its true form. Other than its size, its game statistics are the same in each form. Any equipment it is wearing or carrying isn't transformed."
+   }
+  ]
+ },
+ {
+  "id": "nightmare",
+  "name": "Nightmare",
+  "languages": "Understands Abyssal, Common, And Infernal but can't speak",
+  "traits": [
+   {
+    "name": "Confer Fire Resistance",
+    "desc": "The nightmare can grant Resistance to Fire damage to a rider while it is on the nightmare."
+   },
+   {
+    "name": "Illumination",
+    "desc": "The nightmare sheds Bright Light in a 10-foot radius and Dim Light for an additional 10 feet."
+   }
+  ],
+  "actions": [
+   {
+    "key": "nightmare_hooves",
+    "name": "Hooves",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 13 (2d8 + 4) Bludgeoning damage plus 10 (3d6) Fire damage."
+   },
+   {
+    "key": "nightmare_ethereal-stride",
+    "name": "Ethereal Stride",
+    "desc": "The nightmare and up to three willing creatures within 5 feet of it teleport to the Ethereal Plane from the Material Plane or vice versa."
+   }
+  ]
+ },
+ {
+  "id": "noble",
+  "name": "Noble",
+  "languages": "Common plus two other languages",
+  "actions": [
+   {
+    "key": "noble_rapier",
+    "name": "Rapier",
+    "desc": "Melee Attack Roll: +3, reach 5 ft. 5 (1d8 + 1) Piercing damage."
+   },
+   {
+    "key": "noble_parry",
+    "name": "Parry",
+    "desc": "_Trigger_: The noble is hit by a melee attack roll while holding a weapon. _Response:_ The noble adds 2 to its AC against that attack, possibly causing it to miss."
+   }
+  ]
+ },
+ {
+  "id": "ochre-jelly",
+  "name": "Ochre Jelly",
+  "traits": [
+   {
+    "name": "Amorphous",
+    "desc": "The jelly can move through a space as narrow as 1 inch without expending extra movement to do so."
+   },
+   {
+    "name": "Spider Climb",
+    "desc": "The jelly can climb difficult surfaces, including along ceilings, without needing to make an ability check."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ochre-jelly_pseudopod",
+    "name": "Pseudopod",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. 12 (3d6 + 2) Acid damage."
+   },
+   {
+    "key": "ochre-jelly_split",
+    "name": "Split",
+    "desc": "_Trigger:_ While the jelly is Large or Medium and has 10+ Hit Points, it becomes Bloodied or is subjected to Lightning or Slashing damage. _Response:_ The jelly splits into two new Ochre Jellies. Each new jelly is one size smaller than the original jelly and acts on its Initiative. The original jelly’s Hit Points are divided evenly between the new jellies (round down)."
+   }
+  ]
+ },
+ {
+  "id": "octopus",
+  "name": "Octopus",
+  "traits": [
+   {
+    "name": "Compression",
+    "desc": "The octopus can move through a space as narrow as 1 inch without expending extra movement to do so."
+   },
+   {
+    "name": "Water Breathing",
+    "desc": "The octopus can breathe only underwater."
+   }
+  ],
+  "actions": [
+   {
+    "key": "octopus_tentacles",
+    "name": "Tentacles",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. Hit: 1 Bludgeoning damage."
+   },
+   {
+    "key": "octopus_ink-cloud",
+    "name": "Ink Cloud",
+    "desc": "_Trigger:_ A creature ends its turn within 5 feet of the octopus while underwater. Response: The octopus releases ink that fills a 5-foot Cube centered on itself, and the octopus moves up to its Swim Speed. The Cube is Heavily Obscured for 1 minute or until a strong current or similar effect disperses the ink."
+   }
+  ]
+ },
+ {
+  "id": "ogre",
+  "name": "Ogre",
+  "languages": "Common, Giant",
+  "actions": [
+   {
+    "key": "ogre_greatclub",
+    "name": "Greatclub",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 13 (2d8 + 4) Bludgeoning damage."
+   },
+   {
+    "key": "ogre_javelin",
+    "name": "Javelin",
+    "desc": "Melee or Ranged Attack Roll: +6, reach 5 ft. or range 30/120 ft. 11 (2d6 + 4) Piercing damage."
+   }
+  ]
+ },
+ {
+  "id": "ogre-zombie",
+  "name": "Ogre Zombie",
+  "languages": "Understands Common and Giant but can't speak",
+  "traits": [
+   {
+    "name": "Undead Fortitude",
+    "desc": "If damage reduces the zombie to 0 Hit Points, it makes a Constitution saving throw (DC 5 plus the damage taken) unless the damage is Radiant or from a Critical Hit. On a successful save, the zombie drops to 1 Hit Point instead."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ogre-zombie_slam",
+    "name": "Slam",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 13 (2d8 + 4) Bludgeoning damage."
+   }
+  ]
+ },
+ {
+  "id": "oni",
+  "name": "Oni",
+  "languages": "Common, Giant",
+  "traits": [
+   {
+    "name": "Regeneration",
+    "desc": "The oni regains 10 Hit Points at the start of each of its turns if it has at least 1 Hit Point."
+   }
+  ],
+  "actions": [
+   {
+    "key": "oni_multiattack",
+    "name": "Multiattack",
+    "desc": "The oni makes two Claw or Nightmare Ray attacks. It can replace one attack with a use of Spellcasting."
+   },
+   {
+    "key": "oni_claw",
+    "name": "Claw",
+    "desc": "Melee Attack Roll: +7, reach 10 ft. 10 (1d12 + 4) Slashing damage plus 9 (2d8) Necrotic damage."
+   },
+   {
+    "key": "oni_nightmare-ray",
+    "name": "Nightmare Ray",
+    "desc": "Ranged Attack Roll: +5, range 60 ft. 9 (2d6 + 2) Psychic damage, and the target has the Frightened condition until the start of the oni's next turn."
+   },
+   {
+    "key": "oni_shape-shift",
+    "name": "Shape-Shift",
+    "desc": "The oni shape-shifts into a Small or Medium Humanoid or a Large Giant, or it returns to its true form. Other than its size, its game statistics are the same in each form. Any equipment it is wearing or carrying isn't transformed."
+   },
+   {
+    "key": "oni_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The oni casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 13):\n\n- **At Will:**\n- **1/Day Each:** Charm Person, Darkness, Gaseous Form, Sleep"
+   },
+   {
+    "key": "oni_invisibility",
+    "name": "Invisibility",
+    "desc": "The oni casts Invisibility on itself, requiring no spell components and using the same spellcasting ability as Spellcasting."
+   }
+  ]
+ },
+ {
+  "id": "otyugh",
+  "name": "Otyugh",
+  "languages": "Otyugh; telepathy 120 ft. (doesn't allow the receiving creature to respond telepathically)",
+  "actions": [
+   {
+    "key": "otyugh_multiattack",
+    "name": "Multiattack",
+    "desc": "The otyugh makes one Bite attack and two Tentacle attacks."
+   },
+   {
+    "key": "otyugh_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 12 (2d8 + 3) Piercing damage, and the target has the Poisoned condition. Whenever the Poisoned target finishes a Long Rest, it is subjected to the following effect. Constitution Saving Throw: DC 15. Failure: The target's Hit Point maximum decreases by 5 (1d10) and doesn't return to normal until the Poisoned condition ends on the target. Success: The Poisoned condition ends."
+   },
+   {
+    "key": "otyugh_tentacle",
+    "name": "Tentacle",
+    "desc": "Melee Attack Roll: +6, reach 10 ft. 12 (2d8 + 3) Piercing damage. If the target is a Medium or smaller creature, it has the Grappled condition (escape DC 13) from one of two tentacles."
+   },
+   {
+    "key": "otyugh_tentacle-slam",
+    "name": "Tentacle Slam",
+    "desc": "Constitution Saving Throw: DC 14, each creature Grappled by the otyugh. Failure: 16 (3d8 + 3) Bludgeoning damage, and the target has the Stunned condition until the start of the otyugh's next turn. Success: Half damage only."
+   }
+  ]
+ },
+ {
+  "id": "owl",
+  "name": "Owl",
+  "traits": [
+   {
+    "name": "Flyby",
+    "desc": "The owl doesn't provoke Opportunity Attacks when it flies out of an enemy's reach."
+   }
+  ],
+  "actions": [
+   {
+    "key": "owl_talons",
+    "name": "Talons",
+    "desc": "Melee Attack Roll: +3, reach 5 ft. 1 Slashing damage."
+   }
+  ]
+ },
+ {
+  "id": "owlbear",
+  "name": "Owlbear",
+  "actions": [
+   {
+    "key": "owlbear_multiattack",
+    "name": "Multiattack",
+    "desc": "The owlbear makes two Rend attacks."
+   },
+   {
+    "key": "owlbear_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +7, reach 5 ft. 14 (2d8 + 5) Slashing damage."
+   }
+  ]
+ },
+ {
+  "id": "panther",
+  "name": "Panther",
+  "actions": [
+   {
+    "key": "panther_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 6 (1d6 + 3) Slashing damage."
+   },
+   {
+    "key": "panther_nimble-escape",
+    "name": "Nimble Escape",
+    "desc": "The panther takes the Disengage or Hide action."
+   }
+  ]
+ },
+ {
+  "id": "pegasus",
+  "name": "Pegasus",
+  "languages": "Understands Celestial, Common, Elvish, And Sylvan but can't speak",
+  "actions": [
+   {
+    "key": "pegasus_hooves",
+    "name": "Hooves",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 7 (1d6 + 4) Bludgeoning damage plus 5 (2d4) Radiant damage."
+   }
+  ]
+ },
+ {
+  "id": "phase-spider",
+  "name": "Phase Spider",
+  "traits": [
+   {
+    "name": "Ethereal Sight",
+    "desc": "The spider can see 60 feet into the Ethereal Plane while on the Material Plane and vice versa."
+   },
+   {
+    "name": "Spider Climb",
+    "desc": "The spider can climb difficult surfaces, including along ceilings, without needing to make an ability check."
+   },
+   {
+    "name": "Web Walker",
+    "desc": "The spider ignores movement restrictions caused by webs, and the spider knows the location of any other creature in contact with the same web."
+   }
+  ],
+  "actions": [
+   {
+    "key": "phase-spider_multiattack",
+    "name": "Multiattack",
+    "desc": "The spider makes two Bite attacks."
+   },
+   {
+    "key": "phase-spider_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 8 (1d10 + 3) Piercing damage plus 9 (2d8) Poison damage. If this damage reduces the target to 0 Hit Points, the target becomes Stable, and it has the Poisoned condition for 1 hour. While Poisoned, the target also has the Paralyzed condition."
+   },
+   {
+    "key": "phase-spider_ethereal-jaunt",
+    "name": "Ethereal Jaunt",
+    "desc": "The spider teleports from the Material Plane to the Ethereal Plane or vice versa."
+   }
+  ]
+ },
+ {
+  "id": "piranha",
+  "name": "Piranha",
+  "traits": [
+   {
+    "name": "Water Breathing",
+    "desc": "The piranha can breathe only underwater."
+   }
+  ],
+  "actions": [
+   {
+    "key": "piranha_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +5 (with Advantage if the target doesn't have all its Hit Points), reach 5 ft. 1 Piercing damage."
+   }
+  ]
+ },
+ {
+  "id": "pirate",
+  "name": "Pirate",
+  "languages": "Common plus one other language",
+  "actions": [
+   {
+    "key": "pirate_multiattack",
+    "name": "Multiattack",
+    "desc": "The pirate makes two Dagger attacks. It can replace one attack with a use of Enthralling Panache."
+   },
+   {
+    "key": "pirate_dagger",
+    "name": "Dagger",
+    "desc": "Melee or Ranged Attack Roll: +5, reach 5 ft. or range 20/60 ft. 5 (1d4 + 3) Piercing damage."
+   },
+   {
+    "key": "pirate_enthralling-panache",
+    "name": "Enthralling Panache",
+    "desc": "Wisdom Saving Throw: DC 12, one creature the pirate can see within 30 feet. Failure: The target has the Charmed condition until the start of the pirate's next turn."
+   }
+  ]
+ },
+ {
+  "id": "pirate-captain",
+  "name": "Pirate Captain",
+  "languages": "Common plus one other language",
+  "actions": [
+   {
+    "key": "pirate-captain_multiattack",
+    "name": "Multiattack",
+    "desc": "The pirate makes three attacks, using Rapier or Pistol in any combination."
+   },
+   {
+    "key": "pirate-captain_rapier",
+    "name": "Rapier",
+    "desc": "Melee Attack Roll: +7, reach 5 ft. 13 (2d8 + 4) Piercing damage, and the pirate has Advantage on the next attack roll it makes before the end of this turn."
+   },
+   {
+    "key": "pirate-captain_pistol",
+    "name": "Pistol",
+    "desc": "Ranged Attack Roll: +7, range 30/90 ft. 15 (2d10 + 4) Piercing damage."
+   },
+   {
+    "key": "pirate-captain_captain's-charm",
+    "name": "Captain's Charm",
+    "desc": "Wisdom Saving Throw: DC 14, one creature the pirate can see within 30 feet. Failure: The target has the Charmed condition until the start of the pirate's next turn."
+   },
+   {
+    "key": "pirate-captain_riposte",
+    "name": "Riposte",
+    "desc": "_Trigger:_ The pirate is hit by a melee attack roll while holding a weapon. _Response:_ The pirate adds 3 to its AC against that attack, possibly causing it to miss. On a miss, the pirate makes one Rapier attack against the triggering creature if within range."
+   }
+  ]
+ }
+]

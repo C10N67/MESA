@@ -316,21 +316,43 @@ jugador, el nombre y lo que hace, resumido. Las subclases se escriben a mano
 
 ## Manual del DM
 
-El botón **Manual** de la barra del DM abre un manual de consulta con todas
-las ediciones de D&D: el original de 1974, el Básico (Holmes, B/X, BECMI y
-Rules Cyclopedia), AD&D 1.ª y 2.ª, la 3.ª y la 3.5, la 4.ª, la 5.ª de 2014 y la
-revisión de 2024. De cada una: qué es, cómo son los personajes, cómo se
-juega y consejos para dirigirla hoy o adaptarla a la 5.ª.
+El botón **Manual** de la barra del DM abre el manual de la **5.5** (D&D
+2024). Todo lo de la 5.5 sale del **SRD 5.2**, el reglamento libre de Wizards
+of the Coast (CC-BY-4.0), traducido al castellano para Mesa:
 
-Además trae **reglas rápidas** de la 5.ª para la mesa (CD, acciones,
-cobertura, luz, salvaciones de muerte, concentración, descansos,
-agotamiento, estados, agarrar, viajes, conjuros, niveles y encuentros, con
-las diferencias entre 2014 y 2024), una **comparativa** de las ediciones con
-cómo convertir números entre ellas, y un **buscador** que mira en todas a la
-vez («THAC0», «agarrar», «descanso»…).
+- **Chuleta**: lo que más se consulta en la mesa, solo con reglas de 2024 (CD,
+  acciones, cobertura y luz, 0 puntos de golpe, concentración, descansos,
+  agotamiento, agarrar y empujar, viajes, conjuros, niveles y el presupuesto
+  de PX para preparar encuentros).
+- **Reglamento**: las reglas de juego completas, por capítulos.
+- **Estados**: los quince estados de 2024, con el mismo icono que en el mapa.
+- **Conjuros**: los 339 conjuros y trucos, filtrables por nombre (también en
+  inglés), nivel, clase, escuela, concentración y ritual. Cada uno se abre
+  con su tiempo de lanzamiento, alcance, componentes, duración, texto entero
+  y lo que gana a nivel superior.
+- **Armas y armaduras**: tablas con daño, propiedades, maestría, peso y coste,
+  y qué hace cada propiedad y cada maestría.
+- **Especies**: las nueve especies de la 5.5 con todos sus rasgos.
+- **Criaturas**: las 331 fichas completas (animales, monstruos y gente),
+  filtrables por tipo, desafío y nombre, ordenadas por nombre o por desafío.
 
-Está escrito con palabras propias: no copia los libros, que siguen haciendo
-falta para jugar las ediciones antiguas.
+El **buscador** mira en todo a la vez: «bola de fuego», «fireball», «lobo»,
+«agarrar»… Las **otras ediciones** (el original de 1974, el Básico, AD&D 1.ª
+y 2.ª, la 3.ª y la 3.5, la 4.ª y la 5.ª de 2014) siguen al final del índice,
+resumidas con palabras propias, con una comparativa entre ellas.
+
+Los catálogos están en `public/data/srd52/` (casi 1 MB, unos 200 KB
+comprimidos) y solo se descargan al abrirlos; después se guardan para usarlos
+sin red. Se generan con `tools/srd52/`: `extraer.py` saca los textos en
+inglés de los datos del SRD 5.2 que publica Open5e
+(`data/v2/wizards-of-the-coast/srd-2024` de
+https://github.com/open5e/open5e-api), y `montar.py` los junta con su
+traducción, que está en `tools/srd52/traduccion/` (con el glosario y los
+nombres usados), y con los números de cada cosa (niveles, clases,
+características, costes). Avisa si falta algo o queda texto en inglés. Para
+corregir una errata, se cambia en `traduccion/es/` y se vuelve a montar:
+
+    python3 tools/srd52/montar.py <carpeta srd-2024 de open5e-api>
 
 ## Combate
 
@@ -1029,7 +1051,7 @@ public/
     rules.js           clases, especies, trasfondos, armas y cuentas de la ficha (2014 y 2024)
     builder.js         el creador de personajes paso a paso
     manual.js          la ventana del manual del DM
-    manual-data.js     el texto del manual: todas las ediciones y reglas rápidas
+    manual-data.js     el texto del manual: la chuleta de la 5.5 y las otras ediciones
     soundscape.js      hacer sonar el mapa en la pantalla de la party
     attacks.js         leer y lanzar ataques
     spells.js          biblioteca de conjuros del SRD
@@ -1051,9 +1073,11 @@ public/
     wand.js            varita mágica: pinchar en el suelo y rellenar por color
   retratos/            retratos de serie de cada especie, de hombre y de mujer
   fondos/              el fondo de la pantalla de entrada (forja a lápiz y sus chispas)
+  data/srd52/          el SRD 5.2 en castellano: conjuros, criaturas, equipo, especies y reglas
 tools/retratos.mjs     genera esos retratos
 tools/fuentes/         genera las fuentes de public/fonts/ (y su muestra)
 tools/fondo-forja.mjs  genera el fondo de la entrada
+tools/srd52/           saca y monta el SRD 5.2 traducido del manual
 data/                  la partida y las imágenes (se crea al arrancar)
 ```
 

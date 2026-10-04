@@ -1,0 +1,1333 @@
+[
+ {
+  "id": "giant-crocodile",
+  "name": "Giant Crocodile",
+  "traits": [
+   {
+    "name": "Hold Breath",
+    "desc": "The crocodile can hold its breath for 1 hour."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-crocodile_multiattack",
+    "name": "Multiattack",
+    "desc": "The crocodile makes one Bite attack and one Tail attack."
+   },
+   {
+    "key": "giant-crocodile_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +8, reach 5 ft. 21 (3d10 + 5) Piercing damage. If the target is a Large or smaller creature, it has the Grappled condition (escape DC 15). While Grappled, the target has the Restrained condition and can't be targeted by the crocodile's Tail."
+   },
+   {
+    "key": "giant-crocodile_tail",
+    "name": "Tail",
+    "desc": "Melee Attack Roll: +8, reach 10 ft. 18 (3d8 + 5) Bludgeoning damage. If the target is a Large or smaller creature, it has the Prone condition."
+   }
+  ]
+ },
+ {
+  "id": "giant-eagle",
+  "name": "Giant Eagle",
+  "languages": "Celestial; understands Common and Primordial (Auran) but can't speak them",
+  "actions": [
+   {
+    "key": "giant-eagle_multiattack",
+    "name": "Multiattack",
+    "desc": "The eagle makes two Rend attacks."
+   },
+   {
+    "key": "giant-eagle_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 5 (1d4 + 3) Slashing damage plus 3 (1d6) Radiant damage."
+   }
+  ]
+ },
+ {
+  "id": "giant-elk",
+  "name": "Giant Elk",
+  "languages": "Celestial; understands Common, Elvish, And Sylvan but can't speak them",
+  "actions": [
+   {
+    "key": "giant-elk_ram",
+    "name": "Ram",
+    "desc": "Melee Attack Roll: +6, reach 10 ft. 11 (2d6 + 4) Bludgeoning damage plus 5 (2d4) Radiant damage. If the target is a Huge or smaller creature and the elk moved 20+ feet straight toward it immediately before the hit, the target takes an extra 5 (2d4) Bludgeoning damage and has the Prone condition."
+   }
+  ]
+ },
+ {
+  "id": "giant-fire-beetle",
+  "name": "Giant Fire Beetle",
+  "traits": [
+   {
+    "name": "Illumination",
+    "desc": "The beetle sheds Bright Light in a 10-foot radius and Dim Light for an additional 10 feet."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-fire-beetle_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +1, reach 5 ft. 1 Fire damage."
+   }
+  ]
+ },
+ {
+  "id": "giant-fly",
+  "name": "Giant Fly"
+ },
+ {
+  "id": "giant-frog",
+  "name": "Giant Frog",
+  "traits": [
+   {
+    "name": "Amphibious",
+    "desc": "The frog can breathe air and water."
+   },
+   {
+    "name": "Standing Leap",
+    "desc": "The frog's Long Jump is up to 20 feet and its High Jump is up to 10 feet with or without a running start."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-frog_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +3, reach 5 ft. 5 (1d6 + 2) Piercing damage. If the target is a Medium or smaller creature, it has the Grappled condition (escape DC 11)."
+   },
+   {
+    "key": "giant-frog_swallow",
+    "name": "Swallow",
+    "desc": "The frog swallows a Small or smaller target it is grappling. While swallowed, the target isn't Grappled but has the Blinded and Restrained conditions, and it has Cover|XPHB|Total Cover against attacks and other effects outside the frog. While swallowing the target, the frog can't use Bite, and if the frog dies, the swallowed target is no longer Restrained and can escape from the corpse using 5 feet of movement, exiting with the Prone condition. At the end of the frog's next turn, the swallowed target takes 5 (2d4) Acid damage. If that damage doesn't kill it, the frog disgorges it, causing it to exit Prone."
+   }
+  ]
+ },
+ {
+  "id": "giant-goat",
+  "name": "Giant Goat",
+  "actions": [
+   {
+    "key": "giant-goat_ram",
+    "name": "Ram",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 6 (1d6 + 3) Bludgeoning damage. If the target is a Large or smaller creature and the goat moved 20+ feet straight toward it immediately before the hit, the target takes an extra 5 (2d4) Bludgeoning damage and has the Prone condition."
+   }
+  ]
+ },
+ {
+  "id": "giant-hyena",
+  "name": "Giant Hyena",
+  "actions": [
+   {
+    "key": "giant-hyena_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 10 (2d6 + 3) Piercing damage."
+   },
+   {
+    "key": "giant-hyena_rampage-1-day",
+    "name": "Rampage",
+    "desc": "Immediately after dealing damage to a creature that was already Bloodied, the hyena can move up to half its Speed, and it makes one Bite attack."
+   }
+  ]
+ },
+ {
+  "id": "giant-lizard",
+  "name": "Giant Lizard",
+  "traits": [
+   {
+    "name": "Spider Climb",
+    "desc": "The lizard can climb difficult surfaces, including along ceilings, without needing to make an ability check."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-lizard_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. 6 (1d8 + 2) Piercing damage."
+   }
+  ]
+ },
+ {
+  "id": "giant-octopus",
+  "name": "Giant Octopus",
+  "traits": [
+   {
+    "name": "Water Breathing",
+    "desc": "The octopus can breathe only underwater. It can hold its breath for 1 hour outside water."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-octopus_tentacles",
+    "name": "Tentacles",
+    "desc": "Melee Attack Roll: +5, reach 10 ft. 10 (2d6 + 3) Bludgeoning damage. If the target is a Medium or smaller creature, it has the Grappled condition (escape DC 13) from all eight tentacles. While Grappled, the target has the Restrained condition."
+   },
+   {
+    "key": "giant-octopus_ink-cloud",
+    "name": "Ink Cloud",
+    "desc": "_Trigger:_ The octopus takes damage while underwater. _Response:_ The octopus releases ink that fills a 10-foot Cube centered on itself, and the octopus moves up to its Swim Speed. The Cube is Heavily Obscured for 1 minute or until a strong current or similar effect disperses the ink."
+   }
+  ]
+ },
+ {
+  "id": "giant-owl",
+  "name": "Giant Owl",
+  "languages": "Celestial; understands Common, Elvish, And Sylvan but can't speak them",
+  "traits": [
+   {
+    "name": "Flyby",
+    "desc": "The owl doesn't provoke an Opportunity Attack when it flies out of an enemy's reach."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-owl_talons",
+    "name": "Talons",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. 7 (1d10 + 2) Slashing damage."
+   },
+   {
+    "key": "giant-owl_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The owl casts one of the following spells, requiring no spell components and using Wisdom as the spellcasting ability:\n\n- **At Will:** Detect Evil and Good, Detect Magic\n- **1/Day Each:** Clairvoyance"
+   }
+  ]
+ },
+ {
+  "id": "giant-rat",
+  "name": "Giant Rat",
+  "traits": [
+   {
+    "name": "Pack Tactics",
+    "desc": "The rat has Advantage on an attack roll against a creature if at least one of the rat's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-rat_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +5, reach 5 feet. 5 (1d4 + 3) Piercing damage."
+   }
+  ]
+ },
+ {
+  "id": "giant-scorpion",
+  "name": "Giant Scorpion",
+  "actions": [
+   {
+    "key": "giant-scorpion_multiattack",
+    "name": "Multiattack",
+    "desc": "The scorpion makes two Claw attacks and one Sting attack."
+   },
+   {
+    "key": "giant-scorpion_claw",
+    "name": "Claw",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 6 (1d6 + 3) Bludgeoning damage. If the target is a Large or smaller creature, it has the Grappled condition (escape DC 13) from one of two claws."
+   },
+   {
+    "key": "giant-scorpion_sting",
+    "name": "Sting",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 7 (1d8 + 3) Piercing damage plus 11 (2d10) Poison damage."
+   }
+  ]
+ },
+ {
+  "id": "giant-seahorse",
+  "name": "Giant Seahorse",
+  "traits": [
+   {
+    "name": "Water Breathing",
+    "desc": "The seahorse can breathe only underwater."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-seahorse_ram",
+    "name": "Ram",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. 9 (2d6 + 2) Bludgeoning damage, or 11 (2d8 + 2) Bludgeoning damage if the seahorse moved 20+ feet straight toward the target immediately before the hit."
+   },
+   {
+    "key": "giant-seahorse_bubble-dash",
+    "name": "Bubble Dash",
+    "desc": "While underwater, the seahorse moves up to half its Swim Speed without provoking Opportunity Attacks."
+   }
+  ]
+ },
+ {
+  "id": "giant-shark",
+  "name": "Giant Shark",
+  "traits": [
+   {
+    "name": "Water Breathing",
+    "desc": "The shark can breathe only underwater."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-shark_multiattack",
+    "name": "Multiattack",
+    "desc": "The shark makes two Bite attacks."
+   },
+   {
+    "key": "giant-shark_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +9 (with Advantage if the target doesn't have all its Hit Points), reach 5 ft. 22 (3d10 + 6) Piercing damage."
+   }
+  ]
+ },
+ {
+  "id": "giant-spider",
+  "name": "Giant Spider",
+  "traits": [
+   {
+    "name": "Spider Climb",
+    "desc": "The spider can climb difficult surfaces, including along ceilings, without needing to make an ability check."
+   },
+   {
+    "name": "Web Walker",
+    "desc": "The spider ignores movement restrictions caused by webs, and it knows the location of any other creature in contact with the same web."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-spider_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 7 (1d8 + 3) Piercing damage plus 7 (2d6) Poison damage."
+   },
+   {
+    "key": "giant-spider_web",
+    "name": "Web",
+    "desc": "Dexterity Saving Throw: DC 13, one creature the spider can see within 60 feet. Failure: The target has the Restrained condition until the web is destroyed (AC 10; HP 5; Vulnerability to Fire damage; Immunity to Poison and Psychic damage)."
+   }
+  ]
+ },
+ {
+  "id": "giant-toad",
+  "name": "Giant Toad",
+  "traits": [
+   {
+    "name": "Amphibious",
+    "desc": "The toad can breathe air and water."
+   },
+   {
+    "name": "Standing Leap",
+    "desc": "The toad's Long Jump is up to 20 feet and its High Jump is up to 10 feet with or without a running start."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-toad_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. 5 (1d6 + 2) Piercing damage plus 5 (2d4) Poison damage. If the target is a Medium or smaller creature, it has the Grappled condition (escape DC 12)."
+   },
+   {
+    "key": "giant-toad_swallow",
+    "name": "Swallow",
+    "desc": "The toad swallows a Medium or smaller target it is grappling. While swallowed, the target isn't Grappled but has the Blinded and Restrained conditions, and it has Cover|XPHB|Total Cover against attacks and other effects outside the toad. In addition, the target takes 10 (3d6) Acid damage at the end of each of the toad's turns. The toad can have only one target swallowed at a time, and it can't use Bite while it has a swallowed target. If the toad dies, a swallowed creature is no longer Restrained and can escape from the corpse using 5 feet of movement, exiting with the Prone condition."
+   }
+  ]
+ },
+ {
+  "id": "giant-venomous-snake",
+  "name": "Giant Venomous Snake",
+  "actions": [
+   {
+    "key": "giant-venomous-snake_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +6, reach 10 ft. 6 (1d4 + 4) Piercing damage plus 4 (1d8) Poison damage."
+   }
+  ]
+ },
+ {
+  "id": "giant-vulture",
+  "name": "Giant Vulture",
+  "languages": "Understands Common but can't speak",
+  "traits": [
+   {
+    "name": "Pack Tactics",
+    "desc": "The vulture has Advantage on an attack roll against a creature if at least one of the vulture's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-vulture_gouge",
+    "name": "Gouge",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. 9 (2d6 + 2) Piercing damage, and the target has the Poisoned condition until the end of its next turn."
+   }
+  ]
+ },
+ {
+  "id": "giant-wasp",
+  "name": "Giant Wasp",
+  "traits": [
+   {
+    "name": "Flyby",
+    "desc": "The wasp doesn't provoke an Opportunity Attack when it flies out of an enemy's reach."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-wasp_sting",
+    "name": "Sting",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. 5 (1d6 + 2) Piercing damage plus 5 (2d4) Poison damage."
+   }
+  ]
+ },
+ {
+  "id": "giant-weasel",
+  "name": "Giant Weasel",
+  "actions": [
+   {
+    "key": "giant-weasel_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 5 (1d4 + 3) Piercing damage."
+   }
+  ]
+ },
+ {
+  "id": "giant-wolf-spider",
+  "name": "Giant Wolf Spider",
+  "traits": [
+   {
+    "name": "Spider Climb",
+    "desc": "The spider can climb difficult surfaces, including along ceilings, without needing to make an ability check."
+   }
+  ],
+  "actions": [
+   {
+    "key": "giant-wolf-spider_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 5 (1d4 + 3) Piercing damage plus 5 (2d4) Poison damage."
+   }
+  ]
+ },
+ {
+  "id": "gibbering-mouther",
+  "name": "Gibbering Mouther",
+  "traits": [
+   {
+    "name": "Aberrant Ground",
+    "desc": "The ground in a 10-foot Emanation originating from the mouther is Difficult Terrain."
+   },
+   {
+    "name": "Gibbering",
+    "desc": "The mouther babbles incoherently while it doesn't have the Incapacitated condition. Wisdom Saving Throw: DC 10, any creature that starts its turn within 20 feet of the mouther while it is babbling. Failure: The target rolls 1d8 to determine what it does during the current turn:\n\n- 1-4: The target does nothing.\n- 5-6: The target takes no action or Bonus Action and uses all its movement to move in a random direction.\n- 7-8: The target makes a melee attack against a randomly determined creature within its reach or does nothing if it can't make such an attack."
+   }
+  ],
+  "actions": [
+   {
+    "key": "gibbering-mouther_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +2, reach 5 ft. 7 (2d6) Piercing damage. If the target is a Medium or smaller creature, it has the Prone condition. The target dies if it is reduced to 0 Hit Points by this attack. Its body is then absorbed into the mouther, leaving only equipment behind."
+   },
+   {
+    "key": "gibbering-mouther_blinding-spittle",
+    "name": "Blinding Spittle",
+    "desc": "Dexterity Saving Throw: DC 10, each creature in a 10-foot-radius Sphere [Area of Effect]|XPHB|Sphere centered on a point within 30 feet. Failure: 7 (2d6) Radiant damage, and the target has the Blinded condition until the end of the mouther's next turn."
+   }
+  ]
+ },
+ {
+  "id": "glabrezu",
+  "name": "Glabrezu",
+  "languages": "Abyssal; telepathy 120 ft.",
+  "traits": [
+   {
+    "name": "Demonic Restoration",
+    "desc": "If the glabrezu dies outside the Abyss, its body dissolves into ichor, and it gains a new body instantly, reviving with all its Hit Points somewhere in the Abyss."
+   },
+   {
+    "name": "Magic Resistance",
+    "desc": "The glabrezu has Advantage on saving throws against spells and other magical effects."
+   }
+  ],
+  "actions": [
+   {
+    "key": "glabrezu_multiattack",
+    "name": "Multiattack",
+    "desc": "The glabrezu makes two Pincer attacks and uses Pummel or Spellcasting."
+   },
+   {
+    "key": "glabrezu_pincer",
+    "name": "Pincer",
+    "desc": "Melee Attack Roll: +9, reach 10 ft. 16 (2d10 + 5) Slashing damage. If the target is a Medium or smaller creature, it has the Grappled condition (escape DC 15) from one of two pincers."
+   },
+   {
+    "key": "glabrezu_pummel",
+    "name": "Pummel",
+    "desc": "Dexterity Saving Throw: DC 17, one creature Grappled by the glabrezu. Failure: 15 (3d6 + 5) Bludgeoning damage. Success: Half damage."
+   },
+   {
+    "key": "glabrezu_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The glabrezu casts one of the following spells, requiring no Material components and using Intelligence as the spellcasting ability (spell save DC 16):\n\n- **At Will:** Darkness, Detect Magic, Dispel Magic\n- **1/Day Each:** Confusion, Fly, Power Word Stun"
+   }
+  ]
+ },
+ {
+  "id": "gladiator",
+  "name": "Gladiator",
+  "languages": "Common",
+  "actions": [
+   {
+    "key": "gladiator_multiattack",
+    "name": "Multiattack",
+    "desc": "The gladiator makes three Spear attacks. It can replace one attack with a use of Shield Bash."
+   },
+   {
+    "key": "gladiator_spear",
+    "name": "Spear",
+    "desc": "Melee or Ranged Attack Roll: +7, reach 5 ft. or range 20/60 ft. 11 (2d6 + 4) Piercing damage."
+   },
+   {
+    "key": "gladiator_shield-bash",
+    "name": "Shield Bash",
+    "desc": "Strength Saving Throw: DC 15, one creature within 5 feet that the gladiator can see. Failure: 9 (2d4 + 4) Bludgeoning damage. If the target is a Medium or smaller creature, it has the Prone condition."
+   },
+   {
+    "key": "gladiator_parry",
+    "name": "Parry",
+    "desc": "_Trigger:_ The gladiator is hit by a melee attack roll while holding a weapon. _Response:_ The gladiator adds 3 to its AC against that attack, possibly causing it to miss."
+   }
+  ]
+ },
+ {
+  "id": "gnoll-warrior",
+  "name": "Gnoll Warrior",
+  "languages": "Gnoll",
+  "actions": [
+   {
+    "key": "gnoll-warrior_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. 5 (1d6 + 2) Piercing damage."
+   },
+   {
+    "key": "gnoll-warrior_bone-bow",
+    "name": "Bone Bow",
+    "desc": "Ranged Attack Roll: +3, range 150/600 ft. 6 (1d10 + 1) Piercing damage."
+   },
+   {
+    "key": "gnoll-warrior_rampage-1-day",
+    "name": "Rampage",
+    "desc": "Immediately after dealing damage to a creature that is already Bloodied, the gnoll moves up to half its Speed, and it makes one Rend attack."
+   }
+  ]
+ },
+ {
+  "id": "goat",
+  "name": "Goat",
+  "actions": [
+   {
+    "key": "goat_ram",
+    "name": "Ram",
+    "desc": "Melee Attack Roll: +2, reach 5 ft. 1 Bludgeoning damage, or 2 (1d4) Bludgeoning damage if the goat moved 20+ feet straight toward the target immediately before the hit."
+   }
+  ]
+ },
+ {
+  "id": "goblin-boss",
+  "name": "Goblin Boss",
+  "languages": "Common, Goblin",
+  "actions": [
+   {
+    "key": "goblin-boss_multiattack",
+    "name": "Multiattack",
+    "desc": "The goblin makes two attacks, using Scimitar or Shortbow in any combination."
+   },
+   {
+    "key": "goblin-boss_scimitar",
+    "name": "Scimitar",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. 5 (1d6 + 2) Slashing damage, plus 2 (1d4) Slashing damage if the attack roll had Advantage."
+   },
+   {
+    "key": "goblin-boss_shortbow",
+    "name": "Shortbow",
+    "desc": "Ranged Attack Roll: +4, range 80/320 ft. 5 (1d6 + 2) Piercing damage, plus 2 (1d4) Piercing damage if the attack roll had Advantage."
+   },
+   {
+    "key": "goblin-boss_nimble-escape",
+    "name": "Nimble Escape",
+    "desc": "The goblin takes the Disengage or Hide action."
+   },
+   {
+    "key": "goblin-boss_redirect-attack",
+    "name": "Redirect Attack",
+    "desc": "_Trigger:_ A creature the goblin can see makes an attack roll against it. _Response:_ The goblin chooses a Small or Medium ally within 5 feet of itself. The goblin and that ally swap places, and the ally becomes the target of the attack instead."
+   }
+  ]
+ },
+ {
+  "id": "goblin-minion",
+  "name": "Goblin Minion",
+  "languages": "Common, Goblin",
+  "actions": [
+   {
+    "key": "goblin-minion_dagger",
+    "name": "Dagger",
+    "desc": "Melee or Ranged Attack Roll: +4, reach 5 ft. or range 20/60 ft. 4 (1d4 + 2) Piercing damage."
+   },
+   {
+    "key": "goblin-minion_nimble-escape",
+    "name": "Nimble Escape",
+    "desc": "The goblin takes the Disengage or Hide action."
+   }
+  ]
+ },
+ {
+  "id": "goblin-warrior",
+  "name": "Goblin Warrior",
+  "languages": "Common, Goblin",
+  "actions": [
+   {
+    "key": "goblin-warrior_scimitar",
+    "name": "Scimitar",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. 5 (1d6 + 2) Slashing damage, plus 2 (1d4) Slashing damage if the attack roll had Advantage."
+   },
+   {
+    "key": "goblin-warrior_shortbow",
+    "name": "Shortbow",
+    "desc": "Ranged Attack Roll: +4, range 80/320 ft. 5 (1d6 + 2) Piercing damage, plus 2 (1d4) Piercing damage if the attack roll had Advantage."
+   },
+   {
+    "key": "goblin-warrior_nimble-escape",
+    "name": "Nimble Escape",
+    "desc": "The goblin takes the Disengage or Hide action."
+   }
+  ]
+ },
+ {
+  "id": "gold-dragon-wyrmling",
+  "name": "Gold Dragon Wyrmling",
+  "languages": "Draconic",
+  "traits": [
+   {
+    "name": "Amphibious",
+    "desc": "The dragon can breathe air and water."
+   }
+  ],
+  "actions": [
+   {
+    "key": "gold-dragon-wyrmling_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes two Rend attacks."
+   },
+   {
+    "key": "gold-dragon-wyrmling_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 9 (1d10 + 4) Slashing damage."
+   },
+   {
+    "key": "gold-dragon-wyrmling_fire-breath",
+    "name": "Fire Breath",
+    "desc": "Dexterity Saving Throw: DC 13, each creature in a 15-foot Cone. Failure: 22 (4d10) Fire damage. Success: Half damage."
+   },
+   {
+    "key": "gold-dragon-wyrmling_weakening-breath",
+    "name": "Weakening Breath",
+    "desc": "Strength Saving Throw: DC 13, each creature that isn't currently affected by this breath in a 15-foot Cone. Failure: The target has Disadvantage on Strength-based D20 Test and subtracts 2 (1d4) from its damage rolls. It repeats the save at the end of each of its turns, ending the effect on itself on a success. After 1 minute, it succeeds automatically."
+   }
+  ]
+ },
+ {
+  "id": "gorgon",
+  "name": "Gorgon",
+  "actions": [
+   {
+    "key": "gorgon_gore",
+    "name": "Gore",
+    "desc": "Melee Attack Roll: +8, reach 5 ft. 18 (2d12 + 5) Piercing damage. If the target is a Large or smaller creature and the gorgon moved 20+ feet straight toward it immediately before the hit, the target has the Prone condition."
+   },
+   {
+    "key": "gorgon_petrifying-breath",
+    "name": "Petrifying Breath",
+    "desc": "Constitution Saving Throw: DC 15, each creature in a 30-foot Cone. First Failure The target has the Restrained condition and repeats the save at the end of its next turn if it is still Restrained, ending the effect on itself on a success. Second Failure The target has the Petrified condition instead of the Restrained condition."
+   },
+   {
+    "key": "gorgon_trample",
+    "name": "Trample",
+    "desc": "Dexterity Saving Throw: DC 16, one creature within 5 feet that has the Prone condition. Failure: 16 (2d10 + 5) Bludgeoning damage. Success: Half damage."
+   }
+  ]
+ },
+ {
+  "id": "gray-ooze",
+  "name": "Gray Ooze",
+  "traits": [
+   {
+    "name": "Amorphous",
+    "desc": "The ooze can move through a space as narrow as 1 inch without expending extra movement to do so."
+   },
+   {
+    "name": "Corrosive Form",
+    "desc": "Nonmagical ammunition is destroyed immediately after hitting the ooze and dealing any damage. Any nonmagical weapon takes a cumulative -1 penalty to attack rolls immediately after dealing damage to the ooze and coming into contact with it. The weapon is destroyed if the penalty reaches -5. The penalty can be removed by casting the Mending spell on the weapon. The ooze can eat through 2-inch-thick, nonmagical metal or wood in 1 round."
+   }
+  ],
+  "actions": [
+   {
+    "key": "gray-ooze_pseudopod",
+    "name": "Pseudopod",
+    "desc": "Melee Attack Roll: +3, reach 5 ft. 10 (2d8 + 1) Acid damage. Nonmagical armor worn by the target takes a -1 penalty to the AC it offers. The armor is destroyed if the penalty reduces its AC to 10. The penalty can be removed by casting the Mending spell on the armor."
+   }
+  ]
+ },
+ {
+  "id": "green-dragon-wyrmling",
+  "name": "Green Dragon Wyrmling",
+  "languages": "Draconic",
+  "traits": [
+   {
+    "name": "Amphibious",
+    "desc": "The dragon can breathe air and water."
+   }
+  ],
+  "actions": [
+   {
+    "key": "green-dragon-wyrmling_multiattack",
+    "name": "Multiattack",
+    "desc": "The dragon makes two Rend attacks."
+   },
+   {
+    "key": "green-dragon-wyrmling_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. 7 (1d10 + 2) Slashing damage plus 3 (1d6) Poison damage."
+   },
+   {
+    "key": "green-dragon-wyrmling_poison-breath",
+    "name": "Poison Breath",
+    "desc": "Constitution Saving Throw: DC 11, each creature in a 15-foot Cone. Failure: 21 (6d6) Poison damage. Success: Half damage."
+   }
+  ]
+ },
+ {
+  "id": "green-hag",
+  "name": "Green Hag",
+  "languages": "Common, Elvish, Sylvan",
+  "traits": [
+   {
+    "name": "Amphibious",
+    "desc": "The hag can breathe air and water."
+   },
+   {
+    "name": "Mimicry",
+    "desc": "The hag can mimic animal sounds and humanoid voices. A creature that hears the sounds can tell they are imitations only with a successful DC 14 Wisdom (Insight) check."
+   }
+  ],
+  "actions": [
+   {
+    "key": "green-hag_multiattack",
+    "name": "Multiattack",
+    "desc": "The hag makes two Claw attacks."
+   },
+   {
+    "key": "green-hag_claw",
+    "name": "Claw",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 8 (1d8 + 4) Slashing damage plus 3 (1d6) Poison damage."
+   },
+   {
+    "key": "green-hag_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The hag casts one of the following spells, requiring no Material components and using Wisdom as the spellcasting ability (spell save DC 12, +4 to hit with spell attacks):\n\n- **At Will:** Dancing Lights, Disguise Self, Invisibility, Minor Illusion, Ray of Sickness"
+   }
+  ]
+ },
+ {
+  "id": "grick",
+  "name": "Grick",
+  "actions": [
+   {
+    "key": "grick_multiattack",
+    "name": "Multiattack",
+    "desc": "The grick makes one Beak attack and one Tentacles attack."
+   },
+   {
+    "key": "grick_beak",
+    "name": "Beak",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. 9 (2d6 + 2) Piercing damage."
+   },
+   {
+    "key": "grick_tentacles",
+    "name": "Tentacles",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. 7 (1d10 + 2) Slashing damage. If the target is a Medium or smaller creature, it has the Grappled condition (escape DC 12) from all four tentacles."
+   }
+  ]
+ },
+ {
+  "id": "griffon",
+  "name": "Griffon",
+  "actions": [
+   {
+    "key": "griffon_multiattack",
+    "name": "Multiattack",
+    "desc": "The griffon makes two Rend attacks."
+   },
+   {
+    "key": "griffon_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 8 (1d8 + 4) Piercing damage. If the target is a Medium or smaller creature, it has the Grappled condition (escape DC 14) from both of the griffon's front claws."
+   }
+  ]
+ },
+ {
+  "id": "grimlock",
+  "name": "Grimlock",
+  "actions": [
+   {
+    "key": "grimlock_bone-cudgel",
+    "name": "Bone Cudgel",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 6 (1d6 + 3) Bludgeoning damage plus 2 (1d4) Psychic damage."
+   }
+  ]
+ },
+ {
+  "id": "guard",
+  "name": "Guard",
+  "languages": "Common",
+  "actions": [
+   {
+    "key": "guard_spear",
+    "name": "Spear",
+    "desc": "Melee or Ranged Attack Roll: +3, reach 5 ft. or range 20/60 ft. 4 (1d6 + 1) Piercing damage."
+   }
+  ]
+ },
+ {
+  "id": "guard-captain",
+  "name": "Guard Captain",
+  "languages": "Common",
+  "actions": [
+   {
+    "key": "guard-captain_multiattack",
+    "name": "Multiattack",
+    "desc": "The guard makes two attacks, using Javelin or Longsword in any combination."
+   },
+   {
+    "key": "guard-captain_javelin",
+    "name": "Javelin",
+    "desc": "Melee or Ranged Attack Roll: +6, reach 5 ft. or range 30/120 ft. 14 (3d6 + 4) Piercing damage."
+   },
+   {
+    "key": "guard-captain_longsword",
+    "name": "Longsword",
+    "desc": "Melee Attack Roll: +6, reach 5 ft. 15 (2d10 + 4) Slashing damage."
+   }
+  ]
+ },
+ {
+  "id": "guardian-naga",
+  "name": "Guardian Naga",
+  "languages": "Celestial, Common",
+  "traits": [
+   {
+    "name": "Celestial Restoration",
+    "desc": "If the naga dies, it returns to life in 1d6 days and regains all its Hit Points unless Dispel Evil and Good is cast on its remains."
+   }
+  ],
+  "actions": [
+   {
+    "key": "guardian-naga_multiattack",
+    "name": "Multiattack",
+    "desc": "The naga makes two Bite attacks. It can replace any attack with a use of Poisonous Spittle."
+   },
+   {
+    "key": "guardian-naga_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +8, reach 10 ft. 17 (2d12 + 4) Piercing damage plus 22 (4d10) Poison damage."
+   },
+   {
+    "key": "guardian-naga_poisonous-spittle",
+    "name": "Poisonous Spittle",
+    "desc": "Constitution Saving Throw: DC 16, one creature the naga can see within 60 feet. Failure: 31 (7d8) Poison damage, and the target has the Blinded condition until the start of the naga's next turn. Success: Half damage only."
+   },
+   {
+    "key": "guardian-naga_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The naga casts one of the following spells, requiring no Somatic or Material components and using Wisdom as the spellcasting ability (spell save DC 16):\n\n- **At Will:** Thaumaturgy\n- **1/Day Each:** Clairvoyance, Cure Wounds, Flame Strike, Geas, True Seeing"
+   }
+  ]
+ },
+ {
+  "id": "half-dragon",
+  "name": "Half-Dragon",
+  "languages": "Common, Draconic",
+  "traits": [
+   {
+    "name": "Draconic Origin",
+    "desc": "The half-dragon is related to a type of dragon associated with one of the following damage types (DM's choice): Acid, Cold, Fire, Lightning, or Poison. This choice affects other aspects of the stat block."
+   }
+  ],
+  "actions": [
+   {
+    "key": "half-dragon_multiattack",
+    "name": "Multiattack",
+    "desc": "The half-dragon makes two Claw attacks."
+   },
+   {
+    "key": "half-dragon_claw",
+    "name": "Claw",
+    "desc": "Melee Attack Roll: +7, reach 10 ft. 6 (1d4 + 4) Slashing damage plus 7 (2d6) damage of the type chosen for the Draconic Origin trait."
+   },
+   {
+    "key": "half-dragon_dragon's-breath",
+    "name": "Dragon's Breath",
+    "desc": "Dexterity Saving Throw: DC 14, each creature in a 30-foot Cone. Failure: 28 (8d6) damage of the type chosen for the Draconic Origin trait. Success: Half damage."
+   },
+   {
+    "key": "half-dragon_leap",
+    "name": "Leap",
+    "desc": "The half-dragon jumps up to 30 feet by spending 10 feet of movement."
+   }
+  ]
+ },
+ {
+  "id": "harpy",
+  "name": "Harpy",
+  "languages": "Common",
+  "actions": [
+   {
+    "key": "harpy_claw",
+    "name": "Claw",
+    "desc": "Melee Attack Roll: +3, reach 5 ft. 6 (2d4 + 1) Slashing damage."
+   },
+   {
+    "key": "harpy_luring-song",
+    "name": "Luring Song",
+    "desc": "The harpy sings a magical melody, which lasts until the harpy's Concentration ends on it. Wisdom Saving Throw: DC 11, each Humanoid and Giant in a 300-foot Emanation originating from the harpy when the song starts. Failure: The target has the Charmed condition until the song ends and repeats the save at the end of each of its turns. While Charmed, the target has the Incapacitated condition and ignores the Luring Song of other harpies. If the target is more than 5 feet from the harpy, the target moves on its turn toward the harpy by the most direct route, trying to get within 5 feet of the harpy. It doesn't avoid Opportunity Attacks; however, before moving into damaging terrain (such as lava or a pit) and whenever it takes damage from a source other than the harpy, the target repeats the save. Success: The target is immune to this harpy's Luring Song for 24 hours."
+   }
+  ]
+ },
+ {
+  "id": "hawk",
+  "name": "Hawk",
+  "actions": [
+   {
+    "key": "hawk_talons",
+    "name": "Talons",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 1 Slashing damage."
+   }
+  ]
+ },
+ {
+  "id": "hell-hound",
+  "name": "Hell Hound",
+  "languages": "Understands Infernal but can't speak",
+  "traits": [
+   {
+    "name": "Pack Tactics",
+    "desc": "The hound has Advantage on an attack roll against a creature if at least one of the hound's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hell-hound_multiattack",
+    "name": "Multiattack",
+    "desc": "The hound makes two Bite attacks."
+   },
+   {
+    "key": "hell-hound_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 7 (1d8 + 3) Piercing damage plus 3 (1d6) Fire damage."
+   },
+   {
+    "key": "hell-hound_fire-breath",
+    "name": "Fire Breath",
+    "desc": "Dexterity Saving Throw: DC 12, each creature in a 15-foot Cone. Failure: 17 (5d6) Fire damage. Success: Half damage."
+   }
+  ]
+ },
+ {
+  "id": "hezrou",
+  "name": "Hezrou",
+  "languages": "Abyssal; telepathy 120 ft.",
+  "traits": [
+   {
+    "name": "Demonic Restoration",
+    "desc": "If the hezrou dies outside the Abyss, its body dissolves into ichor, and it gains a new body instantly, reviving with all its Hit Points somewhere in the Abyss."
+   },
+   {
+    "name": "Magic Resistance",
+    "desc": "The hezrou has Advantage on saving throws against spells and other magical effects."
+   },
+   {
+    "name": "Stench",
+    "desc": "Constitution Saving Throw: DC 16, any creature that starts its turn in a 10-foot Emanation originating from the hezrou. Failure: The target has the Poisoned condition until the start of its next turn."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hezrou_multiattack",
+    "name": "Multiattack",
+    "desc": "The hezrou makes three Rend attacks."
+   },
+   {
+    "key": "hezrou_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +7, reach 5 ft. 6 (1d4 + 4) Slashing damage plus 9 (2d8) Poison damage."
+   },
+   {
+    "key": "hezrou_leap",
+    "name": "Leap",
+    "desc": "The hezrou jumps up to 30 feet by spending 10 feet of movement."
+   }
+  ]
+ },
+ {
+  "id": "hill-giant",
+  "name": "Hill Giant",
+  "languages": "Giant",
+  "actions": [
+   {
+    "key": "hill-giant_multiattack",
+    "name": "Multiattack",
+    "desc": "The giant makes two attacks, using Tree Club or Trash Lob in any combination."
+   },
+   {
+    "key": "hill-giant_tree-club",
+    "name": "Tree Club",
+    "desc": "Melee Attack Roll: +8, reach 10 ft. 18 (3d8 + 5) Bludgeoning damage. If the target is a Large or smaller creature, it has the Prone condition."
+   },
+   {
+    "key": "hill-giant_trash-lob",
+    "name": "Trash Lob",
+    "desc": "Ranged Attack Roll: +8, range 60/240 ft. 16 (2d10 + 5) Bludgeoning damage, and the target has the Poisoned condition until the end of its next turn."
+   }
+  ]
+ },
+ {
+  "id": "hippogriff",
+  "name": "Hippogriff",
+  "traits": [
+   {
+    "name": "Flyby",
+    "desc": "The hippogriff doesn't provoke an Opportunity Attack when it flies out of an enemy's reach."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hippogriff_multiattack",
+    "name": "Multiattack",
+    "desc": "The hippogriff makes two Rend attacks."
+   },
+   {
+    "key": "hippogriff_rend",
+    "name": "Rend",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 7 (1d8 + 3) Slashing damage."
+   }
+  ]
+ },
+ {
+  "id": "hippopotamus",
+  "name": "Hippopotamus",
+  "traits": [
+   {
+    "name": "Hold Breath",
+    "desc": "The hippopotamus can hold its breath for 10 minutes."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hippopotamus_multiattack",
+    "name": "Multiattack",
+    "desc": "The hippopotamus makes two Bite attacks."
+   },
+   {
+    "key": "hippopotamus_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +7, reach 5 ft. 16 (2d10 + 5) Piercing damage."
+   }
+  ]
+ },
+ {
+  "id": "hobgoblin-captain",
+  "name": "Hobgoblin Captain",
+  "languages": "Common, Goblin",
+  "traits": [
+   {
+    "name": "Aura of Authority",
+    "desc": "While in a 10-foot Emanation originating from the hobgoblin, the hobgoblin and its allies have Advantage on attack rolls and saving throws, provided the hobgoblin doesn't have the Incapacitated condition."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hobgoblin-captain_multiattack",
+    "name": "Multiattack",
+    "desc": "The hobgoblin makes two attacks, using Greatsword or Longbow in any combination."
+   },
+   {
+    "key": "hobgoblin-captain_greatsword",
+    "name": "Greatsword",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. 9 (2d6 + 2) Slashing damage plus 3 (1d6) Poison damage."
+   },
+   {
+    "key": "hobgoblin-captain_longbow",
+    "name": "Longbow",
+    "desc": "Ranged Attack Roll: +4, range 150/600 ft. 6 (1d8 + 2) Piercing damage plus 5 (2d4) Poison damage."
+   }
+  ]
+ },
+ {
+  "id": "hobgoblin-warrior",
+  "name": "Hobgoblin Warrior",
+  "languages": "Common, Goblin",
+  "traits": [
+   {
+    "name": "Pack Tactics",
+    "desc": "The hobgoblin has Advantage on an attack roll against a creature if at least one of the hobgoblin's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hobgoblin-warrior_longsword",
+    "name": "Longsword",
+    "desc": "Melee Attack Roll: +3, reach 5 ft. 12 (2d10 + 1) Slashing damage."
+   },
+   {
+    "key": "hobgoblin-warrior_longbow",
+    "name": "Longbow",
+    "desc": "Ranged Attack Roll: +3, range 150/600 ft. 5 (1d8 + 1) Piercing damage plus 7 (3d4) Poison damage."
+   }
+  ]
+ },
+ {
+  "id": "homunculus",
+  "name": "Homunculus",
+  "languages": "Understands Common plus one other language but can't speak",
+  "traits": [
+   {
+    "name": "Telepathic Bond",
+    "desc": "While the homunculus is on the same plane of existence as its master, the two of them can communicate telepathically with each other."
+   }
+  ],
+  "actions": [
+   {
+    "key": "homunculus_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +4, reach 5 ft. 1 Piercing damage, and the target is subjected to the following effect. Constitution Saving Throw: DC 12. Failure: The target has the Poisoned condition until the end of the homunculus's next turn. Failure by 5 or More: The target has the Poisoned condition for 1 minute. While Poisoned, the target has the Unconscious condition, which ends early if the target takes any damage."
+   }
+  ]
+ },
+ {
+  "id": "horned-devil",
+  "name": "Horned Devil",
+  "languages": "Infernal; telepathy 120 ft.",
+  "traits": [
+   {
+    "name": "Diabolical Restoration",
+    "desc": "If the devil dies outside the Nine Hells, its body disappears in sulfurous smoke, and it gains a new body instantly, reviving with all its Hit Points somewhere in the Nine Hells."
+   },
+   {
+    "name": "Magic Resistance",
+    "desc": "The devil has Advantage on saving throws against spells and other magical effects."
+   }
+  ],
+  "actions": [
+   {
+    "key": "horned-devil_multiattack",
+    "name": "Multiattack",
+    "desc": "The devil makes three attacks, using Searing Fork or Hurl Flame in any combination. It can replace one attack with a use of Infernal Tail."
+   },
+   {
+    "key": "horned-devil_searing-fork",
+    "name": "Searing Fork",
+    "desc": "Melee Attack Roll: +10, reach 10 ft. 15 (2d8 + 6) Piercing damage plus 9 (2d8) Fire damage."
+   },
+   {
+    "key": "horned-devil_hurl-flame",
+    "name": "Hurl Flame",
+    "desc": "Ranged Attack Roll: +8, range 150 ft. 26 (5d8 + 4) Fire damage. If the target is a flammable object that isn't being worn or carried, it starts burning."
+   },
+   {
+    "key": "horned-devil_infernal-tail",
+    "name": "Infernal Tail",
+    "desc": "Dexterity Saving Throw: DC 17, one creature the devil can see within 10 feet. Failure: 10 (1d8 + 6) Necrotic damage, and the target receives an infernal wound if it doesn't have one. While wounded, the target loses 10 (3d6) Hit Points at the start of each of its turns. The wound closes after 1 minute, after a spell restores Hit Points to the target, or after the target or a creature within 5 feet of it takes an action to stanch the wound, doing so by succeeding on a DC 17 Wisdom (Medicine) check."
+   }
+  ]
+ },
+ {
+  "id": "hunter-shark",
+  "name": "Hunter Shark",
+  "traits": [
+   {
+    "name": "Water Breathing",
+    "desc": "The shark can breathe only underwater."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hunter-shark_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +6 (with Advantage if the target doesn't have all its Hit Points), reach 5 ft. 14 (3d6 + 4) Piercing damage."
+   }
+  ]
+ },
+ {
+  "id": "hydra",
+  "name": "Hydra",
+  "traits": [
+   {
+    "name": "Hold Breath",
+    "desc": "The hydra can hold its breath for 1 hour."
+   },
+   {
+    "name": "Multiple Heads",
+    "desc": "The hydra has five heads. Whenever the hydra takes 25 damage or more on a single turn, one of its heads dies. The hydra dies if all its heads are dead. At the end of each of its turns when it has at least one living head, the hydra grows two heads for each of its heads that died since its last turn, unless it has taken Fire damage since its last turn. The hydra regains 20 Hit Points when it grows new heads."
+   },
+   {
+    "name": "Reactive Heads",
+    "desc": "For each head the hydra has beyond one, it gets an extra Reaction that can be used only for Opportunity Attacks."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hydra_multiattack",
+    "name": "Multiattack",
+    "desc": "The hydra makes as many Bite attacks as it has heads."
+   },
+   {
+    "key": "hydra_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +8, reach 10 ft. 10 (1d10 + 5) Piercing damage."
+   }
+  ]
+ },
+ {
+  "id": "hyena",
+  "name": "Hyena",
+  "traits": [
+   {
+    "name": "Pack Tactics",
+    "desc": "The hyena has Advantage on an attack roll against a creature if at least one of the hyena's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition."
+   }
+  ],
+  "actions": [
+   {
+    "key": "hyena_bite",
+    "name": "Bite",
+    "desc": "Melee Attack Roll: +2, reach 5 ft. 3 (1d6) Piercing damage."
+   }
+  ]
+ },
+ {
+  "id": "ice-devil",
+  "name": "Ice Devil",
+  "languages": "Infernal; telepathy 120 ft.",
+  "traits": [
+   {
+    "name": "Diabolical Restoration",
+    "desc": "If the devil dies outside the Nine Hells, its body disappears in sulfurous smoke, and it gains a new body instantly, reviving with all its Hit Points somewhere in the Nine Hells."
+   },
+   {
+    "name": "Magic Resistance",
+    "desc": "The devil has Advantage on saving throws against spells and other magical effects."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ice-devil_multiattack",
+    "name": "Multiattack",
+    "desc": "The devil makes three Ice Spear attacks. It can replace one attack with a Tail attack."
+   },
+   {
+    "key": "ice-devil_ice-spear",
+    "name": "Ice Spear",
+    "desc": "Melee or Ranged Attack Roll: +10, reach 5 ft. or range 30/120 ft. 14 (2d8 + 5) Piercing damage plus 10 (3d6) Cold damage. Until the end of its next turn, the target can't take a Bonus Action or Reaction, its Speed decreases by 10 feet, and it can move or take one action on its turn, not both. HitomThe spear magically returns to the devil's hand immediately after a ranged attack."
+   },
+   {
+    "key": "ice-devil_tail",
+    "name": "Tail",
+    "desc": "Melee Attack Roll: +10, reach 10 ft. 15 (3d6 + 5) Bludgeoning damage plus 18 (4d8) Cold damage."
+   },
+   {
+    "key": "ice-devil_ice-wall",
+    "name": "Ice Wall",
+    "desc": "The devil casts Wall of Ice (level 8 version), requiring no spell components and using Intelligence as the spellcasting ability (spell save DC 17).\n\n- **At Will:**"
+   }
+  ]
+ },
+ {
+  "id": "ice-mephit",
+  "name": "Ice Mephit",
+  "languages": "Primordial (Aquan, Auran)",
+  "traits": [
+   {
+    "name": "Death Burst",
+    "desc": "The mephit explodes when it dies. Constitution Saving Throw: DC 10, each creature in a 5-foot Emanation originating from the mephit. Failure: 5 (2d4) Cold damage. Success: Half damage."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ice-mephit_claw",
+    "name": "Claw",
+    "desc": "Melee Attack Roll: +3, reach 5 ft. 3 (1d4 + 1) Slashing damage plus 2 (1d4) Cold damage."
+   },
+   {
+    "key": "ice-mephit_frost-breath",
+    "name": "Frost Breath",
+    "desc": "Constitution Saving Throw: DC 10, each creature in a 15-foot Cone. Failure: 7 (3d4) Cold damage. Success: Half damage."
+   },
+   {
+    "key": "ice-mephit_fog-cloud",
+    "name": "Fog Cloud",
+    "desc": "The mephit casts Fog Cloud, requiring no spell components and using Charisma as the spellcasting ability.\n\n- **At Will:**\n- **1/Day Each:** Fog Cloud"
+   }
+  ]
+ },
+ {
+  "id": "imp",
+  "name": "Imp",
+  "languages": "Common, Infernal",
+  "traits": [
+   {
+    "name": "Magic Resistance",
+    "desc": "The imp has Advantage on saving throws against spells and other magical effects."
+   }
+  ],
+  "actions": [
+   {
+    "key": "imp_sting",
+    "name": "Sting",
+    "desc": "Melee Attack Roll: +5, reach 5 ft. 6 (1d6 + 3) Piercing damage plus 7 (2d6) Poison damage."
+   },
+   {
+    "key": "imp_shape-shift",
+    "name": "Shape-Shift",
+    "desc": "The imp shape-shifts to resemble a rat (Speed 20 ft.), a raven (20 ft., Fly 60 ft.), or a spider (20 ft., Climb 20 ft.), or it returns to its true form. Its statistics are the same in each form, except for its Speed. Any equipment it is wearing or carrying isn't transformed."
+   },
+   {
+    "key": "imp_invisibility",
+    "name": "Invisibility",
+    "desc": "The imp casts Invisibility on itself, requiring no spell components and using Charisma as the spellcasting ability.\n\n- **At Will:** Invisibility"
+   }
+  ]
+ },
+ {
+  "id": "incubus",
+  "name": "Incubus",
+  "languages": "Abyssal, Common, Infernal; telepathy 60 ft.",
+  "traits": [
+   {
+    "name": "Succubus Form",
+    "desc": "When the incubus finishes a Long Rest, it can shape-shift into a Succubus, using that stat block instead of this one. Any equipment it's wearing or carrying isn't transformed."
+   }
+  ],
+  "actions": [
+   {
+    "key": "incubus_multiattack",
+    "name": "Multiattack",
+    "desc": "The incubus makes two Restless Touch attacks."
+   },
+   {
+    "key": "incubus_restless-touch",
+    "name": "Restless Touch",
+    "desc": "Melee Attack Roll: +7, reach 5 ft. 15 (3d6 + 5) Psychic damage, and the target is cursed for 24 hours or until the incubus dies. Until the curse ends, the target gains no benefit from finishing Short Rests."
+   },
+   {
+    "key": "incubus_spellcasting",
+    "name": "Spellcasting",
+    "desc": "The incubus casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 15):\n\n- **At Will:** Disguise Self, Etherealness\n- **1/Day Each:** Dream, Hypnotic Pattern"
+   },
+   {
+    "key": "incubus_nightmare-recharge-6",
+    "name": "Nightmare",
+    "desc": "Wisdom Saving Throw: DC 15, one creature the incubus can see within 60 feet. Failure: If the target has 20 Hit Points or fewer, it has the Unconscious condition for 1 hour, until it takes damage, or until a creature within 5 feet of it takes an action to wake it. Otherwise, the target takes 18 (4d8) Psychic damage."
+   }
+  ]
+ }
+]

@@ -1,0 +1,1263 @@
+[
+ {
+  "id": "ancient-red-dragon",
+  "name": "Dragón rojo anciano",
+  "languages": "Común, dracónico",
+  "traits": [
+   {
+    "name": "Resistencia legendaria (4/día, o 5/día en su guarida)",
+    "desc": "Si el dragón falla una tirada de salvación, puede elegir tener éxito en su lugar."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ancient-red-dragon_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace tres ataques de Desgarrar. Puede sustituir un ataque por un uso de Lanzamiento de conjuros para lanzar Rayo abrasador (versión de nivel 3)."
+   },
+   {
+    "key": "ancient-red-dragon_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +17, alcance 15 pies. 19 (2d8 + 10) de daño cortante más 10 (3d6) de daño de fuego."
+   },
+   {
+    "key": "ancient-red-dragon_fire-breath",
+    "name": "Aliento de fuego",
+    "desc": "Tirada de salvación de Destreza: CD 24, cada criatura en un cono de 90 pies. Fallo: 91 (26d6) de daño de fuego. Éxito: mitad de daño."
+   },
+   {
+    "key": "ancient-red-dragon_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "El dragón lanza uno de los siguientes conjuros, sin necesitar componentes materiales y usando Carisma como aptitud mágica (CD de salvación de conjuros 23, +15 para impactar con ataques de conjuro):\n\n- **A voluntad:** Orden imperiosa, Detectar magia, Rayo abrasador\n- **1/día cada uno:** Bola de fuego, Escudriñar"
+   },
+   {
+    "key": "ancient-red-dragon_commanding-presence",
+    "name": "Presencia imponente",
+    "desc": "El dragón usa Lanzamiento de conjuros para lanzar Orden imperiosa (versión de nivel 2). El dragón no puede volver a realizar esta acción hasta el comienzo de su siguiente turno."
+   },
+   {
+    "key": "ancient-red-dragon_fiery-rays",
+    "name": "Rayos ígneos",
+    "desc": "El dragón usa Lanzamiento de conjuros para lanzar Rayo abrasador (versión de nivel 3). El dragón no puede volver a realizar esta acción hasta el comienzo de su siguiente turno."
+   },
+   {
+    "key": "ancient-red-dragon_pounce",
+    "name": "Abalanzarse",
+    "desc": "El dragón se mueve hasta la mitad de su velocidad y hace un ataque de Desgarrar."
+   }
+  ]
+ },
+ {
+  "id": "ancient-silver-dragon",
+  "name": "Dragón de plata anciano",
+  "languages": "Común, dracónico",
+  "traits": [
+   {
+    "name": "Resistencia legendaria (4/día, o 5/día en su guarida)",
+    "desc": "Si el dragón falla una tirada de salvación, puede elegir tener éxito en su lugar."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ancient-silver-dragon_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace tres ataques de Desgarrar. Puede sustituir un ataque por un uso de (A) Aliento paralizante o (B) Lanzamiento de conjuros para lanzar Cuchillo de hielo (versión de nivel 2)."
+   },
+   {
+    "key": "ancient-silver-dragon_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +17, alcance 15 pies. 19 (2d8 + 10) de daño cortante más 9 (2d8) de daño de frío."
+   },
+   {
+    "key": "ancient-silver-dragon_cold-breath",
+    "name": "Aliento de frío",
+    "desc": "Tirada de salvación de Constitución: CD 24, cada criatura en un cono de 90 pies. Fallo: 67 (15d8) de daño de frío. Éxito: mitad de daño."
+   },
+   {
+    "key": "ancient-silver-dragon_paralyzing-breath",
+    "name": "Aliento paralizante",
+    "desc": "Tirada de salvación de Constitución: CD 24, cada criatura en un cono de 90 pies. Primer fallo: el objetivo tiene el estado Incapacitado hasta el final de su siguiente turno, momento en el que repite la tirada de salvación. Segundo fallo: el objetivo tiene el estado Paralizado y repite la tirada de salvación al final de cada uno de sus turnos, poniendo fin al efecto sobre sí mismo si tiene éxito. Tras 1 minuto, tiene éxito automáticamente."
+   },
+   {
+    "key": "ancient-silver-dragon_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "El dragón lanza uno de los siguientes conjuros, sin necesitar componentes materiales y usando Carisma como aptitud mágica (CD de salvación de conjuros 23, +15 para impactar con ataques de conjuro):\n\n- **A voluntad:** Detectar magia, Inmovilizar monstruo, Cuchillo de hielo, Cambiar de forma\n- **1/día cada uno:** Controlar el clima, Tormenta de hielo, Teletransporte, Zona de verdad"
+   },
+   {
+    "key": "ancient-silver-dragon_chill",
+    "name": "Escalofrío",
+    "desc": "El dragón usa Lanzamiento de conjuros para lanzar Inmovilizar monstruo. El dragón no puede volver a realizar esta acción hasta el comienzo de su siguiente turno."
+   },
+   {
+    "key": "ancient-silver-dragon_cold-gale",
+    "name": "Vendaval gélido",
+    "desc": "Tirada de salvación de Destreza: CD 23, cada criatura en una línea de 60 pies de largo y 10 pies de ancho. Fallo: 14 (4d6) de daño de frío, y el objetivo es empujado hasta 30 pies en línea recta alejándose del dragón. Éxito: solo mitad de daño. Fallo o éxito: El dragón no puede volver a realizar esta acción hasta el comienzo de su siguiente turno."
+   },
+   {
+    "key": "ancient-silver-dragon_pounce",
+    "name": "Abalanzarse",
+    "desc": "El dragón se mueve hasta la mitad de su velocidad y hace un ataque de Desgarrar."
+   }
+  ]
+ },
+ {
+  "id": "ancient-white-dragon",
+  "name": "Dragón blanco anciano",
+  "languages": "Común, dracónico",
+  "traits": [
+   {
+    "name": "Caminar sobre el hielo",
+    "desc": "El dragón puede moverse por superficies heladas y trepar por ellas sin necesidad de hacer una prueba de característica. Además, el terreno difícil compuesto de hielo o nieve no le cuesta movimiento adicional."
+   },
+   {
+    "name": "Resistencia legendaria (4/día, o 5/día en su guarida)",
+    "desc": "Si el dragón falla una tirada de salvación, puede elegir tener éxito en su lugar."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ancient-white-dragon_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace tres ataques de Desgarrar."
+   },
+   {
+    "key": "ancient-white-dragon_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +14, alcance 15 pies. 17 (2d8 + 8) de daño cortante más 7 (2d6) de daño de frío."
+   },
+   {
+    "key": "ancient-white-dragon_cold-breath",
+    "name": "Aliento de frío",
+    "desc": "Tirada de salvación de Constitución: CD 22, cada criatura en un cono de 90 pies. Fallo: 63 (14d8) de daño de frío. Éxito: mitad de daño."
+   },
+   {
+    "key": "ancient-white-dragon_freezing-burst",
+    "name": "Estallido congelante",
+    "desc": "Tirada de salvación de Constitución: CD 20, cada criatura en una esfera de 30 pies de radio centrada en un punto que el dragón pueda ver a 120 pies o menos. Fallo: 14 (4d6) de daño de frío, y la velocidad del objetivo es 0 hasta el final del siguiente turno del objetivo. Fallo o éxito: El dragón no puede volver a realizar esta acción hasta el comienzo de su siguiente turno."
+   },
+   {
+    "key": "ancient-white-dragon_pounce",
+    "name": "Abalanzarse",
+    "desc": "El dragón se mueve hasta la mitad de su velocidad y hace un ataque de Desgarrar."
+   },
+   {
+    "key": "ancient-white-dragon_frightful-presence",
+    "name": "Presencia aterradora",
+    "desc": "El dragón lanza Miedo, sin necesitar componentes materiales y usando Carisma como aptitud mágica (CD de salvación de conjuros 18). El dragón no puede volver a realizar esta acción hasta el comienzo de su siguiente turno."
+   }
+  ]
+ },
+ {
+  "id": "animated-armor",
+  "name": "Armadura animada",
+  "actions": [
+   {
+    "key": "animated-armor_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "La armadura hace dos ataques de Golpe."
+   },
+   {
+    "key": "animated-armor_slam",
+    "name": "Golpe",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño contundente."
+   }
+  ]
+ },
+ {
+  "id": "animated-flying-sword",
+  "name": "Espada voladora animada",
+  "actions": [
+   {
+    "key": "animated-flying-sword_slash",
+    "name": "Tajo",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 6 (1d8 + 2) de daño cortante."
+   }
+  ]
+ },
+ {
+  "id": "animated-rug-of-smothering",
+  "name": "Alfombra asfixiante animada",
+  "actions": [
+   {
+    "key": "animated-rug-of-smothering_smother",
+    "name": "Asfixiar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 10 (2d6 + 3) de daño contundente. Si el objetivo es una criatura Mediana o más pequeña, la alfombra puede darle el estado Agarrado (CD 13 para escapar) en lugar de infligir daño. Hasta que termine el agarre, el objetivo tiene los estados Cegado y Apresado, se está asfixiando y recibe 10 (2d6 + 3) de daño contundente al comienzo de cada uno de sus turnos. La alfombra solo puede asfixiar a una criatura a la vez. Mientras agarra al objetivo, la alfombra no puede realizar esta acción, la alfombra reduce a la mitad el daño que recibe (redondeando hacia abajo) y el objetivo recibe la misma cantidad de daño."
+   }
+  ]
+ },
+ {
+  "id": "ankheg",
+  "name": "Ankheg",
+  "traits": [
+   {
+    "name": "Tunelador",
+    "desc": "El ankheg puede excavar a través de roca sólida a la mitad de su velocidad de excavación y deja tras de sí un túnel de 10 pies de diámetro."
+   }
+  ],
+  "actions": [
+   {
+    "key": "ankheg_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5 (con ventaja si el objetivo está Agarrado por el ankheg), alcance 5 pies. 10 (2d6 + 3) de daño cortante más 3 (1d6) de daño de ácido. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Agarrado (CD 13 para escapar)."
+   },
+   {
+    "key": "ankheg_acid-spray",
+    "name": "Rociada de ácido",
+    "desc": "Tirada de salvación de Destreza: CD 12, cada criatura en una línea de 30 pies de largo y 5 pies de ancho. Fallo: 14 (4d6) de daño de ácido. Éxito: mitad de daño."
+   }
+  ]
+ },
+ {
+  "id": "ankylosaurus",
+  "name": "Anquilosaurio",
+  "actions": [
+   {
+    "key": "ankylosaurus_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El anquilosaurio hace dos ataques de Cola."
+   },
+   {
+    "key": "ankylosaurus_tail",
+    "name": "Cola",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 10 pies. 9 (1d10 + 4) de daño contundente. Si el objetivo es una criatura Enorme o más pequeña, tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "ape",
+  "name": "Simio",
+  "actions": [
+   {
+    "key": "ape_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El simio hace dos ataques de Puño."
+   },
+   {
+    "key": "ape_fist",
+    "name": "Puño",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 5 (1d4 + 3) de daño contundente."
+   },
+   {
+    "key": "ape_rock",
+    "name": "Roca",
+    "desc": "Tirada de ataque a distancia: +5, alcance 25/50 pies. 10 (2d6 + 3) de daño contundente."
+   }
+  ]
+ },
+ {
+  "id": "archelon",
+  "name": "Arquelón",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "El arquelón puede respirar aire y agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "archelon_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El arquelón hace dos ataques de Mordisco."
+   },
+   {
+    "key": "archelon_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 14 (3d6 + 4) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "archmage",
+  "name": "Archimago",
+  "languages": "Común y otros cinco idiomas",
+  "traits": [
+   {
+    "name": "Resistencia mágica",
+    "desc": "El archimago tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "archmage_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El archimago hace cuatro ataques de Estallido arcano."
+   },
+   {
+    "key": "archmage_arcane-burst",
+    "name": "Estallido arcano",
+    "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +9, alcance 5 pies o alcance 150 pies. 27 (4d10 + 5) de daño de fuerza."
+   },
+   {
+    "key": "archmage_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "El archimago lanza uno de los siguientes conjuros, usando Inteligencia como aptitud mágica (CD de salvación de conjuros 17):\n\n- **A voluntad:** Detectar magia, Detectar pensamientos, Disfrazarse, Invisibilidad, Luz, Armadura de mago, Mano de mago, Prestidigitación\n- **2/día cada uno:** Volar, Relámpago\n- **1/día cada uno:** Cono de frío, Mente en blanco, Escudriñar, Teletransporte"
+   },
+   {
+    "key": "archmage_misty-step-3-day",
+    "name": "Paso brumoso",
+    "desc": "El mago lanza Paso brumoso, usando la misma aptitud mágica que en Lanzamiento de conjuros."
+   },
+   {
+    "key": "archmage_protective-magic",
+    "name": "Magia protectora",
+    "desc": "El archimago lanza Contraconjuro o Escudo en respuesta al desencadenante del conjuro, usando la misma aptitud mágica que en Lanzamiento de conjuros."
+   }
+  ]
+ },
+ {
+  "id": "assassin",
+  "name": "Asesino",
+  "languages": "Común, jerga de ladrones",
+  "traits": [
+   {
+    "name": "Evasión",
+    "desc": "Si el asesino está sujeto a un efecto que le permite hacer una tirada de salvación de Destreza para recibir solo la mitad del daño, en su lugar no recibe daño si tiene éxito en la tirada de salvación y solo la mitad del daño si falla. No puede usar este rasgo si tiene el estado Incapacitado."
+   }
+  ],
+  "actions": [
+   {
+    "key": "assassin_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El asesino hace tres ataques, usando Espada corta o Ballesta ligera en cualquier combinación."
+   },
+   {
+    "key": "assassin_shortsword",
+    "name": "Espada corta",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 7 (1d6 + 4) de daño perforante más 17 (5d6) de daño de veneno, y el objetivo tiene el estado Envenenado hasta el comienzo del siguiente turno del asesino."
+   },
+   {
+    "key": "assassin_light-crossbow",
+    "name": "Ballesta ligera",
+    "desc": "Tirada de ataque a distancia: +7, alcance 80/320 pies. 8 (1d8 + 4) de daño perforante más 21 (6d6) de daño de veneno."
+   },
+   {
+    "key": "assassin_cunning-action",
+    "name": "Acción astuta",
+    "desc": "El asesino realiza la acción de Correr, Retirarse o Esconderse."
+   }
+  ]
+ },
+ {
+  "id": "awakened-shrub",
+  "name": "Arbusto despertado",
+  "languages": "Común y otro idioma",
+  "actions": [
+   {
+    "key": "awakened-shrub_rake",
+    "name": "Arañazo",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +1, alcance 5 pies. 1 de daño cortante."
+   }
+  ]
+ },
+ {
+  "id": "awakened-tree",
+  "name": "Árbol despertado",
+  "languages": "Común y otro idioma",
+  "actions": [
+   {
+    "key": "awakened-tree_slam",
+    "name": "Golpe",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 10 pies. 13 (2d8 + 4) de daño contundente."
+   }
+  ]
+ },
+ {
+  "id": "axe-beak",
+  "name": "Pico hacha",
+  "actions": [
+   {
+    "key": "axe-beak_beak",
+    "name": "Pico",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño cortante."
+   }
+  ]
+ },
+ {
+  "id": "azer-sentinel",
+  "name": "Centinela azer",
+  "languages": "Primordial (ignano)",
+  "traits": [
+   {
+    "name": "Aura de fuego",
+    "desc": "Al final de cada uno de los turnos del azer, cada criatura que este elija en una emanación de 5 pies que se origina en el azer recibe 5 (1d10) de daño de fuego, a menos que el azer tenga el estado Incapacitado."
+   },
+   {
+    "name": "Iluminación",
+    "desc": "El azer emite luz brillante en un radio de 10 pies y luz tenue 10 pies más allá."
+   }
+  ],
+  "actions": [
+   {
+    "key": "azer-sentinel_burning-hammer",
+    "name": "Martillo ardiente",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 8 (1d10 + 3) de daño contundente más 3 (1d6) de daño de fuego."
+   }
+  ]
+ },
+ {
+  "id": "baboon",
+  "name": "Babuino",
+  "traits": [
+   {
+    "name": "Tácticas de manada",
+    "desc": "El babuino tiene ventaja en las tiradas de ataque contra una criatura si al menos uno de los aliados del babuino está a 5 pies o menos de la criatura y no tiene el estado Incapacitado."
+   }
+  ],
+  "actions": [
+   {
+    "key": "baboon_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +1, alcance 5 pies. 1 (1d4 - 1) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "badger",
+  "name": "Tejón",
+  "actions": [
+   {
+    "key": "badger_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +2, alcance 5 pies. 1 de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "balor",
+  "name": "Balor",
+  "languages": "Abisal; telepatía 120 pies",
+  "traits": [
+   {
+    "name": "Estertores de muerte",
+    "desc": "El balor explota cuando muere. Tirada de salvación de Destreza: CD 20, cada criatura en una emanación de 30 pies que se origina en el balor. Fallo: 31 (9d6) de daño de fuego más 31 (9d6) de daño de fuerza. Éxito: mitad de daño. Fallo o éxito: si el balor muere fuera del Abismo, obtiene un nuevo cuerpo al instante, reviviendo con todos sus puntos de golpe en algún lugar del Abismo."
+   },
+   {
+    "name": "Aura de fuego",
+    "desc": "Al final de cada uno de los turnos del balor, cada criatura en una emanación de 5 pies que se origina en el balor recibe 13 (3d8) de daño de fuego."
+   },
+   {
+    "name": "Resistencia legendaria (3/día)",
+    "desc": "Si el balor falla una tirada de salvación, puede elegir tener éxito en su lugar."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "El balor tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "balor_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El balor hace un ataque de Látigo de llamas y un ataque de Espada de relámpago."
+   },
+   {
+    "key": "balor_flame-whip",
+    "name": "Látigo de llamas",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +14, alcance 30 pies. 18 (3d6 + 8) de daño de fuerza más 17 (5d6) de daño de fuego. Si el objetivo es una criatura Enorme o más pequeña, el balor tira del objetivo hasta 25 pies en línea recta hacia sí mismo, y el objetivo tiene el estado Derribado."
+   },
+   {
+    "key": "balor_lightning-blade",
+    "name": "Espada de relámpago",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +14, alcance 10 pies. 21 (3d8 + 8) de daño de fuerza más 22 (4d10) de daño de relámpago, y el objetivo no puede realizar reacciones hasta el comienzo del siguiente turno del balor."
+   },
+   {
+    "key": "balor_teleport",
+    "name": "Teletransporte",
+    "desc": "El balor se teletransporta a sí mismo o a un demonio voluntario que esté a 10 pies o menos de él hasta 60 pies, a un espacio desocupado que el balor pueda ver."
+   }
+  ]
+ },
+ {
+  "id": "bandit",
+  "name": "Bandido",
+  "languages": "Común, jerga de ladrones",
+  "actions": [
+   {
+    "key": "bandit_scimitar",
+    "name": "Cimitarra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 4 (1d6 + 1) de daño cortante."
+   },
+   {
+    "key": "bandit_light-crossbow",
+    "name": "Ballesta ligera",
+    "desc": "Tirada de ataque a distancia: +3, alcance 80/320 pies. 5 (1d8 + 1) de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "bandit-captain",
+  "name": "Capitán bandido",
+  "languages": "Común, jerga de ladrones",
+  "actions": [
+   {
+    "key": "bandit-captain_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El bandido hace dos ataques, usando Cimitarra y Pistola en cualquier combinación."
+   },
+   {
+    "key": "bandit-captain_scimitar",
+    "name": "Cimitarra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 6 (1d6 + 3) de daño cortante."
+   },
+   {
+    "key": "bandit-captain_pistol",
+    "name": "Pistola",
+    "desc": "Tirada de ataque a distancia: +5, alcance 30/90 pies. 8 (1d10 + 3) de daño perforante."
+   },
+   {
+    "key": "bandit-captain_parry",
+    "name": "Parada",
+    "desc": "El capitán añade 2 a su CA contra un ataque cuerpo a cuerpo que fuera a impactarle. Para hacerlo, el capitán debe ver al atacante y estar empuñando un arma cuerpo a cuerpo."
+   }
+  ]
+ },
+ {
+  "id": "barbed-devil",
+  "name": "Diablo de púas",
+  "languages": "Infernal; telepatía 120 pies",
+  "traits": [
+   {
+    "name": "Piel de púas",
+    "desc": "Al comienzo de cada uno de sus turnos, el diablo inflige 5 (1d10) de daño perforante a cualquier criatura que esté agarrando o a cualquier criatura que lo esté agarrando."
+   },
+   {
+    "name": "Restauración diabólica",
+    "desc": "Si el diablo muere fuera de los Nueve Infiernos, su cuerpo desaparece en un humo sulfuroso y obtiene un nuevo cuerpo al instante, reviviendo con todos sus puntos de golpe en algún lugar de los Nueve Infiernos."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "El diablo tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "barbed-devil_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El diablo hace un ataque de Garras y un ataque de Cola, o hace dos ataques de Lanzar llamas."
+   },
+   {
+    "key": "barbed-devil_claws",
+    "name": "Garras",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 10 (2d6 + 3) de daño perforante. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Agarrado (CD 13 para escapar) por ambas garras."
+   },
+   {
+    "key": "barbed-devil_tail",
+    "name": "Cola",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 10 pies. 14 (2d10 + 3) de daño cortante."
+   },
+   {
+    "key": "barbed-devil_hurl-flame",
+    "name": "Lanzar llamas",
+    "desc": "Tirada de ataque a distancia: +5, alcance 150 pies. 17 (5d6) de daño de fuego. Si el objetivo es un objeto inflamable que nadie lleva puesto ni transporta, empieza a arder."
+   }
+  ]
+ },
+ {
+  "id": "basilisk",
+  "name": "Basilisco",
+  "actions": [
+   {
+    "key": "basilisk_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 10 (2d6 + 3) de daño perforante más 7 (2d6) de daño de veneno."
+   },
+   {
+    "key": "basilisk_petrifying-gaze-recharge-4-6",
+    "name": "Mirada petrificadora (Recarga 4-6)",
+    "desc": "Tirada de salvación de Constitución: CD 12, cada criatura en un cono de 30 pies. Si el basilisco ve su reflejo dentro del cono, debe hacer esta tirada de salvación. Primer fallo: el objetivo tiene el estado Apresado y repite la tirada de salvación al final de su siguiente turno si sigue Apresado, poniendo fin al efecto sobre sí mismo si tiene éxito. Segundo fallo: el objetivo tiene el estado Petrificado en lugar del estado Apresado."
+   }
+  ]
+ },
+ {
+  "id": "bat",
+  "name": "Murciélago",
+  "actions": [
+   {
+    "key": "bat_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4 para impactar, alcance 5 pies. 1 de daño perforante."
+   }
+  ]
+ },
+ {
+  "id": "bearded-devil",
+  "name": "Diablo barbudo",
+  "languages": "Infernal; telepatía 120 pies",
+  "traits": [
+   {
+    "name": "Resistencia mágica",
+    "desc": "El diablo tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "bearded-devil_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El diablo hace un ataque de Barba y un ataque de Guja infernal."
+   },
+   {
+    "key": "bearded-devil_beard",
+    "name": "Barba",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 7 (1d8 + 3) de daño perforante, y el objetivo tiene el estado Envenenado hasta el comienzo del siguiente turno del diablo. Hasta que termine este veneno, el objetivo no puede recuperar puntos de golpe."
+   },
+   {
+    "key": "bearded-devil_infernal-glaive",
+    "name": "Guja infernal",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 10 pies. 8 (1d10 + 3) de daño cortante. Si el objetivo es una criatura y no tiene ya una herida infernal, queda sujeto al siguiente efecto. Tirada de salvación de Constitución: CD 12. Fallo: el objetivo sufre una herida infernal. Mientras esté herido, el objetivo pierde 5 (1d10) puntos de golpe al comienzo de cada uno de sus turnos. La herida se cierra tras 1 minuto, después de que un conjuro le restablezca puntos de golpe al objetivo o después de que el objetivo o una criatura a 5 pies o menos de él realice una acción para restañar la herida, lo que consigue superando una prueba de Sabiduría (Medicina) CD 12."
+   }
+  ]
+ },
+ {
+  "id": "behir",
+  "name": "Behir",
+  "languages": "Dracónico",
+  "actions": [
+   {
+    "key": "behir_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El behir hace un ataque de Mordisco y usa Constreñir."
+   },
+   {
+    "key": "behir_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +10, alcance 10 pies. 19 (2d12 + 6) de daño perforante más 11 (2d10) de daño de relámpago."
+   },
+   {
+    "key": "behir_constrict",
+    "name": "Constreñir",
+    "desc": "Tirada de salvación de Fuerza: CD 18, una criatura Grande o más pequeña que el behir pueda ver a 5 pies o menos. Fallo: 28 (5d8 + 6) de daño contundente. El objetivo tiene el estado Agarrado (CD 16 para escapar), y tiene el estado Apresado hasta que termine el agarre."
+   },
+   {
+    "key": "behir_lightning-breath",
+    "name": "Aliento de relámpago",
+    "desc": "Tirada de salvación de Destreza: CD 16, cada criatura en una línea de 90 pies de largo y 5 pies de ancho. Fallo: 66 (12d10) de daño de relámpago. Éxito: mitad de daño."
+   },
+   {
+    "key": "behir_swallow",
+    "name": "Tragar",
+    "desc": "Tirada de salvación de Destreza: CD 18, una criatura Grande o más pequeña Agarrada por el behir (el behir solo puede tener tragada a una criatura a la vez). Fallo: el behir se traga al objetivo, que deja de estar Agarrado. Mientras está tragada, una criatura tiene los estados Cegado y Apresado, tiene cobertura total contra ataques y otros efectos procedentes del exterior del behir, y recibe 21 (6d6) de daño de ácido al comienzo de cada uno de los turnos del behir. Si el behir recibe 30 o más de daño en un solo turno de la criatura tragada, debe superar una tirada de salvación de Constitución CD 14 al final de ese turno o regurgitar a la criatura, que cae en un espacio a 10 pies o menos del behir y tiene el estado Derribado. Si el behir muere, una criatura tragada deja de estar Apresada y puede escapar del cadáver usando 15 pies de movimiento, saliendo Derribada."
+   }
+  ]
+ },
+ {
+  "id": "berserker",
+  "name": "Berserker",
+  "languages": "Común",
+  "traits": [
+   {
+    "name": "Frenesí sangriento",
+    "desc": "Mientras está Maltrecho, el berserker tiene ventaja en las tiradas de ataque y en las tiradas de salvación."
+   }
+  ],
+  "actions": [
+   {
+    "key": "berserker_greataxe",
+    "name": "Gran hacha",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 9 (1d12 + 3) de daño cortante."
+   }
+  ]
+ },
+ {
+  "id": "black-bear",
+  "name": "Oso negro",
+  "actions": [
+   {
+    "key": "black-bear_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El oso hace dos ataques de Desgarrar."
+   },
+   {
+    "key": "black-bear_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño cortante."
+   }
+  ]
+ },
+ {
+  "id": "black-dragon-wyrmling",
+  "name": "Cría de dragón negro",
+  "languages": "Dracónico",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "El dragón puede respirar aire y agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "black-dragon-wyrmling_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace dos ataques de Desgarrar."
+   },
+   {
+    "key": "black-dragon-wyrmling_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 5 (1d6 + 2) de daño cortante más 2 (1d4) de daño de ácido."
+   },
+   {
+    "key": "black-dragon-wyrmling_acid-breath",
+    "name": "Aliento de ácido",
+    "desc": "Tirada de salvación de Destreza: CD 11, cada criatura en una línea de 15 pies de largo y 5 pies de ancho. Fallo: 22 (5d8) de daño de ácido. Éxito: mitad de daño."
+   }
+  ]
+ },
+ {
+  "id": "black-pudding",
+  "name": "Pudin negro",
+  "traits": [
+   {
+    "name": "Amorfo",
+    "desc": "El pudin puede moverse a través de un espacio de tan solo 1 pulgada de ancho sin gastar movimiento adicional para hacerlo."
+   },
+   {
+    "name": "Forma corrosiva",
+    "desc": "Una criatura que impacta al pudin con una tirada de ataque cuerpo a cuerpo recibe 4 (1d8) de daño de ácido. La munición no mágica queda destruida inmediatamente después de impactar al pudin e infligir cualquier daño. Cualquier arma no mágica sufre un penalizador acumulativo de -1 a las tiradas de ataque inmediatamente después de infligir daño al pudin y entrar en contacto con él. El arma queda destruida si el penalizador llega a -5. El penalizador puede eliminarse lanzando el conjuro Reparar sobre el arma. En 1 minuto, el pudin puede corroer 2 pies de madera o metal no mágicos."
+   },
+   {
+    "name": "Trepar como una araña",
+    "desc": "El pudin puede trepar por superficies difíciles, incluso por los techos, sin necesidad de hacer una prueba de característica."
+   }
+  ],
+  "actions": [
+   {
+    "key": "black-pudding_dissolving-pseudopod",
+    "name": "Seudópodo disolvente",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 10 pies. 17 (4d6 + 3) de daño de ácido. La armadura no mágica que lleve puesta el objetivo sufre un penalizador de -1 a la CA que proporciona. La armadura queda destruida si el penalizador reduce su CA a 10. El penalizador puede eliminarse lanzando el conjuro Reparar sobre la armadura."
+   },
+   {
+    "key": "black-pudding-split",
+    "name": "Dividirse",
+    "desc": "_Desencadenante:_ Mientras el pudin es Grande o Mediano y tiene 10 o más puntos de golpe, queda Maltrecho o está sujeto a daño de relámpago o cortante. _Respuesta:_ El pudin se divide en dos nuevos Pudines negros. Cada nuevo pudin es un tamaño más pequeño que el pudin original y actúa en su iniciativa. Los puntos de golpe del pudin original se reparten equitativamente entre los nuevos pudines (redondeando hacia abajo)."
+   }
+  ]
+ },
+ {
+  "id": "blink-dog",
+  "name": "Perro intermitente",
+  "languages": "Entiende el élfico y el silvano pero no los habla",
+  "actions": [
+   {
+    "key": "blink-dog_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 5 (1d4 + 3) de daño perforante."
+   },
+   {
+    "key": "blink-dog_teleport-recharge-4-6",
+    "name": "Teletransporte (Recarga 4-6)",
+    "desc": "El perro se teletransporta hasta 40 pies a un espacio desocupado que pueda ver."
+   }
+  ]
+ },
+ {
+  "id": "blood-hawk",
+  "name": "Halcón sangriento",
+  "traits": [
+   {
+    "name": "Tácticas de manada",
+    "desc": "El halcón tiene ventaja en las tiradas de ataque contra una criatura si al menos uno de los aliados del halcón está a 5 pies o menos de la criatura y no tiene el estado Incapacitado."
+   }
+  ],
+  "actions": [
+   {
+    "key": "blood-hawk_beak",
+    "name": "Pico",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 4 (1d4 + 2) de daño perforante, o 6 (1d8 + 2) de daño perforante si el objetivo está Maltrecho."
+   }
+  ]
+ },
+ {
+  "id": "blue-dragon-wyrmling",
+  "name": "Cría de dragón azul",
+  "languages": "Dracónico",
+  "actions": [
+   {
+    "key": "blue-dragon-wyrmling_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace dos ataques de Desgarrar."
+   },
+   {
+    "key": "blue-dragon-wyrmling_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 8 (1d10 + 3) de daño cortante más 3 (1d6) de daño de relámpago."
+   },
+   {
+    "key": "blue-dragon-wyrmling_lightning-breath",
+    "name": "Aliento de relámpago",
+    "desc": "Tirada de salvación de Destreza: CD 12, cada criatura en una línea de 30 pies de largo y 5 pies de ancho. Fallo: 21 (6d6) de daño de relámpago. Éxito: mitad de daño."
+   }
+  ]
+ },
+ {
+  "id": "boar",
+  "name": "Jabalí",
+  "traits": [
+   {
+    "name": "Furia sangrienta",
+    "desc": "Mientras está Maltrecho, el jabalí tiene ventaja en las tiradas de ataque."
+   }
+  ],
+  "actions": [
+   {
+    "key": "boar_gore",
+    "name": "Cornada",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +3, alcance 5 pies. 4 (1d6 + 1) de daño perforante. Si el objetivo es una criatura Mediana o más pequeña y el jabalí se ha movido 20 pies o más en línea recta hacia él inmediatamente antes del impacto, el objetivo recibe 3 (1d6) de daño perforante adicional y tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "bone-devil",
+  "name": "Diablo óseo",
+  "languages": "Infernal; telepatía 120 pies",
+  "traits": [
+   {
+    "name": "Restauración diabólica",
+    "desc": "Si el diablo muere fuera de los Nueve Infiernos, su cuerpo desaparece en un humo sulfuroso y obtiene un nuevo cuerpo al instante, reviviendo con todos sus puntos de golpe en algún lugar de los Nueve Infiernos."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "El diablo tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "bone-devil_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El diablo hace dos ataques de Garra y un ataque de Aguijón infernal."
+   },
+   {
+    "key": "bone-devil_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +8, alcance 10 pies. 13 (2d8 + 4) de daño cortante."
+   },
+   {
+    "key": "bone-devil_infernal-sting",
+    "name": "Aguijón infernal",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +8, alcance 10 pies. 15 (2d10 + 4) de daño perforante más 18 (4d8) de daño de veneno, y el objetivo tiene el estado Envenenado hasta el comienzo del siguiente turno del diablo. Mientras está Envenenado, el objetivo no puede recuperar puntos de golpe."
+   }
+  ]
+ },
+ {
+  "id": "brass-dragon-wyrmling",
+  "name": "Cría de dragón de latón",
+  "languages": "Dracónico",
+  "actions": [
+   {
+    "key": "brass-dragon-wyrmling_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 7 (1d10 + 2) de daño cortante."
+   },
+   {
+    "key": "brass-dragon-wyrmling_fire-breath",
+    "name": "Aliento de fuego",
+    "desc": "Tirada de salvación de Destreza: CD 11, cada criatura en una línea de 20 pies de largo y 5 pies de ancho. Fallo: 14 (4d6) de daño de fuego. Éxito: mitad de daño."
+   },
+   {
+    "key": "brass-dragon-wyrmling_sleep-breath",
+    "name": "Aliento de sueño",
+    "desc": "Tirada de salvación de Constitución: CD 11, cada criatura en un cono de 15 pies. Fallo: el objetivo tiene el estado Incapacitado hasta el final de su siguiente turno, momento en el que repite la tirada de salvación. Segundo fallo: el objetivo tiene el estado Inconsciente durante 1 minuto. Este efecto termina para el objetivo si recibe daño o si una criatura a 5 pies o menos de él realiza una acción para despertarlo."
+   }
+  ]
+ },
+ {
+  "id": "bronze-dragon-wyrmling",
+  "name": "Cría de dragón de bronce",
+  "languages": "Dracónico",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "El dragón puede respirar aire y agua."
+   }
+  ],
+  "actions": [
+   {
+    "key": "bronze-dragon-wyrmling_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El dragón hace dos ataques de Desgarrar."
+   },
+   {
+    "key": "bronze-dragon-wyrmling_rend",
+    "name": "Desgarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 8 (1d10 + 3) de daño cortante."
+   },
+   {
+    "key": "bronze-dragon-wyrmling_lightning-breath",
+    "name": "Aliento de relámpago",
+    "desc": "Tirada de salvación de Destreza: CD 12, cada criatura en una línea de 40 pies de largo y 5 pies de ancho. Fallo: 16 (3d10) de daño de relámpago. Éxito: mitad de daño."
+   },
+   {
+    "key": "bronze-dragon-wyrmling_repulsion-breath",
+    "name": "Aliento de repulsión",
+    "desc": "Tirada de salvación de Fuerza: CD 12, cada criatura en un cono de 30 pies. Fallo: el objetivo es empujado hasta 30 pies en línea recta alejándose del dragón y tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "brown-bear",
+  "name": "Oso pardo",
+  "actions": [
+   {
+    "key": "brown-bear_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El oso hace un ataque de Mordisco y un ataque de Garra."
+   },
+   {
+    "key": "brown-bear_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 7 (1d8 + 3) de daño perforante."
+   },
+   {
+    "key": "brown-bear_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5, alcance 5 pies. 5 (1d4 + 3) de daño cortante. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "bugbear-stalker",
+  "name": "Osgo acechador",
+  "languages": "Común, goblin",
+  "traits": [
+   {
+    "name": "Raptar",
+    "desc": "El osgo no necesita gastar movimiento adicional para mover a una criatura a la que esté agarrando."
+   }
+  ],
+  "actions": [
+   {
+    "key": "bugbear-stalker_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El osgo hace dos ataques de Jabalina o de Lucero del alba."
+   },
+   {
+    "key": "bugbear-stalker_javelin",
+    "name": "Jabalina",
+    "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +5, alcance 10 pies o alcance 30/120 pies. 13 (3d6 + 3) de daño perforante."
+   },
+   {
+    "key": "bugbear-stalker_morningstar",
+    "name": "Lucero del alba",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +5 (con ventaja si el objetivo está Agarrado por el osgo), alcance 10 pies. 12 (2d8 + 3) de daño perforante."
+   },
+   {
+    "key": "bugbear-stalker_quick-grapple",
+    "name": "Agarre rápido",
+    "desc": "Tirada de salvación de Destreza: CD 13, una criatura Mediana o más pequeña que el osgo pueda ver a 10 pies o menos. Fallo: el objetivo tiene el estado Agarrado (CD 13 para escapar)."
+   }
+  ]
+ },
+ {
+  "id": "bugbear-warrior",
+  "name": "Osgo guerrero",
+  "languages": "Común, goblin",
+  "traits": [
+   {
+    "name": "Raptar",
+    "desc": "El osgo no necesita gastar movimiento adicional para mover a una criatura a la que esté agarrando."
+   }
+  ],
+  "actions": [
+   {
+    "key": "bugbear-warrior_grab",
+    "name": "Agarrar",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 10 pies. 9 (2d6 + 2) de daño contundente. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Agarrado (CD 12 para escapar)."
+   },
+   {
+    "key": "bugbear-warrior_light-hammer",
+    "name": "Martillo ligero",
+    "desc": "Tirada de ataque cuerpo a cuerpo o a distancia: +4 (con ventaja si el objetivo está Agarrado por el osgo), alcance 10 pies o alcance 20/60 pies. 9 (3d4 + 2) de daño contundente."
+   }
+  ]
+ },
+ {
+  "id": "bulette",
+  "name": "Bulette",
+  "actions": [
+   {
+    "key": "bulette_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El bulette hace dos ataques de Mordisco."
+   },
+   {
+    "key": "bulette_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 17 (2d12 + 4) de daño perforante."
+   },
+   {
+    "key": "bulette_deadly-leap",
+    "name": "Salto mortal",
+    "desc": "El bulette gasta 5 pies de movimiento para saltar a un espacio a 15 pies o menos que contenga una o más criaturas Grandes o más pequeñas. Tirada de salvación de Destreza: CD 15, cada criatura en el espacio de destino del bulette. Fallo: 19 (3d12) de daño contundente, y el objetivo tiene el estado Derribado. Éxito: mitad de daño, y el objetivo es empujado 5 pies en línea recta alejándose del bulette."
+   },
+   {
+    "key": "bulette_leap",
+    "name": "Salto",
+    "desc": "El bulette salta hasta 30 pies gastando 10 pies de movimiento."
+   }
+  ]
+ },
+ {
+  "id": "camel",
+  "name": "Camello",
+  "actions": [
+   {
+    "key": "camel_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 4 (1d4 + 2) de daño contundente."
+   }
+  ]
+ },
+ {
+  "id": "cat",
+  "name": "Gato",
+  "traits": [
+   {
+    "name": "Saltarín",
+    "desc": "La distancia de salto del gato se determina usando su Destreza en lugar de su Fuerza."
+   }
+  ],
+  "actions": [
+   {
+    "key": "cat_scratch",
+    "name": "Arañazo",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +4, alcance 5 pies. 1 de daño cortante."
+   }
+  ]
+ },
+ {
+  "id": "centaur-trooper",
+  "name": "Soldado centauro",
+  "languages": "Élfico, silvano",
+  "actions": [
+   {
+    "key": "centaur-trooper_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El centauro hace dos ataques, usando Pica o Arco largo en cualquier combinación."
+   },
+   {
+    "key": "centaur-trooper_pike",
+    "name": "Pica",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 10 pies. 9 (1d10 + 4) de daño perforante."
+   },
+   {
+    "key": "centaur-trooper_longbow",
+    "name": "Arco largo",
+    "desc": "Tirada de ataque a distancia: +4, alcance 150/600 pies. 6 (1d8 + 2) de daño perforante."
+   },
+   {
+    "key": "centaur-trooper_trampling-charge-recharge-5-6",
+    "name": "Carga arrolladora",
+    "desc": "El centauro se mueve hasta su velocidad sin provocar ataques de oportunidad y puede moverse a través de los espacios de criaturas Medianas o más pequeñas. Cada criatura en cuyo espacio entre el centauro es objetivo una vez del siguiente efecto. Tirada de salvación de Fuerza: CD 14. Fallo: 7 (1d6 + 4) de daño contundente, y el objetivo tiene el estado Derribado."
+   }
+  ]
+ },
+ {
+  "id": "chain-devil",
+  "name": "Diablo de las cadenas",
+  "languages": "Infernal; telepatía 120 pies",
+  "traits": [
+   {
+    "name": "Restauración diabólica",
+    "desc": "Si el diablo muere fuera de los Nueve Infiernos, su cuerpo desaparece en un humo sulfuroso y obtiene un nuevo cuerpo al instante, reviviendo con todos sus puntos de golpe en algún lugar de los Nueve Infiernos."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "El diablo tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "chain-devil_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El diablo hace dos ataques de Cadena y usa Conjurar cadena infernal."
+   },
+   {
+    "key": "chain-devil_chain",
+    "name": "Cadena",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 10 pies. 11 (2d6 + 4) de daño cortante. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Agarrado (CD 14 para escapar) por una de dos cadenas, y tiene el estado Apresado hasta que termine el agarre."
+   },
+   {
+    "key": "chain-devil_conjure-infernal-chain",
+    "name": "Conjurar cadena infernal",
+    "desc": "El diablo conjura una cadena ígnea para atar a una criatura. Tirada de salvación de Destreza: CD 15, una criatura que el diablo pueda ver a 60 pies o menos. Fallo: 9 (2d4 + 4) de daño de fuego, y el objetivo tiene el estado Apresado hasta el final del siguiente turno del diablo, momento en el que la cadena desaparece. Si el objetivo es Grande o más pequeño, el diablo lo mueve hasta 30 pies en línea recta hacia sí mismo. Éxito: la cadena desaparece."
+   },
+   {
+    "key": "chain-devil_unnerving-gaze",
+    "name": "Mirada inquietante",
+    "desc": "_Desencadenante:_ Una criatura que el diablo puede ver comienza su turno a 30 pies o menos del diablo y puede ver al diablo. _Respuesta––Tirada de salvación de Sabiduría:_ CD 15, la criatura desencadenante. _Fallo:_ El objetivo tiene el estado Asustado hasta el final de su turno. _Éxito:_ El objetivo es inmune a la Mirada inquietante de este diablo durante 24 horas."
+   }
+  ]
+ },
+ {
+  "id": "chimera",
+  "name": "Quimera",
+  "languages": "Entiende el dracónico pero no lo habla",
+  "actions": [
+   {
+    "key": "chimera_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "La quimera hace un ataque de Embestida, un ataque de Mordisco y un ataque de Garra. Puede sustituir el ataque de Garra por un uso de Aliento de fuego si está disponible."
+   },
+   {
+    "key": "chimera_bite",
+    "name": "Mordisco",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 11 (2d6 + 4) de daño perforante, o 18 (4d6 + 4) de daño perforante si la quimera tenía ventaja en la tirada de ataque."
+   },
+   {
+    "key": "chimera_claw",
+    "name": "Garra",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 7 (1d6 + 4) de daño cortante."
+   },
+   {
+    "key": "chimera_ram",
+    "name": "Embestida",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +7, alcance 5 pies. 10 (1d12 + 4) de daño contundente. Si el objetivo es una criatura Mediana o más pequeña, tiene el estado Derribado."
+   },
+   {
+    "key": "chimera_fire-breath",
+    "name": "Aliento de fuego",
+    "desc": "Tirada de salvación de Destreza: CD 15, cada criatura en un cono de 15 pies. Fallo: 31 (7d8) de daño de fuego. Éxito: mitad de daño."
+   }
+  ]
+ },
+ {
+  "id": "chuul",
+  "name": "Chuul",
+  "languages": "Entiende el habla profunda pero no la habla",
+  "traits": [
+   {
+    "name": "Anfibio",
+    "desc": "El chuul puede respirar aire y agua."
+   },
+   {
+    "name": "Percibir magia",
+    "desc": "El chuul percibe la magia a 120 pies o menos de sí mismo. Por lo demás, este rasgo funciona como el conjuro Detectar magia, pero no es mágico en sí mismo."
+   }
+  ],
+  "actions": [
+   {
+    "key": "chuul_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El chuul hace dos ataques de Pinza y usa Tentáculos paralizantes."
+   },
+   {
+    "key": "chuul_pincer",
+    "name": "Pinza",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 10 pies. 9 (1d10 + 4) de daño contundente. Si el objetivo es una criatura Grande o más pequeña, tiene el estado Agarrado (CD 14 para escapar) por una de dos pinzas."
+   },
+   {
+    "key": "chuul_paralyzing-tentacles",
+    "name": "Tentáculos paralizantes",
+    "desc": "Tirada de salvación de Constitución: CD 13, una criatura Agarrada por el chuul. Fallo: el objetivo tiene el estado Envenenado y repite la tirada de salvación al final de cada uno de sus turnos, poniendo fin al efecto sobre sí mismo si tiene éxito. Tras 1 minuto, tiene éxito automáticamente. Mientras está Envenenado, el objetivo tiene el estado Paralizado."
+   }
+  ]
+ },
+ {
+  "id": "clay-golem",
+  "name": "Gólem de arcilla",
+  "languages": "Común y otro idioma",
+  "traits": [
+   {
+    "name": "Absorción de ácido",
+    "desc": "Siempre que el gólem esté sujeto a daño de ácido, no recibe daño y, en su lugar, recupera una cantidad de puntos de golpe igual al daño de ácido infligido."
+   },
+   {
+    "name": "Furia ciega",
+    "desc": "Siempre que el gólem comience su turno Maltrecho, tira 1d6. Con un 6, el gólem entra en furia ciega. En cada uno de sus turnos mientras está en furia ciega, el gólem ataca a la criatura más cercana que pueda ver. Si no hay ninguna criatura lo bastante cerca como para moverse hasta ella y atacarla, el gólem ataca un objeto. Una vez que el gólem entra en furia ciega, sigue en ese estado hasta que es destruido o deja de estar Maltrecho."
+   },
+   {
+    "name": "Forma inmutable",
+    "desc": "El gólem no puede cambiar de forma."
+   },
+   {
+    "name": "Resistencia mágica",
+    "desc": "El gólem tiene ventaja en las tiradas de salvación contra conjuros y otros efectos mágicos."
+   }
+  ],
+  "actions": [
+   {
+    "key": "clay-golem_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El gólem hace dos ataques de Golpe, o hace tres ataques de Golpe si ha usado Apresurarse en este turno."
+   },
+   {
+    "key": "clay-golem_slam",
+    "name": "Golpe",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +9, alcance 5 pies. 10 (1d10 + 5) de daño contundente más 6 (1d12) de daño de ácido, y los puntos de golpe máximos del objetivo disminuyen en una cantidad igual al daño de ácido recibido."
+   },
+   {
+    "key": "clay-golem_hasten-recharge-5-6",
+    "name": "Apresurarse",
+    "desc": "El gólem realiza las acciones de Correr y Retirarse."
+   }
+  ]
+ },
+ {
+  "id": "cloaker",
+  "name": "Embozado",
+  "languages": "Habla profunda, infracomún",
+  "traits": [
+   {
+    "name": "Sensibilidad a la luz",
+    "desc": "Mientras está en luz brillante, el embozado tiene desventaja en las tiradas de ataque."
+   }
+  ],
+  "actions": [
+   {
+    "key": "cloaker_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El embozado hace un ataque de Adherirse y dos ataques de Cola."
+   },
+   {
+    "key": "cloaker_attach",
+    "name": "Adherirse",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 5 pies. 13 (3d6 + 3) de daño perforante. Si el objetivo es una criatura Grande o más pequeña, el embozado se adhiere a ella. Mientras el embozado está adherido, el objetivo tiene el estado Cegado, y el embozado no puede hacer ataques de Adherirse contra otros objetivos. Además, el embozado reduce a la mitad el daño que recibe (redondeando hacia abajo), y el objetivo recibe la misma cantidad de daño. El embozado puede soltarse gastando 5 pies de movimiento. El objetivo o una criatura a 5 pies o menos de él puede realizar una acción para intentar soltar al embozado, lo que consigue superando una prueba de Fuerza (Atletismo) CD 14."
+   },
+   {
+    "key": "cloaker_tail",
+    "name": "Cola",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +6, alcance 10 pies. 8 (1d10 + 3) de daño cortante."
+   },
+   {
+    "key": "cloaker_moan",
+    "name": "Gemido",
+    "desc": "Tirada de salvación de Sabiduría: CD 13, cada criatura en una emanación de 60 pies que se origina en el embozado. Fallo: el objetivo tiene el estado Asustado hasta el final del siguiente turno del embozado. Éxito: el objetivo es inmune al Gemido de este embozado durante las siguientes 24 horas."
+   },
+   {
+    "key": "cloaker_phantasms-recharge-after-a-short-or-long-rest",
+    "name": "Fantasmas (Recarga tras un descanso corto o largo)",
+    "desc": "El embozado lanza el conjuro Imagen múltiple, sin necesitar componentes de conjuro y usando Sabiduría como aptitud mágica. El conjuro termina antes si el embozado comienza o termina su turno en luz brillante."
+   }
+  ]
+ },
+ {
+  "id": "cloud-giant",
+  "name": "Gigante de las nubes",
+  "languages": "Común, gigante",
+  "actions": [
+   {
+    "key": "cloud-giant_multiattack",
+    "name": "Ataque múltiple",
+    "desc": "El gigante hace dos ataques, usando Maza atronadora o Nube de truenos en cualquier combinación. Puede sustituir un ataque por un uso de Lanzamiento de conjuros para lanzar Nube de niebla."
+   },
+   {
+    "key": "cloud-giant_thunderous-mace",
+    "name": "Maza atronadora",
+    "desc": "Tirada de ataque cuerpo a cuerpo: +12, alcance 10 pies. 21 (3d8 + 8) de daño contundente más 7 (2d6) de daño de trueno."
+   },
+   {
+    "key": "cloud-giant_thundercloud",
+    "name": "Nube de truenos",
+    "desc": "Tirada de ataque a distancia: +12, alcance 240 pies. 18 (3d6 + 8) de daño de trueno, y el objetivo tiene el estado Incapacitado hasta el final de su siguiente turno."
+   },
+   {
+    "key": "cloud-giant_spellcasting",
+    "name": "Lanzamiento de conjuros",
+    "desc": "El gigante lanza uno de los siguientes conjuros, sin necesitar componentes materiales y usando Carisma como aptitud mágica (CD de salvación de conjuros 15):\n\n- **A voluntad:** Detectar magia, Nube de niebla, Luz\n- **1/día cada uno:** Controlar el clima, Forma gaseosa, Telequinesis"
+   },
+   {
+    "key": "cloud-giant_misty-step",
+    "name": "Paso brumoso",
+    "desc": "El gigante lanza el conjuro Paso brumoso, usando la misma aptitud mágica que en Lanzamiento de conjuros."
+   }
+  ]
+ }
+]

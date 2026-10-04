@@ -1,0 +1,1326 @@
+[
+ {
+  "id": "aboleth",
+  "name": "Aboleth"
+ },
+ {
+  "id": "adult-black-dragon",
+  "name": "Adult Black Dragon"
+ },
+ {
+  "id": "adult-blue-dragon",
+  "name": "Adult Blue Dragon"
+ },
+ {
+  "id": "adult-brass-dragon",
+  "name": "Adult Brass Dragon"
+ },
+ {
+  "id": "adult-bronze-dragon",
+  "name": "Adult Bronze Dragon"
+ },
+ {
+  "id": "adult-copper-dragon",
+  "name": "Adult Copper Dragon"
+ },
+ {
+  "id": "adult-gold-dragon",
+  "name": "Adult Gold Dragon"
+ },
+ {
+  "id": "adult-green-dragon",
+  "name": "Adult Green Dragon"
+ },
+ {
+  "id": "adult-red-dragon",
+  "name": "Adult Red Dragon"
+ },
+ {
+  "id": "adult-silver-dragon",
+  "name": "Adult Silver Dragon"
+ },
+ {
+  "id": "adult-white-dragon",
+  "name": "Adult White Dragon"
+ },
+ {
+  "id": "air-elemental",
+  "name": "Air Elemental"
+ },
+ {
+  "id": "allosaurus",
+  "name": "Allosaurus"
+ },
+ {
+  "id": "ancient-black-dragon",
+  "name": "Ancient Black Dragon"
+ },
+ {
+  "id": "ancient-blue-dragon",
+  "name": "Ancient Blue Dragon"
+ },
+ {
+  "id": "ancient-brass-dragon",
+  "name": "Ancient Brass Dragon"
+ },
+ {
+  "id": "ancient-bronze-dragon",
+  "name": "Ancient Bronze Dragon"
+ },
+ {
+  "id": "ancient-copper-dragon",
+  "name": "Ancient Copper Dragon"
+ },
+ {
+  "id": "ancient-gold-dragon",
+  "name": "Ancient Gold Dragon"
+ },
+ {
+  "id": "ancient-green-dragon",
+  "name": "Ancient Green Dragon"
+ },
+ {
+  "id": "ancient-red-dragon",
+  "name": "Ancient Red Dragon"
+ },
+ {
+  "id": "ancient-silver-dragon",
+  "name": "Ancient Silver Dragon"
+ },
+ {
+  "id": "ancient-white-dragon",
+  "name": "Ancient White Dragon"
+ },
+ {
+  "id": "animated-armor",
+  "name": "Animated Armor"
+ },
+ {
+  "id": "animated-flying-sword",
+  "name": "Animated Flying Sword"
+ },
+ {
+  "id": "animated-rug-of-smothering",
+  "name": "Animated Rug of Smothering"
+ },
+ {
+  "id": "ankheg",
+  "name": "Ankheg"
+ },
+ {
+  "id": "ankylosaurus",
+  "name": "Ankylosaurus"
+ },
+ {
+  "id": "ape",
+  "name": "Ape"
+ },
+ {
+  "id": "archelon",
+  "name": "Archelon"
+ },
+ {
+  "id": "archmage",
+  "name": "Archmage"
+ },
+ {
+  "id": "assassin",
+  "name": "Assassin"
+ },
+ {
+  "id": "awakened-shrub",
+  "name": "Awakened Shrub"
+ },
+ {
+  "id": "awakened-tree",
+  "name": "Awakened Tree"
+ },
+ {
+  "id": "axe-beak",
+  "name": "Axe Beak"
+ },
+ {
+  "id": "azer-sentinel",
+  "name": "Azer Sentinel"
+ },
+ {
+  "id": "baboon",
+  "name": "Baboon"
+ },
+ {
+  "id": "badger",
+  "name": "Badger"
+ },
+ {
+  "id": "balor",
+  "name": "Balor"
+ },
+ {
+  "id": "bandit",
+  "name": "Bandit"
+ },
+ {
+  "id": "bandit-captain",
+  "name": "Bandit Captain"
+ },
+ {
+  "id": "barbed-devil",
+  "name": "Barbed Devil"
+ },
+ {
+  "id": "basilisk",
+  "name": "Basilisk"
+ },
+ {
+  "id": "bat",
+  "name": "Bat"
+ },
+ {
+  "id": "bearded-devil",
+  "name": "Bearded Devil"
+ },
+ {
+  "id": "behir",
+  "name": "Behir"
+ },
+ {
+  "id": "berserker",
+  "name": "Berserker"
+ },
+ {
+  "id": "black-bear",
+  "name": "Black Bear"
+ },
+ {
+  "id": "black-dragon-wyrmling",
+  "name": "Black Dragon Wyrmling"
+ },
+ {
+  "id": "black-pudding",
+  "name": "Black Pudding"
+ },
+ {
+  "id": "blink-dog",
+  "name": "Blink Dog"
+ },
+ {
+  "id": "blood-hawk",
+  "name": "Blood Hawk"
+ },
+ {
+  "id": "blue-dragon-wyrmling",
+  "name": "Blue Dragon Wyrmling"
+ },
+ {
+  "id": "boar",
+  "name": "Boar"
+ },
+ {
+  "id": "bone-devil",
+  "name": "Bone Devil"
+ },
+ {
+  "id": "brass-dragon-wyrmling",
+  "name": "Brass Dragon Wyrmling"
+ },
+ {
+  "id": "bronze-dragon-wyrmling",
+  "name": "Bronze Dragon Wyrmling"
+ },
+ {
+  "id": "brown-bear",
+  "name": "Brown Bear"
+ },
+ {
+  "id": "bugbear-stalker",
+  "name": "Bugbear Stalker"
+ },
+ {
+  "id": "bugbear-warrior",
+  "name": "Bugbear Warrior"
+ },
+ {
+  "id": "bulette",
+  "name": "Bulette"
+ },
+ {
+  "id": "camel",
+  "name": "Camel"
+ },
+ {
+  "id": "cat",
+  "name": "Cat"
+ },
+ {
+  "id": "centaur-trooper",
+  "name": "Centaur Trooper"
+ },
+ {
+  "id": "chain-devil",
+  "name": "Chain Devil"
+ },
+ {
+  "id": "chimera",
+  "name": "Chimera"
+ },
+ {
+  "id": "chuul",
+  "name": "Chuul"
+ },
+ {
+  "id": "clay-golem",
+  "name": "Clay Golem"
+ },
+ {
+  "id": "cloaker",
+  "name": "Cloaker"
+ },
+ {
+  "id": "cloud-giant",
+  "name": "Cloud Giant"
+ },
+ {
+  "id": "cockatrice",
+  "name": "Cockatrice"
+ },
+ {
+  "id": "commoner",
+  "name": "Commoner"
+ },
+ {
+  "id": "constrictor-snake",
+  "name": "Constrictor Snake"
+ },
+ {
+  "id": "copper-dragon-wyrmling",
+  "name": "Copper Dragon Wyrmling"
+ },
+ {
+  "id": "couatl",
+  "name": "Couatl"
+ },
+ {
+  "id": "crab",
+  "name": "Crab"
+ },
+ {
+  "id": "crocodile",
+  "name": "Crocodile"
+ },
+ {
+  "id": "cultist",
+  "name": "Cultist"
+ },
+ {
+  "id": "cultist-fanatic",
+  "name": "Cultist Fanatic"
+ },
+ {
+  "id": "darkmantle",
+  "name": "Darkmantle"
+ },
+ {
+  "id": "death-dog",
+  "name": "Death Dog"
+ },
+ {
+  "id": "deer",
+  "name": "Deer"
+ },
+ {
+  "id": "deva",
+  "name": "Deva"
+ },
+ {
+  "id": "dire-wolf",
+  "name": "Dire Wolf"
+ },
+ {
+  "id": "djinni",
+  "name": "Djinni"
+ },
+ {
+  "id": "doppelganger",
+  "name": "Doppelganger"
+ },
+ {
+  "id": "draft-horse",
+  "name": "Draft Horse"
+ },
+ {
+  "id": "dragon-turtle",
+  "name": "Dragon Turtle"
+ },
+ {
+  "id": "dretch",
+  "name": "Dretch"
+ },
+ {
+  "id": "drider",
+  "name": "Drider"
+ },
+ {
+  "id": "druid",
+  "name": "Druid"
+ },
+ {
+  "id": "dryad",
+  "name": "Dryad"
+ },
+ {
+  "id": "dust-mephit",
+  "name": "Dust Mephit"
+ },
+ {
+  "id": "eagle",
+  "name": "Eagle"
+ },
+ {
+  "id": "earth-elemental",
+  "name": "Earth Elemental"
+ },
+ {
+  "id": "efreeti",
+  "name": "Efreeti"
+ },
+ {
+  "id": "elephant",
+  "name": "Elephant"
+ },
+ {
+  "id": "elk",
+  "name": "Elk"
+ },
+ {
+  "id": "erinyes",
+  "name": "Erinyes"
+ },
+ {
+  "id": "ettercap",
+  "name": "Ettercap"
+ },
+ {
+  "id": "ettin",
+  "name": "Ettin"
+ },
+ {
+  "id": "fire-elemental",
+  "name": "Fire Elemental"
+ },
+ {
+  "id": "fire-giant",
+  "name": "Fire Giant"
+ },
+ {
+  "id": "flesh-golem",
+  "name": "Flesh Golem"
+ },
+ {
+  "id": "flying-snake",
+  "name": "Flying Snake"
+ },
+ {
+  "id": "frog",
+  "name": "Frog"
+ },
+ {
+  "id": "frost-giant",
+  "name": "Frost Giant"
+ },
+ {
+  "id": "gargoyle",
+  "name": "Gargoyle"
+ },
+ {
+  "id": "gelatinous-cube",
+  "name": "Gelatinous Cube"
+ },
+ {
+  "id": "ghast",
+  "name": "Ghast"
+ },
+ {
+  "id": "ghost",
+  "name": "Ghost"
+ },
+ {
+  "id": "ghoul",
+  "name": "Ghoul"
+ },
+ {
+  "id": "giant-ape",
+  "name": "Giant Ape"
+ },
+ {
+  "id": "giant-badger",
+  "name": "Giant Badger"
+ },
+ {
+  "id": "giant-bat",
+  "name": "Giant Bat"
+ },
+ {
+  "id": "giant-boar",
+  "name": "Giant Boar"
+ },
+ {
+  "id": "giant-centipede",
+  "name": "Giant Centipede"
+ },
+ {
+  "id": "giant-constrictor-snake",
+  "name": "Giant Constrictor Snake"
+ },
+ {
+  "id": "giant-crab",
+  "name": "Giant Crab"
+ },
+ {
+  "id": "giant-crocodile",
+  "name": "Giant Crocodile"
+ },
+ {
+  "id": "giant-eagle",
+  "name": "Giant Eagle"
+ },
+ {
+  "id": "giant-elk",
+  "name": "Giant Elk"
+ },
+ {
+  "id": "giant-fire-beetle",
+  "name": "Giant Fire Beetle"
+ },
+ {
+  "id": "giant-fly",
+  "name": "Giant Fly"
+ },
+ {
+  "id": "giant-frog",
+  "name": "Giant Frog"
+ },
+ {
+  "id": "giant-goat",
+  "name": "Giant Goat"
+ },
+ {
+  "id": "giant-hyena",
+  "name": "Giant Hyena"
+ },
+ {
+  "id": "giant-lizard",
+  "name": "Giant Lizard"
+ },
+ {
+  "id": "giant-octopus",
+  "name": "Giant Octopus"
+ },
+ {
+  "id": "giant-owl",
+  "name": "Giant Owl"
+ },
+ {
+  "id": "giant-rat",
+  "name": "Giant Rat"
+ },
+ {
+  "id": "giant-scorpion",
+  "name": "Giant Scorpion"
+ },
+ {
+  "id": "giant-seahorse",
+  "name": "Giant Seahorse"
+ },
+ {
+  "id": "giant-shark",
+  "name": "Giant Shark"
+ },
+ {
+  "id": "giant-spider",
+  "name": "Giant Spider"
+ },
+ {
+  "id": "giant-toad",
+  "name": "Giant Toad"
+ },
+ {
+  "id": "giant-venomous-snake",
+  "name": "Giant Venomous Snake"
+ },
+ {
+  "id": "giant-vulture",
+  "name": "Giant Vulture"
+ },
+ {
+  "id": "giant-wasp",
+  "name": "Giant Wasp"
+ },
+ {
+  "id": "giant-weasel",
+  "name": "Giant Weasel"
+ },
+ {
+  "id": "giant-wolf-spider",
+  "name": "Giant Wolf Spider"
+ },
+ {
+  "id": "gibbering-mouther",
+  "name": "Gibbering Mouther"
+ },
+ {
+  "id": "glabrezu",
+  "name": "Glabrezu"
+ },
+ {
+  "id": "gladiator",
+  "name": "Gladiator"
+ },
+ {
+  "id": "gnoll-warrior",
+  "name": "Gnoll Warrior"
+ },
+ {
+  "id": "goat",
+  "name": "Goat"
+ },
+ {
+  "id": "goblin-boss",
+  "name": "Goblin Boss"
+ },
+ {
+  "id": "goblin-minion",
+  "name": "Goblin Minion"
+ },
+ {
+  "id": "goblin-warrior",
+  "name": "Goblin Warrior"
+ },
+ {
+  "id": "gold-dragon-wyrmling",
+  "name": "Gold Dragon Wyrmling"
+ },
+ {
+  "id": "gorgon",
+  "name": "Gorgon"
+ },
+ {
+  "id": "gray-ooze",
+  "name": "Gray Ooze"
+ },
+ {
+  "id": "green-dragon-wyrmling",
+  "name": "Green Dragon Wyrmling"
+ },
+ {
+  "id": "green-hag",
+  "name": "Green Hag"
+ },
+ {
+  "id": "grick",
+  "name": "Grick"
+ },
+ {
+  "id": "griffon",
+  "name": "Griffon"
+ },
+ {
+  "id": "grimlock",
+  "name": "Grimlock"
+ },
+ {
+  "id": "guard",
+  "name": "Guard"
+ },
+ {
+  "id": "guard-captain",
+  "name": "Guard Captain"
+ },
+ {
+  "id": "guardian-naga",
+  "name": "Guardian Naga"
+ },
+ {
+  "id": "half-dragon",
+  "name": "Half-Dragon"
+ },
+ {
+  "id": "harpy",
+  "name": "Harpy"
+ },
+ {
+  "id": "hawk",
+  "name": "Hawk"
+ },
+ {
+  "id": "hell-hound",
+  "name": "Hell Hound"
+ },
+ {
+  "id": "hezrou",
+  "name": "Hezrou"
+ },
+ {
+  "id": "hill-giant",
+  "name": "Hill Giant"
+ },
+ {
+  "id": "hippogriff",
+  "name": "Hippogriff"
+ },
+ {
+  "id": "hippopotamus",
+  "name": "Hippopotamus"
+ },
+ {
+  "id": "hobgoblin-captain",
+  "name": "Hobgoblin Captain"
+ },
+ {
+  "id": "hobgoblin-warrior",
+  "name": "Hobgoblin Warrior"
+ },
+ {
+  "id": "homunculus",
+  "name": "Homunculus"
+ },
+ {
+  "id": "horned-devil",
+  "name": "Horned Devil"
+ },
+ {
+  "id": "hunter-shark",
+  "name": "Hunter Shark"
+ },
+ {
+  "id": "hydra",
+  "name": "Hydra"
+ },
+ {
+  "id": "hyena",
+  "name": "Hyena"
+ },
+ {
+  "id": "ice-devil",
+  "name": "Ice Devil"
+ },
+ {
+  "id": "ice-mephit",
+  "name": "Ice Mephit"
+ },
+ {
+  "id": "imp",
+  "name": "Imp"
+ },
+ {
+  "id": "incubus",
+  "name": "Incubus"
+ },
+ {
+  "id": "invisible-stalker",
+  "name": "Invisible Stalker"
+ },
+ {
+  "id": "iron-golem",
+  "name": "Iron Golem"
+ },
+ {
+  "id": "jackal",
+  "name": "Jackal"
+ },
+ {
+  "id": "killer-whale",
+  "name": "Killer Whale"
+ },
+ {
+  "id": "knight",
+  "name": "Knight"
+ },
+ {
+  "id": "kobold-warrior",
+  "name": "Kobold Warrior"
+ },
+ {
+  "id": "kraken",
+  "name": "Kraken"
+ },
+ {
+  "id": "lamia",
+  "name": "Lamia"
+ },
+ {
+  "id": "lemure",
+  "name": "Lemure"
+ },
+ {
+  "id": "lich",
+  "name": "Lich"
+ },
+ {
+  "id": "lion",
+  "name": "Lion"
+ },
+ {
+  "id": "lizard",
+  "name": "Lizard"
+ },
+ {
+  "id": "mage",
+  "name": "Mage"
+ },
+ {
+  "id": "magma-mephit",
+  "name": "Magma Mephit"
+ },
+ {
+  "id": "magmin",
+  "name": "Magmin"
+ },
+ {
+  "id": "mammoth",
+  "name": "Mammoth"
+ },
+ {
+  "id": "manticore",
+  "name": "Manticore"
+ },
+ {
+  "id": "marilith",
+  "name": "Marilith"
+ },
+ {
+  "id": "mastiff",
+  "name": "Mastiff"
+ },
+ {
+  "id": "medusa",
+  "name": "Medusa"
+ },
+ {
+  "id": "merfolk-skirmisher",
+  "name": "Merfolk Skirmisher"
+ },
+ {
+  "id": "merrow",
+  "name": "Merrow"
+ },
+ {
+  "id": "mimic",
+  "name": "Mimic"
+ },
+ {
+  "id": "minotaur-skeleton",
+  "name": "Minotaur Skeleton"
+ },
+ {
+  "id": "minotaur-of-baphomet",
+  "name": "Minotaur of Baphomet"
+ },
+ {
+  "id": "mule",
+  "name": "Mule"
+ },
+ {
+  "id": "mummy",
+  "name": "Mummy"
+ },
+ {
+  "id": "mummy-lord",
+  "name": "Mummy Lord"
+ },
+ {
+  "id": "nalfeshnee",
+  "name": "Nalfeshnee"
+ },
+ {
+  "id": "night-hag",
+  "name": "Night Hag"
+ },
+ {
+  "id": "nightmare",
+  "name": "Nightmare"
+ },
+ {
+  "id": "noble",
+  "name": "Noble"
+ },
+ {
+  "id": "ochre-jelly",
+  "name": "Ochre Jelly"
+ },
+ {
+  "id": "octopus",
+  "name": "Octopus"
+ },
+ {
+  "id": "ogre",
+  "name": "Ogre"
+ },
+ {
+  "id": "ogre-zombie",
+  "name": "Ogre Zombie"
+ },
+ {
+  "id": "oni",
+  "name": "Oni"
+ },
+ {
+  "id": "otyugh",
+  "name": "Otyugh"
+ },
+ {
+  "id": "owl",
+  "name": "Owl"
+ },
+ {
+  "id": "owlbear",
+  "name": "Owlbear"
+ },
+ {
+  "id": "panther",
+  "name": "Panther"
+ },
+ {
+  "id": "pegasus",
+  "name": "Pegasus"
+ },
+ {
+  "id": "phase-spider",
+  "name": "Phase Spider"
+ },
+ {
+  "id": "piranha",
+  "name": "Piranha"
+ },
+ {
+  "id": "pirate",
+  "name": "Pirate"
+ },
+ {
+  "id": "pirate-captain",
+  "name": "Pirate Captain"
+ },
+ {
+  "id": "pit-fiend",
+  "name": "Pit Fiend"
+ },
+ {
+  "id": "planetar",
+  "name": "Planetar"
+ },
+ {
+  "id": "plesiosaurus",
+  "name": "Plesiosaurus"
+ },
+ {
+  "id": "polar-bear",
+  "name": "Polar Bear"
+ },
+ {
+  "id": "pony",
+  "name": "Pony"
+ },
+ {
+  "id": "priest",
+  "name": "Priest"
+ },
+ {
+  "id": "priest-acolyte",
+  "name": "Priest Acolyte"
+ },
+ {
+  "id": "pseudodragon",
+  "name": "Pseudodragon"
+ },
+ {
+  "id": "pteranodon",
+  "name": "Pteranodon"
+ },
+ {
+  "id": "purple-worm",
+  "name": "Purple Worm"
+ },
+ {
+  "id": "quasit",
+  "name": "Quasit"
+ },
+ {
+  "id": "rakshasa",
+  "name": "Rakshasa"
+ },
+ {
+  "id": "rat",
+  "name": "Rat"
+ },
+ {
+  "id": "raven",
+  "name": "Raven"
+ },
+ {
+  "id": "red-dragon-wyrmling",
+  "name": "Red Dragon Wyrmling"
+ },
+ {
+  "id": "reef-shark",
+  "name": "Reef Shark"
+ },
+ {
+  "id": "remorhaz",
+  "name": "Remorhaz"
+ },
+ {
+  "id": "rhinoceros",
+  "name": "Rhinoceros"
+ },
+ {
+  "id": "riding-horse",
+  "name": "Riding Horse"
+ },
+ {
+  "id": "roc",
+  "name": "Roc"
+ },
+ {
+  "id": "roper",
+  "name": "Roper"
+ },
+ {
+  "id": "rust-monster",
+  "name": "Rust Monster"
+ },
+ {
+  "id": "saber-toothed-tiger",
+  "name": "Saber-Toothed Tiger"
+ },
+ {
+  "id": "sahuagin-warrior",
+  "name": "Sahuagin Warrior"
+ },
+ {
+  "id": "salamander",
+  "name": "Salamander"
+ },
+ {
+  "id": "satyr",
+  "name": "Satyr"
+ },
+ {
+  "id": "scorpion",
+  "name": "Scorpion"
+ },
+ {
+  "id": "scout",
+  "name": "Scout"
+ },
+ {
+  "id": "sea-hag",
+  "name": "Sea Hag"
+ },
+ {
+  "id": "seahorse",
+  "name": "Seahorse"
+ },
+ {
+  "id": "shadow",
+  "name": "Shadow"
+ },
+ {
+  "id": "shambling-mound",
+  "name": "Shambling Mound"
+ },
+ {
+  "id": "shield-guardian",
+  "name": "Shield Guardian"
+ },
+ {
+  "id": "shrieker-fungus",
+  "name": "Shrieker Fungus"
+ },
+ {
+  "id": "silver-dragon-wyrmling",
+  "name": "Silver Dragon Wyrmling"
+ },
+ {
+  "id": "skeleton",
+  "name": "Skeleton"
+ },
+ {
+  "id": "solar",
+  "name": "Solar"
+ },
+ {
+  "id": "specter",
+  "name": "Specter"
+ },
+ {
+  "id": "sphinx-of-lore",
+  "name": "Sphinx of Lore"
+ },
+ {
+  "id": "sphinx-of-valor",
+  "name": "Sphinx of Valor"
+ },
+ {
+  "id": "sphinx-of-wonder",
+  "name": "Sphinx of Wonder"
+ },
+ {
+  "id": "spider",
+  "name": "Spider"
+ },
+ {
+  "id": "spirit-naga",
+  "name": "Spirit Naga"
+ },
+ {
+  "id": "sprite",
+  "name": "Sprite"
+ },
+ {
+  "id": "spy",
+  "name": "Spy"
+ },
+ {
+  "id": "steam-mephit",
+  "name": "Steam Mephit"
+ },
+ {
+  "id": "stirge",
+  "name": "Stirge"
+ },
+ {
+  "id": "stone-giant",
+  "name": "Stone Giant"
+ },
+ {
+  "id": "stone-golem",
+  "name": "Stone Golem"
+ },
+ {
+  "id": "storm-giant",
+  "name": "Storm Giant"
+ },
+ {
+  "id": "succubus",
+  "name": "Succubus"
+ },
+ {
+  "id": "swarm-of-bats",
+  "name": "Swarm of Bats"
+ },
+ {
+  "id": "swarm-of-crawling-claws",
+  "name": "Swarm of Crawling Claws"
+ },
+ {
+  "id": "swarm-of-insects",
+  "name": "Swarm of Insects"
+ },
+ {
+  "id": "swarm-of-piranhas",
+  "name": "Swarm of Piranhas"
+ },
+ {
+  "id": "swarm-of-rats",
+  "name": "Swarm of Rats"
+ },
+ {
+  "id": "swarm-of-ravens",
+  "name": "Swarm of Ravens"
+ },
+ {
+  "id": "swarm-of-venomous-snakes",
+  "name": "Swarm of Venomous Snakes"
+ },
+ {
+  "id": "tarrasque",
+  "name": "Tarrasque"
+ },
+ {
+  "id": "tiger",
+  "name": "Tiger"
+ },
+ {
+  "id": "tough",
+  "name": "Tough"
+ },
+ {
+  "id": "tough-boss",
+  "name": "Tough Boss"
+ },
+ {
+  "id": "treant",
+  "name": "Treant"
+ },
+ {
+  "id": "triceratops",
+  "name": "Triceratops"
+ },
+ {
+  "id": "troll",
+  "name": "Troll"
+ },
+ {
+  "id": "troll-limb",
+  "name": "Troll Limb"
+ },
+ {
+  "id": "tyrannosaurus-rex",
+  "name": "Tyrannosaurus Rex"
+ },
+ {
+  "id": "unicorn",
+  "name": "Unicorn"
+ },
+ {
+  "id": "vampire",
+  "name": "Vampire"
+ },
+ {
+  "id": "vampire-familiar",
+  "name": "Vampire Familiar"
+ },
+ {
+  "id": "vampire-spawn",
+  "name": "Vampire Spawn"
+ },
+ {
+  "id": "venomous-snake",
+  "name": "Venomous Snake"
+ },
+ {
+  "id": "violet-fungus",
+  "name": "Violet Fungus"
+ },
+ {
+  "id": "vrock",
+  "name": "Vrock"
+ },
+ {
+  "id": "vulture",
+  "name": "Vulture"
+ },
+ {
+  "id": "warhorse",
+  "name": "Warhorse"
+ },
+ {
+  "id": "warhorse-skeleton",
+  "name": "Warhorse Skeleton"
+ },
+ {
+  "id": "warrior-infantry",
+  "name": "Warrior Infantry"
+ },
+ {
+  "id": "warrior-veteran",
+  "name": "Warrior Veteran"
+ },
+ {
+  "id": "water-elemental",
+  "name": "Water Elemental"
+ },
+ {
+  "id": "weasel",
+  "name": "Weasel"
+ },
+ {
+  "id": "werebear",
+  "name": "Werebear"
+ },
+ {
+  "id": "wereboar",
+  "name": "Wereboar"
+ },
+ {
+  "id": "wererat",
+  "name": "Wererat"
+ },
+ {
+  "id": "weretiger",
+  "name": "Weretiger"
+ },
+ {
+  "id": "werewolf",
+  "name": "Werewolf"
+ },
+ {
+  "id": "white-dragon-wyrmling",
+  "name": "White Dragon Wyrmling"
+ },
+ {
+  "id": "wight",
+  "name": "Wight"
+ },
+ {
+  "id": "will-o-wisp",
+  "name": "Will-o'-Wisp"
+ },
+ {
+  "id": "winter-wolf",
+  "name": "Winter Wolf"
+ },
+ {
+  "id": "wolf",
+  "name": "Wolf"
+ },
+ {
+  "id": "worg",
+  "name": "Worg"
+ },
+ {
+  "id": "wraith",
+  "name": "Wraith"
+ },
+ {
+  "id": "wyvern",
+  "name": "Wyvern"
+ },
+ {
+  "id": "xorn",
+  "name": "Xorn"
+ },
+ {
+  "id": "young-black-dragon",
+  "name": "Young Black Dragon"
+ },
+ {
+  "id": "young-blue-dragon",
+  "name": "Young Blue Dragon"
+ },
+ {
+  "id": "young-brass-dragon",
+  "name": "Young Brass Dragon"
+ },
+ {
+  "id": "young-bronze-dragon",
+  "name": "Young Bronze Dragon"
+ },
+ {
+  "id": "young-copper-dragon",
+  "name": "Young Copper Dragon"
+ },
+ {
+  "id": "young-gold-dragon",
+  "name": "Young Gold Dragon"
+ },
+ {
+  "id": "young-green-dragon",
+  "name": "Young Green Dragon"
+ },
+ {
+  "id": "young-red-dragon",
+  "name": "Young Red Dragon"
+ },
+ {
+  "id": "young-silver-dragon",
+  "name": "Young Silver Dragon"
+ },
+ {
+  "id": "young-white-dragon",
+  "name": "Young White Dragon"
+ },
+ {
+  "id": "zombie",
+  "name": "Zombie"
+ }
+]

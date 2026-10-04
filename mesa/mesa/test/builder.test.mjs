@@ -112,7 +112,8 @@ test("los datos están bien enlazados", () => {
 });
 
 test("el manual tiene todas las ediciones y se puede buscar", async () => {
-  for (const e of EDITIONS) assert.ok(SECTIONS.some(s => s.ed === e.id), e.id);
+  /* Las páginas de catálogo («page») se pintan desde los datos del SRD 5.2 */
+  for (const e of EDITIONS) assert.ok(e.page || SECTIONS.some(s => s.ed === e.id), e.id);
   for (const s of SECTIONS) assert.ok(EDITIONS.some(e => e.id === s.ed), s.title);
   const fold = t => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
   const has = w => SECTIONS.filter(s => fold(s.title + s.text).includes(fold(w))).map(s => s.ed);

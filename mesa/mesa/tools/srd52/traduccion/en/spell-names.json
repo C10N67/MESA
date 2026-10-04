@@ -1,0 +1,1358 @@
+[
+ {
+  "id": "acid-splash",
+  "name": "Acid Splash"
+ },
+ {
+  "id": "chill-touch",
+  "name": "Chill Touch"
+ },
+ {
+  "id": "dancing-lights",
+  "name": "Dancing Lights"
+ },
+ {
+  "id": "druidcraft",
+  "name": "Druidcraft"
+ },
+ {
+  "id": "eldritch-blast",
+  "name": "Eldritch Blast"
+ },
+ {
+  "id": "elementalism",
+  "name": "Elementalism"
+ },
+ {
+  "id": "fire-bolt",
+  "name": "Fire Bolt"
+ },
+ {
+  "id": "guidance",
+  "name": "Guidance"
+ },
+ {
+  "id": "light",
+  "name": "Light"
+ },
+ {
+  "id": "mage-hand",
+  "name": "Mage Hand"
+ },
+ {
+  "id": "mending",
+  "name": "Mending"
+ },
+ {
+  "id": "message",
+  "name": "Message"
+ },
+ {
+  "id": "minor-illusion",
+  "name": "Minor Illusion"
+ },
+ {
+  "id": "poison-spray",
+  "name": "Poison Spray"
+ },
+ {
+  "id": "prestidigitation",
+  "name": "Prestidigitation"
+ },
+ {
+  "id": "produce-flame",
+  "name": "Produce Flame"
+ },
+ {
+  "id": "ray-of-frost",
+  "name": "Ray of Frost"
+ },
+ {
+  "id": "resistance",
+  "name": "Resistance"
+ },
+ {
+  "id": "sacred-flame",
+  "name": "Sacred Flame"
+ },
+ {
+  "id": "shillelagh",
+  "name": "Shillelagh"
+ },
+ {
+  "id": "shocking-grasp",
+  "name": "Shocking Grasp"
+ },
+ {
+  "id": "sorcerous-burst",
+  "name": "Sorcerous Burst"
+ },
+ {
+  "id": "spare-the-dying",
+  "name": "Spare the Dying"
+ },
+ {
+  "id": "starry-wisp",
+  "name": "Starry Wisp"
+ },
+ {
+  "id": "thaumaturgy",
+  "name": "Thaumaturgy"
+ },
+ {
+  "id": "true-strike",
+  "name": "True Strike"
+ },
+ {
+  "id": "vicious-mockery",
+  "name": "Vicious Mockery"
+ },
+ {
+  "id": "alarm",
+  "name": "Alarm"
+ },
+ {
+  "id": "animal-friendship",
+  "name": "Animal Friendship"
+ },
+ {
+  "id": "bane",
+  "name": "Bane"
+ },
+ {
+  "id": "bless",
+  "name": "Bless"
+ },
+ {
+  "id": "burning-hands",
+  "name": "Burning Hands"
+ },
+ {
+  "id": "charm-person",
+  "name": "Charm Person"
+ },
+ {
+  "id": "chromatic-orb",
+  "name": "Chromatic Orb"
+ },
+ {
+  "id": "color-spray",
+  "name": "Color Spray"
+ },
+ {
+  "id": "command",
+  "name": "Command"
+ },
+ {
+  "id": "comprehend-languages",
+  "name": "Comprehend Languages"
+ },
+ {
+  "id": "create-or-destroy-water",
+  "name": "Create or Destroy Water"
+ },
+ {
+  "id": "cure-wounds",
+  "name": "Cure Wounds"
+ },
+ {
+  "id": "detect-evil-and-good",
+  "name": "Detect Evil and Good"
+ },
+ {
+  "id": "detect-magic",
+  "name": "Detect Magic"
+ },
+ {
+  "id": "detect-poison-and-disease",
+  "name": "Detect Poison and Disease"
+ },
+ {
+  "id": "disguise-self",
+  "name": "Disguise Self"
+ },
+ {
+  "id": "dissonant-whispers",
+  "name": "Dissonant Whispers"
+ },
+ {
+  "id": "divine-favor",
+  "name": "Divine Favor"
+ },
+ {
+  "id": "divine-smite",
+  "name": "Divine Smite"
+ },
+ {
+  "id": "ensnaring-strike",
+  "name": "Ensnaring Strike"
+ },
+ {
+  "id": "entangle",
+  "name": "Entangle"
+ },
+ {
+  "id": "expeditious-retreat",
+  "name": "Expeditious Retreat"
+ },
+ {
+  "id": "faerie-fire",
+  "name": "Faerie Fire"
+ },
+ {
+  "id": "false-life",
+  "name": "False Life"
+ },
+ {
+  "id": "feather-fall",
+  "name": "Feather Fall"
+ },
+ {
+  "id": "find-familiar",
+  "name": "Find Familiar"
+ },
+ {
+  "id": "floating-disk",
+  "name": "Floating Disk"
+ },
+ {
+  "id": "fog-cloud",
+  "name": "Fog Cloud"
+ },
+ {
+  "id": "goodberry",
+  "name": "Goodberry"
+ },
+ {
+  "id": "grease",
+  "name": "Grease"
+ },
+ {
+  "id": "guiding-bolt",
+  "name": "Guiding Bolt"
+ },
+ {
+  "id": "healing-word",
+  "name": "Healing Word"
+ },
+ {
+  "id": "hellish-rebuke",
+  "name": "Hellish Rebuke"
+ },
+ {
+  "id": "heroism",
+  "name": "Heroism"
+ },
+ {
+  "id": "hex",
+  "name": "Hex"
+ },
+ {
+  "id": "hideous-laughter",
+  "name": "Hideous Laughter"
+ },
+ {
+  "id": "hunters-mark",
+  "name": "Hunter's Mark"
+ },
+ {
+  "id": "ice-knife",
+  "name": "Ice Knife"
+ },
+ {
+  "id": "identify",
+  "name": "Identify"
+ },
+ {
+  "id": "illusory-script",
+  "name": "Illusory Script"
+ },
+ {
+  "id": "inflict-wounds",
+  "name": "Inflict Wounds"
+ },
+ {
+  "id": "jump",
+  "name": "Jump"
+ },
+ {
+  "id": "longstrider",
+  "name": "Longstrider"
+ },
+ {
+  "id": "mage-armor",
+  "name": "Mage Armor"
+ },
+ {
+  "id": "magic-missile",
+  "name": "Magic Missile"
+ },
+ {
+  "id": "protection-from-evil-and-good",
+  "name": "Protection from Evil and Good"
+ },
+ {
+  "id": "purify-food-and-drink",
+  "name": "Purify Food and Drink"
+ },
+ {
+  "id": "ray-of-sickness",
+  "name": "Ray of Sickness"
+ },
+ {
+  "id": "sanctuary",
+  "name": "Sanctuary"
+ },
+ {
+  "id": "searing-smite",
+  "name": "Searing Smite"
+ },
+ {
+  "id": "shield",
+  "name": "Shield"
+ },
+ {
+  "id": "shield-of-faith",
+  "name": "Shield of Faith"
+ },
+ {
+  "id": "silent-image",
+  "name": "Silent Image"
+ },
+ {
+  "id": "sleep",
+  "name": "Sleep"
+ },
+ {
+  "id": "speak-with-animals",
+  "name": "Speak with Animals"
+ },
+ {
+  "id": "thunderwave",
+  "name": "Thunderwave"
+ },
+ {
+  "id": "unseen-servant",
+  "name": "Unseen Servant"
+ },
+ {
+  "id": "acid-arrow",
+  "name": "Acid Arrow"
+ },
+ {
+  "id": "aid",
+  "name": "Aid"
+ },
+ {
+  "id": "alter-self",
+  "name": "Alter Self"
+ },
+ {
+  "id": "animal-messenger",
+  "name": "Animal Messenger"
+ },
+ {
+  "id": "arcane-lock",
+  "name": "Arcane Lock"
+ },
+ {
+  "id": "arcanists-magic-aura",
+  "name": "Arcanist's Magic Aura"
+ },
+ {
+  "id": "augury",
+  "name": "Augury"
+ },
+ {
+  "id": "barkskin",
+  "name": "Barkskin"
+ },
+ {
+  "id": "blindnessdeafness",
+  "name": "Blindness/Deafness"
+ },
+ {
+  "id": "blur",
+  "name": "Blur"
+ },
+ {
+  "id": "calm-emotions",
+  "name": "Calm Emotions"
+ },
+ {
+  "id": "continual-flame",
+  "name": "Continual Flame"
+ },
+ {
+  "id": "darkness",
+  "name": "Darkness"
+ },
+ {
+  "id": "darkvision",
+  "name": "Darkvision"
+ },
+ {
+  "id": "detect-thoughts",
+  "name": "Detect Thoughts"
+ },
+ {
+  "id": "dragons-breath",
+  "name": "Dragon's Breath"
+ },
+ {
+  "id": "enhance-ability",
+  "name": "Enhance Ability"
+ },
+ {
+  "id": "enlargereduce",
+  "name": "Enlarge/Reduce"
+ },
+ {
+  "id": "enthrall",
+  "name": "Enthrall"
+ },
+ {
+  "id": "find-steed",
+  "name": "Find Steed"
+ },
+ {
+  "id": "find-traps",
+  "name": "Find Traps"
+ },
+ {
+  "id": "flame-blade",
+  "name": "Flame Blade"
+ },
+ {
+  "id": "flaming-sphere",
+  "name": "Flaming Sphere"
+ },
+ {
+  "id": "gentle-repose",
+  "name": "Gentle Repose"
+ },
+ {
+  "id": "gust-of-wind",
+  "name": "Gust of Wind"
+ },
+ {
+  "id": "heat-metal",
+  "name": "Heat Metal"
+ },
+ {
+  "id": "hold-person",
+  "name": "Hold Person"
+ },
+ {
+  "id": "invisibility",
+  "name": "Invisibility"
+ },
+ {
+  "id": "knock",
+  "name": "Knock"
+ },
+ {
+  "id": "lesser-restoration",
+  "name": "Lesser Restoration"
+ },
+ {
+  "id": "levitate",
+  "name": "Levitate"
+ },
+ {
+  "id": "locate-animals-or-plants",
+  "name": "Locate Animals or Plants"
+ },
+ {
+  "id": "locate-object",
+  "name": "Locate Object"
+ },
+ {
+  "id": "magic-mouth",
+  "name": "Magic Mouth"
+ },
+ {
+  "id": "magic-weapon",
+  "name": "Magic Weapon"
+ },
+ {
+  "id": "mind-spike",
+  "name": "Mind Spike"
+ },
+ {
+  "id": "mirror-image",
+  "name": "Mirror Image"
+ },
+ {
+  "id": "misty-step",
+  "name": "Misty Step"
+ },
+ {
+  "id": "moonbeam",
+  "name": "Moonbeam"
+ },
+ {
+  "id": "pass-without-trace",
+  "name": "Pass without Trace"
+ },
+ {
+  "id": "phantasmal-force",
+  "name": "Phantasmal Force"
+ },
+ {
+  "id": "prayer-of-healing",
+  "name": "Prayer of Healing"
+ },
+ {
+  "id": "protection-from-poison",
+  "name": "Protection from Poison"
+ },
+ {
+  "id": "ray-of-enfeeblement",
+  "name": "Ray of Enfeeblement"
+ },
+ {
+  "id": "rope-trick",
+  "name": "Rope Trick"
+ },
+ {
+  "id": "scorching-ray",
+  "name": "Scorching Ray"
+ },
+ {
+  "id": "see-invisibility",
+  "name": "See Invisibility"
+ },
+ {
+  "id": "shatter",
+  "name": "Shatter"
+ },
+ {
+  "id": "shining-smite",
+  "name": "Shining Smite"
+ },
+ {
+  "id": "silence",
+  "name": "Silence"
+ },
+ {
+  "id": "spider-climb",
+  "name": "Spider Climb"
+ },
+ {
+  "id": "spike-growth",
+  "name": "Spike Growth"
+ },
+ {
+  "id": "spiritual-weapon",
+  "name": "Spiritual Weapon"
+ },
+ {
+  "id": "suggestion",
+  "name": "Suggestion"
+ },
+ {
+  "id": "warding-bond",
+  "name": "Warding Bond"
+ },
+ {
+  "id": "web",
+  "name": "Web"
+ },
+ {
+  "id": "zone-of-truth",
+  "name": "Zone of Truth"
+ },
+ {
+  "id": "animate-dead",
+  "name": "Animate Dead"
+ },
+ {
+  "id": "beacon-of-hope",
+  "name": "Beacon of Hope"
+ },
+ {
+  "id": "bestow-curse",
+  "name": "Bestow Curse"
+ },
+ {
+  "id": "blink",
+  "name": "Blink"
+ },
+ {
+  "id": "call-lightning",
+  "name": "Call Lightning"
+ },
+ {
+  "id": "clairvoyance",
+  "name": "Clairvoyance"
+ },
+ {
+  "id": "conjure-animals",
+  "name": "Conjure Animals"
+ },
+ {
+  "id": "counterspell",
+  "name": "Counterspell"
+ },
+ {
+  "id": "create-food-and-water",
+  "name": "Create Food and Water"
+ },
+ {
+  "id": "daylight",
+  "name": "Daylight"
+ },
+ {
+  "id": "dispel-magic",
+  "name": "Dispel Magic"
+ },
+ {
+  "id": "fear",
+  "name": "Fear"
+ },
+ {
+  "id": "fireball",
+  "name": "Fireball"
+ },
+ {
+  "id": "fly",
+  "name": "Fly"
+ },
+ {
+  "id": "gaseous-form",
+  "name": "Gaseous Form"
+ },
+ {
+  "id": "glyph-of-warding",
+  "name": "Glyph of Warding"
+ },
+ {
+  "id": "haste",
+  "name": "Haste"
+ },
+ {
+  "id": "hypnotic-pattern",
+  "name": "Hypnotic Pattern"
+ },
+ {
+  "id": "lightning-bolt",
+  "name": "Lightning Bolt"
+ },
+ {
+  "id": "magic-circle",
+  "name": "Magic Circle"
+ },
+ {
+  "id": "major-image",
+  "name": "Major Image"
+ },
+ {
+  "id": "mass-healing-word",
+  "name": "Mass Healing Word"
+ },
+ {
+  "id": "meld-into-stone",
+  "name": "Meld into Stone"
+ },
+ {
+  "id": "nondetection",
+  "name": "Nondetection"
+ },
+ {
+  "id": "phantom-steed",
+  "name": "Phantom Steed"
+ },
+ {
+  "id": "plant-growth",
+  "name": "Plant Growth"
+ },
+ {
+  "id": "protection-from-energy",
+  "name": "Protection from Energy"
+ },
+ {
+  "id": "remove-curse",
+  "name": "Remove Curse"
+ },
+ {
+  "id": "revivify",
+  "name": "Revivify"
+ },
+ {
+  "id": "sending",
+  "name": "Sending"
+ },
+ {
+  "id": "sleet-storm",
+  "name": "Sleet Storm"
+ },
+ {
+  "id": "slow",
+  "name": "Slow"
+ },
+ {
+  "id": "speak-with-dead",
+  "name": "Speak with Dead"
+ },
+ {
+  "id": "speak-with-plants",
+  "name": "Speak with Plants"
+ },
+ {
+  "id": "spirit-guardians",
+  "name": "Spirit Guardians"
+ },
+ {
+  "id": "stinking-cloud",
+  "name": "Stinking Cloud"
+ },
+ {
+  "id": "tiny-hut",
+  "name": "Tiny Hut"
+ },
+ {
+  "id": "tongues",
+  "name": "Tongues"
+ },
+ {
+  "id": "vampiric-touch",
+  "name": "Vampiric Touch"
+ },
+ {
+  "id": "water-breathing",
+  "name": "Water Breathing"
+ },
+ {
+  "id": "water-walk",
+  "name": "Water Walk"
+ },
+ {
+  "id": "wind-wall",
+  "name": "Wind Wall"
+ },
+ {
+  "id": "arcane-eye",
+  "name": "Arcane Eye"
+ },
+ {
+  "id": "aura-of-life",
+  "name": "Aura of Life"
+ },
+ {
+  "id": "banishment",
+  "name": "Banishment"
+ },
+ {
+  "id": "black-tentacles",
+  "name": "Black Tentacles"
+ },
+ {
+  "id": "blight",
+  "name": "Blight"
+ },
+ {
+  "id": "charm-monster",
+  "name": "Charm Monster"
+ },
+ {
+  "id": "compulsion",
+  "name": "Compulsion"
+ },
+ {
+  "id": "confusion",
+  "name": "Confusion"
+ },
+ {
+  "id": "conjure-minor-elementals",
+  "name": "Conjure Minor Elementals"
+ },
+ {
+  "id": "conjure-woodland-beings",
+  "name": "Conjure Woodland Beings"
+ },
+ {
+  "id": "control-water",
+  "name": "Control Water"
+ },
+ {
+  "id": "death-ward",
+  "name": "Death Ward"
+ },
+ {
+  "id": "dimension-door",
+  "name": "Dimension Door"
+ },
+ {
+  "id": "divination",
+  "name": "Divination"
+ },
+ {
+  "id": "dominate-beast",
+  "name": "Dominate Beast"
+ },
+ {
+  "id": "fabricate",
+  "name": "Fabricate"
+ },
+ {
+  "id": "faithful-hound",
+  "name": "Faithful Hound"
+ },
+ {
+  "id": "fire-shield",
+  "name": "Fire Shield"
+ },
+ {
+  "id": "freedom-of-movement",
+  "name": "Freedom of Movement"
+ },
+ {
+  "id": "giant-insect",
+  "name": "Giant Insect"
+ },
+ {
+  "id": "greater-invisibility",
+  "name": "Greater Invisibility"
+ },
+ {
+  "id": "guardian-of-faith",
+  "name": "Guardian of Faith"
+ },
+ {
+  "id": "hallucinatory-terrain",
+  "name": "Hallucinatory Terrain"
+ },
+ {
+  "id": "ice-storm",
+  "name": "Ice Storm"
+ },
+ {
+  "id": "locate-creature",
+  "name": "Locate Creature"
+ },
+ {
+  "id": "phantasmal-killer",
+  "name": "Phantasmal Killer"
+ },
+ {
+  "id": "polymorph",
+  "name": "Polymorph"
+ },
+ {
+  "id": "private-sanctum",
+  "name": "Private Sanctum"
+ },
+ {
+  "id": "resilient-sphere",
+  "name": "Resilient Sphere"
+ },
+ {
+  "id": "secret-chest",
+  "name": "Secret Chest"
+ },
+ {
+  "id": "stone-shape",
+  "name": "Stone Shape"
+ },
+ {
+  "id": "stoneskin",
+  "name": "Stoneskin"
+ },
+ {
+  "id": "vitriolic-sphere",
+  "name": "Vitriolic Sphere"
+ },
+ {
+  "id": "wall-of-fire",
+  "name": "Wall of Fire"
+ },
+ {
+  "id": "animate-objects",
+  "name": "Animate Objects"
+ },
+ {
+  "id": "antilife-shell",
+  "name": "Antilife Shell"
+ },
+ {
+  "id": "arcane-hand",
+  "name": "Arcane Hand"
+ },
+ {
+  "id": "awaken",
+  "name": "Awaken"
+ },
+ {
+  "id": "cloudkill",
+  "name": "Cloudkill"
+ },
+ {
+  "id": "commune",
+  "name": "Commune"
+ },
+ {
+  "id": "commune-with-nature",
+  "name": "Commune with Nature"
+ },
+ {
+  "id": "cone-of-cold",
+  "name": "Cone of Cold"
+ },
+ {
+  "id": "conjure-elemental",
+  "name": "Conjure Elemental"
+ },
+ {
+  "id": "contact-other-plane",
+  "name": "Contact Other Plane"
+ },
+ {
+  "id": "contagion",
+  "name": "Contagion"
+ },
+ {
+  "id": "creation",
+  "name": "Creation"
+ },
+ {
+  "id": "dispel-evil-and-good",
+  "name": "Dispel Evil and Good"
+ },
+ {
+  "id": "dominate-person",
+  "name": "Dominate Person"
+ },
+ {
+  "id": "dream",
+  "name": "Dream"
+ },
+ {
+  "id": "flame-strike",
+  "name": "Flame Strike"
+ },
+ {
+  "id": "geas",
+  "name": "Geas"
+ },
+ {
+  "id": "greater-restoration",
+  "name": "Greater Restoration"
+ },
+ {
+  "id": "hallow",
+  "name": "Hallow"
+ },
+ {
+  "id": "hold-monster",
+  "name": "Hold Monster"
+ },
+ {
+  "id": "insect-plague",
+  "name": "Insect Plague"
+ },
+ {
+  "id": "legend-lore",
+  "name": "Legend Lore"
+ },
+ {
+  "id": "mass-cure-wounds",
+  "name": "Mass Cure Wounds"
+ },
+ {
+  "id": "mislead",
+  "name": "Mislead"
+ },
+ {
+  "id": "modify-memory",
+  "name": "Modify Memory"
+ },
+ {
+  "id": "passwall",
+  "name": "Passwall"
+ },
+ {
+  "id": "planar-binding",
+  "name": "Planar Binding"
+ },
+ {
+  "id": "raise-dead",
+  "name": "Raise Dead"
+ },
+ {
+  "id": "reincarnate",
+  "name": "Reincarnate"
+ },
+ {
+  "id": "scrying",
+  "name": "Scrying"
+ },
+ {
+  "id": "seeming",
+  "name": "Seeming"
+ },
+ {
+  "id": "summon-dragon",
+  "name": "Summon Dragon"
+ },
+ {
+  "id": "telekinesis",
+  "name": "Telekinesis"
+ },
+ {
+  "id": "telepathic-bond",
+  "name": "Telepathic Bond"
+ },
+ {
+  "id": "teleportation-circle",
+  "name": "Teleportation Circle"
+ },
+ {
+  "id": "tree-stride",
+  "name": "Tree Stride"
+ },
+ {
+  "id": "wall-of-force",
+  "name": "Wall of Force"
+ },
+ {
+  "id": "wall-of-stone",
+  "name": "Wall of Stone"
+ },
+ {
+  "id": "blade-barrier",
+  "name": "Blade Barrier"
+ },
+ {
+  "id": "chain-lightning",
+  "name": "Chain Lightning"
+ },
+ {
+  "id": "circle-of-death",
+  "name": "Circle of Death"
+ },
+ {
+  "id": "conjure-fey",
+  "name": "Conjure Fey"
+ },
+ {
+  "id": "contingency",
+  "name": "Contingency"
+ },
+ {
+  "id": "create-undead",
+  "name": "Create Undead"
+ },
+ {
+  "id": "disintegrate",
+  "name": "Disintegrate"
+ },
+ {
+  "id": "eyebite",
+  "name": "Eyebite"
+ },
+ {
+  "id": "find-the-path",
+  "name": "Find the Path"
+ },
+ {
+  "id": "flesh-to-stone",
+  "name": "Flesh to Stone"
+ },
+ {
+  "id": "forbiddance",
+  "name": "Forbiddance"
+ },
+ {
+  "id": "freezing-sphere",
+  "name": "Freezing Sphere"
+ },
+ {
+  "id": "globe-of-invulnerability",
+  "name": "Globe of Invulnerability"
+ },
+ {
+  "id": "guards-and-wards",
+  "name": "Guards and Wards"
+ },
+ {
+  "id": "harm",
+  "name": "Harm"
+ },
+ {
+  "id": "heal",
+  "name": "Heal"
+ },
+ {
+  "id": "heroes-feast",
+  "name": "Heroes' Feast"
+ },
+ {
+  "id": "instant-summons",
+  "name": "Instant Summons"
+ },
+ {
+  "id": "irresistible-dance",
+  "name": "Irresistible Dance"
+ },
+ {
+  "id": "magic-jar",
+  "name": "Magic Jar"
+ },
+ {
+  "id": "mass-suggestion",
+  "name": "Mass Suggestion"
+ },
+ {
+  "id": "move-earth",
+  "name": "Move Earth"
+ },
+ {
+  "id": "planar-ally",
+  "name": "Planar Ally"
+ },
+ {
+  "id": "programmed-illusion",
+  "name": "Programmed Illusion"
+ },
+ {
+  "id": "sunbeam",
+  "name": "Sunbeam"
+ },
+ {
+  "id": "transport-via-plants",
+  "name": "Transport via Plants"
+ },
+ {
+  "id": "true-seeing",
+  "name": "True Seeing"
+ },
+ {
+  "id": "wall-of-ice",
+  "name": "Wall of Ice"
+ },
+ {
+  "id": "wall-of-thorns",
+  "name": "Wall of Thorns"
+ },
+ {
+  "id": "wind-walk",
+  "name": "Wind Walk"
+ },
+ {
+  "id": "word-of-recall",
+  "name": "Word of Recall"
+ },
+ {
+  "id": "arcane-sword",
+  "name": "Arcane Sword"
+ },
+ {
+  "id": "conjure-celestial",
+  "name": "Conjure Celestial"
+ },
+ {
+  "id": "delayed-blast-fireball",
+  "name": "Delayed Blast Fireball"
+ },
+ {
+  "id": "divine-word",
+  "name": "Divine Word"
+ },
+ {
+  "id": "etherealness",
+  "name": "Etherealness"
+ },
+ {
+  "id": "finger-of-death",
+  "name": "Finger of Death"
+ },
+ {
+  "id": "fire-storm",
+  "name": "Fire Storm"
+ },
+ {
+  "id": "forcecage",
+  "name": "Forcecage"
+ },
+ {
+  "id": "magnificent-mansion",
+  "name": "Magnificent Mansion"
+ },
+ {
+  "id": "mirage-arcane",
+  "name": "Mirage Arcane"
+ },
+ {
+  "id": "plane-shift",
+  "name": "Plane Shift"
+ },
+ {
+  "id": "prismatic-spray",
+  "name": "Prismatic Spray"
+ },
+ {
+  "id": "project-image",
+  "name": "Project Image"
+ },
+ {
+  "id": "regenerate",
+  "name": "Regenerate"
+ },
+ {
+  "id": "resurrection",
+  "name": "Resurrection"
+ },
+ {
+  "id": "reverse-gravity",
+  "name": "Reverse Gravity"
+ },
+ {
+  "id": "sequester",
+  "name": "Sequester"
+ },
+ {
+  "id": "simulacrum",
+  "name": "Simulacrum"
+ },
+ {
+  "id": "symbol",
+  "name": "Symbol"
+ },
+ {
+  "id": "teleport",
+  "name": "Teleport"
+ },
+ {
+  "id": "animal-shapes",
+  "name": "Animal Shapes"
+ },
+ {
+  "id": "antimagic-field",
+  "name": "Antimagic Field"
+ },
+ {
+  "id": "antipathysympathy",
+  "name": "Antipathy/Sympathy"
+ },
+ {
+  "id": "befuddlement",
+  "name": "Befuddlement"
+ },
+ {
+  "id": "clone",
+  "name": "Clone"
+ },
+ {
+  "id": "control-weather",
+  "name": "Control Weather"
+ },
+ {
+  "id": "demiplane",
+  "name": "Demiplane"
+ },
+ {
+  "id": "dominate-monster",
+  "name": "Dominate Monster"
+ },
+ {
+  "id": "earthquake",
+  "name": "Earthquake"
+ },
+ {
+  "id": "glibness",
+  "name": "Glibness"
+ },
+ {
+  "id": "holy-aura",
+  "name": "Holy Aura"
+ },
+ {
+  "id": "incendiary-cloud",
+  "name": "Incendiary Cloud"
+ },
+ {
+  "id": "maze",
+  "name": "Maze"
+ },
+ {
+  "id": "mind-blank",
+  "name": "Mind Blank"
+ },
+ {
+  "id": "power-word-stun",
+  "name": "Power Word Stun"
+ },
+ {
+  "id": "sunburst",
+  "name": "Sunburst"
+ },
+ {
+  "id": "tsunami",
+  "name": "Tsunami"
+ },
+ {
+  "id": "astral-projection",
+  "name": "Astral Projection"
+ },
+ {
+  "id": "foresight",
+  "name": "Foresight"
+ },
+ {
+  "id": "gate",
+  "name": "Gate"
+ },
+ {
+  "id": "imprisonment",
+  "name": "Imprisonment"
+ },
+ {
+  "id": "mass-heal",
+  "name": "Mass Heal"
+ },
+ {
+  "id": "meteor-swarm",
+  "name": "Meteor Swarm"
+ },
+ {
+  "id": "power-word-heal",
+  "name": "Power Word Heal"
+ },
+ {
+  "id": "power-word-kill",
+  "name": "Power Word Kill"
+ },
+ {
+  "id": "prismatic-wall",
+  "name": "Prismatic Wall"
+ },
+ {
+  "id": "shapechange",
+  "name": "Shapechange"
+ },
+ {
+  "id": "storm-of-vengeance",
+  "name": "Storm of Vengeance"
+ },
+ {
+  "id": "time-stop",
+  "name": "Time Stop"
+ },
+ {
+  "id": "true-polymorph",
+  "name": "True Polymorph"
+ },
+ {
+  "id": "true-resurrection",
+  "name": "True Resurrection"
+ },
+ {
+  "id": "weird",
+  "name": "Weird"
+ },
+ {
+  "id": "wish",
+  "name": "Wish"
+ }
+]
