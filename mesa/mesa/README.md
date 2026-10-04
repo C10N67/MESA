@@ -974,6 +974,14 @@ activado «reducir movimiento» en su sistema no ve ninguna animación.
 Una criatura que sale de la niebla aparece sin deslizarse: si lo hiciera,
 enseñaría por dónde ha venido.
 
+## Qué versión tengo
+
+La versión de Mesa sale al final del menú **···** del DM («Mesa 2.18.0»). Si
+el navegador se quedara con una hoja de estilos de otra versión (lo nuevo
+aparece pero no hace nada, como un botón que no esconde nada), Mesa lo nota
+al entrar, vacía sus copias guardadas y la vuelve a pedir. Si aun así algo
+no cuadra, recarga con **Ctrl+Mayús+R** (Cmd+Mayús+R en Mac).
+
 ## Dónde viven los datos
 
 En la carpeta `data/` junto al programa: `mesa.json` con la partida e `images/`
@@ -1057,6 +1065,7 @@ public/
   css/mesa.css         estilos
   js/
     main.js            entrada a la partida y reparto de vistas
+    version.js         la versión de Mesa (igual en mesa.css y sw.js)
     net.js             conexión, reconexión y envío de operaciones
     engine.js          las reglas de la partida (lo usan el servidor y la versión de prueba)
     local.js           versión de prueba: habla con la partida que corre en el navegador

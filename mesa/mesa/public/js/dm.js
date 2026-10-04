@@ -17,6 +17,7 @@ import { openSpellbook } from "./spellbook.js";
 import { openGridFit, openWallFit } from "./gridfit.js";
 import { langPicker } from "./i18n.js";
 import { icon, withIcon, conditionIcon, conditionTone } from "./icons.js";
+import { VERSION } from "./version.js";
 import { rollHitPoints } from "./dice.js";
 import { TYPE_NAMES, typeOf, crValue, CATALOG_BY_ID } from "./catalog.js";
 
@@ -1175,7 +1176,7 @@ function renderMap() {
           <button class="btn sm map-stow" data-map="stowTools" title="Guardar las herramientas: el mapa queda limpio y un marcapáginas las vuelve a sacar">${withIcon("bookmark", "Guardar", 15)}</button>
         </div>
         <div class="board" id="board"><canvas id="canvas"></canvas><div class="coords" id="coords"></div></div>
-        <button type="button" class="tools-mark" data-map="unstowTools" title="Sacar las herramientas del mapa" aria-label="Sacar las herramientas del mapa">
+        <button type="button" class="tools-mark" style="display:none" data-map="unstowTools" title="Sacar las herramientas del mapa" aria-label="Sacar las herramientas del mapa">
           <span class="tools-mark-ribbon"></span></button>
       </div>`;
     fitMapPane();
@@ -1792,6 +1793,10 @@ function stowTools(on) {
   const wrap = $("#mapPane .map-wrap");
   if (!wrap) return;
   wrap.classList.toggle("tools-stowed", on);
+  /* También a mano: así funciona aunque el navegador tuviera una hoja de
+     estilos vieja (la clase solo pone el aspecto) */
+  wrap.querySelector(".map-bar").style.display = on ? "none" : "";
+  wrap.querySelector(".tools-mark").style.display = on ? "block" : "none";
   try { on ? localStorage.setItem(TOOLS_KEY, "1") : localStorage.removeItem(TOOLS_KEY); } catch {}
   if (on) {
     const current = wrap.querySelector("#tools [aria-pressed=true]") || wrap.querySelector("[aria-pressed=true]");
@@ -2019,6 +2024,7 @@ function openMenu() {
     ${item("import", "upload", "Cargar una copia", "Sustituye la partida por la de un archivo")}
     <div class="menu-item static"><span class="menu-ico">${icon("lang", 20)}</span><span class="menu-text"><b>Idioma</b><small>Solo cambia en este aparato</small></span><span id="menuLang"></span></div>
     ${item("leave", "exit", "Salir de la sesión", "Vuelves a la pantalla de entrada", "danger")}
+    <p class="menu-version">Mesa ${VERSION}</p>
     <input type="file" id="handoutFile" accept="image/*" hidden>
     <input type="file" id="importFile" accept="application/json" hidden>
   </div>`);

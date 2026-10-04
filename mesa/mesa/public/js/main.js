@@ -4,6 +4,7 @@ import { $, el, esc, toast, initials, imgURL } from "./util.js";
 import { icon, withIcon } from "./icons.js";
 import { store, savedSession, forgetSession, join, lobby, ping, connect, onState, DEMO } from "./net.js";
 import { startI18n, langPicker } from "./i18n.js";
+import { VERSION } from "./version.js";
 
 const SHARED = typeof SharedWorker === "function";
 
@@ -16,7 +17,21 @@ const askedRole = () => {
   return ["dm", "player", "screen"].includes(r) ? r : null;
 };
 
+/* ¿La hoja de estilos es de esta misma versión? Si el navegador se ha quedado
+   con una vieja (una caché terca, una copia a medio actualizar), lo nuevo
+   aparece pero no funciona: un botón que no esconde nada. Entonces se vacían
+   las copias guardadas y se pide la hoja otra vez, saltándose las cachés. */
+function checkStyles() {
+  const css = getComputedStyle(document.documentElement).getPropertyValue("--mesa-version").trim().replace(/["']/g, "");
+  if (css === VERSION) return;
+  console.warn(`Mesa ${VERSION}: la hoja de estilos es de otra versión (${css || "sin versión"}). Se vuelve a pedir.`);
+  if ("caches" in window) caches.keys().then(keys => keys.forEach(k => caches.delete(k))).catch(() => {});
+  const link = document.querySelector('link[rel="stylesheet"][href*="mesa.css"]');
+  if (link) link.href = `css/mesa.css?v=${VERSION}&t=${Date.now()}`;
+}
+
 async function boot() {
+  checkStyles();
   const wanted = askedRole();
   const saved = savedSession(wanted);
   if (saved && (!wanted || saved.role === wanted)) {
