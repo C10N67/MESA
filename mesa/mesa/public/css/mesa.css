@@ -11,7 +11,7 @@
    lejos) y la del sistema para el resto de la interfaz. */
 
 :root {
-  --mesa-version: "2.22.0";   /* igual que js/version.js y sw.js */
+  --mesa-version: "2.23.0";   /* igual que js/version.js y sw.js */
   --pitch: #0a0c11;
   --stone: #141821;
   --stone-2: #1b202b;
@@ -1231,6 +1231,13 @@ body.screen { background: #05060a; overflow: hidden; }
 @media (max-width: 1280px) {
   .top-actions #bestiaryBtn .lbl, .top-actions #restBtn .lbl { display: none; }
   .top-actions #bestiaryBtn, .top-actions #restBtn { padding: 7px 9px; }
+}
+@media (max-width: 1220px) {
+  .top-actions .btn:not(.primary) .lbl { display: none; }
+  .top-actions .btn:not(.primary) { padding: 7px 9px; }
+}
+@media (min-width: 701px) and (max-width: 1000px) {
+  .voice [data-voice="join"] .lbl { display: none; }
 }
 @media (max-width: 1080px) {
   .top-actions .btn .lbl { display: none; }
