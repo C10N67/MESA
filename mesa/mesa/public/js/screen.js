@@ -8,6 +8,7 @@ import { conditionName } from "./schema.js";
 import { MapView } from "./map.js";
 import { icon } from "./icons.js";
 import { langPicker } from "./i18n.js";
+import { playSoundscape } from "./soundscape.js";
 
 let mapView = null;
 let lastRollId = null;
@@ -60,6 +61,8 @@ let lastRound = null;
 
 function render() {
   if (!doc()) return;
+  /* El sonido del mapa suena aquí: es la vista de la party */
+  playSoundscape(doc().audio || null);
   const t = $("#stitle");
   if (t) t.textContent = doc().session.title || "";
   const { session, chars, maps } = doc();

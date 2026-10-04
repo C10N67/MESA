@@ -3,10 +3,11 @@
 import { afterMove } from "./portals.js";
 import { voiceWidget } from "./voice.js";
 import { $, el, on, esc, lines, sign, pct, hpTone, hpBar, tweenBars, initials, imgURL, toast, modal, confirmBox, shrinkImage, clamp } from "./util.js";
-import { CONDITIONS, conditionName, ABILITIES, SKILLS, PIN_KINDS, modOf, normalizeChar, normalizeBeast, bestiaryOf, isBaseBeast, normalizeMap, normalizePin, normalizePortal, uid, encounterDifficulty, MAX_COLS, MAX_ROWS } from "./schema.js";
+import { CONDITIONS, conditionName, ABILITIES, SKILLS, PIN_KINDS, modOf, normalizeChar, normalizeBeast, bestiaryOf, isBaseBeast, normalizeMap, normalizePin, normalizePortal, normalizeSound, SOUND_PRESETS, MAX_SOUNDS, uid, encounterDifficulty, MAX_COLS, MAX_ROWS } from "./schema.js";
 import { openAttacks, attacksOf } from "./attacks.js";
 import { feetChars, nextRoomId } from "./los.js";
-import { store, onState, onPresence, onStatus, op, patchChar, patchSession, patchMap, uploadImage, leave, lobby } from "./net.js";
+import { store, onState, onPresence, onStatus, op, patchChar, patchSession, patchMap, uploadImage, uploadAudio, leave, lobby } from "./net.js";
+import { previewSound } from "./soundscape.js";
 import { dicePanel, renderLog, throwDice, tellTable, currentMode, isSecret } from "./dice-panel.js";
 import { openCharEditor, openConditions } from "./char-editor.js";
 import { MapView } from "./map.js";
@@ -1127,6 +1128,7 @@ function renderMap() {
             <button data-tool="erase" aria-pressed="false" title="Quitar muros, diagonales y puertas">${icon("eraser", 15)}Borrar</button>
             <button data-tool="pin" aria-pressed="false" title="Clavar una nota">${icon("note", 15)}Nota</button>
             <button data-tool="portal" aria-pressed="false" title="Escalera o pasadizo: a otro mapa o a otro punto de este">${icon("stairs", 15)}Acceso</button>
+            <button data-tool="sound" aria-pressed="false" title="Fuente de sonido: la oye la party en su pantalla, más fuerte cuanto más cerca y apagada tras los muros">${icon("sound", 15)}Sonido</button>
             <button data-tool="draw" aria-pressed="false" title="Dibujar a mano alzada">${icon("scribble", 15)}Dibujar</button>
           </div>
           <div class="tool-set" id="terrain" aria-label="Terreno">
@@ -1203,6 +1205,7 @@ function renderMap() {
       },
       onPin: (x, y) => editPin({ x, y }),
       onPortal: (x, y) => editPortal({ x, y }),
+      onSound: (x, y) => editSound({ x, y }),
       onRoom: id => { const h = $("#mapHint"); if (h) h.textContent = roomHint(id); },
       onPing: (x, y) => op("ping", { x, y, mapId: activeMap().id }),
       onSelect: ids => { const h = $("#mapHint"); if (h) h.textContent = ids.length ? ids.length + " fichas elegidas" : ""; },
@@ -1228,8 +1231,10 @@ function renderMap() {
         door: "Pulsa un borde para una puerta recta, o el centro de una casilla para una en diagonal. Otra pulsación la abre o la cierra; para quitarla, Borrar",
         erase: "Arrastra para quitar muros y puertas; un muro a mano alzada se quita entero",
         pin: "Pulsa donde quieras clavar la nota",
-        portal: "Pulsa donde esté la escalera"
+        portal: "Pulsa donde esté la escalera",
+        sound: "Pulsa donde quieras una fuente de sonido, o una que ya esté para cambiarla"
       }[mapTool] || "";
+      mapView.draw();
       $("#mapHint", pane).textContent = hint;
     });
 
@@ -1447,6 +1452,140 @@ function editPortal(seed) {
   });
 }
 
+/* ---------- Sonidos del mapa ----------
+   Una fuente de sonido en una casilla: uno de los de serie o un archivo
+   tuyo. La oye la vista de la party (la pantalla de la tele), más fuerte
+   cuanto más cerca esté el personaje que mejor la oye, y más floja y
+   apagada detrás de muros y puertas cerradas. Tú no la oyes en la mesa:
+   para eso está «Escuchar». */
+const PRESET_NAME = Object.fromEntries(SOUND_PRESETS);
+const soundLabel = s => s.name || (s.audioId ? s.fileName || "Archivo propio" : PRESET_NAME[s.preset] || "Sonido");
+
+/* Los archivos que ya has subido, en cualquier mapa: se pueden reutilizar */
+function uploadedSounds() {
+  const out = new Map();
+  for (const m of doc().maps) for (const s of m.sounds || []) if (s.audioId && !out.has(s.audioId)) out.set(s.audioId, s.fileName || s.audioId);
+  return out;
+}
+
+function editSound(seed) {
+  const map = activeMap();
+  const existing = (map.sounds || []).find(s => seed.id ? s.id === seed.id : s.x === seed.x && s.y === seed.y);
+  if (!existing && (map.sounds || []).length >= MAX_SOUNDS) return toast(`Caben ${MAX_SOUNDS} sonidos por mapa`, "bad");
+  const sound = normalizeSound(existing || { ...seed, radius: 8, volume: 0.8 });
+  const files = uploadedSounds();
+  const current = () => body.querySelector('[name="source"]').value;
+  const option = (value, label, on) => `<option value="${esc(value)}" ${on ? "selected" : ""}>${esc(label)}</option>`;
+  const body = el(`<div>
+    <div class="cols2">
+      <label class="field"><span>Nombre</span><input name="name" value="${esc(sound.name)}" placeholder="${esc(soundLabel({ ...sound, name: "" }))}" maxlength="40"></label>
+      <label class="field"><span>Qué suena</span><select name="source">
+        <optgroup label="Sonidos de serie">
+          ${SOUND_PRESETS.map(([k, l]) => option("p:" + k, l, !sound.audioId && sound.preset === k)).join("")}
+        </optgroup>
+        <optgroup label="Tus sonidos" data-files>
+          ${[...files].map(([id, name]) => option("f:" + id, name, sound.audioId === id)).join("")}
+          ${option("upload", "Subir un archivo de audio…", false)}
+        </optgroup>
+      </select></label>
+    </div>
+    <input type="file" name="file" accept="audio/*,.mp3,.ogg,.wav,.m4a,.flac,.webm" hidden>
+    <div class="row" style="margin-bottom:12px">
+      <button type="button" class="btn sm" data-preview>${withIcon("play", "Escuchar", 15)}</button>
+      <span class="pill hidden" data-busy>Subiendo…</span>
+    </div>
+    <div class="cols2">
+      <label class="field"><span>Volumen <output data-vol>${Math.round(sound.volume * 100)}%</output></span>
+        <input name="volume" type="range" min="0" max="100" step="5" value="${Math.round(sound.volume * 100)}"></label>
+      <label class="field"><span>Se oye hasta (casillas)</span><input name="radius" type="number" min="1" max="40" value="${sound.radius}"></label>
+      <label class="field"><span>Casilla X</span><input name="x" type="number" min="0" max="${map.cols - 1}" value="${sound.x}"></label>
+      <label class="field"><span>Casilla Y</span><input name="y" type="number" min="0" max="${map.rows - 1}" value="${sound.y}"></label>
+    </div>
+    <label class="check"><input type="checkbox" name="on" ${sound.on ? "checked" : ""}> Sonando</label>
+    <p class="prose small" style="margin-top:10px"><span>Lo oye la pantalla de la party: más fuerte cuanto más cerca esté alguien de la party, y más flojo y apagado detrás de muros y puertas cerradas. Por una puerta abierta llega rodeando. Tú no lo oyes en la mesa.</span></p>
+  </div>`);
+
+  let lastSource = current();
+  let stop = null;
+  const halt = () => { if (stop) { stop(); stop = null; } };
+  const vol = body.querySelector('[name="volume"]');
+  vol.addEventListener("input", () => { body.querySelector("[data-vol]").textContent = vol.value + "%"; });
+
+  const fileInput = body.querySelector('[name="file"]');
+  const select = body.querySelector('[name="source"]');
+  select.addEventListener("change", () => {
+    halt();
+    if (select.value === "upload") { select.value = lastSource; fileInput.click(); }
+    else lastSource = select.value;
+  });
+  fileInput.addEventListener("change", async () => {
+    const f = fileInput.files[0];
+    fileInput.value = "";
+    if (!f) return;
+    if (f.size > 20 * 1024 * 1024) return toast("Ese archivo pasa de 20 MB: recórtalo o pásalo a MP3", "bad");
+    const busy = body.querySelector("[data-busy]");
+    busy.classList.remove("hidden");
+    try {
+      const id = await uploadAudio(f);
+      const name = f.name.replace(/\.[^.]+$/, "").slice(0, 80);
+      files.set(id, name);
+      const opt = document.createElement("option");
+      opt.value = "f:" + id;
+      opt.textContent = name;
+      const group = select.querySelector("[data-files]");
+      group.insertBefore(opt, group.lastElementChild);
+      select.value = lastSource = opt.value;
+      const nameInput = body.querySelector('[name="name"]');
+      if (!nameInput.value) nameInput.placeholder = name;
+      toast("Sonido subido", "good");
+    } catch (err) { toast(err.message, "bad"); }
+    busy.classList.add("hidden");
+  });
+
+  const read = () => {
+    const v = n => body.querySelector(`[name="${n}"]`);
+    const src = current();
+    const audioId = src.startsWith("f:") ? src.slice(2) : "";
+    return normalizeSound({
+      ...sound,
+      name: v("name").value.trim(),
+      preset: src.startsWith("p:") ? src.slice(2) : sound.preset,
+      audioId, fileName: audioId ? files.get(audioId) || "" : "",
+      volume: (+v("volume").value || 0) / 100,
+      radius: clamp(Math.trunc(+v("radius").value || 8), 1, 40),
+      x: clamp(Math.trunc(+v("x").value || 0), 0, map.cols - 1),
+      y: clamp(Math.trunc(+v("y").value || 0), 0, map.rows - 1),
+      on: v("on").checked
+    });
+  };
+
+  const previewBtn = body.querySelector("[data-preview]");
+  previewBtn.addEventListener("click", async () => {
+    if (stop) return halt();
+    try {
+      const s = read();
+      previewBtn.disabled = true;
+      stop = await previewSound({ preset: s.preset, audioId: s.audioId, volume: Math.max(0.3, s.volume) });
+      /* Se para solo al cerrar la ventana, la cierres como la cierres */
+      const watch = setInterval(() => { if (!body.isConnected) { clearInterval(watch); halt(); } }, 400);
+    } catch (err) { toast(err.message || "No se pudo reproducir", "bad"); }
+    previewBtn.disabled = false;
+  });
+
+  modal({
+    title: existing ? "Sonido: " + soundLabel(sound) : "Nueva fuente de sonido",
+    body,
+    actions: [
+      ...(existing ? [{ label: "Quitar", tone: "danger", run: () => { halt(); op("sound.set", { mapId: map.id, sound, remove: true }); } }] : []),
+      { label: "Cancelar", run: () => { halt(); } },
+      { label: "Guardar", tone: "primary", run: () => {
+        halt();
+        op("sound.set", { mapId: map.id, sound: read() });
+      } }
+    ]
+  });
+}
+
 const roomHint = id => `Sala ${id}: pinta a trazos, todo es la misma sala. Empieza dentro de otra para seguirla, o pulsa «Sala» otra vez para una nueva`;
 
 function paintEdge(key, tool) {
@@ -1465,6 +1604,10 @@ function mapAction(what) {
   if (what === "fit") return mapView.setZoom(1);
   if (what === "settings") return openMapSettings(map);
 }
+
+/* Cómo se pierde la vista tras un muro, en palabras */
+const fadeLabel = f => f >= 1 ? "difuminada, como siempre" : f <= 0 ? "se corta en seco"
+  : f <= 0.25 ? "se pierde muy rápido" : f <= 0.55 ? "se pierde rápido" : "se pierde poco a poco";
 
 function openMapSettings(map) {
   const body = el(`<div>
@@ -1509,6 +1652,23 @@ function openMapSettings(map) {
             <option value="alt" ${map.diagonals === "alt" ? "selected" : ""}>Variante 5-10-5</option>
           </select></label>
       </div>
+      <label class="field" style="margin-top:12px"><span>Vista tras los muros: <output data-fade>${fadeLabel(map.wallFade ?? 1)}</output></span>
+        <input name="wallFade" type="range" min="0" max="100" step="5" value="${Math.round((map.wallFade ?? 1) * 100)}"
+          title="Cuánto asoma lo que hay detrás de un muro antes de perderse de vista"></label>
+      <p class="prose small"><span>A la izquierda la vista se corta en seco en el muro; a la derecha se difumina y deja asomar un poco lo de detrás, como hasta ahora.</span></p>
+    </fieldset>
+    <fieldset>
+      <legend>Sonido</legend>
+      <div class="cols2">
+        <label class="field"><span>Volumen general <output data-svol>${Math.round((session().soundVolume ?? 0.8) * 100)}%</output></span>
+          <input name="soundVolume" type="range" min="0" max="100" step="5" value="${Math.round((session().soundVolume ?? 0.8) * 100)}"></label>
+        <div>
+          <label class="check"><input type="checkbox" name="soundMuted" ${session().soundMuted ? "checked" : ""}> Silenciar todo</label>
+          <label class="check" style="margin-top:8px"><input type="checkbox" name="soundOnPlayers" ${session().soundOnPlayers ? "checked" : ""}> Que suene también en los móviles de los jugadores</label>
+        </div>
+      </div>
+      <p class="prose small"><span>Suena en la pantalla de la party. En los móviles, solo si lo marcas (para jugar cada uno en su casa): cada uno oye lo que oye su personaje. Pon fuentes con la herramienta «Sonido» del mapa.</span></p>
+      <div class="sound-list" data-sounds></div>
     </fieldset>
     <div class="row">
       <button type="button" class="btn sm" id="resetFog">Restablecer niebla</button>
@@ -1521,6 +1681,31 @@ function openMapSettings(map) {
       <button type="button" class="btn sm danger" id="dropMap">Borrar este mapa</button>
     </div>
   </div>`);
+
+  const fade = body.querySelector('[name="wallFade"]');
+  fade.addEventListener("input", () => { body.querySelector("[data-fade]").textContent = fadeLabel(+fade.value / 100); });
+  const svol = body.querySelector('[name="soundVolume"]');
+  svol.addEventListener("input", () => { body.querySelector("[data-svol]").textContent = svol.value + "%"; });
+  /* Los sonidos de este mapa: encender y apagar al momento, o abrir uno */
+  const list = body.querySelector("[data-sounds]");
+  const fresh = () => doc().maps.find(m => m.id === map.id) || map;
+  const paintSounds = () => {
+    const sounds = fresh().sounds || [];
+    list.innerHTML = sounds.length ? sounds.map(s => `<div class="sound-row">
+        <label class="check"><input type="checkbox" data-sound-on="${esc(s.id)}" ${s.on ? "checked" : ""}> ${esc(soundLabel(s))}</label>
+        <small>${s.x}, ${s.y} · ${s.radius} casillas · ${Math.round(s.volume * 100)}%</small>
+        <button type="button" class="btn sm" data-sound-edit="${esc(s.id)}">Cambiar</button>
+      </div>`).join("") : `<p class="prose small"><span>Este mapa todavía no tiene sonidos.</span></p>`;
+  };
+  paintSounds();
+  on(list, "change", "[data-sound-on]", (e, b) => {
+    const s = (fresh().sounds || []).find(x => x.id === b.dataset.soundOn);
+    if (s) op("sound.set", { mapId: map.id, sound: { ...s, on: b.checked } });
+  });
+  on(list, "click", "[data-sound-edit]", (e, b) => {
+    const s = (fresh().sounds || []).find(x => x.id === b.dataset.soundEdit);
+    if (s && fresh() === activeMap()) { win.close(); editSound({ id: s.id }); }
+  });
 
   const file = body.querySelector("#imgFile");
   /* Si se encaja la cuadrícula con este formulario abierto, que «Guardar» no
@@ -1592,7 +1777,8 @@ function openMapSettings(map) {
           dark: v("dark").checked,
           playerZoom: v("playerZoom").checked,
           feet: +v("feet").value || 5,
-          diagonals: v("diagonals").value
+          diagonals: v("diagonals").value,
+          wallFade: clamp((+v("wallFade").value || 0) / 100, 0, 1)
         });
         patchSession({
           showMapToParty: v("show").checked,
@@ -1601,7 +1787,10 @@ function openMapSettings(map) {
           allowPlayerDraw: v("draw").checked,
           showWallsToParty: v("walls").checked,
           showMoveRange: v("range").checked,
-          showFoeHP: v("foehp").checked
+          showFoeHP: v("foehp").checked,
+          soundVolume: clamp((+v("soundVolume").value || 0) / 100, 0, 1),
+          soundMuted: v("soundMuted").checked,
+          soundOnPlayers: v("soundOnPlayers").checked
         });
       }
     }]

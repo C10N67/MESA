@@ -1354,3 +1354,25 @@ ul.plain b { color: var(--vellum); }
 .gridfit-range-row { display: flex; align-items: center; gap: 10px; }
 .gridfit-range-row input { flex: 1; }
 .gridfit-range-row small { color: var(--dim); white-space: nowrap; }
+
+/* ---------- Sonido del mapa ---------- */
+/* Los navegadores no dejan sonar nada hasta que alguien toca la página: en la
+   tele sale este botón mientras haga falta */
+.sound-unlock {
+  position: fixed; left: 50%; top: max(14px, env(safe-area-inset-top)); transform: translateX(-50%);
+  z-index: 60; display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 18px; border-radius: 99px; border: 1px solid #3f7f88;
+  background: rgba(14, 34, 40, .94); color: #bfe7ec; font: 600 14px/1.2 var(--sans);
+  box-shadow: var(--shadow); cursor: pointer; animation: fadeIn .3s ease both;
+}
+.sound-unlock:hover { background: rgba(20, 48, 56, .96); }
+.sound-list { display: grid; gap: 6px; margin-top: 10px; }
+.sound-row {
+  display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 10px;
+  padding: 6px 10px; border: 1px solid var(--edge); border-radius: 10px; background: #0e1219;
+}
+.sound-row small { color: var(--dim); white-space: nowrap; }
+@media (max-width: 560px) {
+  .sound-row { grid-template-columns: 1fr auto; }
+  .sound-row small { grid-column: 1 / -1; order: 3; }
+}

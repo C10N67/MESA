@@ -6,7 +6,7 @@
    party solo recibe lo que su personaje alcanza a ver. */
 
 import { cellKey, edgeKey, clamp, footprint, conditionName } from "./schema.js";
-import { visibleCells, reachableCells, shapeCells, gridDistance, occupied, fits, nextRoomId } from "./los.js";
+import { visibleCells, reachableCells, shapeCells, gridDistance, occupied, fits, nextRoomId, blockingSegments, hasSight } from "./los.js";
 import { initials, imgURL, pct, hpTone, reducedMotion } from "./util.js";
 import { drawGlyph } from "./icons.js";
 
@@ -400,6 +400,7 @@ export class MapView {
       }
       if (this.mode === "dm" && this.tool === "pin") return this.opts.onPin && this.opts.onPin(p.x, p.y);
       if (this.mode === "dm" && this.tool === "portal") return this.opts.onPortal && this.opts.onPortal(p.x, p.y);
+      if (this.mode === "dm" && this.tool === "sound") return this.opts.onSound && this.opts.onSound(p.x, p.y);
 
       const token = this.tokenAt(p.x, p.y);
       if (token && this.canDrag(token)) {
@@ -985,6 +986,10 @@ export class MapView {
       this.pinBadge(ctx, g, pin, X, Y);
     }
 
+    /* Fuentes de sonido: solo el DM sabe dónde están. El aro es hasta dónde
+       se oyen; con la herramienta de sonido en la mano se ve más. */
+    if (dm) for (const s of map.sounds || []) this.soundBadge(ctx, g, s, X, Y, this.tool === "sound");
+
     /* Dibujos a mano alzada, y el que se está haciendo ahora */
     for (const d of map.drawings || []) this.stroke2d(ctx, g, d.points, d.color, d.width, X, Y, dm && !d.party);
     if (this.stroke) this.stroke2d(ctx, g, this.stroke.points, this.drawColor || "#e0bd76", this.drawWidth || 0.08, X, Y, false);
@@ -1202,6 +1207,8 @@ export class MapView {
     ctx.rect(X(0), Y(0), map.cols * g.cell, map.rows * g.cell);
     ctx.clip();
     ctx.drawImage(fog.soft, X(-1), Y(-1), (map.cols + 2) * g.cell, (map.rows + 2) * g.cell);
+    const shade = this.wallShade(map, seen, known, fog);
+    if (shade) ctx.drawImage(shade, X(0), Y(0), map.cols * g.cell, map.rows * g.cell);
     ctx.restore();
 
     /* Algo se mueve en la penumbra: una sombra con un interrogante, sin
@@ -1224,6 +1231,125 @@ export class MapView {
       }
       ctx.restore();
     }
+  }
+
+  /* La sombra de los muros. La niebla difuminada deja asomar un poco lo que
+     hay al otro lado de un muro, y un muro a mano alzada que cruza una casilla
+     vista enseña entera la mitad de detrás. Con «wallFade» por debajo de 1
+     se tapa: detrás de cada muro, en la sombra que proyecta desde quienes
+     miran, la vista se apaga en esa profundidad (en casillas; 0, en seco).
+
+     Para no tapar lo que sí se ve, la sombra de un muro es la intersección
+     de las de cada personaje que alcanza a verlo (si alguien lo ve desde el
+     otro lado, no hay sombra), y no se pinta sobre casillas vistas, salvo en
+     las que el propio muro atraviesa, ni sobre lo explorado o la penumbra.
+     Se pinta en un lienzo aparte y solo se rehace cuando cambia algo de eso. */
+  wallShade(map, seen, known, fog) {
+    const fade = map.wallFade ?? 1;
+    if (!(fade < 1) || !seen) return null;
+    const occ = map.occluders || map;
+    const viewers = (this.data.chars || []).filter(c => c.kind === "pc" && c.hp > 0 && c.mx !== null && c.mapId === map.id)
+      .map(c => {
+        const trueSight = Math.min(40, Math.max(c.vision || 0, c.light || 0));
+        const reach = Math.max(trueSight, Math.min(60, map.dark ? trueSight : Math.max(map.radius || 0, trueSight)));
+        return { x: c.mx + 0.5, y: c.my + 0.5, reach };
+      })
+      .filter(v => v.reach > 0);
+    const edges = occ.edges || {}, walls = occ.walls || [];
+    const key = [fog.key, fade, map.cols, map.rows, viewers.map(v => v.x + ":" + v.y + ":" + v.reach).join(";"),
+      Object.keys(edges).length, Object.values(edges).filter(v => v === "door").length,
+      walls.length, walls.reduce((n, w) => n + w.points.length, 0)].join("|");
+    if (this._shade && this._shade.key === key) return this._shade.canvas;
+    if (!viewers.length) { this._shade = { key, canvas: null }; return null; }
+
+    /* Resolución: unas cuantas decenas de píxeles por casilla, sin pasar de
+       unos pocos millones de píxeles en total */
+    const R = Math.max(6, Math.min(32, Math.floor(Math.sqrt(3.5e6 / (map.cols * map.rows)))));
+    const canvas = (this._shade && this._shade.canvas) || document.createElement("canvas");
+    canvas.width = map.cols * R; canvas.height = map.rows * R;
+    const sctx = canvas.getContext("2d");
+    sctx.setTransform(1, 0, 0, 1, 0, 0);
+    sctx.clearRect(0, 0, canvas.width, canvas.height);
+    sctx.setTransform(R, 0, 0, R, 0, 0);
+
+    const fringe = new Set(map.fringe || []);
+    const nearSeen = (x, y) => {
+      const cx = Math.floor(x), cy = Math.floor(y);
+      for (let oy = -1; oy <= 1; oy++) for (let ox = -1; ox <= 1; ox++) if (seen.has(cellKey(cx + ox, cy + oy))) return true;
+      return false;
+    };
+    const segDistTo = (v, s) => segDist(v.x, v.y, [s.x1, s.y1], [s.x2, s.y2]);
+    const crossed = new Set();      // casillas vistas que atraviesa un muro
+    const LONG = 2.5;               // hasta dónde se alarga la sombra, en casillas
+    const occMap = { edges, walls };
+    /* Cuenta quien alcanza el muro y lo tiene a la vista: el lado del muro
+       que da a él no queda tapado por otro muro */
+    const facing = (v, s) => {
+      if (segDistTo(v, s) > v.reach + 1.5) return false;
+      const mx = (s.x1 + s.x2) / 2, my = (s.y1 + s.y2) / 2, len = Math.hypot(s.x2 - s.x1, s.y2 - s.y1);
+      let nx = -(s.y2 - s.y1) / len, ny = (s.x2 - s.x1) / len;
+      if ((v.x - mx) * nx + (v.y - my) * ny < 0) { nx = -nx; ny = -ny; }
+      /* La casilla de delante del muro; si un muro a mano alzada deja su
+         centro al otro lado, la siguiente */
+      return [0.35, 0.85].some(k => hasSight(occMap, Math.floor(v.x), Math.floor(v.y), Math.floor(mx + nx * k), Math.floor(my + ny * k)));
+    };
+    for (const s of blockingSegments(occMap)) {
+      if (!nearSeen(s.x1, s.y1) && !nearSeen(s.x2, s.y2) && !nearSeen((s.x1 + s.x2) / 2, (s.y1 + s.y2) / 2)) continue;
+      const who = viewers.filter(v => facing(v, s));
+      if (!who.length) continue;
+      if (s.cross) {
+        const len = Math.hypot(s.x2 - s.x1, s.y2 - s.y1), n = Math.max(1, Math.ceil(len * 8));
+        for (let i = 0; i <= n; i++) {
+          const t = i / n;
+          crossed.add(cellKey(Math.floor(s.x1 + (s.x2 - s.x1) * t), Math.floor(s.y1 + (s.y2 - s.y1) * t)));
+        }
+      }
+      sctx.save();
+      let empty = false;
+      for (const v of who) {
+        const ax = s.x1 - v.x, ay = s.y1 - v.y, bx = s.x2 - v.x, by = s.y2 - v.y;
+        const la = Math.hypot(ax, ay), lb = Math.hypot(bx, by);
+        if (la < 1e-3 || lb < 1e-3 || Math.abs(ax * by - ay * bx) < 1e-6) { empty = true; break; }   // de canto o encima: no proyecta
+        sctx.beginPath();
+        sctx.moveTo(s.x1, s.y1);
+        sctx.lineTo(s.x2, s.y2);
+        sctx.lineTo(s.x2 + bx / lb * LONG, s.y2 + by / lb * LONG);
+        sctx.lineTo(s.x1 + ax / la * LONG, s.y1 + ay / la * LONG);
+        sctx.closePath();
+        sctx.clip();
+      }
+      if (!empty) {
+        /* Degradado perpendicular al muro, del lado contrario a quien mira */
+        const dx = s.x2 - s.x1, dy = s.y2 - s.y1, len = Math.hypot(dx, dy);
+        let nx = -dy / len, ny = dx / len;
+        const v = who[0];
+        if ((v.x - s.x1) * nx + (v.y - s.y1) * ny > 0) { nx = -nx; ny = -ny; }
+        if (fade > 0.01) {
+          const mx = (s.x1 + s.x2) / 2, my = (s.y1 + s.y2) / 2;
+          const grad = sctx.createLinearGradient(mx, my, mx + nx * fade, my + ny * fade);
+          grad.addColorStop(0, "rgba(5,6,10,0)");
+          grad.addColorStop(1, "rgba(5,6,10,1)");
+          sctx.fillStyle = grad;
+        } else sctx.fillStyle = "rgb(5,6,10)";
+        const pad = LONG + 1;
+        sctx.fillRect(Math.min(s.x1, s.x2) - pad, Math.min(s.y1, s.y2) - pad, Math.abs(dx) + pad * 2, Math.abs(dy) + pad * 2);
+      }
+      sctx.restore();
+    }
+
+    /* Lo que se ve de verdad, lo explorado y la penumbra se quedan como están */
+    sctx.globalCompositeOperation = "destination-out";
+    sctx.fillStyle = "#000";
+    const keep = k => {
+      const [x, y] = k.split(",").map(Number);
+      sctx.fillRect(x, y, 1, 1);
+    };
+    for (const k of seen) if (!crossed.has(k)) keep(k);
+    for (const k of known) if (!seen.has(k)) keep(k);
+    for (const k of fringe) keep(k);
+    sctx.globalCompositeOperation = "source-over";
+    this._shade = { key, canvas };
+    return canvas;
   }
 
   dmLayers(ctx, g, map, X, Y) {
@@ -1320,6 +1446,31 @@ export class MapView {
       }
       ctx.restore();
     }
+  }
+
+  soundBadge(ctx, g, s, X, Y, active) {
+    const cx = X(s.x) + g.cell / 2, cy = Y(s.y) + g.cell / 2;
+    const tone = s.on ? "94,184,196" : "150,150,160";
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx, cy, s.radius * g.cell, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${tone},${active ? 0.07 : 0.03})`;
+    ctx.fill();
+    /* Un filo oscuro debajo, para que el aro se lea también sobre un plano claro */
+    ctx.strokeStyle = `rgba(4,10,12,${active ? 0.5 : 0.22})`;
+    ctx.lineWidth = Math.max(2, g.cell * 0.07);
+    ctx.stroke();
+    ctx.strokeStyle = `rgba(${tone},${active ? 0.85 : 0.35})`;
+    ctx.lineWidth = Math.max(1, g.cell * 0.03);
+    ctx.setLineDash([g.cell * 0.2, g.cell * 0.16]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    const r = Math.max(7, g.cell * 0.36);
+    ctx.fillStyle = s.on ? "rgba(18,44,50,.92)" : "rgba(30,30,36,.9)";
+    ctx.strokeStyle = `rgb(${tone})`;
+    ctx.lineWidth = Math.max(1.5, g.cell * 0.05);
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    if (g.cell > 12) drawGlyph(ctx, s.on ? "sound" : "soundOff", cx, cy, r * 1.3, `rgb(${tone})`);
+    ctx.restore();
   }
 
   pinBadge(ctx, g, pin, X, Y) {

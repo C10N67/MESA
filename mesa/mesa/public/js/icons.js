@@ -87,6 +87,8 @@ const P = {
   mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/>',
   micOff: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 10.7 5"/><path d="M12 17.5V21"/><path d="M4 4l16 16"/>',
   headset: '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/>',
+  sound: '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4v-5Z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/>',
+  soundOff: '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4v-5Z"/><path d="m16 9.5 5 5M21 9.5l-5 5"/>',
   wand: '<path d="M4 20 15 9"/><path d="m14 4 1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2Z"/><path d="m19 11 .6 1.2 1.2.6-1.2.6-.6 1.2-.6-1.2-1.2-.6 1.2-.6.6-1.2Z"/>',
 };
 
@@ -122,6 +124,16 @@ export function drawGlyph(ctx, name, cx, cy, size, color) {
     ctx.beginPath();
     ctx.moveTo(3.5, 20.5); ctx.lineTo(7.5, 20.5); ctx.lineTo(7.5, 16.5); ctx.lineTo(11.5, 16.5);
     ctx.lineTo(11.5, 12.5); ctx.lineTo(15.5, 12.5); ctx.lineTo(15.5, 8.5); ctx.lineTo(19.5, 8.5);
+    ctx.stroke();
+  } else if (name === "sound" || name === "soundOff") {
+    ctx.beginPath();
+    ctx.moveTo(4, 9.5); ctx.lineTo(7.5, 9.5); ctx.lineTo(12, 5.5); ctx.lineTo(12, 18.5); ctx.lineTo(7.5, 14.5); ctx.lineTo(4, 14.5); ctx.closePath();
+    ctx.globalAlpha = 0.3; ctx.fill(); ctx.globalAlpha = 1; ctx.stroke();
+    ctx.beginPath();
+    if (name === "sound") {
+      ctx.arc(13.5, 12, 3.6, -0.98, 0.98);
+      ctx.moveTo(18, 6.5); ctx.arc(13.5, 12, 7.1, -0.89, 0.89);
+    } else { ctx.moveTo(16, 9.5); ctx.lineTo(21, 14.5); ctx.moveTo(21, 9.5); ctx.lineTo(16, 14.5); }
     ctx.stroke();
   }
   ctx.restore();

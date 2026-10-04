@@ -11,9 +11,10 @@
      absorbImages(d) saca las imágenes incrustadas de una copia antigua
      onPresence()    avisa de que ha cambiado quién está conectado */
 
-import { emptyDoc, migrate, cellKey, normalizeChar, normalizeBeast, normalizeMap, normalizeShape, normalizePin, normalizePortal, normalizeAttack, normalizeDrawing, normalizeWall, MAX_WALLS, modOf, addDice, scaleDice, cantripTier } from "./schema.js";
+import { emptyDoc, migrate, cellKey, normalizeChar, normalizeBeast, normalizeMap, normalizeShape, normalizePin, normalizePortal, normalizeSound, MAX_SOUNDS, normalizeAttack, normalizeDrawing, normalizeWall, MAX_WALLS, modOf, addDice, scaleDice, cantripTier } from "./schema.js";
 import { visibleCells, fringeCells, edgesNear, wallsNear, gridDistance, pathCost, occupied, fits, reachableCells } from "./los.js";
 import { roll, detail } from "./dice.js";
+import { partyHearing, mixFor } from "./hearing.js";
 import { critDamage } from "./attacks-core.js";
 
 export const ROLES = ["dm", "player", "screen"];
@@ -78,11 +79,30 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
 
   function redact(client) {
     if (client.role === "dm") return { ...doc, you: null };
-    if (!partyCache || partyCache.rev !== rev) partyCache = { rev, view: partyView() };
+    if (!partyCache || partyCache.rev !== rev) partyCache = { rev, view: partyView(), hearing: null };
     return {
       ...partyCache.view,
       log: doc.log.filter(e => canRead(client, e)),
+      audio: audioFor(client),
       you: client.charId || null
+    };
+  }
+
+  /* El sonido del mapa. Suena en la pantalla de la party y, si el DM quiere,
+     también en los móviles: cada uno, lo que oye su personaje. Solo viaja a
+     qué volumen llega cada sonido, no dónde está. */
+  function audioFor(client) {
+    const s = doc.session;
+    const phone = client.role === "player";
+    if (phone && !s.soundOnPlayers) return null;
+    const map = doc.maps.find(m => m.id === s.activeMapId) || null;
+    if (!map || !(map.sounds || []).length) return { volume: 0, sources: [] };
+    if (!partyCache.hearing) partyCache.hearing = partyHearing(doc, map);
+    const mine = phone && client.charId ? doc.chars.find(c => c.id === client.charId) : null;
+    const own = mine && mine.hp > 0 && mine.mx !== null && mine.mapId === map.id ? mine.id : null;
+    return {
+      volume: s.soundMuted ? 0 : Math.max(0, Math.min(1, Number(s.soundVolume ?? 0.8))),
+      sources: mixFor(partyCache.hearing, own)
     };
   }
 
@@ -166,6 +186,13 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
            solo deja de viajar el dibujo */
         edges: doc.session.showWallsToParty === false ? {} : doc.session.revealAll ? map.edges : edgesNear(map, seen, explored),
         walls: doc.session.showWallsToParty === false ? [] : doc.session.revealAll ? map.walls || [] : wallsNear(map, seen, explored),
+        /* Cómo se apaga la vista detrás de un muro. Para recortarla hacen
+           falta los muros cercanos aunque el DM no quiera que se dibujen:
+           entonces viajan aparte, solo los que cortan la vista. */
+        wallFade: map.wallFade ?? 1,
+        occluders: (map.wallFade ?? 1) < 1 && !doc.session.revealAll && doc.session.showWallsToParty === false
+          ? { edges: blockingOnly(edgesNear(map, seen, explored)), walls: wallsNear(map, seen, explored) }
+          : null,
         dark: map.dark, feet: map.feet, diagonals: map.diagonals, playerZoom: map.playerZoom,
         cells: pickCells(map, seen, explored),
         shapes: (map.shapes || []).filter(sh => sh.party),
@@ -190,6 +217,12 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
       session: { ...doc.session, notes: "", alert: null, activeMapId: showMap ? map.id : "" }
     };
   }
+
+  const blockingOnly = edges => {
+    const out = {};
+    for (const [k, v] of Object.entries(edges)) if (v === "wall" || v === "door") out[k] = v;
+    return out;
+  };
 
   /* ---------- Lo que la party ha llegado a ver ----------
      Se calcula una vez por difusión, antes de repartir. Aquí es donde el mapa
@@ -706,6 +739,10 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         if (op.fields && "walls" in op.fields) {
           m.walls = (Array.isArray(m.walls) ? m.walls : []).map(normalizeWall).filter(w => w.points.length > 1).slice(-MAX_WALLS);
         }
+        if (op.fields && "sounds" in op.fields) {
+          m.sounds = (Array.isArray(m.sounds) ? m.sounds : []).map(normalizeSound).slice(0, MAX_SOUNDS);
+        }
+        if (op.fields && "wallFade" in op.fields) m.wallFade = Math.max(0, Math.min(1, Number(m.wallFade) || 0));
         break;
       }
       case "map.add":
@@ -898,6 +935,17 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         const pin = normalizePin({ ...op.pin, discovered: op.pin.discovered ?? (previous && previous.discovered) });
         const list = (m.pins || []).filter(p => p.id !== pin.id);
         m.pins = op.remove ? list : [...list, pin];
+        break;
+      }
+      /* Fuentes de sonido: solo las ve el DM; la party solo las oye */
+      case "sound.set": {
+        if (!dm) return "Solo el DM";
+        const m = doc.maps.find(x => x.id === (op.mapId || doc.session.activeMapId));
+        if (!m) return "No existe ese mapa";
+        const sound = normalizeSound(op.sound || {});
+        const list = (m.sounds || []).filter(x => x.id !== sound.id);
+        if (!op.remove && list.length >= MAX_SOUNDS) return `Caben ${MAX_SOUNDS} sonidos por mapa`;
+        m.sounds = op.remove ? list : [...list, sound];
         break;
       }
       case "portal.set": {

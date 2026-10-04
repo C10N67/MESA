@@ -105,6 +105,14 @@ const http = {
     if (!res.ok) throw new Error(data.error || "No se pudo subir la imagen");
     return data.imageId;
   },
+  async audio(token, blob) {
+    const res = await fetch("api/audio?token=" + encodeURIComponent(token), {
+      method: "POST", headers: { "Content-Type": blob.type }, body: blob
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || (res.status === 413 ? "El archivo es demasiado grande" : "No se pudo subir el sonido"));
+    return data.audioId;
+  },
   async rtc(token, to, data) {
     const res = await fetch("api/rtc", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, to, data }) });
     return res.ok;
@@ -204,6 +212,16 @@ export async function sendRtc(to, data) {
 
 export async function uploadImage(blob) {
   return (await transport()).image(store.session.token, blob);
+}
+
+/* Un sonido para el mapa. Si el navegador no sabe de qué tipo es (pasa con
+   algunos .m4a en Windows), se deduce de la extensión. */
+const AUDIO_BY_EXT = { mp3: "audio/mpeg", ogg: "audio/ogg", oga: "audio/ogg", wav: "audio/wav", webm: "audio/webm", m4a: "audio/mp4", aac: "audio/aac", flac: "audio/flac" };
+export async function uploadAudio(file) {
+  const ext = String(file.name || "").split(".").pop().toLowerCase();
+  const type = /^audio\//.test(file.type) && file.type !== "audio/x-m4a" ? file.type : AUDIO_BY_EXT[ext] || file.type;
+  const blob = type === file.type ? file : new Blob([file], { type });
+  return (await transport()).audio(store.session.token, blob);
 }
 
 /* Ayuda de la IA (Claude o Gemini) para los muros del plano. Habla con el

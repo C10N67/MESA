@@ -611,6 +611,61 @@ vista y el paso igual, solo deja de verse la línea), si puede acercarse y aleja
 si se pinta el alcance al arrastrar, cuántos pies mide una casilla, cómo cuentan
 las diagonales y si la cámara enseña todo el plano o sigue al personaje.
 
+### Lo que asoma detrás de un muro
+
+El borde de lo que se ve sale difuminado, y por eso detrás de un muro asoma un
+poco de lo que hay al otro lado; con un muro a mano alzada que cruza una
+casilla vista, se veía entera la mitad de detrás. En **Ajustes del mapa →
+Vista tras los muros** eliges cómo de rápido se pierde la vista detrás de un
+muro, mapa a mapa:
+
+- **Del todo a la derecha**, como siempre: difuminada, asoma un poco.
+- **Más a la izquierda**, la vista se apaga antes: el control es la
+  profundidad (hasta una casilla) en la que lo de detrás se funde a negro.
+- **Del todo a la izquierda**, se corta en seco justo en el muro.
+
+La sombra la proyecta cada muro (recto, diagonal o a mano alzada) desde los
+personajes que lo tienen delante. Si alguien lo ve desde el otro lado, no hay
+sombra, y nunca tapa lo que la party ve de verdad, lo que recuerda haber
+explorado ni la penumbra. Por una puerta abierta se ve el cono que deja el
+hueco. Funciona igual aunque no enseñes los muros a la party: para recortar la
+vista le llegan solo los que tiene cerca, sin dibujarlos.
+
+### Sonido en el mapa
+
+Con la herramienta **Sonido** pones fuentes de sonido en el plano: pulsa una
+casilla para una nueva, o una que ya esté para cambiarla. Cada una tiene:
+
+- **Qué suena**: uno de los **sonidos de serie** (hoguera, lluvia, viento,
+  río, cueva con goteo, bosque con pájaros, zumbido arcano, tambores de guerra
+  y un laúd que toca en bucle) o **un archivo tuyo** (MP3, OGG, WAV, M4A o
+  FLAC, hasta 20 MB). Los de serie no son archivos: Mesa los sintetiza en el
+  navegador, así que no pesan nada y suenan sin internet. Lo que subas queda en
+  la lista **Tus sonidos** para reutilizarlo en otros puntos u otros mapas.
+- **Volumen** y **hasta dónde se oye**, en casillas.
+- Si está **sonando** o no. Con **Escuchar** lo oyes tú en tu aparato antes
+  de ponerlo.
+
+Lo oye **la vista de la party**, la pantalla de la tele, no tú. Suena más fuerte
+cuanto más cerca está el personaje que mejor lo oye, y las paredes cuentan: a
+través de un muro o una puerta cerrada llega mucho más flojo y apagado (se
+pierden los agudos, como la música de una taberna oída desde la calle). Por
+una puerta abierta o un hueco, el sonido llega **rodeando**, sin apagarse,
+aunque más flojo cuanto más hay que andar. Al moverse alguien, el volumen
+cambia suave.
+
+Dónde están las fuentes no sale de tu aparato: a la tele solo le llega a qué
+volumen le llega cada sonido.
+
+En **Ajustes del mapa → Sonido** están el volumen general, **Silenciar todo**,
+la lista de sonidos del mapa para encenderlos y apagarlos al momento, y
+**Que suene también en los móviles de los jugadores**, para cuando cada uno
+juega desde su casa: entonces cada móvil oye lo que oye su personaje.
+
+Los navegadores no dejan sonar nada hasta que alguien toca la página: si la
+tele acaba de abrirse, sale arriba un botón **Activar el sonido**. Basta con
+pulsarlo (o con el doble clic de pantalla completa).
+
 ### Salas, zonas reveladas y zonas ocultas
 
 Tres pinceles más, en el grupo **Zonas**, que solo ve el DM (la party nunca
@@ -863,6 +918,9 @@ public/
     local-worker.js    versión de prueba: lo comparte entre pestañas
     schema.js          forma de los datos y migración (lo usan servidor y navegador)
     los.js             muros, luz, visión, distancias y plantillas (compartido)
+    hearing.js         cuánto oye la party cada fuente de sonido (compartido)
+    synth.js           los sonidos de serie, sintetizados en el navegador
+    soundscape.js      hacer sonar el mapa en la pantalla de la party
     attacks.js         leer y lanzar ataques
     spells.js          biblioteca de conjuros del SRD
     spellbook.js       lista de conjuros de cada personaje y ventana de lanzar
@@ -892,7 +950,7 @@ data/                  la partida, las imágenes y las claves de la IA si las gu
   casillas que su party ve; el servidor lo comprueba, no el navegador.
 - Lo que un jugador no debe saber no se le manda: ni la CA de un monstruo, ni
   sus PV exactos, ni tus notas del mapa, ni las plantillas que no compartas, ni
-  los susurros de otro.
+  los susurros de otro, ni dónde están las fuentes de sonido.
 - Las tiradas de ataque y el reparto de puntos de vida se resuelven en el
   servidor. Nadie puede decidir desde su navegador que ha impactado.
 - La voz va de aparato a aparato. El servidor solo reenvía los mensajes para

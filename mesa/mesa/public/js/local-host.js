@@ -49,10 +49,16 @@ async function kvSet(key, value) {
 
 /* ---------- Imágenes ---------- */
 const EXT = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif" };
+const AUDIO_EXT = {
+  "audio/mpeg": "mp3", "audio/mp3": "mp3", "audio/ogg": "ogg", "audio/wav": "wav", "audio/x-wav": "wav",
+  "audio/wave": "wav", "audio/webm": "webm", "audio/mp4": "m4a", "audio/x-m4a": "m4a", "audio/aac": "aac",
+  "audio/flac": "flac", "audio/x-flac": "flac"
+};
 
-async function storeImage(base, blob) {
-  const ext = EXT[blob.type];
-  if (!ext) throw new Error("Formato de imagen no admitido");
+/* Los sonidos del DM se guardan igual que las imágenes */
+async function storeImage(base, blob, kinds = EXT) {
+  const ext = kinds[blob.type];
+  if (!ext) throw new Error(kinds === EXT ? "Formato de imagen no admitido" : "Formato de audio no admitido: usa MP3, OGG, WAV, M4A o FLAC");
   const id = rid(8) + "." + ext;
   const cache = await caches.open(IMG_CACHE);
   await cache.put(new URL("img/" + id, base).href, new Response(blob, {
@@ -187,6 +193,11 @@ export function createHost(base) {
       case "image": {
         if (!c) throw new Error("sesión caducada");
         return storeImage(base, msg.blob);
+      }
+      case "audio": {
+        if (!c) throw new Error("sesión caducada");
+        if (c.role !== "dm") throw new Error("Solo el DM");
+        return storeImage(base, msg.blob, AUDIO_EXT);
       }
       case "leave": {
         ports.delete(msg.token);

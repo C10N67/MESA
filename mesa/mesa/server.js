@@ -64,6 +64,13 @@ const ai = { claude: createClaude({ dataDir: DATA }), gemini: createGemini({ dat
 
 const MAX_BODY = 24 * 1024 * 1024;   // 24 MB: cabe un plano grande
 const IMG_TYPES = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif" };
+/* Los sonidos que sube el DM para el mapa. Se guardan con las imágenes. */
+const AUDIO_TYPES = {
+  "audio/mpeg": "mp3", "audio/mp3": "mp3", "audio/ogg": "ogg", "audio/wav": "wav", "audio/x-wav": "wav",
+  "audio/wave": "wav", "audio/webm": "webm", "audio/mp4": "m4a", "audio/x-m4a": "m4a", "audio/aac": "aac",
+  "audio/flac": "flac", "audio/x-flac": "flac"
+};
+const MAX_AUDIO = 20 * 1024 * 1024;
 
 async function boot() {
   await mkdir(IMAGES, { recursive: true });
@@ -141,7 +148,9 @@ const MIME = {
   ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8",
   ".css": "text/css; charset=utf-8", ".json": "application/json; charset=utf-8",
   ".png": "image/png", ".jpg": "image/jpeg", ".webp": "image/webp",
-  ".svg": "image/svg+xml", ".ico": "image/x-icon", ".woff2": "font/woff2", ".webmanifest": "application/manifest+json"
+  ".svg": "image/svg+xml", ".ico": "image/x-icon", ".woff2": "font/woff2", ".webmanifest": "application/manifest+json",
+  ".gif": "image/gif", ".mp3": "audio/mpeg", ".ogg": "audio/ogg", ".wav": "audio/wav", ".webm": "audio/webm",
+  ".m4a": "audio/mp4", ".aac": "audio/aac", ".flac": "audio/flac"
 };
 
 const json = (res, code, obj) => {
@@ -348,6 +357,19 @@ const handler = async (req, res) => {
       const id = randomBytes(8).toString("hex") + "." + ext;
       await writeFile(path.join(IMAGES, id), buf);
       return json(res, 200, { imageId: id, bytes: buf.length });
+    }
+
+    if (p === "/api/audio" && req.method === "POST") {
+      const client = clients.get(url.searchParams.get("token") || "");
+      if (!client) return json(res, 401, { error: "sesión caducada" });
+      if (client.role !== "dm") return json(res, 403, { error: "Solo el DM" });
+      const mime = String(req.headers["content-type"] || "").split(";")[0];
+      const ext = AUDIO_TYPES[mime];
+      if (!ext) return json(res, 415, { error: "Formato de audio no admitido: usa MP3, OGG, WAV, M4A o FLAC" });
+      const buf = await readBody(req, MAX_AUDIO);
+      const id = randomBytes(8).toString("hex") + "." + ext;
+      await writeFile(path.join(IMAGES, id), buf);
+      return json(res, 200, { audioId: id, bytes: buf.length });
     }
 
     if (p.startsWith("/img/")) {

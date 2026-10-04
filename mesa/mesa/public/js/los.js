@@ -40,10 +40,24 @@ function diagonals(map) {
     segs.push(seg);
     cells.add(cellKey(x, y));
   }
-  hit = { segs, cells, walls };
+  /* Índice por cubos de BUCKET×BUCKET casillas: un rayo solo mira los tramos
+     de los cubos que pisa, no los miles que puede tener un plano trazado con
+     la IA o la varita */
+  const grid = new Map();
+  segs.forEach((sg, i) => {
+    sg.i = i;
+    for (let by = Math.floor(sg.miny / BUCKET); by <= Math.floor(sg.maxy / BUCKET); by++) {
+      for (let bx = Math.floor(sg.minx / BUCKET); bx <= Math.floor(sg.maxx / BUCKET); bx++) {
+        const k = bx + "," + by;
+        (grid.get(k) || grid.set(k, []).get(k)).push(sg);
+      }
+    }
+  });
+  hit = { segs, cells, walls, grid, mark: new Uint32Array(segs.length), q: 0 };
   diagCache.set(edges, hit);
   return hit;
 }
+const BUCKET = 4;
 
 /* Casillas que un muro diagonal deja sin suelo */
 export const wallCell = (map, x, y) => diagonals(map).cells.has(cellKey(x, y));
@@ -52,23 +66,66 @@ export const wallCell = (map, x, y) => diagonals(map).cells.has(cellKey(x, y));
    mano alzada?
    Tocarlo en su extremo cuenta como cruzarlo (así no se cuela la vista por la
    junta de dos tramos); que el rayo empiece o acabe sobre el muro, no. */
-export function crossesDiagonal(map, x0, y0, x1, y1) {
-  const { segs } = diagonals(map);
-  if (!segs.length) return false;
+export const crossesDiagonal = (map, x0, y0, x1, y1) => segmentHits(map, x0, y0, x1, y1, true) > 0;
+
+/* Cuántos muros diagonales o a mano alzada cruza ese segmento. El sonido no
+   se corta con el primero: se apaga un poco más con cada uno. */
+export const crossCount = (map, x0, y0, x1, y1) => segmentHits(map, x0, y0, x1, y1, false);
+
+function segmentHits(map, x0, y0, x1, y1, first) {
+  const d = diagonals(map);
+  if (!d.segs.length) return 0;
   const ax = x0 + 0.5, ay = y0 + 0.5, bx = x1 + 0.5, by = y1 + 0.5;
   const lx = Math.min(ax, bx), hx = Math.max(ax, bx), ly = Math.min(ay, by), hy = Math.max(ay, by);
   const rx = bx - ax, ry = by - ay;
-  for (const w of segs) {
-    if (w.maxx < lx || w.minx > hx || w.maxy < ly || w.miny > hy) continue;
-    const sx = w.x2 - w.x1, sy = w.y2 - w.y1;
-    const den = rx * sy - ry * sx;
-    if (Math.abs(den) < 1e-9) continue;                  // paralelos
-    const qx = w.x1 - ax, qy = w.y1 - ay;
-    const t = (qx * sy - qy * sx) / den;                 // a lo largo del rayo
-    const u = (qx * ry - qy * rx) / den;                 // a lo largo del muro
-    if (t > 1e-6 && t < 1 - 1e-6 && u >= -1e-6 && u <= 1 + 1e-6) return true;
+  /* Cada tramo se mira una sola vez aunque esté en varios cubos */
+  if (++d.q > 4e9) { d.mark.fill(0); d.q = 1; }
+  const q = d.q;
+  let n = 0;
+  for (let gy = Math.floor(ly / BUCKET); gy <= Math.floor(hy / BUCKET); gy++) {
+    for (let gx = Math.floor(lx / BUCKET); gx <= Math.floor(hx / BUCKET); gx++) {
+      for (const w of d.grid.get(gx + "," + gy) || []) {
+        if (d.mark[w.i] === q) continue;
+        d.mark[w.i] = q;
+        if (w.maxx < lx || w.minx > hx || w.maxy < ly || w.miny > hy) continue;
+        const sx = w.x2 - w.x1, sy = w.y2 - w.y1;
+        const den = rx * sy - ry * sx;
+        if (Math.abs(den) < 1e-9) continue;                  // paralelos
+        const qx = w.x1 - ax, qy = w.y1 - ay;
+        const t = (qx * sy - qy * sx) / den;                 // a lo largo del rayo
+        const u = (qx * ry - qy * rx) / den;                 // a lo largo del muro
+        if (t > 1e-6 && t < 1 - 1e-6 && u >= -1e-6 && u <= 1 + 1e-6) {
+          n++;
+          if (first) return n;
+        }
+      }
+    }
   }
-  return false;
+  return n;
+}
+
+/* Todo lo que corta la vista, como segmentos sueltos en casillas: los bordes
+   con muro o puerta cerrada, las diagonales y cada tramo de los muros a mano
+   alzada. «cross» marca los que pasan por dentro de una casilla (diagonales y
+   mano alzada), que son los que dejan media casilla al otro lado. */
+export function blockingSegments(map) {
+  const out = [];
+  for (const [key, type] of Object.entries(map.edges || {})) {
+    if (!BLOCKS[type]) continue;
+    const [sx, sy, dir] = key.split(",");
+    const x = Number(sx), y = Number(sy);
+    if (dir === "v") out.push({ x1: x, y1: y, x2: x, y2: y + 1, cross: false });
+    else if (dir === "h") out.push({ x1: x, y1: y, x2: x + 1, y2: y, cross: false });
+    else if (dir === "d") out.push({ x1: x, y1: y, x2: x + 1, y2: y + 1, cross: true });
+    else if (dir === "a") out.push({ x1: x + 1, y1: y, x2: x, y2: y + 1, cross: true });
+  }
+  for (const w of map.walls || []) {
+    for (let i = 1; i < w.points.length; i++) {
+      const [x1, y1] = w.points[i - 1], [x2, y2] = w.points[i];
+      if (x1 !== x2 || y1 !== y2) out.push({ x1, y1, x2, y2, cross: true });
+    }
+  }
+  return out;
 }
 
 /* Un muro vive en el borde de una casilla: "x,y,v" es su lado izquierdo y

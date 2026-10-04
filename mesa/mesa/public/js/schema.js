@@ -287,6 +287,12 @@ const MAP_DEFAULTS = {
   pins: [],             // chinchetas con nota
   portals: [],          // accesos a otros mapas
   playerZoom: true,     // dejar que los jugadores se acerquen
+  /* Lo que se ve al otro lado de un muro: el borde de la vista se difumina y
+     deja asomar un poco lo de detrás. Es la profundidad, en casillas, en la
+     que esa vista se apaga del todo: 0 corta en seco, 1 deja el difuminado de
+     siempre sin recortar. */
+  wallFade: 1,
+  sounds: [],           // fuentes de sonido que oye la party
   /* Dónde cae la cuadrícula dibujada en la imagen, en píxeles de la imagen:
      la casilla (0,0) empieza en (x, y) y mide w × h. Sin esto (null), la
      imagen se estira para llenar columnas × filas, como siempre. */
@@ -317,6 +323,8 @@ export function normalizeMap(raw = {}) {
   m.shapes = Array.isArray(m.shapes) ? m.shapes.map(normalizeShape).slice(0, 40) : [];
   m.pins = Array.isArray(m.pins) ? m.pins.map(normalizePin).slice(0, 60) : [];
   m.portals = Array.isArray(m.portals) ? m.portals.map(normalizePortal).slice(0, 40) : [];
+  m.sounds = Array.isArray(m.sounds) ? m.sounds.map(normalizeSound).slice(0, MAX_SOUNDS) : [];
+  m.wallFade = clamp(Math.round(num(m.wallFade, 1) * 100) / 100, 0, 1);
   m.edges = m.edges && typeof m.edges === "object" && !Array.isArray(m.edges) ? { ...m.edges } : {};
   /* Capas por casilla que pinta el DM:
      rough  terreno difícil (cuesta el doble de movimiento)
@@ -425,6 +433,36 @@ export function normalizePortal(raw = {}) {
   };
 }
 
+/* ---------- Sonido ----------
+   Fuentes de sonido que el DM pone en el mapa. Las oye la vista de la party
+   (la pantalla de la tele), más fuerte cuanto más cerca está alguien de la
+   party y más apagadas detrás de un muro. Pueden ser uno de los sonidos de
+   serie, que Mesa sintetiza en el navegador (no hay archivos que descargar ni
+   hace falta internet), o un archivo de audio que suba el DM. */
+export const SOUND_PRESETS = [
+  ["fuego", "Hoguera"], ["lluvia", "Lluvia"], ["viento", "Viento"], ["rio", "Río"],
+  ["cueva", "Cueva con goteo"], ["bosque", "Bosque con pájaros"], ["arcano", "Zumbido arcano"],
+  ["tambores", "Tambores de guerra"], ["laud", "Laúd (música)"]
+];
+export const MAX_SOUNDS = 40;
+/* Lo que se sube: un nombre aleatorio con su extensión, como las imágenes */
+export const AUDIO_ID = /^[0-9a-f]{8,32}\.(mp3|ogg|oga|wav|webm|m4a|aac|flac)$/;
+export function normalizeSound(raw = {}) {
+  const audioId = AUDIO_ID.test(String(raw.audioId || "")) ? String(raw.audioId) : "";
+  const preset = SOUND_PRESETS.some(([k]) => k === raw.preset) ? raw.preset : "fuego";
+  return {
+    id: raw.id || uid(),
+    x: Math.max(0, Math.trunc(num(raw.x))), y: Math.max(0, Math.trunc(num(raw.y))),
+    name: String(raw.name || "").slice(0, 40),
+    preset,                                   // de serie, si no hay archivo
+    audioId,                                  // archivo subido por el DM
+    fileName: audioId ? String(raw.fileName || "").slice(0, 80) : "",
+    volume: clamp(num(raw.volume, 0.8), 0, 1),
+    radius: clamp(Math.trunc(num(raw.radius, 8)), 1, 40),     // hasta dónde se oye, en casillas
+    on: raw.on !== false                      // sonando
+  };
+}
+
 /* ---------- Sesión ---------- */
 const SESSION_DEFAULTS = {
   title: "Campaña sin nombre",
@@ -442,7 +480,11 @@ const SESSION_DEFAULTS = {
   showMoveRange: true,  // pintar el alcance al arrastrar
   allowPlayerDraw: true,   // ¿los jugadores pueden dibujar en el mapa?
   showWallsToParty: true,  // ¿la party ve los muros y las puertas dibujados?
-  autoSkipDown: true    // saltar en la iniciativa a los que están fuera de combate
+  autoSkipDown: true,   // saltar en la iniciativa a los que están fuera de combate
+  /* Sonido del mapa */
+  soundVolume: 0.8,     // volumen general
+  soundMuted: false,    // todo en silencio de golpe
+  soundOnPlayers: false // que suene también en los móviles (para jugar cada uno en su casa)
 };
 
 export function emptyDoc() {

@@ -12,6 +12,7 @@ import { openCharEditor, openConditions } from "./char-editor.js";
 import { MapView } from "./map.js";
 import { openSpellbook } from "./spellbook.js";
 import { langPicker } from "./i18n.js";
+import { playSoundscape } from "./soundscape.js";
 import { icon, withIcon } from "./icons.js";
 
 let tab = "ficha";
@@ -95,6 +96,9 @@ export function mountPlayer(root) {
 let hadChar = null;
 function render() {
   if (!doc()) return;
+  /* El sonido del mapa solo llega al móvil si el DM lo ha pedido (para jugar
+     cada uno desde su casa); si no, viene vacío y no suena nada */
+  playSoundscape(doc().audio || null);
   /* Si te quedas sin personaje (el DM lo libera, o lo recuperas desde otro
      aparato), se dice en vez de cambiar la pantalla sin explicación. */
   const nowChar = store.session.charId && doc().chars.find(c => c.id === store.session.charId);

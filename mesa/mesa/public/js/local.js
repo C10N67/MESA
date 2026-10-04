@@ -54,6 +54,11 @@ export async function localTransport() {
       registerLocalImage(id, URL.createObjectURL(blob));
       return id;
     },
+    async audio(token, blob) {
+      const id = await ask("audio", { token, blob });
+      registerLocalImage(id, URL.createObjectURL(blob));
+      return id;
+    },
     leave: token => { port.postMessage({ kind: "leave", token }); }
   };
 }

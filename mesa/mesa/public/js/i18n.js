@@ -685,7 +685,30 @@ const EN = {
   "Volver a la ficha de serie": "Back to the stock stat block",
   "Humanoide": "Humanoid", "Bestia": "Beast", "Muerto viviente": "Undead", "Monstruosidad": "Monstrosity",
   "Gigante": "Giant", "Dragón": "Dragon", "Aberración": "Aberration", "Infernal": "Fiend", "Hada": "Fey",
-  "Elemental": "Elemental", "Constructo": "Construct", "Cieno": "Ooze", "Planta": "Plant", "Celestial": "Celestial"
+  "Elemental": "Elemental", "Constructo": "Construct", "Cieno": "Ooze", "Planta": "Plant", "Celestial": "Celestial",
+
+  /* Sonido del mapa y vista tras los muros */
+  "Sonido": "Sound", "Activar el sonido": "Turn sound on", "Escuchar": "Listen", "Sonando": "Playing",
+  "Fuente de sonido: la oye la party en su pantalla, más fuerte cuanto más cerca y apagada tras los muros": "Sound source: the party hears it on their screen, louder the closer they are and muffled behind walls",
+  "Pulsa donde quieras una fuente de sonido, o una que ya esté para cambiarla": "Click where you want a sound source, or on an existing one to change it",
+  "Nueva fuente de sonido": "New sound source", "Qué suena": "What plays", "Sonidos de serie": "Built-in sounds",
+  "Tus sonidos": "Your sounds", "Subir un archivo de audio…": "Upload an audio file…", "Subiendo…": "Uploading…",
+  "Volumen": "Volume", "Se oye hasta (casillas)": "Heard up to (squares)", "Casilla X": "Square X", "Casilla Y": "Square Y",
+  "Lo oye la pantalla de la party: más fuerte cuanto más cerca esté alguien de la party, y más flojo y apagado detrás de muros y puertas cerradas. Por una puerta abierta llega rodeando. Tú no lo oyes en la mesa.": "The party screen hears it: louder the closer anyone in the party is, and quieter and muffled behind walls and closed doors. Through an open door it comes around. You don't hear it at the table.",
+  "Hoguera": "Campfire", "Lluvia": "Rain", "Viento": "Wind", "Río": "River", "Cueva con goteo": "Dripping cave",
+  "Bosque con pájaros": "Forest with birds", "Zumbido arcano": "Arcane hum", "Tambores de guerra": "War drums",
+  "Laúd (música)": "Lute (music)", "Archivo propio": "Your own file", "Sonido subido": "Sound uploaded",
+  "Volumen general": "Master volume", "Silenciar todo": "Mute everything",
+  "Que suene también en los móviles de los jugadores": "Also play it on the players' phones",
+  "Suena en la pantalla de la party. En los móviles, solo si lo marcas (para jugar cada uno en su casa): cada uno oye lo que oye su personaje. Pon fuentes con la herramienta «Sonido» del mapa.": "It plays on the party screen. On phones, only if you tick it (for playing from home): each one hears what their character hears. Place sources with the map's «Sound» tool.",
+  "Este mapa todavía no tiene sonidos.": "This map has no sounds yet.", "Cambiar": "Change",
+  "Ese archivo pasa de 20 MB: recórtalo o pásalo a MP3": "That file is over 20 MB: trim it or convert it to MP3",
+  "Formato de audio no admitido: usa MP3, OGG, WAV, M4A o FLAC": "Audio format not supported: use MP3, OGG, WAV, M4A or FLAC",
+  "No se pudo subir el sonido": "Couldn't upload the sound", "Este navegador no reproduce sonido": "This browser can't play sound",
+  "Vista tras los muros:": "Sight behind walls:", "difuminada, como siempre": "blurred, as always", "se corta en seco": "cut off sharply",
+  "se pierde muy rápido": "fades very fast", "se pierde rápido": "fades fast", "se pierde poco a poco": "fades gradually",
+  "Cuánto asoma lo que hay detrás de un muro antes de perderse de vista": "How much of what's behind a wall shows before it's lost from sight",
+  "A la izquierda la vista se corta en seco en el muro; a la derecha se difumina y deja asomar un poco lo de detrás, como hasta ahora.": "To the left, sight stops sharply at the wall; to the right it blurs and lets a little of what's behind show, as before."
 };
 
 /* Las criaturas de serie traen su inglés en el catálogo: nombre, tipo, sentidos
@@ -748,6 +771,9 @@ const SPELL_PARTS = [
   [/^(\d+) puntos de sueño$/, "$1 points of sleep"]
 ];
 const PATTERNS = [
+  [/^Sonido: (.+)$/, "Sound: $1"],
+  [/^Caben (\d+) sonidos por mapa$/, "Up to $1 sounds per map"],
+  [/^(\d+), (\d+) · (\d+) casillas · (\d+)%$/, "$1, $2 · $3 squares · $4%"],
   [/^(\d+) criaturas$/, "$1 creatures"],
   [/^(\d+) pies$/, "$1 ft."],
   [/^vd (\S+)$/i, "CR $1"],
