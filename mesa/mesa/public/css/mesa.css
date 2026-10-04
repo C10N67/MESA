@@ -1509,3 +1509,11 @@ ul.plain b { color: var(--vellum); }
   .bld-scores th, .bld-scores td { padding: 5px 3px; }
   .bld-scores select, .bld-scores input { width: 62px; }
 }
+/* Tarjetas de especie con su retrato de serie */
+.bld-cards.faces { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.bld-card.face { flex-direction: row; align-items: center; gap: 10px; }
+.bld-card.face img { width: 52px; height: 52px; border-radius: 50%; flex: 0 0 auto; border: 2px solid var(--edge); }
+.bld-card.face[aria-pressed="true"] img { border-color: var(--gold); }
+.bld-card.face span { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.bld-inline { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.bld-inline > * { flex: 0 0 auto; }

@@ -772,7 +772,13 @@ const EN = {
   "Competencia": "Proficiency",
   "PV": "HP",
   "Escudo (+2 CA)": "Shield (+2 AC)",
-  "Tirar 4d6 seis veces": "Roll 4d6 six times"
+  "Tirar 4d6 seis veces": "Roll 4d6 six times",
+  "Mujer": "Woman",
+  "Hombre": "Man",
+  "Retrato de serie:": "Default portrait:",
+  "Subir": "Upload",
+  "De serie": "Default",
+  "Volver al retrato de serie de su especie": "Go back to the species' default portrait"
 };
 
 /* Las criaturas de serie traen su inglés en el catálogo: nombre, tipo, sentidos

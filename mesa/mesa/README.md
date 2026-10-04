@@ -291,6 +291,13 @@ con los pasos y tarjetas para elegir, con lo que da cada opción a la vista.
 8. **Detalles**: nombre, retrato, color, alineamiento, idiomas, personalidad.
 9. **Resumen**, y **Crear personaje**.
 
+Si el jugador no sube un retrato, la ficha lleva el **retrato de serie** de
+su especie, de hombre o de mujer (se elige en «Especie» o en «Detalles»):
+hay uno para cada una de las doce especies, y si luego cambia de especie al
+subir de nivel, el retrato cambia con ella. Uno subido a mano no se toca. Son
+dibujos vectoriales que genera `node tools/retratos.mjs`; para cambiar uno,
+se retoca ahí y se vuelve a generar.
+
 Abajo se ve siempre cómo va la ficha (PV y CA). Sale una ficha normal de Mesa,
 con los ataques listos para tirar, los recursos de clase (furia, inspiración
 bárdica, canalizar divinidad…), los espacios de conjuro y una lista de
@@ -1001,6 +1008,8 @@ public/
     wallfind.js        proponer muros y puertas del plano y trazarlos sobre la tinta
     aiwalls.js         ayuda de la IA: trocear el plano, la pregunta y juntar las respuestas
     wand.js            varita mágica: pinchar en el suelo y rellenar por color
+  retratos/            retratos de serie de cada especie, de hombre y de mujer
+tools/retratos.mjs     genera esos retratos
 data/                  la partida, las imágenes y las claves de la IA si las guardas (se crea al arrancar)
 ```
 

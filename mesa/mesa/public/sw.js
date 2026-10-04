@@ -14,7 +14,7 @@
    Todas las rutas son relativas al sitio donde vive Mesa: en GitHub Pages es
    una subcarpeta (/DnD/), no la raíz. */
 
-const VERSION = "mesa-2.10.0";
+const VERSION = "mesa-2.11.0";
 const SHELL_CACHE = VERSION + "-app";
 const IMG_CACHE = "mesa-img";
 const IMG_LIMIT = 80;
@@ -35,7 +35,10 @@ const SHELL = [
   "js/spells.js", "js/spellbook.js", "js/voice.js", "js/portals.js",
   "js/gridfind.js", "js/gridfit.js", "js/wallfind.js", "js/aiwalls.js",
   "js/wand.js", "js/hearing.js", "js/synth.js", "js/soundscape.js",
-  "js/rules.js", "js/builder.js", "js/manual.js", "js/manual-data.js"
+  "js/rules.js", "js/builder.js", "js/manual.js", "js/manual-data.js",
+  /* Retratos de serie de cada especie: pesan poco y sirven sin red */
+  ...["aasimar", "draconido", "elfo", "enano", "gnomo", "goliat", "humano", "mediano", "orco", "semielfo", "semiorco", "tiefling"]
+    .flatMap(s => [`retratos/${s}-m.svg`, `retratos/${s}-f.svg`])
 ].map(p => new URL(p, BASE).href);
 
 self.addEventListener("install", event => {

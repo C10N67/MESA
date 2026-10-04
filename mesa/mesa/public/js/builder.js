@@ -15,7 +15,7 @@ import { SKILLS, ABILITIES, normalizeChar, normalizeAttack, normalizeSpell, uid 
 import {
   RULESETS, CLASSES, CLASS_BY_ID, SPECIES, BACKGROUNDS, ORIGIN_FEATS, WEAPONS, WEAPON_BY_ID, ARMORS, ARMOR_BY_ID, MASTERY,
   STANDARD_ARRAY, POINT_COST, POINT_BUDGET, SPELL_CLASSES, ABILITY_NAMES,
-  byRules, featuresFor, cantripsKnown, asiCount, weaponProficient, armorProficient, spellSlots, proficiencyFor,
+  defaultPortrait, isDefaultPortrait, byRules, featuresFor, cantripsKnown, asiCount, weaponProficient, armorProficient, spellSlots, proficiencyFor,
   computeBuild
 } from "./rules.js";
 import { SPELL_LIBRARY } from "./spells.js";
@@ -41,6 +41,7 @@ function freshState() {
     asi: { str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0 }, hpMode: "avg", hpRolls: [],
     armor: null, shield: null, weapons: null, kit: null, spells: [],
     name: "", player: "", alignment: "", color: COLORS[Math.floor(Math.random() * COLORS.length)], avatarId: "",
+    look: Math.random() < 0.5 ? "f" : "m",   // retrato por defecto: de hombre o de mujer
     languages: "Común", traits: "", ideals: "", bonds: "", flaws: "", appearance: ""
   };
 }
@@ -63,7 +64,8 @@ function toChar(st, d, prev) {
     st.flaws && "Defectos: " + st.flaws, st.appearance && "Aspecto: " + st.appearance
   ].filter(Boolean).join("\n");
   const fields = {
-    kind: "pc", name: st.name.trim() || "Sin nombre", player: st.player, color: st.color, avatarId: st.avatarId,
+    kind: "pc", name: st.name.trim() || "Sin nombre", player: st.player, color: st.color,
+    avatarId: st.avatarId || defaultPortrait(st.species, st.look),
     className: cls.name, race: sp ? sp.name : "", background: bg ? bg.name : "", alignment: st.alignment,
     subclass: st.subclass, level: d.level, rules: d.rules,
     maxHp: d.hp, ac: d.ac, speed: d.speed, proficiency: d.pb, hitDice: `${d.level}d${cls.die}`,
@@ -94,6 +96,8 @@ export function openBuilder({ char = null, isDM = true, onManual = null } = {}) 
   const st = { ...freshState(), ...(char && char.build ? JSON.parse(JSON.stringify(char.build)) : {}) };
   if (char) {
     st.name = char.name; st.player = char.player || ""; st.color = char.color; st.avatarId = char.avatarId || "";
+    /* El retrato de serie no cuenta como suyo: si cambia de especie, cambia */
+    if (isDefaultPortrait(st.avatarId)) { st.look = /-f\.svg$/.test(st.avatarId) ? "f" : "m"; st.avatarId = ""; }
     st.alignment = char.alignment || st.alignment;
   }
   const levelUp = !!(char && char.build);
@@ -148,8 +152,15 @@ export function openBuilder({ char = null, isDM = true, onManual = null } = {}) 
     <span class="pill">${icon("heart", 12)} ${d.hp} PV</span><span class="pill">${icon("shield", 12)} CA ${d.ac}</span>` : `<span class="muted">Elige una clase para empezar</span>`;
 
   /* ---------- Cada paso ---------- */
+  /* El retrato que lleva ahora: el suyo o el de serie de su especie */
+  const face = () => st.avatarId || defaultPortrait(st.species, st.look);
+  const faceStyle = () => face() ? `background-image:url(${imgURL(face())});background-size:cover;background-position:center` : "";
   const card = (attr, id, on, title, sub, extra = "") => `<button type="button" class="bld-card" ${attr}="${esc(id)}" aria-pressed="${on}">
     <b>${esc(title)}</b>${sub ? `<small>${esc(sub)}</small>` : ""}${extra}</button>`;
+
+  /* Retrato de serie: de hombre o de mujer */
+  const lookButtons = () => `<span class="small muted">Retrato de serie:</span>
+    ${[["f", "Mujer"], ["m", "Hombre"]].map(([k, l]) => `<button type="button" class="chip" data-look="${k}" aria-pressed="${st.look === k}">${l}</button>`).join("")}`;
 
   const VIEWS = {
     rules: () => `<h3>¿Con qué reglas jugáis?</h3>
@@ -224,8 +235,10 @@ export function openBuilder({ char = null, isDM = true, onManual = null } = {}) 
       const list = SPECIES[st.rules];
       const sp = d.sp;
       return `<h3>Elige una ${st.rules === "2014" ? "raza" : "especie"}</h3>
-      <div class="bld-cards">${list.map(s => card("data-species", s.id, st.species === s.id, s.name,
-        `${s.size} · ${s.speed} pies${s.vision ? " · visión " + s.vision * 5 + " pies" : ""}`)).join("")}</div>
+      <div class="bld-cards faces">${list.map(s => `<button type="button" class="bld-card face" data-species="${s.id}" aria-pressed="${st.species === s.id}">
+        <img src="${imgURL(defaultPortrait(s.id, st.look))}" alt="" loading="lazy">
+        <span><b>${esc(s.name)}</b><small>${esc(`${s.size} · ${s.speed} pies${s.vision ? " · visión " + s.vision * 5 + " pies" : ""}`)}</small></span></button>`).join("")}</div>
+      <div class="bld-inline" style="margin-top:10px">${lookButtons()}</div>
       ${sp ? `<div class="bld-detail">
         <p class="prose"><span>${esc(sp.blurb)}</span></p>
         ${st.rules === "2014" && sp.asi ? `<p class="small"><b>Mejoras:</b> ${Object.entries(sp.asi).map(([k, v]) => `${ABILITY_NAMES[k]} +${v}`).join(", ")}</p>` : ""}
@@ -323,8 +336,9 @@ export function openBuilder({ char = null, isDM = true, onManual = null } = {}) 
     details: () => `<h3>Detalles</h3>
       <div class="row" style="align-items:flex-start">
         <div style="flex:0 0 96px">
-          <div class="avatar" data-avatar style="width:78px;height:78px;font-size:22px;--tone:${esc(st.color)};${st.avatarId ? `background-image:url(${imgURL(st.avatarId)});background-size:cover` : ""}">${st.avatarId ? "" : initials(st.name || "?")}</div>
-          <button type="button" class="btn sm" data-pick-avatar style="margin-top:8px;width:78px">Retrato</button>
+          <div class="avatar" data-avatar style="width:78px;height:78px;font-size:22px;--tone:${esc(st.color)};${faceStyle()}">${face() ? "" : initials(st.name || "?")}</div>
+          <button type="button" class="btn sm" data-pick-avatar style="margin-top:8px;width:78px">${st.avatarId ? "Cambiar" : "Subir"}</button>
+          ${st.avatarId ? `<button type="button" class="btn sm" data-clear-avatar style="margin-top:6px;width:78px" title="Volver al retrato de serie de su especie">De serie</button>` : ""}
           <input type="file" data-avatar-file accept="image/*" hidden>
         </div>
         <div style="flex:1 1 300px">
@@ -334,7 +348,8 @@ export function openBuilder({ char = null, isDM = true, onManual = null } = {}) 
             <label class="field"><span>Alineamiento</span><select data-text="alignment"><option value="">—</option>${ALIGNMENTS.map(a => `<option ${st.alignment === a ? "selected" : ""}>${a}</option>`).join("")}</select></label>
             <label class="field"><span>Idiomas</span><input data-text="languages" value="${esc(st.languages)}"></label>
           </div>
-          <div class="row">${COLORS.map(c => `<button type="button" class="swatch" data-color="${c}" aria-pressed="${st.color === c}" style="--sw:${c}" title="Color de la ficha"></button>`).join("")}</div>
+          ${!st.avatarId ? `<div class="bld-inline" style="margin-bottom:10px">${lookButtons()}</div>` : ""}
+          <div class="bld-inline">${COLORS.map(c => `<button type="button" class="swatch" data-color="${c}" aria-pressed="${st.color === c}" style="--sw:${c}" title="Color de la ficha"></button>`).join("")}</div>
         </div>
       </div>
       <div class="cols2">
@@ -350,7 +365,7 @@ export function openBuilder({ char = null, isDM = true, onManual = null } = {}) 
       const missing = [!d.bg && "trasfondo", !d.sp && (st.rules === "2014" ? "raza" : "especie"), !st.name.trim() && "nombre",
         st.skills.length < d.cls.skills.n && "habilidades de clase"].filter(Boolean);
       return `<div class="bld-sheet">
-        <header><div class="avatar" style="--tone:${esc(st.color)};${st.avatarId ? `background-image:url(${imgURL(st.avatarId)});background-size:cover` : ""}">${st.avatarId ? "" : initials(st.name || "?")}</div>
+        <header><div class="avatar" style="--tone:${esc(st.color)};${faceStyle()}">${face() ? "" : initials(st.name || "?")}</div>
           <div><h3>${esc(st.name || "Sin nombre")}</h3><small>${esc([d.sp && d.sp.name, d.cls.name + " " + d.level, st.subclass, d.bg && d.bg.name].filter(Boolean).join(" · "))} · reglas de ${d.rules}</small></div></header>
         <div class="bld-stats">
           <span><small>PV</small><b>${d.hp}</b></span><span><small>CA</small><b>${d.ac}</b></span>
@@ -401,6 +416,8 @@ export function openBuilder({ char = null, isDM = true, onManual = null } = {}) 
     st.hpRolls = Array.from({ length: 19 }, () => 1 + Math.floor(Math.random() * cls.die));
   }));
   on(body, "click", "[data-color]", (e, b) => set(() => { st.color = b.dataset.color; }));
+  on(body, "click", "[data-look]", (e, b) => set(() => { st.look = b.dataset.look; }));
+  on(body, "click", "[data-clear-avatar]", () => set(() => { st.avatarId = ""; }));
   on(body, "click", "[data-manual]", () => { win.close(); onManual(); });
   on(body, "click", "[data-pick-avatar]", () => body.querySelector("[data-avatar-file]").click());
   on(body, "change", "[data-avatar-file]", async (e, input) => {

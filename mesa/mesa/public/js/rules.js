@@ -543,6 +543,13 @@ export const SPECIES = {
   ]
 };
 
+/* Retrato por defecto de cada especie, de hombre («m») o de mujer («f»):
+   public/retratos/<especie>-<m|f>.svg (los genera tools/retratos.mjs). Sale
+   en la ficha y en el mapa mientras el jugador no suba el suyo. */
+export const defaultPortrait = (species, look = "m") =>
+  species ? `retratos/${species}-${look === "f" ? "f" : "m"}.svg` : "";
+export const isDefaultPortrait = id => /^retratos\/[a-z]+-[mf]\.svg$/.test(String(id || ""));
+
 /* ---------- Trasfondos ----------
    2014: dos habilidades y un rasgo. 2024: tres características entre las
    que repartir +2/+1 o +1/+1/+1, una dote de origen y dos habilidades. */

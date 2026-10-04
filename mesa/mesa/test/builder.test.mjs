@@ -127,3 +127,15 @@ test("el manual tiene todas las ediciones y se puede buscar", async () => {
     for (const r of rows) assert.equal(r.replace(/^\||\|$/g, "").split("|").length, n, `${s.title}: ${r}`);
   }
 });
+
+test("cada especie tiene su retrato de serie, de hombre y de mujer", async () => {
+  const { existsSync } = await import("node:fs");
+  const { defaultPortrait, isDefaultPortrait } = await import("../public/js/rules.js");
+  for (const rules of ["2014", "2024"]) for (const s of SPECIES[rules]) for (const look of ["m", "f"]) {
+    const id = defaultPortrait(s.id, look);
+    assert.ok(isDefaultPortrait(id), id);
+    assert.ok(existsSync(new URL("../public/" + id, import.meta.url)), "falta " + id);
+  }
+  assert.equal(defaultPortrait("", "f"), "");
+  assert.equal(isDefaultPortrait("0123abcd.webp"), false);
+});
