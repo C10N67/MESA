@@ -10,9 +10,11 @@
       los enseña sobre el plano para revisarlos antes de ponerlos. Por
       defecto los muros salen a mano alzada, como los del pincel, pegados a
       la pared dibujada; también se pueden poner por la cuadrícula. En planos
-      con mucho detalle se puede pedir ayuda a Claude (aiwalls.js): dice qué
-      casillas son suelo y dónde hay tabiques y puertas, y el trazado los pega
-      a la tinta igual que siempre. */
+      con mucho detalle hay tres ayudas para decir qué es suelo: la varita
+      mágica (wand.js: pinchar en el suelo, gratis y sin internet), Gemini
+      (plan gratuito) o Claude (de pago); con las dos IA (aiwalls.js) también
+      salen tabiques y puertas. Después el trazado pega los muros a la tinta
+      igual que siempre. */
 
 import { modal, toast, imgURL } from "./util.js";
 import { patchMap, aiStatus, aiSetKey, aiWalls } from "./net.js";
@@ -20,6 +22,7 @@ import { MAX_COLS, MAX_ROWS } from "./schema.js";
 import { toGray, detectGrid, fitCount } from "./gridfind.js";
 import { measureWalls, classifyWalls, traceWalls } from "./wallfind.js";
 import { planTiles, mergeTiles, edgesFromAI } from "./aiwalls.js";
+import { makeBlocks, blockAt, wandFloor } from "./wand.js";
 
 const mod = (a, b) => ((a % b) + b) % b;
 const fmt = (v, d = 2) => String(Math.round(v * 10 ** d) / 10 ** d).replace(".", ",");
@@ -284,8 +287,13 @@ export function openWallFit(map) {
       <label class="check" style="margin-top:6px"><input type="radio" name="fit" value="grid"> Por los bordes de la cuadrícula</label>
     </fieldset>
     <fieldset class="gridfit-ai">
-      <legend>Ayuda de la IA (Claude)</legend>
-      <div class="gridfit-ai-body"><p class="hint">Mirando si está disponible…</p></div>
+      <legend>Ayuda para planos con mucho detalle</legend>
+      <div class="row gridfit-help" role="radiogroup">
+        <label class="check"><input type="radio" name="help" value="wand" checked> Varita mágica <small>(gratis)</small></label>
+        <label class="check"><input type="radio" name="help" value="gemini"> Gemini <small>(gratis, con límites)</small></label>
+        <label class="check"><input type="radio" name="help" value="claude"> Claude <small>(de pago)</small></label>
+      </div>
+      <div class="gridfit-ai-body"></div>
     </fieldset>
     <label class="field gridfit-range"><span>Sensibilidad</span>
       <span class="gridfit-range-row"><small>Menos muros</small>
@@ -305,15 +313,31 @@ export function openWallFit(map) {
   const input = n => body.querySelector(`[name="${n}"]`);
   const setStatus = (tone, text) => { status.className = "gridfit-status " + tone; status.textContent = text; };
   let img = null, pixels = null, measured = null, result = null, traced = null;
-  let ai = null;             // lo que ha dicho Claude: { floor, separators, failed }
   let proposal = null;       // muros y puertas por la cuadrícula, y el suelo
+  /* De dónde sale el suelo: la detección automática, la varita o una IA */
+  let source = null;         // null · "wand" · "ai"
+  const wand = { clicks: [], blocks: null, remove: false, tol: 45, holes: true };
+  let ai = null;             // lo que ha dicho la IA: { floor, separators, failed, provider }
   const brush = () => body.querySelector('[name="fit"]:checked').value === "brush";
+  const helpKind = () => body.querySelector('[name="help"]:checked').value;
+  const NAMES = { claude: "Claude", gemini: "Gemini" };
+
+  /* Las puertas que vio la detección, como separadores (para la varita) */
+  const detectedDoors = edges => Object.entries(edges).filter(([k, t]) => t !== "wall" && /,(v|h)$/.test(k)).map(([k]) => {
+    const [x, y, dir] = k.split(",");
+    return dir === "v" ? { x: +x - 1, y: +y, side: "right", kind: "door" } : { x: +x, y: +y - 1, side: "below", kind: "door" };
+  }).filter(sep => sep.x >= 0 && sep.y >= 0);
 
   function classify() {
     result = classifyWalls(measured, { sensitivity: +input("sens").value });
-    proposal = ai ? edgesFromAI(g.cols, g.rows, ai, result.floor) : { edges: result.edges, floor: result.floor };
+    if (source === "wand" && wand.clicks.length) {
+      const floor = wandFloor(wand.blocks, wand.clicks, wand.tol, { holes: wand.holes });
+      proposal = edgesFromAI(g.cols, g.rows, { floor, separators: detectedDoors(result.edges) });
+    } else if (source === "ai" && ai) proposal = edgesFromAI(g.cols, g.rows, ai, result.floor);
+    else proposal = { edges: result.edges, floor: result.floor };
     traced = brush() ? traceWalls(pixels, img.naturalWidth, img.naturalHeight, g, proposal.edges, { floor: proposal.floor }) : null;
-    if (ai) return aiSummary();
+    if (source === "wand" && wand.clicks.length) return helpSummary("Con la varita");
+    if (source === "ai" && ai) return helpSummary(`Con la ayuda de ${NAMES[ai.provider]}`);
     const { walls, doors, diagonals, floorMask } = result.stats;
     const what = traced
       ? `${traced.walls.length} ${traced.walls.length === 1 ? "muro" : "muros"} a mano alzada y ${doors} ${doors === 1 ? "puerta" : "puertas"}`
@@ -330,6 +354,17 @@ export function openWallFit(map) {
     const { ctx, k } = paintBase(canvas, view, img, g, input("zoom").checked);
     if (!result) return;
     const X = c => g.x + c * g.w, Y = r => g.y + r * g.h;
+    /* Con la varita: el suelo que sale, en verde, y dónde se ha pinchado */
+    if (source === "wand" && wand.clicks.length) {
+      ctx.fillStyle = "rgba(80,220,120,.22)";
+      proposal.floor.forEach((f, i) => { if (f) ctx.fillRect(X(i % g.cols), Y(Math.floor(i / g.cols)), g.w, g.h); });
+      for (const c of wand.clicks) {
+        ctx.fillStyle = c.remove ? "#ff5a5a" : "#3ddc84";
+        ctx.beginPath();
+        ctx.arc(g.x + (c.i + 0.5) * wand.blocks.b, g.y + (c.j + 0.5) * wand.blocks.b, Math.max(4 / k, g.w * 0.12), 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     if (traced) {
@@ -390,56 +425,104 @@ export function openWallFit(map) {
     ]
   });
 
-  /* ---------- Ayuda de la IA ---------- */
+  /* ---------- Ayudas: varita, Gemini y Claude ---------- */
   const aiBox = body.querySelector(".gridfit-ai-body");
   const tiles = planTiles(g.cols, g.rows);
+  let aiInfo = null;         // lo que dice el servidor de cada IA
 
-  function aiSummary() {
+  function helpSummary(how) {
     const walls = traced ? traced.walls.length : Object.values(proposal.edges).filter(t => t === "wall").length;
     const doors = Object.values(proposal.edges).filter(t => t !== "wall").length;
     const what = `${walls} ${walls === 1 ? "muro" : "muros"}${traced ? " a mano alzada" : ""} y ${doors} ${doors === 1 ? "puerta" : "puertas"}`;
-    if (ai.failed) setStatus("warn", `Con la ayuda de Claude propongo ${what}. ${ai.failed} de ${tiles.length} partes no se pudieron analizar: ahí va la detección automática.`);
-    else setStatus("good", `Con la ayuda de Claude propongo ${what}. Revísalos sobre el plano antes de ponerlos.`);
+    if (source === "ai" && ai.failed) setStatus("warn", `${how} propongo ${what}. ${ai.failed} de ${tiles.length} partes no se pudieron analizar: ahí va la detección automática.`);
+    else setStatus("good", `${how} propongo ${what}. Revísalos sobre el plano antes de ponerlos.`);
     draw();
   }
 
-  async function paintAI(known) {
-    let st = known;
-    if (!st) {
-      try { st = await aiStatus(); } catch (err) { st = { error: err.message }; }
+  /* ---- Varita mágica ---- */
+  function paintWand() {
+    aiBox.innerHTML = `
+      <p class="hint">Pincha sobre el plano, en el suelo de cada sala y de cada pasillo: se rellena hasta donde llegue ese color
+        (en verde). Si algo se queda fuera (una estantería contra la pared, una alfombra de otro color), pincha también encima.
+        Los muebles sueltos dentro de una sala cuentan como suelo solos. Gratis y sin internet.</p>
+      <div class="row">
+        <button type="button" class="btn sm" data-wand="add" aria-pressed="${!wand.remove}">Añadir suelo</button>
+        <button type="button" class="btn sm" data-wand="remove" aria-pressed="${wand.remove}">Quitar</button>
+        <button type="button" class="btn sm" data-wand="undo" ${wand.clicks.length ? "" : "disabled"}>Deshacer</button>
+        <button type="button" class="btn sm" data-wand="clear" ${wand.clicks.length ? "" : "disabled"}>Empezar de nuevo</button>
+      </div>
+      <label class="field gridfit-range"><span>Tolerancia del color</span>
+        <span class="gridfit-range-row"><small>Menos</small>
+        <input name="wandTol" type="range" min="10" max="120" step="5" value="${wand.tol}">
+        <small>Más</small></span></label>
+      <label class="check"><input type="checkbox" name="wandHoles" ${wand.holes ? "checked" : ""}> Contar los muebles sueltos como suelo</label>`;
+    input("wandTol").addEventListener("input", e => { wand.tol = +e.target.value; if (wand.clicks.length && measured) classify(); });
+    input("wandHoles").addEventListener("change", e => { wand.holes = e.target.checked; if (wand.clicks.length && measured) classify(); });
+  }
+
+  canvas.addEventListener("click", e => {
+    if (helpKind() !== "wand" || !img || !pixels || !measured) return;
+    const box = canvas.getBoundingClientRect();
+    const px = (e.clientX - box.left) / box.width * img.naturalWidth, py = (e.clientY - box.top) / box.height * img.naturalHeight;
+    if (!wand.blocks) wand.blocks = makeBlocks(pixels, img.naturalWidth, img.naturalHeight, g);
+    const at = blockAt(wand.blocks, px, py);
+    if (!at) return;
+    wand.clicks.push({ ...at, remove: wand.remove });
+    source = "wand";
+    classify();
+    paintWand();
+  });
+
+  /* ---- Gemini y Claude ---- */
+  const KEY_HELP = {
+    gemini: `Gemini, la IA de Google, distingue las paredes de los muebles, las alfombras y los escombros. Su plan gratuito no pide
+      tarjeta: saca una clave en <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>
+      y pégala aquí. Tiene un límite de consultas por minuto y por día, así que las partes van de una en una. Ojo: en el plan
+      gratuito Google puede usar lo que le mandas (las partes del plano, nada más) para mejorar sus productos.`,
+    claude: `Claude, la IA de Anthropic, distingue las paredes de los muebles, las alfombras y los escombros. Es de pago: hace falta
+      una clave de la API (<a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>)
+      con saldo; cada parte cuesta unos céntimos.`
+  };
+
+  async function paintAI(provider, known) {
+    if (known && aiInfo && !aiInfo.error) aiInfo = { ...aiInfo, [provider]: known };
+    if (!aiInfo || aiInfo.error) {
+      aiBox.innerHTML = `<p class="hint">Mirando si está disponible…</p>`;
+      try { aiInfo = await aiStatus(); } catch (err) { aiInfo = { error: err.message }; }
+      if (helpKind() !== provider) return;
     }
-    if (st.error) {
+    if (aiInfo.error) {
       aiBox.innerHTML = `<p class="hint"></p>`;
-      aiBox.querySelector("p").textContent = st.error;
+      aiBox.querySelector("p").textContent = aiInfo.error;
       return;
     }
+    const st = aiInfo[provider], name = NAMES[provider];
     if (!st.sdk) {
-      aiBox.innerHTML = `<p class="hint">Falta el módulo de la IA en el ordenador del DM. Cierra Mesa y vuelve a abrirla con
+      aiBox.innerHTML = `<p class="hint">Falta el módulo de ${name} en el ordenador del DM. Cierra Mesa y vuelve a abrirla con
         «Abrir Mesa», que lo instala (hace falta internet), o ejecuta <code>npm install</code> en la carpeta de Mesa.</p>`;
       return;
     }
     if (!st.key) {
       aiBox.innerHTML = `
-        <p class="hint">Claude distingue las paredes de los muebles, las alfombras y los escombros, que es donde la detección
-          automática se confunde. Hace falta una clave de la API de Claude (<a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>).
-          Se guarda solo en este ordenador, en la carpeta de datos de Mesa, y no se le manda a nadie.</p>
-        <div class="row"><input name="aiKey" type="password" autocomplete="off" placeholder="sk-ant-…" style="flex:1;min-width:0">
+        <p class="hint">${KEY_HELP[provider]} La clave se guarda solo en este ordenador, en la carpeta de datos de Mesa, y no se le
+          manda a nadie.</p>
+        <div class="row"><input name="aiKey" type="password" autocomplete="off" placeholder="${provider === "claude" ? "sk-ant-…" : "AIza…"}" style="flex:1;min-width:0">
           <button type="button" class="btn sm" data-ai="key">Guardar clave</button></div>`;
       return;
     }
-    const parts = tiles.length;
+    const parts = tiles.length, mine = source === "ai" && ai && ai.provider === provider;
     aiBox.innerHTML = `
-      <p class="hint">Claude mira el plano en ${parts} ${parts === 1 ? "parte" : "partes"} y dice qué es suelo y dónde hay paredes y puertas;
-        después los muros se ajustan a la tinta como siempre. Se usa tu clave (${st.key === "env" ? "la del sistema" : "la guardada en Mesa"}):
-        cada parte cuesta unos céntimos y tarda un poco.</p>
+      <p class="hint">${name} mira el plano en ${parts} ${parts === 1 ? "parte" : "partes"} y dice qué es suelo y dónde hay paredes y
+        puertas; después los muros se ajustan a la tinta como siempre. Se usa tu clave (${st.key === "env" ? "la del sistema" : "la guardada en Mesa"}).
+        ${provider === "gemini" ? "Con el plan gratuito no cuesta nada, pero tiene un límite de consultas." : "Cada parte cuesta unos céntimos."}</p>
       <div class="row">
-        <button type="button" class="btn sm primary" data-ai="run">${ai ? "Preguntar otra vez" : "Pedir ayuda a Claude"}</button>
-        ${ai ? `<button type="button" class="btn sm" data-ai="off">Volver a la detección automática</button>` : ""}
+        <button type="button" class="btn sm primary" data-ai="run">${mine ? "Preguntar otra vez" : `Pedir ayuda a ${name}`}</button>
+        ${mine ? `<button type="button" class="btn sm" data-ai="off">Volver a la detección automática</button>` : ""}
         ${st.key === "mesa" ? `<button type="button" class="btn sm" data-ai="forget">Olvidar la clave</button>` : ""}
       </div>`;
   }
 
-  /* Una parte del plano para Claude: la imagen con la cuadrícula, las
+  /* Una parte del plano para la IA: la imagen con la cuadrícula, las
      coordenadas y un recuadro en lo que se pregunta */
   function tileImage(t) {
     const v = t.view, vw = v.x1 - v.x0 + 1, vh = v.y1 - v.y0 + 1;
@@ -464,36 +547,59 @@ export function openWallFit(map) {
     return c.toDataURL("image/jpeg", 0.88).split(",")[1];
   }
 
-  async function runAI() {
+  async function runAI(provider) {
     if (!img || !measured) return;
-    aiBox.innerHTML = `<p class="hint">Claude está mirando el plano (${tiles.length} ${tiles.length === 1 ? "parte" : "partes"}). Puede tardar un par de minutos…</p>`;
-    setStatus("", "Esperando a Claude…");
+    const name = NAMES[provider];
+    aiBox.innerHTML = `<p class="hint">${name} está mirando el plano (${tiles.length} ${tiles.length === 1 ? "parte" : "partes"}).
+      Puede tardar un par de minutos${provider === "gemini" ? ", más si hay que esperar al límite del plan gratuito" : ""}…</p>`;
+    setStatus("", `Esperando a ${name}…`);
     try {
-      const { tiles: answers } = await aiWalls(tiles.map(t => ({ x0: t.x0, y0: t.y0, x1: t.x1, y1: t.y1, image: tileImage(t) })));
+      const { tiles: answers } = await aiWalls(provider, tiles.map(t => ({ x0: t.x0, y0: t.y0, x1: t.x1, y1: t.y1, image: tileImage(t) })));
       const merged = mergeTiles(g.cols, g.rows, tiles.map((tile, i) => ({ tile, answer: answers[i] && answers[i].answer })));
       const failed = answers.filter(a => !a || a.error).length;
-      if (failed === tiles.length) throw new Error((answers[0] && answers[0].error) || "Claude no ha contestado");
-      ai = { ...merged, failed };
+      if (failed === tiles.length) throw new Error((answers[0] && answers[0].error) || `${name} no ha contestado`);
+      ai = { ...merged, failed, provider };
+      source = "ai";
       classify();
     } catch (err) {
-      setStatus("bad", "No se pudo usar la ayuda de Claude: " + err.message);
-      if (err.status === 401) { await paintAI({ sdk: true, key: "" }); return; }
+      setStatus("bad", `No se pudo usar la ayuda de ${name}: ${err.message}`);
+      if (err.status === 401) return paintAI(provider, { sdk: true, key: "" });
     }
-    paintAI();
+    if (helpKind() === provider) paintAI(provider);
   }
 
   aiBox.addEventListener("click", async e => {
+    const w = e.target.closest("[data-wand]");
+    if (w) {
+      const what = w.dataset.wand;
+      if (what === "add" || what === "remove") wand.remove = what === "remove";
+      if (what === "undo") wand.clicks.pop();
+      if (what === "clear") wand.clicks = [];
+      if ((what === "undo" || what === "clear") && measured) classify();
+      return paintWand();
+    }
     const b = e.target.closest("[data-ai]");
     if (!b) return;
-    const what = b.dataset.ai;
-    if (what === "run") return runAI();
-    if (what === "off") { ai = null; if (measured) classify(); return paintAI(); }
+    const what = b.dataset.ai, provider = helpKind();
+    if (what === "run") return runAI(provider);
+    if (what === "off") { source = null; ai = null; if (measured) classify(); return paintAI(provider); }
     try {
-      if (what === "key") paintAI(await aiSetKey(aiBox.querySelector('[name="aiKey"]').value));
-      if (what === "forget") paintAI(await aiSetKey(""));
+      if (what === "key") paintAI(provider, await aiSetKey(provider, aiBox.querySelector('[name="aiKey"]').value));
+      if (what === "forget") paintAI(provider, await aiSetKey(provider, ""));
     } catch (err) { toast(err.message, "bad"); }
   });
-  paintAI();
+
+  /* Al cambiar de ayuda se enseña la suya; la varita se queda con lo pinchado */
+  function paintHelp() {
+    const kind = helpKind();
+    canvas.style.cursor = kind === "wand" ? "crosshair" : "";
+    if (kind === "wand") {
+      paintWand();
+      if (wand.clicks.length && source !== "wand") { source = "wand"; if (measured) classify(); }
+    } else paintAI(kind);
+  }
+  body.querySelectorAll('[name="help"]').forEach(r => r.addEventListener("change", paintHelp));
+  paintHelp();
 
   onResizeWhileOpen(body, draw);
 

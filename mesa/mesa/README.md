@@ -8,7 +8,7 @@ mapa y los turnos.
 No necesita instalar nada más que Node.js, no tiene dependencias obligatorias y
 funciona sin internet: basta con que todos estéis en el mismo wifi. (La ayuda
 de la IA para trazar los muros de un plano es opcional y esa sí necesita
-internet.)
+internet; la varita mágica, no.)
 
 ## Probarla sin instalar nada
 
@@ -398,34 +398,51 @@ siempre por la cuadrícula. Si lo prefieres como antes, **Por los bordes de la
 cuadrícula** pone muros rectos y diagonales de casilla. En los dos casos se
 revisa sobre el plano antes de ponerlo.
 
-### Ayuda de la IA para los muros
+### Ayudas para planos con mucho detalle
 
 En planos con mucho detalle (mesas, alfombras con borde oscuro, estanterías,
 escombros, sombras) la detección automática se confunde: ve líneas oscuras y
-cree que son paredes. En la misma ventana de **Muros y puertas del plano**
-está **Pedir ayuda a Claude**, la IA de Anthropic: mira el plano y decide qué
-casillas son suelo y cuáles pared, roca o vacío, sabiendo que un mueble no es
-una pared; también señala los tabiques y las puertas. Después Mesa ajusta los
-muros a la tinta del dibujo igual que siempre.
+cree que son paredes. En la misma ventana de **Muros y puertas del plano** hay
+tres ayudas para decirle qué es suelo; con eso, Mesa ajusta los muros a la
+tinta del dibujo igual que siempre.
 
-- **Cómo lo ve.** El plano se manda por partes de hasta 20 × 20 casillas, con
-  la cuadrícula y las coordenadas dibujadas encima, para que Claude diga
-  exactamente qué casilla es cuál. Un plano de 30 × 20 son dos partes.
-- **Hace falta una clave de la API de Claude**, que se saca en
-  <https://console.anthropic.com/settings/keys>. Se pega una vez en esa misma
-  ventana y se guarda **solo en el ordenador del DM** (`data/claude.json`);
-  no viaja a los navegadores ni a los móviles, y solo el DM puede usar la
-  ayuda. También vale la variable `ANTHROPIC_API_KEY`. **Olvidar la clave**
-  la borra.
-- **Cuesta dinero, poco.** Cada parte es una consulta a Claude Opus 5.5
-  pagada con tu clave: del orden de unos céntimos por parte. Solo se pregunta
-  cuando pulsas el botón.
-- **Lo que sale de tu ordenador** son las partes del plano, nada más: ni la
-  partida ni los personajes.
-- **Necesita internet y el módulo de Claude**, que «Abrir Mesa» y «Jugar por
-  internet» instalan solos la primera vez (o `npm install` en la carpeta).
-  Sin él, Mesa funciona igual y la ventana dice cómo instalarlo. En la
-  versión de prueba de GitHub Pages no está, porque no hay servidor.
+**Varita mágica (gratis, sin internet).** Pincha sobre el plano en el suelo de
+cada sala y de cada pasillo: se rellena hasta donde llegue ese color, como el
+bote de pintura de Paint, y se ve en verde. Los muebles sueltos dentro de una
+sala (una mesa, unos barriles, una alfombra) cuentan como suelo solos. Si algo
+se queda fuera, como una estantería pegada a la pared, pincha también encima.
+**Quitar** borra lo que hayas rellenado de más, **Deshacer** quita el último
+pinchazo y la **tolerancia** dice cuánto se puede parecer un color al pinchado
+para rellenarse. La varita no busca puertas: salen las que encuentre la
+detección automática, y las demás se ponen con **Puerta**.
+
+**Gemini (gratis, con límites).** La IA de Google mira el plano y dice qué
+casillas son suelo, sabiendo que un mueble no es una pared, y dónde hay
+tabiques y puertas. Su plan gratuito no pide tarjeta: la clave se saca en
+<https://aistudio.google.com/apikey> y se pega una vez en la ventana. Tiene un
+límite de consultas por minuto y por día, así que Mesa le manda las partes de
+una en una y, si Google pide calma, espera y lo vuelve a intentar. **Ojo:** en
+el plan gratuito Google puede usar lo que le mandas (las partes del plano,
+nada más) para mejorar sus productos. Se usa el último modelo Flash
+(`gemini-flash-latest`; se puede cambiar con la variable `GEMINI_MODEL`).
+
+**Claude (de pago).** Lo mismo con la IA de Anthropic: hace falta una clave de
+la API (<https://console.anthropic.com/settings/keys>) con saldo, y cada parte
+cuesta unos céntimos. Necesita el módulo de Claude, que «Abrir Mesa» y «Jugar
+por internet» instalan solos la primera vez (o `npm install` en la carpeta).
+
+Lo común a las dos IA:
+
+- **Cómo lo ven.** El plano se manda por partes de hasta 20 × 20 casillas, con
+  la cuadrícula y las coordenadas dibujadas encima, para que digan exactamente
+  qué casilla es cuál. Un plano de 30 × 20 son dos partes.
+- **Las claves se quedan en el ordenador del DM** (`data/gemini.json`,
+  `data/claude.json`, o las variables `GEMINI_API_KEY` y `ANTHROPIC_API_KEY`):
+  no viajan a los navegadores ni a los móviles, y solo el DM puede usar estas
+  ayudas. **Olvidar la clave** la borra.
+- **Lo que sale de tu ordenador** son las partes del plano: ni la partida ni
+  los personajes. Hace falta internet, y en la versión de prueba de GitHub
+  Pages no están, porque no hay servidor.
 - Si una parte falla, ahí se usa la detección automática y se avisa.
   **Volver a la detección automática** deshace la ayuda sin preguntar otra vez.
 
@@ -829,7 +846,8 @@ En la pantalla de la party, doble clic entra y sale de pantalla completa.
 
 ```
 server.js              servidor: red, disco y reparto a cada aparato
-claude.js              ayuda de la IA para los muros del plano (la clave se queda aquí)
+claude.js              ayuda de Claude para los muros del plano (la clave se queda aquí)
+gemini.js              ayuda de Gemini para los muros del plano (la clave se queda aquí)
 public/
   index.html           el documento; la interfaz la monta el JavaScript
   manifest.webmanifest lo que hace falta para instalarla como aplicación
@@ -863,7 +881,8 @@ public/
     gridfit.js         ventanas de encajar la cuadrícula y de muros y puertas del plano
     wallfind.js        proponer muros y puertas del plano y trazarlos sobre la tinta
     aiwalls.js         ayuda de la IA: trocear el plano, la pregunta y juntar las respuestas
-data/                  la partida, las imágenes y la clave de la IA si la guardas (se crea al arrancar)
+    wand.js            varita mágica: pinchar en el suelo y rellenar por color
+data/                  la partida, las imágenes y las claves de la IA si las guardas (se crea al arrancar)
 ```
 
 ## Seguridad, con nombre y apellidos

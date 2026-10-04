@@ -1,8 +1,9 @@
 /* Mesa · servidor de partida
    Node 18+, sin dependencias obligatorias. Sirve la aplicación, guarda el
    estado en disco y mantiene al día a todos los dispositivos conectados. La
-   ayuda de la IA para los muros del plano (claude.js) usa el SDK de
-   Anthropic si está instalado; sin él, todo lo demás funciona igual.
+   ayuda de la IA para los muros del plano puede usar Claude (claude.js, con
+   el SDK de Anthropic si está instalado) o Gemini (gemini.js, que tiene plan
+   gratuito y no necesita nada más); sin ellas, todo funciona igual.
 
    node server.js [--port 8080] [--pin 123456] [--data ./data] [--cert cert.pem --key key.pem] [--internet]
 
@@ -31,6 +32,7 @@ import { fileURLToPath } from "node:url";
 import { migrate } from "./public/js/schema.js";
 import { createEngine } from "./public/js/engine.js";
 import { createClaude } from "./claude.js";
+import { createGemini } from "./gemini.js";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC = path.join(HERE, "public");
@@ -58,14 +60,15 @@ const engine = createEngine({
   onKick: client => { if (client.res) { try { client.res.end(); } catch {} client.res = null; } }
 });
 const clients = engine.clients;   // testigo -> { id, name, role, charId, res }
-const claude = createClaude({ dataDir: DATA });
+const ai = { claude: createClaude({ dataDir: DATA }), gemini: createGemini({ dataDir: DATA }) };
 
 const MAX_BODY = 24 * 1024 * 1024;   // 24 MB: cabe un plano grande
 const IMG_TYPES = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif" };
 
 async function boot() {
   await mkdir(IMAGES, { recursive: true });
-  await claude.init();
+  await ai.claude.init();
+  await ai.gemini.init();
   try {
     const saved = JSON.parse(await readFile(STATE_FILE, "utf8"));
     engine.doc = await absorbLegacyImages(migrate(saved.doc || saved));
@@ -312,20 +315,22 @@ const handler = async (req, res) => {
       return json(res, 200, { ok: true });
     }
 
-    /* Ayuda de la IA (Claude) para los muros del plano. Solo el DM; la clave
-       se queda en este ordenador y no se le manda a nadie. */
+    /* Ayuda de la IA (Claude o Gemini) para los muros del plano. Solo el DM;
+       las claves se quedan en este ordenador y no se le mandan a nadie. */
     if (p.startsWith("/api/ai/")) {
       const body = req.method === "POST" ? JSON.parse((await readBody(req)).toString() || "{}") : {};
       const client = clients.get(body.token || url.searchParams.get("token") || "");
       if (!client) return json(res, 401, { error: "sesión caducada" });
       if (client.role !== "dm") return json(res, 403, { error: "Solo el DM" });
       try {
-        if (p === "/api/ai/status") return json(res, 200, await claude.status());
-        if (p === "/api/ai/key" && req.method === "POST") return json(res, 200, await claude.setKey(body.key));
+        if (p === "/api/ai/status") return json(res, 200, { claude: await ai.claude.status(), gemini: await ai.gemini.status() });
+        const provider = ai[body.provider];
+        if (!provider) return json(res, 400, { error: "¿Claude o Gemini?" });
+        if (p === "/api/ai/key" && req.method === "POST") return json(res, 200, await provider.setKey(body.key));
         if (p === "/api/ai/walls" && req.method === "POST") {
           const tiles = aiTiles(body.tiles);
           if (!tiles) return json(res, 400, { error: "Partes del plano no válidas" });
-          return json(res, 200, { tiles: await claude.walls(tiles) });
+          return json(res, 200, { tiles: await provider.walls(tiles) });
         }
       } catch (err) {
         return json(res, err.status || 500, { error: err.message });
