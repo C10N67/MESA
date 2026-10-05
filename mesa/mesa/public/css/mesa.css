@@ -11,7 +11,7 @@
    lejos) y la del sistema para el resto de la interfaz. */
 
 :root {
-  --mesa-version: "2.35.0";   /* igual que js/version.js y sw.js */
+  --mesa-version: "2.36.0";   /* igual que js/version.js y sw.js */
   --pitch: #0a0c11;
   --stone: #141821;
   --stone-2: #1b202b;
@@ -2530,3 +2530,26 @@ body.library-shown .layout:not(.map-mode) > main { padding-bottom: 160px; }
   .player-top #leaveBtn, .player-top #plang { display: none; }
   .tut-btn { padding: 6px 10px; font-size: 12px; }
 }
+
+/* ---------- Campañas: nueva o existente ---------- */
+.camp-q { font-size: 19px; text-align: center; margin: 4px 0 14px; }
+.camp-modes { grid-template-columns: repeat(2, 1fr); }
+.roles button:disabled { opacity: .45; cursor: default; }
+.camp-list { display: grid; gap: 7px; max-height: min(360px, 46vh); overflow-y: auto; }
+.camp-card { display: flex; gap: 6px; align-items: stretch; }
+.camp-load { flex: 1; min-width: 0; display: flex; gap: 11px; align-items: center; text-align: left;
+  border: 1px solid var(--edge); border-radius: 11px; padding: 10px 12px; background: #0e1219; transition: border-color .15s, background .15s; }
+.camp-load:hover { border-color: #3b4459; }
+.camp-card.current .camp-load { border-color: var(--gold); background: #1a1610; }
+.camp-ico { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; background: #171c27; color: var(--gold-soft); flex: none; }
+.camp-text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.camp-text b { font-family: var(--serif); font-size: 15.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.camp-text small { color: var(--dim); font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.camp-tag { flex: none; font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--gold-soft); border: 1px solid #5a4620; border-radius: 99px; padding: 2px 8px; }
+.camp-del { flex: none; align-self: center; }
+.camp-del:hover { color: #f08a7a; }
+.camp-note { font-size: 12.5px; margin: -4px 0 12px; }
+.camp-new .go { width: 100%; }
+.camp-wait { text-align: center; }
+.camp-host .camp-q { display: none; }
+.camp-host { min-width: min(440px, 80vw); }

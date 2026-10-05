@@ -5,6 +5,7 @@ import { icon, withIcon } from "./icons.js";
 import { store, savedSession, forgetSession, join, lobby, ping, connect, onState, DEMO } from "./net.js";
 import { startI18n, langPicker } from "./i18n.js";
 import { VERSION } from "./version.js";
+import { campaignChooser } from "./campaigns.js";
 
 const SHARED = typeof SharedWorker === "function";
 
@@ -213,6 +214,8 @@ async function gate(wanted) {
     $("#go").disabled = true;
     try {
       const data = await join({ name, role, pin: $("#pin").value.trim(), charId });
+      /* El DM elige antes qué campaña se juega: una nueva o una que ya existe */
+      if (data.role === "dm") return chooseCampaign();
       await start(data.role);
     } catch (err) {
       fail(err.message);
@@ -226,7 +229,15 @@ async function gate(wanted) {
     }
   });
 
-  app().addEventListener("keydown", e => { if (e.key === "Enter") $("#go").click(); });
+  app().addEventListener("keydown", e => { const go = $("#go"); if (e.key === "Enter" && go) go.click(); });
+}
+
+/* Ya dentro como DM: ¿campaña nueva o una que ya existe? */
+function chooseCampaign() {
+  const panel = app().querySelector(".panel");
+  panel.innerHTML = `<img class="gate-logo" src="icons/icon.svg" alt="" width="64" height="64">
+    <h1>Mesa</h1><div id="campHost"></div>`;
+  campaignChooser($("#campHost"), { onDone: () => start("dm") });
 }
 
 /* ---------- Instalar como aplicación ----------

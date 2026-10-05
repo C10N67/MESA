@@ -47,6 +47,41 @@ async function kvSet(key, value) {
   });
 }
 
+async function kvDel(key) {
+  const db = await idb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, "readwrite");
+    tx.objectStore(STORE).delete(key);
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+}
+async function kvKeys() {
+  const db = await idb();
+  return new Promise((resolve, reject) => {
+    const req = db.transaction(STORE).objectStore(STORE).getAllKeys();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+/* Las otras campañas, cada una en su entrada: «campaign:<id>» → { meta, doc } */
+const CAMPAIGN = "campaign:";
+const campaigns = {
+  async list() {
+    const out = [];
+    for (const k of await kvKeys()) {
+      if (typeof k !== "string" || !k.startsWith(CAMPAIGN)) continue;
+      const v = await kvGet(k).catch(() => null);
+      if (v && v.meta && v.meta.id) out.push(v.meta);
+    }
+    return out;
+  },
+  async get(id) { const v = await kvGet(CAMPAIGN + id); return (v && v.doc) || null; },
+  put: (id, meta, doc) => kvSet(CAMPAIGN + id, { meta, doc }),
+  remove: id => kvDel(CAMPAIGN + id)
+};
+
 /* ---------- Imágenes ---------- */
 const EXT = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif" };
 const AUDIO_EXT = {
@@ -119,7 +154,7 @@ function sampleDoc(doc) {
 /* ---------- El anfitrión ---------- */
 export function createHost(base) {
   const ports = new Map();          // testigo -> puerto que recibe el flujo
-  const engine = createEngine({ rid, absorbImages: d => absorbImages(base, d), onPresence: () => presence() });
+  const engine = createEngine({ rid, absorbImages: d => absorbImages(base, d), onPresence: () => presence(), campaigns });
   const clients = engine.clients;
 
   const ready = (async () => {
@@ -175,6 +210,11 @@ export function createHost(base) {
         return { token: out.token, id: out.client.id, role: out.client.role, charId: out.client.charId };
       }
       case "ping": return !!c;
+      case "campaigns": {
+        if (!c) throw Object.assign(new Error("sesión caducada"), { status: 401 });
+        if (c.role !== "dm") throw new Error("Solo el DM");
+        return engine.listCampaigns();
+      }
       case "stream": {
         if (!c) throw Object.assign(new Error("sesión caducada"), { status: 401 });
         ports.set(msg.token, port);

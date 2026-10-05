@@ -23,6 +23,7 @@ import { mountLibrary } from "./library.js";
 import { editPortrait } from "./cutout.js";
 import { tutorialButton, tutorialInMenu, startTutorial } from "./tutorial.js";
 import { cleanupStaleDemo } from "./tutorial-demo.js";
+import { campaignChooser } from "./campaigns.js";
 import { rollHitPoints } from "./dice.js";
 import { TYPE_NAMES, typeOf, crValue, CATALOG_BY_ID } from "./catalog.js";
 
@@ -2279,6 +2280,13 @@ function newCharacter() {
   openBuilder({ onManual: () => openCharEditor(null, {}) });
 }
 
+/* Cambiar de campaña sin salir: la de ahora se guarda con las demás */
+function openCampaigns() {
+  const host = el(`<div class="camp-host"></div>`);
+  const m = modal({ title: "Campañas", body: host, actions: [{ label: "Cerrar" }] });
+  campaignChooser(host, { inGame: true, onDone: () => { m.close(); setTimeout(() => toast("Campaña en juego: " + ((doc() || {}).session || {}).title, "good"), 400); } });
+}
+
 /* ---------- Menú ---------- */
 function openMenu() {
   const item = (key, ico, title, sub, tone = "") => `<button class="menu-item ${tone}" data-menu="${key}">
@@ -2292,8 +2300,9 @@ function openMenu() {
     ${item("handout", "image", "Enseñar una imagen", "Un mapa del tesoro, una carta, un retrato")}
     ${item("ask", "dice", "Pedir una tirada", "A quién, qué y con qué dificultad")}
     <h4 class="menu-sec">Partida</h4>
+    ${item("campaigns", "book", "Campañas", "Empezar una nueva o cargar otra; la de ahora se guarda")}
     ${item("export", "download", "Guardar copia", "Descarga un archivo con toda la partida")}
-    ${item("import", "upload", "Cargar una copia", "Sustituye la partida por la de un archivo")}
+    ${item("import", "upload", "Cargar una copia", "La pone en juego; la de ahora se guarda en Campañas")}
     <div class="menu-item static"><span class="menu-ico">${icon("lang", 20)}</span><span class="menu-text"><b>Idioma</b><small>Solo cambia en este aparato</small></span><span id="menuLang"></span></div>
     ${item("gnome", "wand", gnomeEnabled() ? "Despedir a Chispa" : "Llamar a Chispa", gnomeEnabled() ? "El gnomo ingeniero se vuelve a su taller" : "El gnomo ingeniero vuelve a vigilar la mesa")}
     ${tutorialInMenu("dm") ? item("tutorial", "info", "Tutorial", "Un paseo rápido por Mesa, con Chispa") : ""}
@@ -2323,7 +2332,7 @@ function openMenu() {
     if (!file.files[0]) return;
     try {
       const data = JSON.parse(await file.files[0].text());
-      if (!await confirmBox("Cargar esta copia reemplaza la partida actual. ¿Seguimos?")) return;
+      if (!await confirmBox("Esta copia pasa a ser la campaña en juego; la de ahora se guarda en Campañas. ¿Seguimos?")) return;
       op("doc.replace", { doc: data.doc || data });
       toast("Partida cargada", "good");
       m.close();
@@ -2341,6 +2350,7 @@ function openMenu() {
       URL.revokeObjectURL(a.href);
     }
     if (what === "import") file.click();
+    if (what === "campaigns") { m.close(); return openCampaigns(); }
     if (what === "tutorial") { m.close(); return startTutorial("dm"); }
     if (what === "tutorialTools") { m.close(); return startTutorial("dm", { section: "utiles" }); }
     if (what === "tutorialSettings") { m.close(); return startTutorial("dm", { section: "ajustes" }); }

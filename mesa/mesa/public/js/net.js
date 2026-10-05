@@ -113,6 +113,12 @@ const http = {
     if (!res.ok) throw new Error(data.error || (res.status === 413 ? "El archivo es demasiado grande" : "No se pudo subir el sonido"));
     return data.audioId;
   },
+  async campaigns(token) {
+    const res = await fetch("api/campaigns?token=" + encodeURIComponent(token), { cache: "no-store" });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || "No se pudieron leer las campañas");
+    return data.campaigns || [];
+  },
   async rtc(token, to, data) {
     const res = await fetch("api/rtc", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, to, data }) });
     return res.ok;
@@ -135,6 +141,17 @@ export async function lobby() {
 
 export async function ping(token) {
   return (await transport()).ping(token);
+}
+
+/* Campañas: la lista que puede cargar el DM, y empezar o cargar una. La
+   operación se espera (para pasar a la mesa ya con la campaña elegida). */
+export async function campaignList() {
+  return (await transport()).campaigns(store.session.token);
+}
+export async function campaignOp(o) {
+  const { status, data } = await (await transport()).ops(store.session.token, [o]);
+  if (status >= 400) throw new Error(data.error || "No se pudo");
+  return data;
 }
 
 /* ---------- Flujo de estado ---------- */

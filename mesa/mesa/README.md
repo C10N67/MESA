@@ -186,6 +186,30 @@ En **⋯ → Cómo entran mis jugadores** sale la dirección de la red del
 ordenador del DM (la de `localhost` no le sirve a nadie más), con un botón
 para copiarla.
 
+## Campañas
+
+Al entrar como DM desde la pantalla de entrada, Mesa pregunta **qué campaña
+se juega**:
+
+- **Nueva**: le pones nombre (por ejemplo «La mina perdida de Phandelver») y
+  empieza de cero: sin personajes, con un mapa vacío.
+- **Existente**: la lista de campañas guardadas, con sus personajes, cuántos
+  mapas tiene y cuándo se jugó por última vez. La primera, marcada «La
+  última», es la que estaba en juego: un clic y sigues donde lo dejaste. La
+  papelera borra una campaña guardada (pide confirmación).
+
+Al empezar una nueva o cargar otra, **la de ahora se guarda primero** con
+las demás, así que cambiar no pierde nada. Una mesa recién estrenada, sin
+nada dentro, no cuenta como campaña. «Deshacer» empieza de cero en cada
+campaña (no se puede deshacer hacia la anterior), y si algún jugador llevaba
+un personaje que en la otra campaña no existe, vuelve a elegir. Lo mismo se
+abre durante la partida desde **⋯ → Campañas**. Al volver a entrar con la
+sesión guardada (recargar la página) no se pregunta: sigues en la que
+estabas.
+
+Solo el DM puede ver la lista y cambiar de campaña. En la versión de prueba
+las campañas se guardan en el navegador.
+
 ## Idioma
 
 Arriba a la derecha (o en **⋯ → Idioma**, y en la propia pantalla de entrada)
@@ -1125,7 +1149,7 @@ enseñaría por dónde ha venido.
 ## Qué versión tengo
 
 La versión de Mesa sale en la pantalla de entrada y al final del menú **···**
-del DM («Mesa 2.35.0»). Si el navegador trae una versión distinta de la del
+del DM («Mesa 2.36.0»). Si el navegador trae una versión distinta de la del
 servidor, Mesa vacía sus copias guardadas y recarga sola; si no lo consigue,
 lo dice en la pantalla de entrada.
 
@@ -1145,10 +1169,12 @@ no cuadra, recarga con **Ctrl+Mayús+R** (Cmd+Mayús+R en Mac).
 
 En la carpeta `data/` junto al programa: `mesa.json` con la partida e `images/`
 con los planos y los retratos. Se guarda solo, unas décimas después de cada
-cambio, y sobrevive a que cierres la ventana.
+cambio, y sobrevive a que cierres la ventana. Las campañas que no están en
+juego esperan en `data/campaigns/`, una por archivo (mira «Campañas»).
 
 Desde **⋯ → Guardar copia de la partida** te llevas un `.json` con todo, y
-**Cargar una copia** lo devuelve. Las copias de la versión anterior de Mesa (la
+**Cargar una copia** lo devuelve como campaña en juego (la de antes se
+guarda con las demás). Las copias de la versión anterior de Mesa (la
 de escritorio) se cargan igual: personajes, bestiario, mapas, muros y retratos
 se convierten solos. Los planos y las caras, que en aquellos archivos iban
 incrustados en el propio `.json`, se sacan a `data/images/` al importarlos: por
@@ -1257,6 +1283,7 @@ public/
   css/mesa.css         estilos
   js/
     main.js            entrada a la partida y reparto de vistas
+    campaigns.js       elegir campaña al entrar como DM: nueva o una que ya existe
     version.js         la versión de Mesa (igual en mesa.css y sw.js)
     net.js             conexión, reconexión y envío de operaciones
     engine.js          las reglas de la partida (lo usan el servidor y la versión de prueba)

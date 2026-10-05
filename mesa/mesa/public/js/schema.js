@@ -522,6 +522,7 @@ export function emptyDoc() {
   const map = normalizeMap({ name: "Mazmorra" });
   return {
     version: 7,
+    campaignId: "",
     chars: [],
     bestiary: [],
     maps: [map],
@@ -570,6 +571,8 @@ export function migrate(raw) {
 
   return {
     version: 7,
+    /* Qué campaña es, para guardarla aparte al cambiar a otra */
+    campaignId: typeof src.campaignId === "string" ? src.campaignId.replace(/[^a-z0-9]/gi, "").slice(0, 40) : "",
     chars,
     bestiary: ownBeasts(src.bestiary),
     maps,

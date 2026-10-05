@@ -494,7 +494,7 @@ const EN = {
   "Enseñar una imagen": "Show an image", "Un mapa del tesoro, una carta, un retrato": "A treasure map, a letter, a portrait",
   "Pedir una tirada": "Ask for a roll", "A quién, qué y con qué dificultad": "Who, what and how hard",
   "Partida": "Game", "Guardar copia": "Save a copy", "Descarga un archivo con toda la partida": "Downloads a file with the whole game",
-  "Sustituye la partida por la de un archivo": "Replaces the game with one from a file",
+  "La pone en juego; la de ahora se guarda en Campañas": "Puts it in play; the current one is kept in Campaigns",
   "Solo cambia en este aparato": "Only changes on this device", "Vuelves a la pantalla de entrada": "Back to the entry screen",
   "Una hora. Cada personaje decide cuántos dados de golpe gasta desde su ficha.": "One hour. Each character decides how many hit dice to spend from their sheet.",
   "Ocho horas. Vida, espacios de conjuro y recursos al máximo; baja un nivel de agotamiento.": "Eight hours. Hit points, spell slots and resources to full; one level of exhaustion less.",
@@ -828,6 +828,14 @@ const EN = {
   "Guardar o cerrar": "Save or close",
   "«Guardar» aplica lo que hayas cambiado arriba; «Cerrar» lo deja como estaba. Ahora la cierro yo sin tocar nada.": "«Save» applies what you changed above; «Close» leaves it as it was. I'll close it now without touching anything.",
   "Útiles del mapa, con ejemplos": "Map tools, with examples",
+  "Esta copia pasa a ser la campaña en juego; la de ahora se guarda en Campañas. ¿Seguimos?": "This copy becomes the campaign in play; the current one is kept in Campaigns. Shall we?",
+  "¿Qué campaña jugamos?": "Which campaign are we playing?", "Campañas": "Campaigns", "Campaña": "Campaign",
+  "Nueva": "New", "empezar de cero": "start from scratch", "Existente": "Existing", "cargar una guardada": "load a saved one",
+  "todavía no hay": "none yet", "Nombre de la campaña": "Campaign name", "La mina perdida de Phandelver": "The Lost Mine of Phandelver",
+  "Empezar la campaña": "Start the campaign", "Buscando campañas…": "Looking for campaigns…", "Borrar esta campaña": "Delete this campaign",
+  "Empezar una nueva o cargar otra; la de ahora se guarda": "Start a new one or load another; the current one is kept",
+  "Aquí no hay campañas guardadas": "There are no saved campaigns here", "No se encuentra esa campaña": "That campaign can't be found",
+  "Es la campaña que está en juego": "That's the campaign being played", "No se pudieron leer las campañas": "Couldn't read the campaigns",
   "Taller de Chispa": "Sparky's workshop", "Trampa de foso, CD 13": "Pit trap, DC 13", "Trampilla": "Trapdoor", "Salón del trono": "Throne room",
   "Cada herramienta del mapa explicada por Chispa": "Every map tool explained by Sparky",
   "Útiles: las herramientas del mapa": "Tools: the map toolbox",
@@ -1021,6 +1029,8 @@ const SPELL_PARTS = [
   [/^(\d+) puntos de sueño$/, "$1 points of sleep"]
 ];
 const PATTERNS = [
+  [/^¿Borrar la campaña «(.+)»\? No se puede deshacer\.$/, "Delete the campaign «$1»? This can't be undone."],
+  [/^Campaña en juego: (.*)$/, "Now playing: $1"],
   [/^Color de la sala (.+)$/, "Colour of room $1"],
   [/^Nombre de la sala (.+)$/, "Name of room $1"],
   [/^Color (#[0-9a-f]{6})$/, "Colour $1"],

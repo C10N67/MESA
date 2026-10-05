@@ -9,7 +9,9 @@
    createEngine({ rid, absorbImages, onPresence })
      rid(n)          identificador aleatorio de n bytes en hexadecimal
      absorbImages(d) saca las imágenes incrustadas de una copia antigua
-     onPresence()    avisa de que ha cambiado quién está conectado */
+     onPresence()    avisa de que ha cambiado quién está conectado
+     campaigns       dónde se guardan las otras campañas (opcional):
+                     { list(), get(id), put(id, meta, doc), remove(id) } */
 
 import { emptyDoc, migrate, cellKey, normalizeChar, normalizeBeast, normalizeMap, normalizeShape, normalizePin, normalizePortal, normalizeSound, MAX_SOUNDS, normalizeAttack, normalizeDrawing, normalizeWall, MAX_WALLS, modOf, addDice, scaleDice, cantripTier } from "./schema.js";
 import { visibleCells, fringeCells, edgesNear, wallsNear, gridDistance, pathCost, occupied, fits, reachableCells, roomsOf, splitRooms } from "./los.js";
@@ -19,7 +21,7 @@ import { critDamage } from "./attacks-core.js";
 
 export const ROLES = ["dm", "player", "screen"];
 
-export function createEngine({ rid, absorbImages = async d => d, onPresence = () => {}, onKick = () => {} } = {}) {
+export function createEngine({ rid, absorbImages = async d => d, onPresence = () => {}, onKick = () => {}, campaigns = null } = {}) {
   let doc = emptyDoc();
   let pin = "";
   let rev = 0;
@@ -665,6 +667,49 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
     if (history.length > 20) history.shift();
   }
 
+  /* ---------- Campañas ----------
+     La partida en juego es una campaña; las demás esperan guardadas aparte.
+     Al empezar una nueva o cargar otra, la de ahora se guarda primero (si
+     tiene algo: una mesa recién estrenada no cuenta), y «deshacer» empieza
+     de cero, que no se puede deshacer hacia otra campaña. */
+  const BLANK_TITLE = emptyDoc().session.title;
+  const blankMap = m => !m.imageId && !Object.keys(m.edges || {}).length && !(m.walls || []).length
+    && !(m.pins || []).length && !(m.portals || []).length && !(m.drawings || []).length;
+  const isBlank = d => !d.chars.some(c => !c.probe) && !d.bestiary.length && !d.log.length
+    && d.maps.filter(m => !m.demo).length <= 1 && d.maps.every(m => m.demo || blankMap(m))
+    && (d.session.title || BLANK_TITLE) === BLANK_TITLE;
+  const ensureId = () => doc.campaignId || (doc.campaignId = rid(6));
+  const metaOf = (d, savedAt) => ({
+    id: d.campaignId, title: d.session.title || BLANK_TITLE, savedAt,
+    pcs: d.chars.filter(c => c.kind === "pc" && !c.probe).map(c => c.name).slice(0, 8),
+    maps: d.maps.filter(m => !m.demo).length
+  });
+  /* Se guarda tal cual, sin el taller del tutorial ni Chispa de explorador */
+  async function shelve() {
+    if (!campaigns || isBlank(doc)) return;
+    ensureId();
+    const copy = JSON.parse(JSON.stringify(doc));
+    copy.maps = copy.maps.filter(m => !m.demo);
+    copy.chars = copy.chars.filter(c => !c.probe);
+    copy.session.alert = null; copy.session.ping = null;
+    if (!copy.maps.some(m => m.id === copy.session.activeMapId) && copy.maps[0]) copy.session.activeMapId = copy.maps[0].id;
+    await campaigns.put(doc.campaignId, metaOf(copy, Date.now()), copy);
+  }
+  async function switchTo(next) {
+    await shelve();
+    doc = next;
+    partyCache = null;
+    history.length = 0;
+    /* Quien llevaba un personaje que en esta campaña no existe se queda sin él */
+    for (const c of clients.values()) if (c.charId && !findChar(c.charId)) c.charId = null;
+  }
+  async function listCampaigns() {
+    const saved = campaigns ? await campaigns.list().catch(() => []) : [];
+    const now = isBlank(doc) ? [] : [{ ...metaOf(doc, Date.now()), id: ensureId(), current: true }];
+    return [...now, ...saved.filter(s => s && s.id && s.id !== doc.campaignId).sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0))];
+  }
+  const cleanTitle = t => String(t || "").replace(/\s+/g, " ").trim().slice(0, 60);
+
   /* ---------- Operaciones ---------- */
   const PLAYER_LOCKED = new Set(["id", "kind", "hidden", "xp", "cr", "mapId", "mx", "my", "claimedBy"]);
   const findChar = id => doc.chars.find(c => c.id === id);
@@ -1178,10 +1223,46 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         return "SKIP_HISTORY";
       }
 
-      case "doc.replace":
+      case "doc.replace": {
         if (!dm) return "Solo el DM";
-        doc = await absorbImages(migrate(op.doc));
+        /* Una copia cargada de un archivo pasa a ser la campaña en juego: la
+           de antes se guarda con las demás */
+        const next = await absorbImages(migrate(op.doc));
+        if (!next.campaignId || (next.campaignId !== doc.campaignId && campaigns && await campaigns.get(next.campaignId).catch(() => null))) next.campaignId = rid(6);
+        await switchTo(next);
         break;
+      }
+
+      case "campaign.new": {
+        if (!dm) return "Solo el DM";
+        const next = emptyDoc();
+        next.campaignId = rid(6);
+        next.session.title = cleanTitle(op.title) || BLANK_TITLE;
+        await switchTo(next);
+        break;
+      }
+
+      case "campaign.load": {
+        if (!dm) return "Solo el DM";
+        if (!campaigns) return "Aquí no hay campañas guardadas";
+        const id = String(op.id || "");
+        if (id === doc.campaignId) break;
+        const saved = await campaigns.get(id).catch(() => null);
+        if (!saved) return "No se encuentra esa campaña";
+        const next = await absorbImages(migrate(saved));
+        next.campaignId = id;
+        await switchTo(next);
+        break;
+      }
+
+      case "campaign.remove": {
+        if (!dm) return "Solo el DM";
+        if (!campaigns) return "Aquí no hay campañas guardadas";
+        const id = String(op.id || "");
+        if (id === doc.campaignId) return "Es la campaña que está en juego";
+        await campaigns.remove(id);
+        return "SKIP_HISTORY";
+      }
       default:
         return "Operación desconocida: " + op.type;
     }
@@ -1286,7 +1367,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
   /* Aplica un lote. Si una operación falla, las anteriores ya se aplicaron y
      hay que repartirlas igual: por eso se devuelve cuántas entraron. */
   async function run(client, ops) {
-    const worthRemembering = ops.some(o => o && !["ping", "chat", "log.add", "request.done", "undo", "voice.set"].includes(o.type));
+    const worthRemembering = ops.some(o => o && !["ping", "chat", "log.add", "request.done", "undo", "voice.set", "campaign.remove"].includes(o.type));
     /* El taller del tutorial no se apunta en el historial: «deshacer» al
        acabar vuelve a lo último que hizo el DM, no al mapa de prácticas */
     const demoing = doc.maps.some(m => m.demo) || ops.some(o => o && o.type === "map.add" && o.map && o.map.demo);
@@ -1372,7 +1453,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
     set pin(v) { pin = String(v || ""); },
     get rev() { return rev; },
     clients,
-    hello, join, run, advance, refresh, presence, setOnline, purge, saveClients, loadClients,
+    hello, join, run, advance, refresh, presence, setOnline, purge, saveClients, loadClients, listCampaigns,
     snapshot: redact
   };
 }
