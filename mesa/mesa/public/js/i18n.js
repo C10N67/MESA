@@ -785,6 +785,10 @@ const EN = {
   "Manual de D&D: todas las ediciones y reglas rápidas": "D&D manual: every edition and quick rules",
   "Bestiario: el libro de invocaciones (Ctrl+B)": "Bestiary: the book of summonings (Ctrl+B)",
   "Librería": "Library", "Guardar la librería": "Put the library away", "Sacar la librería": "Bring out the library",
+  "Añadir un PDF a la librería": "Add a PDF to the library", "Solo caben PDF en la librería": "Only PDFs fit in the library",
+  "PDF añadido a la librería": "PDF added to the library", "Título del libro": "Book title", "Color del lomo": "Spine colour",
+  "Abrir aparte": "Open separately", "Quitar de la librería": "Remove from the library", "Cerrar el libro": "Close the book",
+  "No se ha podido guardar el cambio": "The change couldn't be saved", "No se ha podido quitar": "It couldn't be removed",
   "Manual de D&D 5.5: reglas, conjuros, criaturas y equipo": "D&D 5.5 manual: rules, spells, creatures and gear",
   "Devolver el manual a la estantería": "Put the manual back on the shelf",
   "Devolver el bestiario a la estantería": "Put the bestiary back on the shelf",
@@ -875,6 +879,11 @@ const SPELL_PARTS = [
   [/^(\d+) puntos de sueño$/, "$1 points of sleep"]
 ];
 const PATTERNS = [
+  [/^(\d+) PDF añadidos a la librería$/, "$1 PDFs added to the library"],
+  [/^Devolver «(.+)» a la estantería$/, "Put «$1» back on the shelf"],
+  [/^«(.+)» no cabe: el navegador no deja guardar más$/, "«$1» doesn't fit: the browser won't store any more"],
+  [/^No se ha podido guardar «(.+)»$/, "«$1» couldn't be saved"],
+  [/^¿Quitar «(.+)» de la librería\? Se borra de este navegador; el archivo original no se toca\.$/, "Remove «$1» from the library? It's deleted from this browser; the original file is untouched."],
   [/^Este navegador tiene Mesa (\S+) y el servidor la (\S+): recarga con Ctrl\+Mayús\+R$/, "This browser has Mesa $1 and the server has $2: reload with Ctrl+Shift+R"],
   [/^Sonido: (.+)$/, "Sound: $1"],
   [/^Caben (\d+) sonidos por mapa$/, "Up to $1 sounds per map"],

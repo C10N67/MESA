@@ -325,6 +325,18 @@ abierto, en el estante queda su hueco, y pulsar el hueco lo devuelve (lo
 cierra). Los libros se abren entre la barra de arriba y la librería, para que
 sus lomos sigan a mano.
 
+**Tus propios PDF** también van a la librería: el lomo de puntos con un «+»
+al final del estante abre el selector de archivos (o suelta los PDF encima de
+la estantería). Cada uno entra como un libro más, con lomo de cuero, nervios
+dorados y su título, más grueso cuanto más pesa. Al abrirlo flota igual que
+el manual, con el visor de PDF del navegador dentro (buscar, pasar páginas,
+ampliar); arriba se le cambia el **título** y el **color del lomo**, se puede
+**abrir aparte** en otra pestaña o **quitar de la librería**. Los PDF se
+guardan **en este navegador**, no en la partida ni en el servidor: no viajan
+a los jugadores, no cuentan para el tamaño de la partida y se quedan aunque
+cierres Mesa, pero en otro ordenador o navegador habrá que volver a añadirlos.
+Quitar uno de la librería no toca el archivo original.
+
 La librería se guarda con el **tirador de latón** de su esquina y queda una
 pestaña de madera, «Librería», para volver a sacarla; cada navegador recuerda
 cómo la dejaste. En el teléfono empieza guardada. En «La mesa» deja sitio
@@ -1019,7 +1031,7 @@ enseñaría por dónde ha venido.
 ## Qué versión tengo
 
 La versión de Mesa sale en la pantalla de entrada y al final del menú **···**
-del DM («Mesa 2.26.0»). Si el navegador trae una versión distinta de la del
+del DM («Mesa 2.27.0»). Si el navegador trae una versión distinta de la del
 servidor, Mesa vacía sus copias guardadas y recarga sola; si no lo consigue,
 lo dice en la pantalla de entrada.
 
@@ -1149,7 +1161,7 @@ public/
     builder.js         el creador de personajes paso a paso
     manual.js          la ventana del manual del DM
     gnome.js           Chispa, el gnomo ingeniero de la vista del DM
-    library.js         la librería del DM: los libros de consulta de lomo
+    library.js         la librería del DM: los libros de consulta de lomo y los PDF
     manual-data.js     el texto del manual: la chuleta de la 5.5 y las otras ediciones
     soundscape.js      hacer sonar el mapa en la pantalla de la party
     attacks.js         leer y lanzar ataques
