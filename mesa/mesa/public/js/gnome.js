@@ -49,7 +49,7 @@ const CSS = `
 .gnome-slot { position: absolute; left: 0; top: 0; bottom: 0; width: 0; pointer-events: none; }
 .gnome-slot[hidden] { display: none; }
 /* Justo a la izquierda del título: el título se aparta lo justo si el margen no le basta */
-.gnome-slot:not([hidden]) ~ .brand { margin-left: max(0px, calc(64px - max(14px, 2.2vw))); }
+@media (min-width: 701px) { .gnome-slot:not([hidden]) ~ .brand { margin-left: max(0px, calc(64px - max(14px, 2.2vw))); } }
 .gnome { position: absolute; left: 4px; top: calc(50% - 23px); width: 54px; height: 45px;
   pointer-events: auto; cursor: pointer; border: 0; padding: 0; background: none; color: inherit;
   -webkit-tap-highlight-color: transparent; }

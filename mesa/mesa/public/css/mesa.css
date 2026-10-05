@@ -11,7 +11,7 @@
    lejos) y la del sistema para el resto de la interfaz. */
 
 :root {
-  --mesa-version: "2.24.0";   /* igual que js/version.js y sw.js */
+  --mesa-version: "2.25.0";   /* igual que js/version.js y sw.js */
   --pitch: #0a0c11;
   --stone: #141821;
   --stone-2: #1b202b;
@@ -1064,6 +1064,55 @@ body.screen { background: #05060a; overflow: hidden; }
 .topbar { min-height: 60px; }
 .brand h1 { font-size: 21px; }
 .top-actions { display: flex; align-items: center; gap: 6px; }
+
+/* Manual y bestiario: dos cintas que cuelgan del borde de arriba de la
+   ventana, como los marcapáginas de un libro. La punta asoma un poco por
+   debajo de la barra; al pasar por encima se estiran, y mientras su libro
+   está abierto se quedan estiradas y encendidas. */
+.top-marks { position: relative; flex: none; align-self: stretch; width: 118px; margin: -12px 0; }
+.top-mark {
+  position: absolute; top: 0; z-index: 2; padding: 0; border: 0; background: none; cursor: pointer;
+  filter: drop-shadow(0 5px 8px rgba(0, 0, 0, .55));
+}
+.top-mark.mark-bestiary { left: 64px; }
+.top-mark-ribbon {
+  display: grid; justify-items: center; align-content: end; gap: 3px;
+  width: 54px; min-height: 80px; padding-bottom: 20px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 84%, 0 100%);
+  transition: min-height .18s ease, filter .18s ease;
+}
+.top-mark-label { font: 700 7.5px/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; }
+.top-mark:hover .top-mark-ribbon, .top-mark:focus-visible .top-mark-ribbon { min-height: 88px; }
+.top-mark[aria-pressed="true"] .top-mark-ribbon { min-height: 94px; }
+.top-mark:focus-visible { outline: none; }
+.mark-manual .top-mark-ribbon {
+  color: #f2d48c;
+  background:
+    linear-gradient(90deg, transparent 4px, rgba(242, 212, 140, .55) 4px 5.5px, transparent 5.5px calc(100% - 5.5px), rgba(242, 212, 140, .55) calc(100% - 5.5px) calc(100% - 4px), transparent calc(100% - 4px)),
+    linear-gradient(180deg, #2c0e0a, #6b2219 55%, #5a1c15);
+}
+.mark-manual[aria-pressed="true"] .top-mark-ribbon { filter: brightness(1.18) drop-shadow(0 0 6px rgba(242, 212, 140, .45)); }
+.mark-bestiary .top-mark-ribbon {
+  color: #ddd6be;
+  background:
+    linear-gradient(90deg, transparent 4px, rgba(184, 179, 156, .5) 4px 5.5px, transparent 5.5px calc(100% - 5.5px), rgba(184, 179, 156, .5) calc(100% - 5.5px) calc(100% - 4px), transparent calc(100% - 4px)),
+    linear-gradient(180deg, #0b0710, #2e1d3d 55%, #241731);
+}
+.mark-bestiary .ico { color: #9ef0bd; filter: drop-shadow(0 0 4px rgba(123, 224, 164, .7)); }
+.mark-bestiary[aria-pressed="true"] .top-mark-ribbon { filter: brightness(1.2) drop-shadow(0 0 7px rgba(123, 224, 164, .55)); }
+@media (max-width: 1220px) and (min-width: 701px) {
+  .top-marks { width: 86px; }
+  .top-mark.mark-bestiary { left: 46px; }
+  .top-mark-ribbon { width: 40px; padding-bottom: 22px; }
+  .top-mark-label { display: none; }
+}
+@media (max-width: 1000px) and (min-width: 701px) {
+  .top-marks { width: 74px; }
+  .top-mark.mark-bestiary { left: 40px; }
+  .top-mark-ribbon { width: 34px; }
+  .top-mark-ribbon .ico { width: 17px; height: 17px; }
+}
+@media (prefers-reduced-motion: reduce) { .top-mark-ribbon { transition: none; } }
 .tabs button { gap: 6px; }
 .presence {
   height: 32px; padding: 0 11px; border-radius: 999px; border: 1px solid var(--edge);
@@ -1236,7 +1285,7 @@ body.screen { background: #05060a; overflow: hidden; }
   .top-actions .btn:not(.primary) .lbl { display: none; }
   .top-actions .btn:not(.primary) { padding: 7px 9px; }
 }
-@media (min-width: 701px) and (max-width: 1000px) {
+@media (min-width: 701px) and (max-width: 1220px) {
   .voice [data-voice="join"] .lbl { display: none; }
 }
 @media (max-width: 1080px) {
@@ -1250,7 +1299,13 @@ body.screen { background: #05060a; overflow: hidden; }
 /* ---------- Teléfono ---------- */
 @media (max-width: 700px) {
   .topbar { padding: 8px 12px; gap: 8px; min-height: 0; }
-  .shell > .topbar:not(.player-top) { display: grid; grid-template-columns: 1fr auto; grid-template-areas: "brand presence" "tabs tabs" "actions actions"; }
+  .shell > .topbar:not(.player-top) { display: grid; grid-template-columns: 1fr auto auto; grid-template-areas: "brand marks presence" "tabs tabs tabs" "actions actions actions"; }
+  .shell > .topbar:not(.player-top) .top-marks { grid-area: marks; align-self: start; width: 84px; height: 40px; margin: -8px 0 0; }
+  .top-mark.mark-bestiary { left: 44px; }
+  .top-mark-ribbon { width: 38px; min-height: 54px; padding-bottom: 14px; }
+  .top-mark:hover .top-mark-ribbon, .top-mark:focus-visible .top-mark-ribbon { min-height: 58px; }
+  .top-mark[aria-pressed="true"] .top-mark-ribbon { min-height: 60px; }
+  .top-mark-label { display: none; }
   .shell > .topbar:not(.player-top) .brand { grid-area: brand; min-width: 0; }
   .shell > .topbar:not(.player-top) .brand .campaign { width: 100%; min-width: 0; }
   .shell > .topbar:not(.player-top) .tabs { grid-area: tabs; }

@@ -11,7 +11,7 @@ import { previewSound } from "./soundscape.js";
 import { dicePanel, renderLog, throwDice, tellTable, currentMode, isSecret } from "./dice-panel.js";
 import { openCharEditor, openConditions } from "./char-editor.js";
 import { openBuilder } from "./builder.js";
-import { openManual, floatingBook } from "./manual.js";
+import { toggleManual, floatingBook } from "./manual.js";
 import { MapView } from "./map.js";
 import { openSpellbook } from "./spellbook.js";
 import { openGridFit, openWallFit } from "./gridfit.js";
@@ -86,9 +86,13 @@ export function mountDM(root) {
         <span class="spacer"></span>
         <span id="voiceSlot"></span>
         <button class="presence" id="presence" type="button" title="Quién está conectado"></button>
+        <div class="top-marks">
+          <button type="button" class="top-mark mark-manual" id="manualBtn" aria-pressed="false" title="Manual de D&D: todas las ediciones y reglas rápidas">
+            <span class="top-mark-ribbon">${icon("scroll", 20)}<span class="top-mark-label">Manual</span></span></button>
+          <button type="button" class="top-mark mark-bestiary" id="bestiaryBtn" aria-pressed="false" title="Bestiario: el libro de invocaciones (Ctrl+B)">
+            <span class="top-mark-ribbon">${icon("skull", 20)}<span class="top-mark-label">Bestiario</span></span></button>
+        </div>
         <div class="top-actions">
-          <button class="btn sm" id="bestiaryBtn" title="Bestiario">${withIcon("book", "Bestiario")}</button>
-          <button class="btn sm" id="manualBtn" title="Manual de D&D: todas las ediciones y reglas rápidas">${withIcon("scroll", "Manual")}</button>
           <button class="btn sm" id="combatBtn" title="Combate">${withIcon("swords", "Iniciar combate")}</button>
           <button class="btn sm" id="restBtn" title="Descansar">${withIcon("moon", "Descansar")}</button>
           <button class="icon-btn" id="undoBtn" title="Deshacer el último cambio" aria-label="Deshacer el último cambio">${icon("undo")}</button>
@@ -119,7 +123,13 @@ export function mountDM(root) {
   });
   $("#addBtn", root).addEventListener("click", () => newCharacter());
   $("#bestiaryBtn", root).addEventListener("click", () => toggleDrawer());
-  $("#manualBtn", root).addEventListener("click", () => openManual());
+  $("#manualBtn", root).addEventListener("click", () => toggleManual());
+  /* Las cintas se quedan «tiradas» mientras su libro está abierto */
+  document.addEventListener("mesa:book", e => {
+    const id = { "mesa.grimoire": "#manualBtn", "mesa.bestiario": "#bestiaryBtn" }[e.detail.key];
+    const mark = id && $(id, root);
+    if (mark) mark.setAttribute("aria-pressed", String(e.detail.open));
+  });
   $("#combatBtn", root).addEventListener("click", toggleCombat);
   $("#restBtn", root).addEventListener("click", openRest);
   $("#undoBtn", root).addEventListener("click", () => { op("undo"); toast("Deshecho"); });

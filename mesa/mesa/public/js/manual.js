@@ -396,6 +396,12 @@ export function openManual(start) {
   return book;
 }
 
+/* La cinta del manual: lo abre y, si ya está abierto, lo cierra */
+export function toggleManual() {
+  if (book) { book.close(); return null; }
+  return openManual();
+}
+
 /* ---------- El grimorio ----------
    El manual se abre como un libro: tapas de cuero, dos páginas de pergamino
    (a la izquierda el índice y el buscador, a la derecha lo que se lee) y una
@@ -429,6 +435,8 @@ export function floatingBook(content, opts) {
   </section>`);
   node.querySelector(".grim-pages").appendChild(content);
   document.body.appendChild(node);
+  const announce = open => document.dispatchEvent(new CustomEvent("mesa:book", { detail: { key, open } }));
+  announce(true);
 
   /* Dónde y de qué tamaño: lo último que eligió el DM, o centrado */
   const small = () => innerWidth <= 700;
@@ -439,8 +447,10 @@ export function floatingBook(content, opts) {
     return { w, h, x: Math.min(Math.max(8 - w + 120, b.x), innerWidth - 120), y: Math.min(Math.max(8, b.y), innerHeight - 60) };
   };
   if (!box || !box.w) {
-    const w = Math.min(1080, innerWidth - 48), h = Math.min(Math.round(innerHeight * 0.86), 820);
-    box = { w, h, x: Math.round((innerWidth - w) / 2), y: Math.round((innerHeight - h) / 2) };
+    /* Por debajo de las cintas de la barra, para que se pueda volver a tirar de ellas */
+    const top = Math.min(104, Math.round(innerHeight * 0.12));
+    const w = Math.min(1080, innerWidth - 48), h = Math.min(Math.round(innerHeight * 0.86), 820, innerHeight - top - 16);
+    box = { w, h, x: Math.round((innerWidth - w) / 2), y: Math.max(top, Math.round((innerHeight - h) / 2)) };
   }
   const place = () => {
     if (small()) { node.removeAttribute("style"); return; }
@@ -488,6 +498,7 @@ export function floatingBook(content, opts) {
     closed = true;
     removeEventListener("resize", onResize);
     onClose();
+    announce(false);
     const done = () => node.remove();
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return done();
     node.classList.add("closing");

@@ -316,7 +316,14 @@ jugador, el nombre y lo que hace, resumido. Las subclases se escriben a mano
 
 ## Manual del DM
 
-El botón **Manual** de la barra del DM abre el manual de la **5.5** (D&D
+Arriba, en la barra del DM, cuelgan dos **marcapáginas** desde el borde de
+la ventana, como las cintas de un libro: el granate del **Manual** y el morado
+de la calavera del **Bestiario**. Cada uno abre su libro y, si ya está
+abierto, lo cierra; mientras el libro está abierto, su cinta se queda
+estirada y encendida. Los libros se abren por debajo de las cintas para poder
+volver a tirar de ellas.
+
+La cinta del **Manual** abre el manual de la **5.5** (D&D
 2024) como un **grimorio**: un libro de tapas de cuero que se abre sobre la
 partida, con el índice y el buscador en la página de la izquierda y lo que se
 lee en la de la derecha, en pergamino. No bloquea nada: se puede seguir
@@ -429,7 +436,7 @@ plantas, celestiales y aberraciones), con fichas completas: características,
 sentidos, idiomas, resistencias, rasgos y acciones, y sus ataques listos para
 tirar de un clic, alientos y conjuros con salvación incluidos.
 
-El bestiario se abre como un **libro de invocaciones**: un tomo de cuero
+La cinta de la calavera abre el bestiario como un **libro de invocaciones**: un tomo de cuero
 morado casi negro con herrajes de hueso, un ojo verde por cierre que
 parpadea, páginas viejas y tostadas en los bordes con manchas de tinta roja,
 un círculo de invocación al fondo de cada ficha y niebla que se escapa por
@@ -1005,7 +1012,7 @@ enseñaría por dónde ha venido.
 ## Qué versión tengo
 
 La versión de Mesa sale en la pantalla de entrada y al final del menú **···**
-del DM («Mesa 2.24.0»). Si el navegador trae una versión distinta de la del
+del DM («Mesa 2.25.0»). Si el navegador trae una versión distinta de la del
 servidor, Mesa vacía sus copias guardadas y recarga sola; si no lo consigue,
 lo dice en la pantalla de entrada.
 

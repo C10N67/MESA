@@ -783,6 +783,7 @@ const EN = {
   "Buscar: THAC0, agarrar, descanso…": "Search: THAC0, grapple, rest…",
   "Buscar en el manual": "Search the manual",
   "Manual de D&D: todas las ediciones y reglas rápidas": "D&D manual: every edition and quick rules",
+  "Bestiario: el libro de invocaciones (Ctrl+B)": "Bestiary: the book of summonings (Ctrl+B)",
   "Guía": "Guide",
   "Reglas rápidas": "Quick rules",
   "Comparativa": "Comparison",
