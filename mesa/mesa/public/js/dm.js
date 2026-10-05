@@ -3,16 +3,16 @@
 import { afterMove } from "./portals.js";
 import { voiceWidget } from "./voice.js";
 import { $, el, on, esc, lines, sign, pct, hpTone, hpBar, tweenBars, initials, imgURL, toast, modal, confirmBox, shrinkImage, clamp } from "./util.js";
-import { CONDITIONS, conditionName, ABILITIES, SKILLS, PIN_KINDS, modOf, normalizeChar, normalizeBeast, bestiaryOf, isBaseBeast, normalizeMap, normalizePin, normalizePortal, normalizeSound, SOUND_PRESETS, MAX_SOUNDS, uid, encounterDifficulty, MAX_COLS, MAX_ROWS } from "./schema.js";
+import { CONDITIONS, conditionName, ABILITIES, SKILLS, PIN_KINDS, modOf, normalizeChar, normalizeBeast, bestiaryOf, isBaseBeast, normalizeMap, normalizePin, normalizePortal, normalizeSound, SOUND_PRESETS, MAX_SOUNDS, uid, encounterDifficulty, MAX_COLS, MAX_ROWS, footprint, cellKey } from "./schema.js";
 import { openAttacks, attacksOf } from "./attacks.js";
-import { feetChars, nextRoomId } from "./los.js";
+import { feetChars, nextRoomId, roomsOf } from "./los.js";
 import { store, onState, onPresence, onStatus, op, patchChar, patchSession, patchMap, uploadImage, uploadAudio, leave, lobby } from "./net.js";
 import { previewSound } from "./soundscape.js";
 import { dicePanel, renderLog, throwDice, tellTable, currentMode, isSecret } from "./dice-panel.js";
 import { openCharEditor, openConditions } from "./char-editor.js";
 import { openBuilder } from "./builder.js";
 import { toggleManual, floatingBook } from "./manual.js";
-import { MapView } from "./map.js";
+import { MapView, roomTone } from "./map.js";
 import { openSpellbook } from "./spellbook.js";
 import { openGridFit, openWallFit } from "./gridfit.js";
 import { langPicker } from "./i18n.js";
@@ -27,6 +27,7 @@ import { TYPE_NAMES, typeOf, crValue, CATALOG_BY_ID } from "./catalog.js";
 let tab = "mesa";
 let shownTab = null;
 let openCards = new Set();
+const foldedGroups = new Set();   // grupos de enemigos plegados en la mesa
 let mapView = null;
 let mapTool = "token";
 let beastQuery = "";
@@ -361,7 +362,61 @@ function renderTable() {
     ${monsters.length ? `
       <div class="section-title"><h2>Enemigos</h2><span class="line"></span>
         <button class="btn sm" data-act="clearFoes">Retirar monstruos</button></div>
-      <div class="grid">${monsters.map(cardHTML).join("")}</div>` : ""}`;
+      ${foesHTML(monsters)}` : ""}`;
+}
+
+/* Enemigos que comparten sala marcada en el mapa: van juntos, en un grupo
+   con el color de la sala. Los que están solos en su sala, fuera de toda
+   sala o sin poner en el mapa, siguen sueltos debajo. */
+function roomGroups(monsters) {
+  const groups = new Map(), loose = [];
+  for (const m of monsters) {
+    const map = m.mx !== null ? doc().maps.find(x => x.id === m.mapId) : null;
+    let hit = null;
+    if (map && map.rooms && Object.keys(map.rooms).length) {
+      const rooms = roomsOf(map), n = footprint(m);
+      /* La casilla de la esquina o, si es grande, cualquiera de las que ocupa */
+      for (let dy = 0; dy < n && !hit; dy++) for (let dx = 0; dx < n && !hit; dx++) {
+        const k = cellKey(m.mx + dx, m.my + dy), idx = (rooms.of.get(k) || [])[0];
+        if (idx !== undefined) hit = { key: map.id + ":" + idx, map, roomId: map.rooms[rooms.list[idx][0]] };
+      }
+    }
+    if (!hit) { loose.push(m); continue; }
+    if (!groups.has(hit.key)) groups.set(hit.key, { ...hit, list: [] });
+    groups.get(hit.key).list.push(m);
+  }
+  const maps = doc().maps.map(x => x.id);
+  const out = [...groups.values()].filter(g => g.list.length > 1)
+    .sort((a, b) => maps.indexOf(a.map.id) - maps.indexOf(b.map.id) || Number(a.roomId) - Number(b.roomId));
+  const grouped = new Set(out.flatMap(g => g.list.map(m => m.id)));
+  return { groups: out, loose: monsters.filter(m => !grouped.has(m.id)) };
+}
+
+function foesHTML(monsters) {
+  const { groups, loose } = roomGroups(monsters);
+  const many = doc().maps.length > 1;
+  const group = g => {
+    const up = g.list.filter(m => m.hp > 0).length;
+    const hp = g.list.reduce((s, m) => s + Math.max(0, m.hp), 0), max = g.list.reduce((s, m) => s + m.maxHp, 0);
+    const folded = foldedGroups.has(g.key), hidden = g.list.every(m => m.hidden);
+    return `<section class="foe-group${folded ? " folded" : ""}" style="--room:${roomTone(g.roomId)}">
+      <header class="foe-group-head">
+        <span class="foe-group-swatch" aria-hidden="true"></span>
+        <h3>Sala ${esc(g.roomId)}${many ? ` <small>· ${esc(g.map.name)}</small>` : ""}</h3>
+        <span class="foe-group-count">${g.list.length} enemigos${up < g.list.length ? ` · ${up} en pie` : ""}</span>
+        <span class="foe-group-hp" title="${hp} de ${max} puntos de vida"><i style="width:${max ? Math.round(hp / max * 100) : 0}%"></i></span>
+        <span class="spacer"></span>
+        <button class="icon-btn" data-gact="hide" data-group="${esc(g.key)}" title="${hidden ? "Enseñar el grupo a la party" : "Ocultar el grupo a la party"}">${icon(hidden ? "eyeOff" : "eye")}</button>
+        <button class="icon-btn" data-gact="fold" data-group="${esc(g.key)}" title="${folded ? "Desplegar el grupo" : "Plegar el grupo"}" aria-expanded="${!folded}">${icon(folded ? "down" : "up")}</button>
+      </header>
+      ${folded
+        ? `<div class="foe-group-mini">${g.list.map(m => `<button type="button" class="foe-chip${m.hp <= 0 ? " down" : ""}" data-gact="fold" data-group="${esc(g.key)}" style="--tone:${esc(m.color)}">
+            ${m.avatarId ? `<img src="${imgURL(m.avatarId)}" alt="">` : `<span class="foe-chip-ini">${initials(m.name)}</span>`}
+            <b>${esc(m.name)}</b><span class="tnum">${m.hp}/${m.maxHp}</span></button>`).join("")}</div>`
+        : `<div class="grid">${g.list.map(cardHTML).join("")}</div>`}
+    </section>`;
+  };
+  return groups.map(group).join("") + (loose.length ? `${groups.length ? `<h3 class="foe-loose-title">Fuera de las salas</h3>` : ""}<div class="grid">${loose.map(cardHTML).join("")}</div>` : "");
 }
 
 /* Quién lleva este personaje y si está conectado ahora mismo */
@@ -374,9 +429,11 @@ function cardHTML(c) {
   const p = pct(c);
   const open = openCards.has(c.id);
   const monster = c.kind === "monster";
+  /* Los de los jugadores, en grande: se les reconoce de un vistazo */
+  const big = monster ? "" : " big";
   const avatar = c.avatarId
-    ? `<img class="avatar" src="${imgURL(c.avatarId)}" alt="" style="--tone:${esc(c.color)}">`
-    : `<div class="avatar" style="--tone:${esc(c.color)}">${initials(c.name)}</div>`;
+    ? `<img class="avatar${big}" src="${imgURL(c.avatarId)}" alt="" style="--tone:${esc(c.color)}">`
+    : `<div class="avatar${big}" style="--tone:${esc(c.color)}">${initials(c.name)}</div>`;
 
   return `
   <article class="card ${c.hp <= 0 ? "down" : ""}" data-id="${c.id}" data-flash style="--tone:${esc(c.color)}">
@@ -473,6 +530,17 @@ function detailHTML(c) {
 
 /* ---------- Acciones de la mesa ---------- */
 function bindTable(root) {
+  /* Los grupos de enemigos por sala: plegar y ocultar a todos de golpe */
+  on(root, "click", "[data-gact]", (e, btn) => {
+    const { groups } = roomGroups(foes());
+    const g = groups.find(x => x.key === btn.dataset.group);
+    if (!g) return;
+    if (btn.dataset.gact === "fold") { foldedGroups.has(g.key) ? foldedGroups.delete(g.key) : foldedGroups.add(g.key); return render(); }
+    if (btn.dataset.gact === "hide") {
+      const hide = !g.list.every(m => m.hidden);
+      g.list.forEach(m => { if (m.hidden !== hide) patchChar(m.id, { hidden: hide }); });
+    }
+  });
   on(root, "click", "[data-act]", (e, btn) => {
     const card = btn.closest("[data-id]");
     const c = card ? byId(card.dataset.id) : null;

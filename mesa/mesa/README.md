@@ -314,6 +314,21 @@ Las clases, especies y trasfondos salen del documento de referencia de la 5.ª
 jugador, el nombre y lo que hace, resumido. Las subclases se escriben a mano
 (se sugiere la del SRD).
 
+
+**Retratos grandes.** En las tarjetas de los jugadores el retrato sale en
+grande, para reconocer a cada uno de un vistazo; los monstruos lo llevan
+pequeño.
+
+**Enemigos por sala.** Si dos o más enemigos están en la misma **sala
+marcada** del mapa (la herramienta «Sala»), la mesa los junta en un **grupo**
+con el color con el que el mapa pinta esa sala: «Sala 2 · 3 enemigos · 2 en
+pie», con la vida que le queda al grupo entero. El grupo se **pliega** a una
+fila de nombres con su vida, y el ojo lo **oculta o enseña** entero a la
+party de una vez, para emboscadas. Los que están solos en su sala, fuera de
+las salas o sin poner en el mapa siguen sueltos debajo, en «Fuera de las
+salas». Los grupos se rehacen solos al mover las fichas. Si hay varios mapas,
+el grupo dice también de cuál es la sala.
+
 ## Manual del DM
 
 Abajo a la izquierda de la vista del DM hay una **librería**: una estantería
@@ -1044,7 +1059,7 @@ enseñaría por dónde ha venido.
 ## Qué versión tengo
 
 La versión de Mesa sale en la pantalla de entrada y al final del menú **···**
-del DM («Mesa 2.28.0»). Si el navegador trae una versión distinta de la del
+del DM («Mesa 2.29.0»). Si el navegador trae una versión distinta de la del
 servidor, Mesa vacía sus copias guardadas y recarga sola; si no lo consigue,
 lo dice en la pantalla de entrada.
 

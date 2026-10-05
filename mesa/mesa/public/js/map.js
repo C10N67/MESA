@@ -1965,6 +1965,8 @@ const PIN_MARKS = {
 };
 
 const ROOM_TONES = [[127, 208, 255], [217, 154, 43], [229, 107, 111], [143, 214, 148], [200, 160, 240], [240, 200, 120]];
+/* El color con el que el mapa del DM pinta una sala: la mesa lo usa para sus grupos */
+export const roomTone = id => `rgb(${ROOM_TONES[(Number(id) || 1) % ROOM_TONES.length].join(",")})`;
 
 export const EDGE_CYCLE = { none: "wall", wall: "door", door: "doorOpen", doorOpen: "door" };
 export { cellKey, edgeKey };

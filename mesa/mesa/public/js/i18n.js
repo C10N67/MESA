@@ -784,6 +784,9 @@ const EN = {
   "Buscar en el manual": "Search the manual",
   "Manual de D&D: todas las ediciones y reglas rápidas": "D&D manual: every edition and quick rules",
   "Bestiario: el libro de invocaciones (Ctrl+B)": "Bestiary: the book of summonings (Ctrl+B)",
+  /* Enemigos agrupados por sala */
+  "Fuera de las salas": "Outside the rooms", "Enseñar el grupo a la party": "Show the group to the party",
+  "Ocultar el grupo a la party": "Hide the group from the party", "Desplegar el grupo": "Unfold the group", "Plegar el grupo": "Fold the group",
   /* El taller del retrato */
   "Retrato": "Portrait", "El fondo se ha quitado solo.": "The background was removed automatically.",
   "No se ha visto un fondo claro que quitar.": "No clear background was found to remove.",
@@ -887,6 +890,10 @@ const SPELL_PARTS = [
   [/^(\d+) puntos de sueño$/, "$1 points of sleep"]
 ];
 const PATTERNS = [
+  [/^Sala (\d+)$/, "Room $1"],
+  [/^(\d+) enemigos · (\d+) en pie$/, "$1 enemies · $2 standing"],
+  [/^(\d+) enemigos$/, "$1 enemies"],
+  [/^(\d+) de (\d+) puntos de vida$/, "$1 of $2 hit points"],
   [/^Retrato de (.+)$/, "Portrait of $1"],
   [/^(.+) ya tiene retrato$/, "$1 has a portrait now"],
   [/^(\d+) PDF añadidos a la librería$/, "$1 PDFs added to the library"],
