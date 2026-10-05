@@ -329,6 +329,12 @@ las salas o sin poner en el mapa siguen sueltos debajo, en «Fuera de las
 salas». Los grupos se rehacen solos al mover las fichas. Si hay varios mapas,
 el grupo dice también de cuál es la sala.
 
+Cada sala se puede **renombrar y recolorear**: pulsa el nombre del grupo en la
+mesa, o ve a **Ajustes del mapa → Salas**, donde salen todas. El mapa del DM
+pinta cada sala de su color con el nombre en el centro («Cripta del
+nigromante», «Armería»…). Los nombres y colores solo los ve el DM: a los
+jugadores y a la tele no les llegan.
+
 ## Manual del DM
 
 Abajo a la izquierda de la vista del DM hay una **librería**: una estantería
@@ -1059,7 +1065,7 @@ enseñaría por dónde ha venido.
 ## Qué versión tengo
 
 La versión de Mesa sale en la pantalla de entrada y al final del menú **···**
-del DM («Mesa 2.29.0»). Si el navegador trae una versión distinta de la del
+del DM («Mesa 2.30.0»). Si el navegador trae una versión distinta de la del
 servidor, Mesa vacía sus copias guardadas y recarga sola; si no lo consigue,
 lo dice en la pantalla de entrada.
 
@@ -1163,6 +1169,22 @@ el menú **···** («Despedir a Chispa» / «Llamar a Chispa»), y cada aparat
 recuerda por su cuenta. En el teléfono no sale, y si el sistema pide reducir
 el movimiento se queda quieto. Vive en `public/js/gnome.js`.
 
+
+**Chispa de explorador.** Arrastra a Chispa desde la barra y suéltalo en
+una casilla del mapa: baja al tablero y hace de **un miembro más de la
+party**. Lo que él ve es lo que vería la party (la niebla, la oscuridad, las
+salas que se revelan, la cámara que encuadra la sala, lo que se oye), en la
+tele y en tu vista; se mueve arrastrando su ficha como cualquier otra. Sirve
+para probar cómo se comporta un mapa y retocarlo sin tener que crear un
+personaje. Mientras explora, en la barra solo queda su mesa con un «?».
+
+- No es un personaje: no sale en la mesa, ni en el combate, ni en las
+  fichas que eligen los jugadores, ni como objetivo de conjuros.
+- **Lo que descubre no se queda**: al volver, cada mapa que ha pisado
+  recupera lo explorado de antes.
+- Vuelve a su sitio pulsando su mesa vacía, con «Devolver a Chispa a su
+  sitio» en el menú de su ficha, o él solo **en cuanto hay un jugador en su
+  mapa** (si ya lo hay, ni siquiera baja).
 ## Estructura
 
 ```

@@ -48,7 +48,7 @@ function audience() {
   const list = [];
   if (me.role !== "dm") list.push({ id: "dm", name: "DM" });
   for (const c of (doc ? doc.chars : [])) {
-    if (c.kind !== "pc" || c.id === me.charId) continue;
+    if (c.kind !== "pc" || c.probe || c.id === me.charId) continue;
     list.push({ id: c.id, name: c.name, color: c.color });
   }
   return list;

@@ -695,6 +695,36 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         }
         break;
       }
+      /* Chispa, el gnomo del DM, recorre el mapa como uno más de la party
+         para ver cómo se comporta (la niebla, las salas, la cámara) sin
+         tener que crear un personaje. Lo que descubre no se queda: al
+         volver a su sitio, cada mapa recupera lo explorado de antes. */
+      case "probe.place": {
+        if (!dm) return "Solo el DM";
+        const map = doc.maps.find(m => m.id === op.mapId);
+        if (!map) return "No existe ese mapa";
+        if (partyOnMap(map)) return "Hay jugadores en este mapa: Chispa se queda en su sitio";
+        let probe = doc.chars.find(c => c.probe);
+        if (!probe) {
+          probe = normalizeChar({ id: "chispa", kind: "pc", probe: true, name: "Chispa", className: "Gnomo ingeniero",
+            race: "Gnomo", size: "Pequeño", hp: 10, maxHp: 10, ac: 12, speed: 25, color: "#2b3142", avatarId: "icons/chispa.svg" });
+          doc.chars.push(probe);
+        }
+        const x = Math.trunc(Number(op.x)), y = Math.trunc(Number(op.y));
+        const prev = { mapId: probe.mapId, mx: probe.mx, my: probe.my };
+        probe.mx = null;
+        const why = fits(map, doc.chars, probe, x, y);
+        if (why) { Object.assign(probe, prev); if (prev.mx === null) recallProbe(); return why; }
+        if (!Array.isArray(map.probeExplored)) map.probeExplored = [...(map.explored || [])];
+        probe.mapId = map.id; probe.mx = x; probe.my = y;
+        doc.session.focusId = probe.id; doc.session.listenerId = probe.id;
+        break;
+      }
+      case "probe.recall": {
+        if (!dm) return "Solo el DM";
+        recallProbe();
+        break;
+      }
       case "char.add": {
         const list = Array.isArray(op.chars) ? op.chars : [op.char];
         if (!dm) {
@@ -1084,7 +1114,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         /* op.whisper es la forma antigua (susurrar solo al DM): se sigue
            entendiendo por si queda alguna pestaña sin recargar. */
         const asked = Array.isArray(op.to) ? op.to : (op.whisper ? ["dm"] : []);
-        const to = [...new Set(asked.filter(x => x === "dm" || doc.chars.some(c => c.id === x && c.kind === "pc")))].slice(0, 12);
+        const to = [...new Set(asked.filter(x => x === "dm" || doc.chars.some(c => c.id === x && c.kind === "pc" && !c.probe)))].slice(0, 12);
         doc.log.push({
           id: rid(6), ts: Date.now(), actor: client.name, byClient: client.id, kind: "chat",
           text, to, from: dm ? "dm" : (client.charId || ""), private: to.length > 0,
@@ -1171,7 +1201,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
 
   function takeChar(client, charId) {
     const c = findChar(charId);
-    if (!c || c.kind !== "pc") return "Ese personaje ya no está en la mesa";
+    if (!c || c.kind !== "pc" || c.probe) return "Ese personaje ya no está en la mesa";
     const other = holder(charId, client);
     if (other && active(other)) return `${c.name} ya lo lleva ${other.name} en otro aparato. Si eres tú, sal allí primero o pide al DM que lo libere.`;
     for (const cl of clients.values()) if (cl !== client && cl.charId === charId) cl.charId = null;
@@ -1184,7 +1214,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
     return {
       title: doc.session.title,
       locked: !!doc.session.locked,
-      players: doc.chars.filter(c => c.kind === "pc").map(c => {
+      players: doc.chars.filter(c => c.kind === "pc" && !c.probe).map(c => {
         const h = holder(c.id);
         const busy = h && active(h);
         return {
@@ -1251,10 +1281,42 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
     for (const op of ops) {
       const err = await apply(client, op);
       if (err === "SKIP_HISTORY") { applied++; continue; }
-      if (err) return { error: err, applied };
+      if (err) { if (checkProbe()) applied++; return { error: err, applied }; }
       applied++;
     }
+    if (checkProbe()) applied++;
     return { error: null, applied };
+  }
+
+  /* ---------- Chispa explorando ---------- */
+  const partyOnMap = map => doc.chars.some(c => c.kind === "pc" && !c.probe && c.mx !== null && c.mapId === map.id);
+  /* Vuelve a su sitio: fuera del tablero y cada mapa con lo explorado de antes */
+  function recallProbe() {
+    const probe = doc.chars.find(c => c.probe);
+    for (const m of doc.maps) if (Array.isArray(m.probeExplored)) { m.explored = m.probeExplored; m.probeExplored = null; }
+    if (!probe) return false;
+    doc.chars = doc.chars.filter(c => !c.probe);
+    if (doc.session.focusId === probe.id) doc.session.focusId = "";
+    if (doc.session.listenerId === probe.id) doc.session.listenerId = "";
+    doc.session.roomView = null;
+    partyCache = null;
+    return true;
+  }
+  /* Tras cada cambio: si ha llegado alguien de la party a su mapa, si lo han
+     sacado del tablero o si ha cruzado a otro mapa (se guarda lo explorado
+     de ese también) */
+  function checkProbe() {
+    const probe = doc.chars.find(c => c.probe);
+    if (!probe) return false;
+    const map = probe.mx !== null && doc.maps.find(m => m.id === probe.mapId);
+    if (!map) return recallProbe();
+    if (!Array.isArray(map.probeExplored)) map.probeExplored = [...(map.explored || [])];
+    if (partyOnMap(map)) {
+      recallProbe();
+      doc.log.push({ id: rid(6), ts: Date.now(), actor: "Mesa", kind: "event", text: "Ha llegado la party: Chispa vuelve a su sitio" });
+      return true;
+    }
+    return false;
   }
 
   /* Prepara una difusión: recorta el registro, apunta lo que la party ha

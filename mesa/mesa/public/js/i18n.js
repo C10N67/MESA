@@ -784,6 +784,18 @@ const EN = {
   "Buscar en el manual": "Search the manual",
   "Manual de D&D: todas las ediciones y reglas rápidas": "D&D manual: every edition and quick rules",
   "Bestiario: el libro de invocaciones (Ctrl+B)": "Bestiary: the book of summonings (Ctrl+B)",
+  /* Salas con nombre y color, y Chispa explorando */
+  "Cambiar el nombre y el color de la sala": "Change the room's name and colour", "Salas": "Rooms", "Otro color": "Another colour",
+  "Ponles nombre y color a tu gusto. Solo los ves tú: en el mapa y en los grupos de enemigos de la mesa.":
+    "Give them any name and colour you like. Only you see them: on the map and in the enemy groups on the table.",
+  "Suéltame en el mapa": "Drop me on the map",
+  "Chispa está explorando el mapa. Pulsa su mesa para que vuelva.": "Sparky is exploring the map. Click the desk to call him back.",
+  "Abre la pestaña Mapa y suelta a Chispa encima": "Open the Map tab and drop Sparky on it",
+  "Suelta a Chispa dentro del mapa": "Drop Sparky inside the map",
+  "Hay jugadores en este mapa: Chispa se queda en su sitio": "There are players on this map: Sparky stays at the desk",
+  "Ha llegado la party: Chispa vuelve a su sitio": "The party has arrived: Sparky goes back to the desk",
+  "Explora el mapa como uno más de la party: lo que descubra no se queda.": "Explores the map as one of the party: whatever he uncovers isn't kept.",
+  "Devolver a Chispa a su sitio": "Send Sparky back to the desk",
   /* Enemigos agrupados por sala */
   "Fuera de las salas": "Outside the rooms", "Enseñar el grupo a la party": "Show the group to the party",
   "Ocultar el grupo a la party": "Hide the group from the party", "Desplegar el grupo": "Unfold the group", "Plegar el grupo": "Fold the group",
@@ -890,6 +902,9 @@ const SPELL_PARTS = [
   [/^(\d+) puntos de sueño$/, "$1 points of sleep"]
 ];
 const PATTERNS = [
+  [/^Color de la sala (.+)$/, "Colour of room $1"],
+  [/^Nombre de la sala (.+)$/, "Name of room $1"],
+  [/^Color (#[0-9a-f]{6})$/, "Colour $1"],
   [/^Sala (\d+)$/, "Room $1"],
   [/^(\d+) enemigos · (\d+) en pie$/, "$1 enemies · $2 standing"],
   [/^(\d+) enemigos$/, "$1 enemies"],

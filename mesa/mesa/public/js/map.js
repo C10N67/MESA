@@ -9,6 +9,7 @@ import { cellKey, edgeKey, clamp, footprint, conditionName } from "./schema.js";
 import { visibleCells, reachableCells, shapeCells, gridDistance, occupied, fits, nextRoomId, blockingSegments } from "./los.js";
 import { initials, imgURL, pct, hpTone, reducedMotion } from "./util.js";
 import { drawGlyph } from "./icons.js";
+import { t } from "./i18n.js";
 
 const COLORS = {
   void: "#07080c",
@@ -1474,8 +1475,26 @@ export class MapView {
     const byRoom = new Map();
     for (const [k, v] of Object.entries(map.rooms || {})) (byRoom.get(v) || byRoom.set(v, []).get(v)).push(k);
     for (const [id, keys] of byRoom) {
-      const [r, gg, b] = ROOM_TONES[(Number(id) || 1) % ROOM_TONES.length];
+      const [r, gg, b] = roomRGB(id, map);
       tint(keys, `rgba(${r},${gg},${b},.12)`, `rgba(${r},${gg},${b},.8)`, true);
+    }
+    /* El nombre de cada sala en su centro, si se lee */
+    if (g.cell >= 14) {
+      ctx.save();
+      ctx.font = `600 ${Math.round(Math.min(15, Math.max(10, g.cell * 0.36)))}px system-ui, sans-serif`;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      for (const [id, keys] of byRoom) {
+        let sx = 0, sy = 0;
+        for (const k of keys) { const [x, y] = k.split(",").map(Number); sx += x; sy += y; }
+        const cx = X(sx / keys.length + 0.5), cy = Y(sy / keys.length + 0.5), label = roomName(id, map);
+        const [r, gg, b] = roomRGB(id, map);
+        const w = ctx.measureText(label).width + 12;
+        ctx.fillStyle = "rgba(10,12,17,.72)";
+        ctx.beginPath(); ctx.roundRect(cx - w / 2, cy - 10, w, 20, 6); ctx.fill();
+        ctx.fillStyle = `rgb(${r},${gg},${b})`;
+        ctx.fillText(label, cx, cy + 0.5);
+      }
+      ctx.restore();
     }
     tint(vis.filter(([, v]) => v === "show").map(([k]) => k), "rgba(79,157,93,.16)", "rgba(110,190,125,.8)", false);
     tint(vis.filter(([, v]) => v === "hide").map(([k]) => k), "rgba(60,40,90,.45)", "rgba(136,120,216,.85)", true);
@@ -1965,8 +1984,15 @@ const PIN_MARKS = {
 };
 
 const ROOM_TONES = [[127, 208, 255], [217, 154, 43], [229, 107, 111], [143, 214, 148], [200, 160, 240], [240, 200, 120]];
-/* El color con el que el mapa del DM pinta una sala: la mesa lo usa para sus grupos */
-export const roomTone = id => `rgb(${ROOM_TONES[(Number(id) || 1) % ROOM_TONES.length].join(",")})`;
+/* El color de una sala: el que le haya puesto el DM o, si no, uno de la serie */
+export function roomRGB(id, map) {
+  const own = map && map.roomInfo && map.roomInfo[id] && map.roomInfo[id].color;
+  if (own) return [1, 3, 5].map(i => parseInt(own.slice(i, i + 2), 16));
+  return ROOM_TONES[(Number(id) || 1) % ROOM_TONES.length];
+}
+export const roomTone = (id, map) => `rgb(${roomRGB(id, map).join(",")})`;
+export const roomHex = (id, map) => "#" + roomRGB(id, map).map(v => v.toString(16).padStart(2, "0")).join("");
+export const roomName = (id, map) => (map && map.roomInfo && map.roomInfo[id] && map.roomInfo[id].name) || t("Sala") + " " + id;
 
 export const EDGE_CYCLE = { none: "wall", wall: "door", door: "doorOpen", doorOpen: "door" };
 export { cellKey, edgeKey };

@@ -138,6 +138,8 @@ export function normalizeChar(raw = {}) {
     : [];
   c.inspiration = !!c.inspiration;
   c.hidden = !!c.hidden;
+  /* Chispa, el gnomo del DM, cuando explora el mapa como uno más de la party */
+  c.probe = !!c.probe;
   c.discovered = !!c.discovered;
   c.size = sizeFromText(raw.size) || sizeFromText(c.sizeType) || "Mediano";
   c.vision = clamp(Math.trunc(num(c.vision)), 0, 40);
@@ -345,6 +347,13 @@ export function normalizeMap(raw = {}) {
   m.rough = layer(m.rough);
   m.rooms = layer(m.rooms);
   m.vis = layer(m.vis);
+  /* Lo explorado antes de que Chispa llegara: se recupera cuando vuelve */
+  m.probeExplored = Array.isArray(m.probeExplored) ? m.probeExplored.filter(k => typeof k === "string") : null;
+  /* Nombre y color que el DM le pone a cada sala (solo lo ve el DM) */
+  m.roomInfo = Object.fromEntries(Object.entries(layer(m.roomInfo)).map(([id, v]) => [id, {
+    name: String((v && v.name) || "").trim().slice(0, 40),
+    color: /^#[0-9a-f]{6}$/i.test(v && v.color) ? v.color.toLowerCase() : ""
+  }]).filter(([, v]) => v.name || v.color));
   m.drawings = Array.isArray(m.drawings) ? m.drawings.map(normalizeDrawing).filter(d => d.points.length > 1).slice(-150) : [];
   m.walls = Array.isArray(m.walls) ? m.walls.map(normalizeWall).filter(w => w.points.length > 1).slice(-MAX_WALLS) : [];
   return m;

@@ -107,7 +107,7 @@ function render() {
   const now = order[combat.index];
   const next = order.length ? order[(combat.index + 1) % order.length] : null;
 
-  const heroes = chars.filter(c => c.kind === "pc");
+  const heroes = chars.filter(c => c.kind === "pc" && !c.probe);
   const foes = chars.filter(c => c.kind === "monster");
   const fighting = new Set(order.map(c => c.id));
   const stage = $("#stage");

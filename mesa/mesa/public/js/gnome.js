@@ -105,6 +105,24 @@ const CSS = `
 @keyframes gnSayOut { to { opacity: 0; transform: translateY(-4px); } }
 
 @media (max-width: 700px) { .gnome-slot { display: none; } }
+/* Arrastrándolo: se levanta de la mesa y lo sigue un fantasma */
+.gnome { touch-action: none; }
+.gnome.lifted .gn-head { opacity: .25; }
+.gnome-ghost {
+  position: fixed; left: 0; top: 0; z-index: 90; pointer-events: none; display: grid; justify-items: center; gap: 2px;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .6));
+}
+.gnome-ghost svg { width: 68px; height: 57px; overflow: visible; animation: gnWiggle .5s ease-in-out infinite alternate; }
+.gnome-ghost span { padding: 2px 8px; border-radius: 99px; font: 600 11px/1.4 var(--sans, system-ui); color: #1b120c; background: ${GOLD}; white-space: nowrap; }
+@keyframes gnWiggle { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
+/* De explorador: en la barra solo queda la mesa con el engranaje */
+.gnome.away .gn-head, .gnome.away .gn-wrench, .gnome.away .gn-zzz, .gnome.away .gn-bang { opacity: 0 !important; }
+.gnome.away .gn-gear { animation-duration: 6s; }
+.gnome.away::after {
+  content: "?"; position: absolute; left: 50%; top: 18%; transform: translateX(-50%);
+  font: 800 15px/1 var(--sans, system-ui); color: ${GOLD}; opacity: .8; animation: gnAsk 1.6s ease-in-out infinite;
+}
+@keyframes gnAsk { 50% { transform: translate(-50%, -3px); opacity: .45; } }
 @media (prefers-reduced-motion: reduce) {
   .gnome .gn-gear, .gnome .gn-wrench, .gnome.asleep .gn-mouth { animation: none; }
   .gnome.asleep:not(.nodding) .gn-zzz text { animation: none; }
@@ -144,7 +162,7 @@ const SVG = `<svg viewBox="0 0 120 100" aria-hidden="true" fill="none" stroke="$
 const rnd = (a, b) => a + Math.random() * (b - a);
 const pick = list => list[Math.floor(Math.random() * list.length)];
 
-export function mountGnome(slot) {
+export function mountGnome(slot, { onDrop = null, onRecall = null } = {}) {
   if (!slot || slot.dataset.gnome) return;
   slot.dataset.gnome = "1";
   if (!document.getElementById("gnome-css")) {
@@ -237,6 +255,7 @@ export function mountGnome(slot) {
     }
     /* Escribiendo: mira hacia abajo, como quien lee por encima del hombro */
     if (e.type === "keydown" && state === "awake") { me.style.setProperty("--py", "1.3px"); }
+    if (away) return;
     if (state !== "awake" && !nodding) wake();
     if (e.type === "pointerdown" && !me.contains(e.target)) {
       set("peek", true); clearTimeout(peekT); peekT = setTimeout(() => set("peek", false), 700);
@@ -255,11 +274,64 @@ export function mountGnome(slot) {
     sayT = setTimeout(() => { bubble.classList.add("out"); setTimeout(() => bubble.remove(), 320); }, 3600);
   }
 
+  /* Arrastrarlo al tablero: Chispa baja a explorar el mapa como uno más
+     de la party. Mientras tanto, en la barra solo queda su mesa vacía;
+     pulsarla lo hace volver. */
+  let away = false, dragged = false, ghost = null, start = null;
+  const lone = me.title;
+  me.addEventListener("pointerdown", e => {
+    if (away || !onDrop || e.button !== 0) return;
+    start = { x: e.clientX, y: e.clientY, id: e.pointerId };
+    dragged = false;
+    try { me.setPointerCapture(e.pointerId); } catch {}
+  });
+  me.addEventListener("pointermove", e => {
+    if (!start || e.pointerId !== start.id) return;
+    if (!ghost && Math.hypot(e.clientX - start.x, e.clientY - start.y) < 7) return;
+    if (!ghost) {
+      dragged = true;
+      ghost = document.createElement("div");
+      ghost.className = "gnome-ghost";
+      ghost.innerHTML = `${SVG}<span>${t("Suéltame en el mapa")}</span>`;
+      document.body.appendChild(ghost);
+      set("lifted", true);
+      wake();
+    }
+    ghost.style.transform = `translate(${e.clientX - 34}px, ${e.clientY - 30}px)`;
+  });
+  const drop = e => {
+    if (!start) return;
+    const was = ghost;
+    start = null;
+    if (!was) return;
+    ghost = null;
+    was.remove();
+    set("lifted", false);
+    const ok = e.type === "pointerup" && onDrop(e.clientX, e.clientY);
+    if (!ok) { set("startle", false); void me.offsetWidth; set("startle", true); setTimeout(() => set("startle", false), 900); }
+  };
+  me.addEventListener("pointerup", drop);
+  me.addEventListener("pointercancel", drop);
+  addEventListener("keydown", e => { if (e.key === "Escape" && ghost) drop({ type: "cancel" }); });
+
   me.addEventListener("click", () => {
+    if (dragged) { dragged = false; return; }
+    if (away) { if (onRecall) onRecall(); return; }
     const was = wake();
     say(was === "awake" ? pick(QUIPS) : pick(WAKE_QUIPS));
     armIdle(); armNod();
   });
+
+  /* Chispa en el tablero (o de vuelta en su mesa) */
+  function setAway(on) {
+    on = !!on;
+    if (on === away) return;
+    away = on;
+    set("away", on);
+    const title = on ? t("Chispa está explorando el mapa. Pulsa su mesa para que vuelva.") : lone;
+    me.title = title; me.setAttribute("aria-label", title);
+    if (!on) { goTo("awake"); wake(); set("startle", false); void me.offsetWidth; set("startle", true); setTimeout(() => set("startle", false), 900); armIdle(); }
+  }
 
   const EVENTS = ["pointermove", "pointerdown", "keydown", "wheel"];
   EVENTS.forEach(ev => addEventListener(ev, activity, { passive: true, capture: true }));
@@ -269,5 +341,5 @@ export function mountGnome(slot) {
   }
 
   armIdle(); armNod(); blinkLoop();
-  return { wake, sleep: () => goTo("asleep"), doze: () => goTo("dozy"), stop, get state() { return state; } };
+  return { wake, sleep: () => goTo("asleep"), doze: () => goTo("dozy"), stop, setAway, get state() { return state; } };
 }

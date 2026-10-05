@@ -12,7 +12,7 @@ import { dicePanel, renderLog, throwDice, tellTable, currentMode, isSecret } fro
 import { openCharEditor, openConditions } from "./char-editor.js";
 import { openBuilder } from "./builder.js";
 import { toggleManual, floatingBook } from "./manual.js";
-import { MapView, roomTone } from "./map.js";
+import { MapView, roomTone, roomHex, roomName } from "./map.js";
 import { openSpellbook } from "./spellbook.js";
 import { openGridFit, openWallFit } from "./gridfit.js";
 import { langPicker } from "./i18n.js";
@@ -28,6 +28,7 @@ let tab = "mesa";
 let shownTab = null;
 let openCards = new Set();
 const foldedGroups = new Set();   // grupos de enemigos plegados en la mesa
+let gnome = null;                 // Chispa, en la barra de arriba
 let mapView = null;
 let mapTool = "token";
 let beastQuery = "";
@@ -46,7 +47,7 @@ function dmSpellCtx() {
   return {
     isDM: true,
     getChar: byId,
-    targets: () => chars().filter(x => x.mapId === activeMap().id && x.mx !== null),
+    targets: () => chars().filter(x => !x.probe && x.mapId === activeMap().id && x.mx !== null),
     preselect: sp => {
       if (sp.shape && lastArea && mapView) return mapView.covered(lastArea).map(x => x.id);
       return targetId ? [targetId] : [];
@@ -66,7 +67,9 @@ function dmSpellCtx() {
 
 const doc = () => store.doc;
 const chars = () => doc().chars;
-const pcs = () => chars().filter(c => c.kind === "pc");
+/* La party, sin Chispa cuando explora el mapa (no es un personaje de verdad) */
+const pcs = () => chars().filter(c => c.kind === "pc" && !c.probe);
+const probe = () => chars().find(c => c.probe);
 const foes = () => chars().filter(c => c.kind === "monster");
 const byId = id => chars().find(c => c.id === id);
 const session = () => doc().session;
@@ -132,7 +135,8 @@ export function mountDM(root) {
   $("#restBtn", root).addEventListener("click", openRest);
   $("#undoBtn", root).addEventListener("click", () => { op("undo"); toast("Deshecho"); });
   $("#moreBtn", root).addEventListener("click", openMenu);
-  mountGnome($("#gnomeSlot", root));
+  /* Chispa: arrastrado al tablero, explora el mapa como uno más de la party */
+  gnome = mountGnome($("#gnomeSlot", root), { onDrop: dropProbe, onRecall: () => op("probe.recall", {}) });
   $("#presence", root).addEventListener("click", openPresence);
   $("#voiceSlot", root).replaceWith(voiceWidget());
 
@@ -243,6 +247,7 @@ function render() {
     campaign.placeholder = "Campaña sin nombre";
   }
 
+  if (gnome) gnome.setAway(!!probe());
   $("#combatBtn").innerHTML = withIcon("swords", session().combat.on ? "Terminar combate" : "Iniciar combate");
   $("#combatBtn").classList.toggle("on", session().combat.on);
   $("#tableView").classList.toggle("hidden", tab !== "mesa");
@@ -339,6 +344,20 @@ function renderRail() {
   });
 }
 
+/* Soltar a Chispa sobre el tablero: solo en la pestaña del mapa, en una
+   casilla, y si no hay nadie de la party en ese mapa */
+function dropProbe(x, y) {
+  const map = activeMap(), board = $("#board");
+  if (!mapView || !board || !$(".layout").classList.contains("map-mode")) { toast("Abre la pestaña Mapa y suelta a Chispa encima", "bad"); return false; }
+  const r = board.getBoundingClientRect();
+  if (x < r.left || x > r.right || y < r.top || y > r.bottom) return false;
+  const p = mapView.toCell(x, y);
+  if (!p || p.x < 0 || p.y < 0 || p.x >= map.cols || p.y >= map.rows) { toast("Suelta a Chispa dentro del mapa", "bad"); return false; }
+  if (pcs().some(c => c.mx !== null && c.mapId === map.id)) { toast("Hay jugadores en este mapa: Chispa se queda en su sitio", "bad"); return false; }
+  op("probe.place", { mapId: map.id, x: p.x, y: p.y });
+  return true;
+}
+
 function renderTable() {
   const view = $("#tableView");
   const monsters = foes();
@@ -392,6 +411,35 @@ function roomGroups(monsters) {
   return { groups: out, loose: monsters.filter(m => !grouped.has(m.id)) };
 }
 
+/* Nombre y color de una sala, a gusto del DM. Solo lo ve el DM: el mapa la
+   pinta de ese color con su nombre, y la mesa agrupa con ellos. */
+const ROOM_SWATCHES = ["#7fd0ff", "#d99a2b", "#e56b6f", "#8fd694", "#c8a0f0", "#f0c878", "#5ec4b6", "#ff8fc8", "#b0b8c8"];
+function editRoom(map, roomId) {
+  const info = (map.roomInfo || {})[roomId] || {};
+  const body = el(`<div class="room-ed">
+    <label class="field"><span>Nombre</span><input name="roomName" maxlength="40" placeholder="Sala ${esc(roomId)}" value="${esc(info.name || "")}"></label>
+    <div class="field"><span>Color</span>
+      <div class="room-swatches">${ROOM_SWATCHES.map(c => `<button type="button" data-swatch="${c}" style="--c:${c}" aria-label="Color ${c}"></button>`).join("")}
+        <input type="color" name="roomColor" value="${roomHex(roomId, map)}" aria-label="Otro color"></div></div>
+  </div>`);
+  const color = body.querySelector("[name=roomColor]");
+  const mark = () => body.querySelectorAll("[data-swatch]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.swatch === color.value)));
+  on(body, "click", "[data-swatch]", (e, b) => { color.value = b.dataset.swatch; mark(); });
+  color.addEventListener("input", mark);
+  mark();
+  modal({
+    title: roomName(roomId, map), body,
+    actions: [{ label: "Cancelar" }, {
+      label: "Guardar", tone: "primary",
+      run: host => {
+        const name = host.querySelector("[name=roomName]").value.trim();
+        const next = { ...(map.roomInfo || {}), [roomId]: { name, color: color.value } };
+        patchMap(map.id, { roomInfo: next });
+      }
+    }]
+  });
+}
+
 function foesHTML(monsters) {
   const { groups, loose } = roomGroups(monsters);
   const many = doc().maps.length > 1;
@@ -399,10 +447,11 @@ function foesHTML(monsters) {
     const up = g.list.filter(m => m.hp > 0).length;
     const hp = g.list.reduce((s, m) => s + Math.max(0, m.hp), 0), max = g.list.reduce((s, m) => s + m.maxHp, 0);
     const folded = foldedGroups.has(g.key), hidden = g.list.every(m => m.hidden);
-    return `<section class="foe-group${folded ? " folded" : ""}" style="--room:${roomTone(g.roomId)}">
+    return `<section class="foe-group${folded ? " folded" : ""}" style="--room:${roomTone(g.roomId, g.map)}">
       <header class="foe-group-head">
-        <span class="foe-group-swatch" aria-hidden="true"></span>
-        <h3>Sala ${esc(g.roomId)}${many ? ` <small>· ${esc(g.map.name)}</small>` : ""}</h3>
+        <button type="button" class="foe-group-name" data-gact="room" data-group="${esc(g.key)}" title="Cambiar el nombre y el color de la sala">
+          <span class="foe-group-swatch" aria-hidden="true"></span>
+          <h3>${esc(roomName(g.roomId, g.map))}${many ? ` <small>· ${esc(g.map.name)}</small>` : ""}</h3>${icon("pencil", 13)}</button>
         <span class="foe-group-count">${g.list.length} enemigos${up < g.list.length ? ` · ${up} en pie` : ""}</span>
         <span class="foe-group-hp" title="${hp} de ${max} puntos de vida"><i style="width:${max ? Math.round(hp / max * 100) : 0}%"></i></span>
         <span class="spacer"></span>
@@ -535,6 +584,7 @@ function bindTable(root) {
     const { groups } = roomGroups(foes());
     const g = groups.find(x => x.key === btn.dataset.group);
     if (!g) return;
+    if (btn.dataset.gact === "room") return editRoom(g.map, g.roomId);
     if (btn.dataset.gact === "fold") { foldedGroups.has(g.key) ? foldedGroups.delete(g.key) : foldedGroups.add(g.key); return render(); }
     if (btn.dataset.gact === "hide") {
       const hide = !g.list.every(m => m.hidden);
@@ -703,7 +753,7 @@ function delayTurn() {
 }
 
 function pickForOrder() {
-  const out = chars().filter(c => !session().combat.order.includes(c.id));
+  const out = chars().filter(c => !c.probe && !session().combat.order.includes(c.id));
   if (!out.length) return toast("Ya están todos en la iniciativa");
   const body = el(`<div class="cond-grid">${out.map(c =>
     `<button class="btn sm" data-add="${c.id}">${esc(c.name)} · ${c.initiative}</button>`).join("")}</div>`);
@@ -792,7 +842,7 @@ function combatCandidates() {
   };
   return chars().filter(c => {
     if (c.hp <= 0) return false;
-    if (c.kind === "pc") return true;
+    if (c.kind === "pc") return !c.probe;
     return c.discovered && near(c);
   });
 }
@@ -806,7 +856,7 @@ const buildOrder = () => sortByInitiative(combatCandidates());
 /* Antes de empezar, se enseña quién va a entrar y se puede quitar a cualquiera. */
 function openCombatRoster() {
   const inside = new Set(combatCandidates().map(c => c.id));
-  const rest = chars().filter(c => !inside.has(c.id));
+  const rest = chars().filter(c => !c.probe && !inside.has(c.id));
   const row = c => `<label class="pick-row init">
     <input type="checkbox" value="${c.id}" ${inside.has(c.id) ? "checked" : ""}>
     <span class="avatar" style="--tone:${esc(c.color)};width:26px;height:26px;font-size:10px">${initials(c.name)}</span>
@@ -1535,7 +1585,7 @@ document.addEventListener("click", e => {
    quien todavía no esté puesto en este mapa. */
 function placeHere(x, y) {
   const map = activeMap();
-  const out = chars().filter(c => c.mapId !== map.id || c.mx === null);
+  const out = chars().filter(c => !c.probe && (c.mapId !== map.id || c.mx === null));
   if (!out.length) return toast("Ya están todos colocados en este mapa");
   const body = el(`<div class="pick-list">
     ${out.map(c => `<button class="pick" data-place="${c.id}">
@@ -1577,7 +1627,12 @@ function tokenMenu(id) {
       ${c.kind === "pc" && sounds ? `<small class="bubble-ear">${icon("sound", 12)} La pantalla oye lo que oye</small>` : ""}
       <span class="bubble-conds"></span>
     </header>
-    <div class="bubble-actions">
+    ${c.probe ? `<div class="bubble-actions">
+      <p class="bubble-note">Explora el mapa como uno más de la party: lo que descubra no se queda.</p>
+      <button data-tk="focus">${icon("screen", 15)}Centrar la cámara de la party aquí</button>
+      <button data-tk="recall" class="danger">${icon("exit", 15)}Devolver a Chispa a su sitio</button>
+      <span class="bubble-count" hidden></span>
+    </div>` : `<div class="bubble-actions">
       <button data-tk="target">${icon("target", 15)}${targetId === id ? "Dejar de apuntarle" : "Apuntar con los ataques"}</button>
       <button data-tk="attack">${icon("sword", 15)}Atacar con ${esc(c.name)}</button>
       <button data-tk="focus">${icon("screen", 15)}Centrar la cámara de la party aquí</button>
@@ -1585,7 +1640,7 @@ function tokenMenu(id) {
       <button data-tk="edit">${icon("pencil", 15)}Abrir la ficha</button>
       ${c.kind === "monster" ? `<button data-tk="hide">${icon(c.hidden ? "eye" : "eyeOff", 15)}${c.hidden ? "Enseñar a la party" : "Ocultar a la party"}</button>` : ""}
       <button data-tk="off" class="danger">${icon("exit", 15)}Sacar del mapa</button>
-    </div>
+    </div>`}
   </div>`);
   document.body.appendChild(el2);
 
@@ -1701,6 +1756,7 @@ function tokenMenu(id) {
     if (what === "edit") return c.kind === "monster" ? openMonsterInstance(c) : openCharEditor(c, {});
     if (what === "hide") return patchChar(c.id, { hidden: !c.hidden });
     if (what === "off") return patchChar(c.id, { mapId: "", mx: null, my: null });
+    if (what === "recall") return op("probe.recall", {});
   });
 }
 
@@ -2017,6 +2073,17 @@ function openMapSettings(map) {
       <button type="button" class="btn sm" id="fitWalls">Muros y puertas del plano</button>
       <input type="file" id="imgFile" accept="image/*" hidden>
     </div>
+    ${(() => {
+      const ids = [...new Set(Object.values(map.rooms || {}).map(String))].sort((a, b) => Number(a) - Number(b));
+      return ids.length ? `<fieldset class="room-list">
+      <legend>Salas</legend>
+      <p class="prose small">Ponles nombre y color a tu gusto. Solo los ves tú: en el mapa y en los grupos de enemigos de la mesa.</p>
+      ${ids.map(id => `<div class="room-row">
+        <input type="color" data-room-color="${esc(id)}" value="${roomHex(id, map)}" aria-label="Color de la sala ${esc(id)}">
+        <input data-room-name="${esc(id)}" maxlength="40" placeholder="Sala ${esc(id)}" value="${esc(((map.roomInfo || {})[id] || {}).name || "")}" aria-label="Nombre de la sala ${esc(id)}">
+      </div>`).join("")}
+    </fieldset>` : "";
+    })()}
     <fieldset>
       <legend>Qué ve la party</legend>
       <label class="check"><input type="checkbox" name="show" ${session().showMapToParty ? "checked" : ""}> Enseñar este mapa en la pantalla de la party</label>
@@ -2160,7 +2227,13 @@ function openMapSettings(map) {
       label: "Guardar", tone: "primary",
       run: host => {
         const v = n => host.querySelector(`[name="${n}"]`);
+        const roomInfo = { ...(map.roomInfo || {}) };
+        host.querySelectorAll("[data-room-name]").forEach(inp => {
+          const id = inp.dataset.roomName, col = host.querySelector(`[data-room-color="${CSS.escape(id)}"]`).value;
+          roomInfo[id] = { name: inp.value.trim(), color: col };
+        });
         patchMap(map.id, {
+          roomInfo,
           name: v("name").value || "Mapa",
           radius: +v("radius").value || 5,
           cols: clamp(Math.trunc(+v("cols").value || map.cols), 5, MAX_COLS),

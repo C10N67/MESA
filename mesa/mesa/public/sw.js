@@ -14,7 +14,7 @@
    Todas las rutas son relativas al sitio donde vive Mesa: en GitHub Pages es
    una subcarpeta (/DnD/), no la raíz. */
 
-const VERSION = "mesa-2.29.0";
+const VERSION = "mesa-2.30.0";
 const SHELL_CACHE = VERSION + "-app";
 const IMG_CACHE = "mesa-img";
 const IMG_LIMIT = 80;
@@ -25,7 +25,7 @@ const SHELL = [
   "./",
   "css/mesa.css", "fonts/mesa-grabada.woff2", "fondos/forja.webp", "fondos/forja-brasas.svg",
   "manifest.webmanifest",
-  "icons/icon.svg", "icons/favicon.svg",
+  "icons/icon.svg", "icons/favicon.svg", "icons/chispa.svg",
   "icons/icon-192.png",
   "js/main.js", "js/version.js", "js/net.js", "js/util.js", "js/i18n.js", "js/icons.js",
   "js/schema.js", "js/catalog.js", "js/los.js", "js/map.js", "js/dice.js",

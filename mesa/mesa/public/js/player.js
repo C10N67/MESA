@@ -188,7 +188,7 @@ function renderAsks(mine) {
 /* Elegir personaje desde dentro: los que lleva alguien conectado salen
    ocupados y no se pueden coger. */
 function renderPicker(pane) {
-  const pcs = doc().chars.filter(c => c.kind === "pc");
+  const pcs = doc().chars.filter(c => c.kind === "pc" && !c.probe);
   const heldBy = id => (store.presence.find(p => p.charId === id && p.role === "player" && p.id !== store.session.id) || {}).name;
   pane.innerHTML = `
     <div class="empty picker">
@@ -293,7 +293,7 @@ function renderSheet(pane, c) {
 
 /* ---------- La party ---------- */
 function renderParty(pane) {
-  const mates = doc().chars.filter(c => c.kind === "pc");
+  const mates = doc().chars.filter(c => c.kind === "pc" && !c.probe);
   const foes = doc().chars.filter(c => c.kind === "monster");
   const combat = doc().session.combat;
   const order = combat.on ? combat.order.map(id => doc().chars.find(c => c.id === id)).filter(Boolean) : [];
