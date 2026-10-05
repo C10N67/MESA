@@ -20,6 +20,7 @@ import { icon, withIcon, conditionIcon, conditionTone } from "./icons.js";
 import { VERSION } from "./version.js";
 import { mountGnome, gnomeEnabled, setGnomeEnabled } from "./gnome.js";
 import { mountLibrary } from "./library.js";
+import { editPortrait } from "./cutout.js";
 import { rollHitPoints } from "./dice.js";
 import { TYPE_NAMES, typeOf, crValue, CATALOG_BY_ID } from "./catalog.js";
 
@@ -938,6 +939,7 @@ function toggleDrawer(force) {
       <ol class="tome-list" id="beastList"></ol>
     </aside>
     <article class="tome-page" id="beastPage"></article>
+    <input type="file" accept="image/*" id="beastPortraitFile" hidden>
   </div>`);
   tome = floatingBook(body, {
     key: "mesa.bestiario", label: "Bestiario", closeLabel: "Cerrar el bestiario", cls: "necro",
@@ -985,6 +987,25 @@ function toggleDrawer(force) {
     }
     if (action === "edit") return openBeastEditor(beast);
     if (action === "drop") return dropBeast(beast);
+    if (action === "portrait") return portraitFile.click();
+  });
+  /* El retrato: pulsarlo para elegir una imagen, o soltarla encima de la página */
+  const portraitFile = body.querySelector("#beastPortraitFile");
+  const current = () => bestiaryOf(doc()).find(x => x.id === beastPick);
+  portraitFile.addEventListener("change", () => {
+    const f = portraitFile.files[0];
+    portraitFile.value = "";
+    if (f && current()) setBeastPortrait(current(), f);
+  });
+  const isImageDrag = e => e.dataTransfer && [...e.dataTransfer.types].includes("Files");
+  page.addEventListener("dragover", e => { if (!isImageDrag(e)) return; e.preventDefault(); page.classList.add("dropping"); });
+  page.addEventListener("dragleave", e => { if (!page.contains(e.relatedTarget)) page.classList.remove("dropping"); });
+  page.addEventListener("drop", e => {
+    if (!isImageDrag(e)) return;
+    e.preventDefault(); page.classList.remove("dropping");
+    const f = [...e.dataTransfer.files].find(x => /^image\//.test(x.type));
+    if (!f) return toast("Suelta una imagen para el retrato", "bad");
+    if (current()) setBeastPortrait(current(), f);
   });
   renderBestiary();
   body.querySelector("#beastSearch").focus({ preventScroll: true });
@@ -1055,15 +1076,31 @@ function renderBestiary() {
       <p>No hay ninguna criatura así. Prueba con otro nombre o crea la tuya.</p></div>`);
 }
 
+/* Un retrato nuevo para una criatura: pasa por el taller (quitar el fondo)
+   y se guarda en la partida; si era de serie, queda como versión propia */
+async function setBeastPortrait(beast, file) {
+  let blob;
+  try { blob = await editPortrait(file, { title: "Retrato de " + beast.name }); }
+  catch (err) { return toast(err.message, "bad"); }
+  if (!blob) return;
+  try {
+    const avatarId = await uploadImage(blob);
+    const next = normalizeBeast({ ...beast, custom: true, avatarId });
+    const own = doc().bestiary || [];
+    op("bestiary.set", { list: own.some(x => x.id === next.id) ? own.map(x => x.id === next.id ? next : x) : [...own, next] });
+    toast(`${beast.name} ya tiene retrato`, "good");
+  } catch (err) { toast(err.message, "bad"); }
+}
+
 function beastSheet(b) {
   const draft = beastDraft.get(b.id) || { qty: 1, rollHp: true };
   const base = isBaseBeast(b.id);
   const block = (title, text) => text ? `<section class="tome-block"><h4>${title}</h4>${lines(text).map(l => `<p>${esc(l)}</p>`).join("")}</section>` : "";
   return `<div class="tome-sigil">${sigil()}</div>
     <header class="tome-head">
-      ${b.avatarId
-        ? `<img class="avatar" src="${imgURL(b.avatarId)}" alt="" style="--tone:${esc(b.color)}">`
-        : `<div class="avatar" style="--tone:${esc(b.color)}">${initials(b.name)}</div>`}
+      <button type="button" class="tome-portrait${b.avatarId && !String(b.avatarId).includes("/") ? " figure" : ""}" data-beast="portrait" data-id="${esc(b.id)}"
+        style="--tone:${esc(b.color)}" title="Cambiar el retrato: elige una imagen o suéltala sobre la página" aria-label="Cambiar el retrato">
+        ${b.avatarId ? `<img src="${imgURL(b.avatarId)}" alt="">` : `<span>${initials(b.name)}</span>`}</button>
       <div><h3>${esc(b.name)}</h3><p class="tome-kind">${esc(b.sizeType)}</p></div>
     </header>
     <dl class="tome-stats">
@@ -1118,7 +1155,7 @@ function openBeastEditor(beast) {
     <div class="row" style="align-items:flex-start;margin-bottom:12px">
       <div style="flex:0 0 96px">
         <div class="avatar" id="bavPreview" style="width:78px;height:78px;font-size:22px;--tone:${esc(b.color)}${
-          b.avatarId ? `;background-image:url(${imgURL(b.avatarId)});background-size:cover` : ""}">${b.avatarId ? "" : initials(b.name || "?")}</div>
+          b.avatarId ? `;background-image:url(${imgURL(b.avatarId)});background-size:contain;background-repeat:no-repeat;background-position:center` : ""}">${b.avatarId ? "" : initials(b.name || "?")}</div>
         <button type="button" class="btn sm" id="bavPick" style="margin-top:8px;width:78px">Retrato</button>
         <input type="file" id="bavFile" accept="image/*" hidden>
       </div>
@@ -1152,12 +1189,16 @@ function openBeastEditor(beast) {
   bfile.addEventListener("change", async () => {
     if (!bfile.files[0]) return;
     try {
-      const { blob } = await shrinkImage(bfile.files[0], 192);
+      const blob = await editPortrait(bfile.files[0], { title: "Retrato de " + (b.name || "la criatura") });
+      bfile.value = "";
+      if (!blob) return;
       avatarId = await uploadImage(blob);
       const prev = body.querySelector("#bavPreview");
       prev.textContent = "";
       prev.style.backgroundImage = `url(${imgURL(avatarId)})`;
-      prev.style.backgroundSize = "cover";
+      prev.style.backgroundSize = "contain";
+      prev.style.backgroundRepeat = "no-repeat";
+      prev.style.backgroundPosition = "center";
       toast("Retrato guardado", "good");
     } catch (err) { toast(err.message, "bad"); }
   });

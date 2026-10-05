@@ -483,6 +483,19 @@ bestiario y todas las que invoques salen ya con esa cara, en la tarjeta y en
 su ficha del mapa. El tamaño también viaja, así que un ogro guardado como
 «Grande» ocupa 2×2 en cuanto lo pones en el tablero.
 
+**Retratos con ilustraciones propias.** En el libro de invocaciones, pulsa el
+retrato de una criatura (o suelta una imagen sobre su página) y se abre el
+**taller del retrato**: Mesa quita el fondo por su cuenta, sin mandar la
+imagen a ningún sitio. Va bien con lo habitual en los manuales, una figura
+sobre blanco, papel o una mancha de acuarela; con un paisaje detrás no lo
+intenta. Lo que quede de fondo se borra **pulsando encima**, como con una
+varita, con la **tolerancia** a tu gusto, y se puede **deshacer**, volver al
+**fondo automático** o a la **imagen original**. Al guardar, la figura se
+recorta, se centra y queda con fondo transparente: en el libro sale entera y
+en grande, y en el tablero, dentro del círculo del color de la criatura. Lo
+mismo pasa con el botón **Retrato** del editor de criaturas. Las imágenes se
+guardan en la partida, como las de los mapas.
+
 Se elige cantidad y **PV al azar** para que dos goblins no aguanten lo mismo.
 Entran al encuentro numerados (Goblin 1, Goblin 2…) y con su iniciativa
 tirada.
@@ -1031,7 +1044,7 @@ enseñaría por dónde ha venido.
 ## Qué versión tengo
 
 La versión de Mesa sale en la pantalla de entrada y al final del menú **···**
-del DM («Mesa 2.27.0»). Si el navegador trae una versión distinta de la del
+del DM («Mesa 2.28.0»). Si el navegador trae una versión distinta de la del
 servidor, Mesa vacía sus copias guardadas y recarga sola; si no lo consigue,
 lo dice en la pantalla de entrada.
 
@@ -1162,6 +1175,7 @@ public/
     manual.js          la ventana del manual del DM
     gnome.js           Chispa, el gnomo ingeniero de la vista del DM
     library.js         la librería del DM: los libros de consulta de lomo y los PDF
+    cutout.js          el taller del retrato: quitar el fondo de una ilustración
     manual-data.js     el texto del manual: la chuleta de la 5.5 y las otras ediciones
     soundscape.js      hacer sonar el mapa en la pantalla de la party
     attacks.js         leer y lanzar ataques

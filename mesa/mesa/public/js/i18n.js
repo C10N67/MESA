@@ -784,6 +784,14 @@ const EN = {
   "Buscar en el manual": "Search the manual",
   "Manual de D&D: todas las ediciones y reglas rápidas": "D&D manual: every edition and quick rules",
   "Bestiario: el libro de invocaciones (Ctrl+B)": "Bestiary: the book of summonings (Ctrl+B)",
+  /* El taller del retrato */
+  "Retrato": "Portrait", "El fondo se ha quitado solo.": "The background was removed automatically.",
+  "No se ha visto un fondo claro que quitar.": "No clear background was found to remove.",
+  "Pulsa sobre lo que quede de fondo para borrarlo.": "Click whatever background is left to erase it.",
+  "Tolerancia": "Tolerance", "Fondo automático": "Automatic background", "Imagen original": "Original image",
+  "Guardar retrato": "Save portrait", "Cambiar el retrato": "Change the portrait",
+  "Cambiar el retrato: elige una imagen o suéltala sobre la página": "Change the portrait: pick an image or drop it on the page",
+  "Suelta una imagen para el retrato": "Drop an image for the portrait",
   "Librería": "Library", "Guardar la librería": "Put the library away", "Sacar la librería": "Bring out the library",
   "Añadir un PDF a la librería": "Add a PDF to the library", "Solo caben PDF en la librería": "Only PDFs fit in the library",
   "PDF añadido a la librería": "PDF added to the library", "Título del libro": "Book title", "Color del lomo": "Spine colour",
@@ -879,6 +887,8 @@ const SPELL_PARTS = [
   [/^(\d+) puntos de sueño$/, "$1 points of sleep"]
 ];
 const PATTERNS = [
+  [/^Retrato de (.+)$/, "Portrait of $1"],
+  [/^(.+) ya tiene retrato$/, "$1 has a portrait now"],
   [/^(\d+) PDF añadidos a la librería$/, "$1 PDFs added to the library"],
   [/^Devolver «(.+)» a la estantería$/, "Put «$1» back on the shelf"],
   [/^«(.+)» no cabe: el navegador no deja guardar más$/, "«$1» doesn't fit: the browser won't store any more"],
