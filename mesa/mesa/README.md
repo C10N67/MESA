@@ -210,6 +210,28 @@ estabas.
 Solo el DM puede ver la lista y cambiar de campaña. En la versión de prueba
 las campañas se guardan en el navegador.
 
+### Parties guardadas
+
+Una party se puede **guardar** para jugarla en otra campaña: en **La mesa**,
+el botón **Guardar party** (arriba a la derecha, o **⋯ → Parties**) guarda
+los personajes con sus fichas tal como están (nivel, vida, conjuros,
+objetos, rasgos), con el nombre que le pongas («Los Hijos del Dragón»). Los
+monstruos no van, y tampoco su sitio en el mapa. Guardar otra vez con el
+mismo nombre **la pone al día**, por ejemplo después de subir de nivel; la
+campaña recuerda el nombre de su party, así que basta con volver a pulsar.
+
+Para traerla:
+
+- Al empezar una **campaña nueva**, el desplegable **Party** permite
+  empezar ya con ella.
+- En cualquier campaña, desde **⋯ → Parties** (o **Traer una party
+  guardada** cuando la mesa está vacía) → **Traer a la mesa**. Los personajes
+  que ya están (mismo nombre) no se repiten.
+
+Las parties viven en `data/parties/`, una por archivo (en la versión de
+prueba, en el navegador). Borrar una party guardada no toca a los personajes
+que ya juegan en alguna campaña.
+
 ## Idioma
 
 Arriba a la derecha (o en **⋯ → Idioma**, y en la propia pantalla de entrada)
@@ -1149,7 +1171,7 @@ enseñaría por dónde ha venido.
 ## Qué versión tengo
 
 La versión de Mesa sale en la pantalla de entrada y al final del menú **···**
-del DM («Mesa 2.36.0»). Si el navegador trae una versión distinta de la del
+del DM («Mesa 2.37.0»). Si el navegador trae una versión distinta de la del
 servidor, Mesa vacía sus copias guardadas y recarga sola; si no lo consigue,
 lo dice en la pantalla de entrada.
 
@@ -1170,7 +1192,8 @@ no cuadra, recarga con **Ctrl+Mayús+R** (Cmd+Mayús+R en Mac).
 En la carpeta `data/` junto al programa: `mesa.json` con la partida e `images/`
 con los planos y los retratos. Se guarda solo, unas décimas después de cada
 cambio, y sobrevive a que cierres la ventana. Las campañas que no están en
-juego esperan en `data/campaigns/`, una por archivo (mira «Campañas»).
+juego esperan en `data/campaigns/`, una por archivo (mira «Campañas»), y las
+parties guardadas en `data/parties/`.
 
 Desde **⋯ → Guardar copia de la partida** te llevas un `.json` con todo, y
 **Cargar una copia** lo devuelve como campaña en juego (la de antes se
@@ -1284,6 +1307,7 @@ public/
   js/
     main.js            entrada a la partida y reparto de vistas
     campaigns.js       elegir campaña al entrar como DM: nueva o una que ya existe
+    parties.js         guardar la party de la mesa y traer una guardada
     version.js         la versión de Mesa (igual en mesa.css y sw.js)
     net.js             conexión, reconexión y envío de operaciones
     engine.js          las reglas de la partida (lo usan el servidor y la versión de prueba)

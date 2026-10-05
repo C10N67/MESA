@@ -1,4 +1,4 @@
-/* Campañas: empezar una nueva o cargar otra guarda primero la de ahora, y
+/* Campañas y parties: empezar una nueva o cargar otra guarda primero la de ahora, y
    «deshacer» no cruza de una campaña a otra.
 
    npm test (desde mesa/mesa) */
@@ -91,4 +91,64 @@ test("borrar una campaña guardada", async () => {
   await engine.run(dm, [{ type: "campaign.remove", id: uno }]);
   assert.equal(shelf.size, 0);
   assert.deepEqual((await engine.listCampaigns()).map(c => c.title), ["Dos"]);
+});
+
+/* ---------- Parties guardadas ---------- */
+function withParties() {
+  const shelves = { campaigns: new Map(), parties: new Map() };
+  const make = m => ({
+    async list() { return [...m.values()].map(v => v.meta); },
+    async get(id) { return m.has(id) ? JSON.parse(JSON.stringify(m.get(id).doc)) : null; },
+    async put(id, meta, doc) { m.set(id, { meta, doc }); },
+    async remove(id) { m.delete(id); }
+  });
+  let n = 0;
+  const engine = createEngine({ rid: k => (++n).toString(16).padStart(k * 2, "0"), campaigns: make(shelves.campaigns), parties: make(shelves.parties) });
+  const dm = engine.join({ role: "dm", name: "DM" }, { checkPin: false }).client;
+  return { engine, dm, shelves };
+}
+
+test("guardar la party y empezar otra campaña con ella", async () => {
+  const { engine, dm, shelves } = withParties();
+  await engine.run(dm, [{ type: "campaign.new", title: "Uno" }]);
+  await engine.run(dm, [{ type: "char.add", chars: [{ kind: "pc", name: "Aria", level: 3, hp: 5, maxHp: 21, mx: 2, my: 2, mapId: engine.doc.maps[0].id }, { kind: "pc", name: "Borin", level: 3 }, { kind: "monster", name: "Goblin" }] }]);
+  assert.equal((await engine.run(dm, [{ type: "party.save", name: "Los Hijos del Dragón" }])).error, null);
+  assert.equal(shelves.parties.size, 1);
+  assert.equal(engine.doc.session.partyName, "Los Hijos del Dragón");
+  const [p] = await engine.listParties();
+  assert.deepEqual(p.pcs, ["Aria", "Borin"], "solo los personajes, no los monstruos");
+
+  await engine.run(dm, [{ type: "campaign.new", title: "Dos", partyId: p.id }]);
+  assert.deepEqual(names(engine), ["Aria", "Borin"]);
+  const aria = engine.doc.chars.find(c => c.name === "Aria");
+  assert.equal(aria.level, 3);
+  assert.equal(aria.hp, 5, "la ficha tal cual estaba");
+  assert.equal(aria.mx, null, "sin sitio en el mapa");
+  assert.equal(engine.doc.session.partyName, "Los Hijos del Dragón");
+});
+
+test("guardar otra vez con el mismo nombre la pone al día, y traerla no repite a nadie", async () => {
+  const { engine, dm, shelves } = withParties();
+  await engine.run(dm, [{ type: "campaign.new", title: "Uno" }]);
+  await engine.run(dm, [{ type: "char.add", char: { kind: "pc", name: "Aria", level: 1 } }]);
+  await engine.run(dm, [{ type: "party.save", name: "Grupo" }]);
+  const id = engine.doc.chars[0].id;
+  await engine.run(dm, [{ type: "char.patch", id, fields: { level: 4 } }]);
+  await engine.run(dm, [{ type: "party.save", name: "grupo" }]);
+  assert.equal(shelves.parties.size, 1);
+  assert.deepEqual((await engine.listParties())[0].levels, [4]);
+  const pid = (await engine.listParties())[0].id;
+  assert.equal((await engine.run(dm, [{ type: "party.load", id: pid }])).error, "Esos personajes ya están en la mesa");
+  await engine.run(dm, [{ type: "campaign.new", title: "Dos" }]);
+  await engine.run(dm, [{ type: "party.load", id: pid }]);
+  assert.deepEqual(names(engine), ["Aria"]);
+  await engine.run(dm, [{ type: "party.remove", id: pid }]);
+  assert.equal(shelves.parties.size, 0);
+});
+
+test("una party vacía no se guarda, y solo el DM guarda", async () => {
+  const { engine, dm } = withParties();
+  assert.equal((await engine.run(dm, [{ type: "party.save", name: "Nadie" }])).error, "No hay personajes que guardar");
+  const player = engine.join({ role: "player", name: "Ana" }, { checkPin: false }).client;
+  assert.equal((await engine.run(player, [{ type: "party.save", name: "Mía" }])).error, "Solo el DM");
 });

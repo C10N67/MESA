@@ -50,6 +50,7 @@ export async function localTransport() {
     },
     ops: (token, ops) => ask("ops", { token, ops }),
     campaigns: token => ask("campaigns", { token }),
+    parties: token => ask("parties", { token }),
     async image(token, blob) {
       const id = await ask("image", { token, blob });
       registerLocalImage(id, URL.createObjectURL(blob));

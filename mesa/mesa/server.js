@@ -43,6 +43,7 @@ const DATA = path.resolve(HERE, arg("data", "data"));
 const IMAGES = path.join(DATA, "images");
 const STATE_FILE = path.join(DATA, "mesa.json");
 const CAMPAIGNS = path.join(DATA, "campaigns");      // las campañas que no están en juego
+const PARTIES = path.join(DATA, "parties");          // las parties guardadas
 const CERT = process.env.MESA_CERT || arg("cert", "");
 const KEY = process.env.MESA_KEY || arg("key", "");
 const INTERNET = argv.includes("--internet") || process.env.MESA_INTERNET === "1";
@@ -56,40 +57,46 @@ const VERSION = (readFileSync(path.join(HERE, "public", "js", "version.js"), "ut
    Las reglas viven en public/js/engine.js; aquí solo hay red y disco. */
 const rid = n => randomBytes(n).toString("hex");
 
-/* Las otras campañas, una por archivo en data/campaigns: { meta, doc } */
-const campaignFile = id => /^[a-z0-9]{1,40}$/i.test(String(id)) ? path.join(CAMPAIGNS, id + ".json") : null;
-const campaigns = {
-  async list() {
-    const names = await readdir(CAMPAIGNS).catch(() => []);
-    const out = [];
-    for (const n of names) {
-      if (!n.endsWith(".json")) continue;
-      try { const { meta } = JSON.parse(await readFile(path.join(CAMPAIGNS, n), "utf8")); if (meta && meta.id) out.push(meta); } catch {}
+/* Estanterías en disco: una carpeta con un archivo por cosa, { meta, doc }.
+   Las campañas que no están en juego (data/campaigns) y las parties
+   guardadas (data/parties). */
+function shelf(dir) {
+  const file = id => /^[a-z0-9]{1,40}$/i.test(String(id)) ? path.join(dir, id + ".json") : null;
+  return {
+    async list() {
+      const names = await readdir(dir).catch(() => []);
+      const out = [];
+      for (const n of names) {
+        if (!n.endsWith(".json")) continue;
+        try { const { meta } = JSON.parse(await readFile(path.join(dir, n), "utf8")); if (meta && meta.id) out.push(meta); } catch {}
+      }
+      return out;
+    },
+    async get(id) {
+      const f = file(id);
+      if (!f) return null;
+      try { return JSON.parse(await readFile(f, "utf8")).doc || null; } catch { return null; }
+    },
+    async put(id, meta, doc) {
+      const f = file(id);
+      if (!f) return;
+      await mkdir(dir, { recursive: true });
+      await writeFile(f + ".tmp", JSON.stringify({ meta, doc }), "utf8");
+      await rename(f + ".tmp", f);
+    },
+    async remove(id) {
+      const f = file(id);
+      if (f) await unlink(f).catch(() => {});
     }
-    return out;
-  },
-  async get(id) {
-    const file = campaignFile(id);
-    if (!file) return null;
-    try { return JSON.parse(await readFile(file, "utf8")).doc || null; } catch { return null; }
-  },
-  async put(id, meta, doc) {
-    const file = campaignFile(id);
-    if (!file) return;
-    await mkdir(CAMPAIGNS, { recursive: true });
-    await writeFile(file + ".tmp", JSON.stringify({ meta, doc }), "utf8");
-    await rename(file + ".tmp", file);
-  },
-  async remove(id) {
-    const file = campaignFile(id);
-    if (file) await unlink(file).catch(() => {});
-  }
-};
+  };
+}
+const campaigns = shelf(CAMPAIGNS);
+const parties = shelf(PARTIES);
 const engine = createEngine({
   rid, absorbImages: d => absorbLegacyImages(d), onPresence: () => broadcastPresence(),
   /* Al expulsar a alguien se le corta el flujo: su aparato vuelve a la entrada */
   onKick: client => { if (client.res) { try { client.res.end(); } catch {} client.res = null; } },
-  campaigns
+  campaigns, parties
 });
 const clients = engine.clients;   // testigo -> { id, name, role, charId, res }
 
@@ -290,6 +297,14 @@ const handler = async (req, res) => {
       if (!client) return json(res, 401, { error: "sesión caducada" });
       if (client.role !== "dm") return json(res, 403, { error: "Solo el DM" });
       return json(res, 200, { campaigns: await engine.listCampaigns() });
+    }
+
+    /* Las parties guardadas, para traerlas a la mesa */
+    if (p === "/api/parties") {
+      const client = clients.get(url.searchParams.get("token") || "");
+      if (!client) return json(res, 401, { error: "sesión caducada" });
+      if (client.role !== "dm") return json(res, 403, { error: "Solo el DM" });
+      return json(res, 200, { parties: await engine.listParties() });
     }
 
     if (p === "/api/stream") {

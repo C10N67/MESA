@@ -11,7 +11,8 @@
      absorbImages(d) saca las imágenes incrustadas de una copia antigua
      onPresence()    avisa de que ha cambiado quién está conectado
      campaigns       dónde se guardan las otras campañas (opcional):
-                     { list(), get(id), put(id, meta, doc), remove(id) } */
+                     { list(), get(id), put(id, meta, doc), remove(id) }
+     parties         dónde se guardan las parties, igual (opcional) */
 
 import { emptyDoc, migrate, cellKey, normalizeChar, normalizeBeast, normalizeMap, normalizeShape, normalizePin, normalizePortal, normalizeSound, MAX_SOUNDS, normalizeAttack, normalizeDrawing, normalizeWall, MAX_WALLS, modOf, addDice, scaleDice, cantripTier } from "./schema.js";
 import { visibleCells, fringeCells, edgesNear, wallsNear, gridDistance, pathCost, occupied, fits, reachableCells, roomsOf, splitRooms } from "./los.js";
@@ -21,7 +22,7 @@ import { critDamage } from "./attacks-core.js";
 
 export const ROLES = ["dm", "player", "screen"];
 
-export function createEngine({ rid, absorbImages = async d => d, onPresence = () => {}, onKick = () => {}, campaigns = null } = {}) {
+export function createEngine({ rid, absorbImages = async d => d, onPresence = () => {}, onKick = () => {}, campaigns = null, parties = null } = {}) {
   let doc = emptyDoc();
   let pin = "";
   let rev = 0;
@@ -710,6 +711,28 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
   }
   const cleanTitle = t => String(t || "").replace(/\s+/g, " ").trim().slice(0, 60);
 
+  /* ---------- Parties guardadas ----------
+     Los personajes de la party con sus fichas enteras (nivel, vida, conjuros,
+     objetos), sin su sitio en el mapa, para traerlos a otra campaña. Guardar
+     otra vez con el mismo nombre la pone al día. */
+  const partyPcs = () => doc.chars.filter(c => c.kind === "pc" && !c.probe);
+  async function listParties() {
+    const list = parties ? await parties.list().catch(() => []) : [];
+    return list.filter(x => x && x.id).sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0));
+  }
+  /* Trae los personajes de una party a la campaña en juego. Los que ya
+     están (mismo nombre) no se repiten. Devuelve cuántos han llegado. */
+  function bringParty(saved) {
+    let n = 0;
+    for (const raw of Array.isArray(saved.chars) ? saved.chars : []) {
+      if (!raw || !raw.name || doc.chars.some(c => c.kind === "pc" && sameName(String(c.name), String(raw.name)))) continue;
+      const free = raw.id && !findChar(raw.id);
+      doc.chars.push(normalizeChar({ ...raw, id: free ? raw.id : "", kind: "pc", probe: false, mapId: "", mx: null, my: null, claimedBy: "" }));
+      n++;
+    }
+    return n;
+  }
+
   /* ---------- Operaciones ---------- */
   const PLAYER_LOCKED = new Set(["id", "kind", "hidden", "xp", "cr", "mapId", "mx", "my", "claimedBy"]);
   const findChar = id => doc.chars.find(c => c.id === id);
@@ -1239,7 +1262,41 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
         next.campaignId = rid(6);
         next.session.title = cleanTitle(op.title) || BLANK_TITLE;
         await switchTo(next);
+        /* Puede empezar ya con una party guardada */
+        const saved = op.partyId && parties ? await parties.get(String(op.partyId)).catch(() => null) : null;
+        if (saved && bringParty(saved)) doc.session.partyName = String(saved.name || "");
         break;
+      }
+
+      case "party.save": {
+        if (!dm) return "Solo el DM";
+        if (!parties) return "Aquí no se pueden guardar parties";
+        const pcs = partyPcs();
+        if (!pcs.length) return "No hay personajes que guardar";
+        const name = cleanTitle(op.name) || doc.session.partyName || "La party";
+        const old = (await listParties()).find(x => sameName(String(x.name || ""), name));
+        const id = old ? old.id : rid(6);
+        const chars = pcs.map(c => ({ ...JSON.parse(JSON.stringify(c)), mapId: "", mx: null, my: null, claimedBy: "" }));
+        await parties.put(id, { id, name, savedAt: Date.now(), pcs: chars.map(c => c.name), levels: chars.map(c => c.level) }, { name, chars });
+        doc.session.partyName = name;
+        break;
+      }
+
+      case "party.load": {
+        if (!dm) return "Solo el DM";
+        if (!parties) return "Aquí no se pueden guardar parties";
+        const saved = await parties.get(String(op.id || "")).catch(() => null);
+        if (!saved) return "No se encuentra esa party";
+        if (!bringParty(saved)) return "Esos personajes ya están en la mesa";
+        if (!doc.session.partyName) doc.session.partyName = String(saved.name || "");
+        break;
+      }
+
+      case "party.remove": {
+        if (!dm) return "Solo el DM";
+        if (!parties) return "Aquí no se pueden guardar parties";
+        await parties.remove(String(op.id || ""));
+        return "SKIP_HISTORY";
       }
 
       case "campaign.load": {
@@ -1367,7 +1424,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
   /* Aplica un lote. Si una operación falla, las anteriores ya se aplicaron y
      hay que repartirlas igual: por eso se devuelve cuántas entraron. */
   async function run(client, ops) {
-    const worthRemembering = ops.some(o => o && !["ping", "chat", "log.add", "request.done", "undo", "voice.set", "campaign.remove"].includes(o.type));
+    const worthRemembering = ops.some(o => o && !["ping", "chat", "log.add", "request.done", "undo", "voice.set", "campaign.remove", "party.remove", "party.save"].includes(o.type));
     /* El taller del tutorial no se apunta en el historial: «deshacer» al
        acabar vuelve a lo último que hizo el DM, no al mapa de prácticas */
     const demoing = doc.maps.some(m => m.demo) || ops.some(o => o && o.type === "map.add" && o.map && o.map.demo);
@@ -1453,7 +1510,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
     set pin(v) { pin = String(v || ""); },
     get rev() { return rev; },
     clients,
-    hello, join, run, advance, refresh, presence, setOnline, purge, saveClients, loadClients, listCampaigns,
+    hello, join, run, advance, refresh, presence, setOnline, purge, saveClients, loadClients, listCampaigns, listParties,
     snapshot: redact
   };
 }

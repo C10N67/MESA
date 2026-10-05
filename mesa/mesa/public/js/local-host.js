@@ -65,22 +65,26 @@ async function kvKeys() {
   });
 }
 
-/* Las otras campañas, cada una en su entrada: «campaign:<id>» → { meta, doc } */
-const CAMPAIGN = "campaign:";
-const campaigns = {
-  async list() {
-    const out = [];
-    for (const k of await kvKeys()) {
-      if (typeof k !== "string" || !k.startsWith(CAMPAIGN)) continue;
-      const v = await kvGet(k).catch(() => null);
-      if (v && v.meta && v.meta.id) out.push(v.meta);
-    }
-    return out;
-  },
-  async get(id) { const v = await kvGet(CAMPAIGN + id); return (v && v.doc) || null; },
-  put: (id, meta, doc) => kvSet(CAMPAIGN + id, { meta, doc }),
-  remove: id => kvDel(CAMPAIGN + id)
-};
+/* Estanterías: cada cosa en su entrada, «<prefijo><id>» → { meta, doc }. Las
+   campañas que no están en juego y las parties guardadas. */
+function shelf(prefix) {
+  return {
+    async list() {
+      const out = [];
+      for (const k of await kvKeys()) {
+        if (typeof k !== "string" || !k.startsWith(prefix)) continue;
+        const v = await kvGet(k).catch(() => null);
+        if (v && v.meta && v.meta.id) out.push(v.meta);
+      }
+      return out;
+    },
+    async get(id) { const v = await kvGet(prefix + id); return (v && v.doc) || null; },
+    put: (id, meta, doc) => kvSet(prefix + id, { meta, doc }),
+    remove: id => kvDel(prefix + id)
+  };
+}
+const campaigns = shelf("campaign:");
+const parties = shelf("party:");
 
 /* ---------- Imágenes ---------- */
 const EXT = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif" };
@@ -154,7 +158,7 @@ function sampleDoc(doc) {
 /* ---------- El anfitrión ---------- */
 export function createHost(base) {
   const ports = new Map();          // testigo -> puerto que recibe el flujo
-  const engine = createEngine({ rid, absorbImages: d => absorbImages(base, d), onPresence: () => presence(), campaigns });
+  const engine = createEngine({ rid, absorbImages: d => absorbImages(base, d), onPresence: () => presence(), campaigns, parties });
   const clients = engine.clients;
 
   const ready = (async () => {
@@ -214,6 +218,11 @@ export function createHost(base) {
         if (!c) throw Object.assign(new Error("sesión caducada"), { status: 401 });
         if (c.role !== "dm") throw new Error("Solo el DM");
         return engine.listCampaigns();
+      }
+      case "parties": {
+        if (!c) throw Object.assign(new Error("sesión caducada"), { status: 401 });
+        if (c.role !== "dm") throw new Error("Solo el DM");
+        return engine.listParties();
       }
       case "stream": {
         if (!c) throw Object.assign(new Error("sesión caducada"), { status: 401 });

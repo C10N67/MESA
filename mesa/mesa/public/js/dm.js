@@ -24,6 +24,7 @@ import { editPortrait } from "./cutout.js";
 import { tutorialButton, tutorialInMenu, startTutorial } from "./tutorial.js";
 import { cleanupStaleDemo } from "./tutorial-demo.js";
 import { campaignChooser } from "./campaigns.js";
+import { openParties } from "./parties.js";
 import { rollHitPoints } from "./dice.js";
 import { TYPE_NAMES, typeOf, crValue, CATALOG_BY_ID } from "./catalog.js";
 
@@ -380,12 +381,16 @@ function renderTable() {
       <div class="stat"><b class="tnum">${pcs().length - upright.length}</b><span>caídos</span></div>
       ${monsters.length ? `<div class="stat"><b class="tnum">${monsters.filter(m => m.hp > 0).length}</b>
         <span>enemigos · ${enc ? enc.adjusted + " PX ajustados, dificultad " + enc.label : ""}</span></div>` : ""}
+      ${pcs().length ? `<button class="btn sm band-end" data-act="parties" title="Guardar la party para traerla a otra campaña">${withIcon("bookmark", "Guardar party", 15)}</button>` : ""}
     </div>
     ${pcs().length ? `<div class="grid">${pcs().map(cardHTML).join("")}</div>` : `
       <div class="empty">
         <h3>Aún no hay nadie en la mesa</h3>
         <p>Crea las fichas tú, o dile a cada jugador que entre desde su móvil y se haga la suya.</p>
-        <button class="btn primary" data-act="add" style="margin-top:12px">Añadir personaje</button>
+        <div class="empty-acts">
+          <button class="btn primary" data-act="add">Añadir personaje</button>
+          <button class="btn" data-act="bringParty">${withIcon("users", "Traer una party guardada", 15)}</button>
+        </div>
       </div>`}
     ${monsters.length ? `
       <div class="section-title"><h2>Enemigos</h2><span class="line"></span>
@@ -609,11 +614,13 @@ function bindTable(root) {
     /* Hay acciones que son de la mesa (pasar turno, tirar iniciativa) y otras
        que son de una ficha concreta. Si la segunda llega sin ficha, se deja
        pasar en vez de reventar. */
-    const sinFicha = ["add", "nextTurn", "prevTurn", "rollInit", "addToOrder", "delay", "attackNow", "clearFoes"];
+    const sinFicha = ["add", "nextTurn", "prevTurn", "rollInit", "addToOrder", "delay", "attackNow", "clearFoes", "parties", "bringParty"];
     if (!c && !sinFicha.includes(act)) return;
 
     switch (act) {
       case "add": return newCharacter();
+      case "parties": return openParties();
+      case "bringParty": return openParties({ focus: "" });
       case "fold":
         openCards.has(c.id) ? openCards.delete(c.id) : openCards.add(c.id);
         return render();
@@ -2301,6 +2308,7 @@ function openMenu() {
     ${item("ask", "dice", "Pedir una tirada", "A quién, qué y con qué dificultad")}
     <h4 class="menu-sec">Partida</h4>
     ${item("campaigns", "book", "Campañas", "Empezar una nueva o cargar otra; la de ahora se guarda")}
+    ${item("parties", "users", "Parties", "Guardar la party de la mesa o traer una guardada")}
     ${item("export", "download", "Guardar copia", "Descarga un archivo con toda la partida")}
     ${item("import", "upload", "Cargar una copia", "La pone en juego; la de ahora se guarda en Campañas")}
     <div class="menu-item static"><span class="menu-ico">${icon("lang", 20)}</span><span class="menu-text"><b>Idioma</b><small>Solo cambia en este aparato</small></span><span id="menuLang"></span></div>
@@ -2351,6 +2359,7 @@ function openMenu() {
     }
     if (what === "import") file.click();
     if (what === "campaigns") { m.close(); return openCampaigns(); }
+    if (what === "parties") { m.close(); return openParties(); }
     if (what === "tutorial") { m.close(); return startTutorial("dm"); }
     if (what === "tutorialTools") { m.close(); return startTutorial("dm", { section: "utiles" }); }
     if (what === "tutorialSettings") { m.close(); return startTutorial("dm", { section: "ajustes" }); }

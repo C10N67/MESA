@@ -8,7 +8,7 @@
 
 import { esc, confirmBox } from "./util.js";
 import { icon, withIcon } from "./icons.js";
-import { campaignList, campaignOp } from "./net.js";
+import { campaignList, partyList, campaignOp } from "./net.js";
 import { currentLang } from "./i18n.js";
 
 const en = () => currentLang() === "en";
@@ -30,6 +30,7 @@ function when(ts) {
 /* Pinta el selector en «host». onDone() se llama con la campaña ya en juego. */
 export function campaignChooser(host, { onDone = () => {}, inGame = false } = {}) {
   let list = [];
+  let parties = [];
   let mode = "load";
   let busy = false;
 
@@ -62,6 +63,11 @@ export function campaignChooser(host, { onDone = () => {}, inGame = false } = {}
         <form class="camp-new">
           <label class="field"><span>Nombre de la campaña</span>
             <input name="title" maxlength="60" placeholder="La mina perdida de Phandelver" autocomplete="off"></label>
+          ${parties.length ? `<label class="field"><span>Party</span>
+            <select name="party">
+              <option value="">Sin party: las fichas se hacen al empezar</option>
+              ${parties.map(p => `<option value="${esc(p.id)}" data-keep>${esc(p.name)} · ${esc((p.pcs || []).join(", "))}</option>`).join("")}
+            </select></label>` : ""}
           ${current ? `<p class="prose camp-note">${en() ? "The current one" : "La de ahora"}, <b data-keep>«${esc(current.title)}»</b>, ${en() ? "is kept with the others: you can load it again whenever you like." : "se guarda con las demás: la puedes volver a cargar cuando quieras."}</p>` : ""}
           <button class="btn primary go" type="submit">${withIcon("plus", "Empezar la campaña")}</button>
         </form>` : `
@@ -108,12 +114,12 @@ export function campaignChooser(host, { onDone = () => {}, inGame = false } = {}
   host.addEventListener("submit", e => {
     e.preventDefault();
     const title = (host.querySelector('[name="title"]') || {}).value || "";
-    act({ type: "campaign.new", title });
+    const partyId = (host.querySelector('[name="party"]') || {}).value || "";
+    act({ type: "campaign.new", title, partyId });
   });
 
   host.innerHTML = `<p class="prose camp-wait">Buscando campañas…</p>`;
-  campaignList()
-    .then(l => { list = l; })
-    .catch(() => { list = []; })
+  Promise.all([campaignList().catch(() => []), partyList().catch(() => [])])
+    .then(([l, p]) => { list = l; parties = p; })
     .finally(() => { mode = list.length ? "load" : "new"; paint(); });
 }

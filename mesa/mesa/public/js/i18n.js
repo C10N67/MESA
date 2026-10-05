@@ -829,6 +829,7 @@ const EN = {
   "«Guardar» aplica lo que hayas cambiado arriba; «Cerrar» lo deja como estaba. Ahora la cierro yo sin tocar nada.": "«Save» applies what you changed above; «Close» leaves it as it was. I'll close it now without touching anything.",
   "Útiles del mapa, con ejemplos": "Map tools, with examples",
   "Esta copia pasa a ser la campaña en juego; la de ahora se guarda en Campañas. ¿Seguimos?": "This copy becomes the campaign in play; the current one is kept in Campaigns. Shall we?",
+  "Parties": "Parties", "Guardar party": "Save party", "Guardar la party de esta mesa": "Save this table's party", "Guardar la party para traerla a otra campaña": "Save the party to bring it to another campaign", "Los Hijos del Dragón": "The Dragon's Children", "Nombre de la party": "Party name", "Se guardan las fichas tal como están ahora. Si ya hay una con ese nombre, se pone al día.": "The sheets are saved exactly as they are now. If there's already one with that name, it gets updated.", "Todavía no hay personajes en la mesa.": "There are no characters at the table yet.", "Parties guardadas": "Saved parties", "Ninguna todavía. Cuando guardes una, la podrás traer a cualquier campaña.": "None yet. Once you save one, you can bring it to any campaign.", "Traer a la mesa": "Bring to the table", "Borrar esta party": "Delete this party", "Party guardada": "Party saved", "La party ya está en la mesa": "The party is at the table", "Buscando parties…": "Looking for parties…", "Traer una party guardada": "Bring a saved party", "Guardar la party de la mesa o traer una guardada": "Save the table's party or bring a saved one", "Sin party: las fichas se hacen al empezar": "No party: sheets are made when you start", "Aquí no se pueden guardar parties": "Parties can't be saved here", "No hay personajes que guardar": "There are no characters to save", "No se encuentra esa party": "That party can't be found", "Esos personajes ya están en la mesa": "Those characters are already at the table", "No se pudieron leer las parties": "Couldn't read the parties",
   "¿Qué campaña jugamos?": "Which campaign are we playing?", "Campañas": "Campaigns", "Campaña": "Campaign",
   "Nueva": "New", "empezar de cero": "start from scratch", "Existente": "Existing", "cargar una guardada": "load a saved one",
   "todavía no hay": "none yet", "Nombre de la campaña": "Campaign name", "La mina perdida de Phandelver": "The Lost Mine of Phandelver",
@@ -1029,6 +1030,7 @@ const SPELL_PARTS = [
   [/^(\d+) puntos de sueño$/, "$1 points of sleep"]
 ];
 const PATTERNS = [
+  [/^¿Borrar la party «(.+)»\? Los personajes que ya están en alguna campaña se quedan\.$/, "Delete the party «$1»? Characters already in a campaign stay there."],
   [/^¿Borrar la campaña «(.+)»\? No se puede deshacer\.$/, "Delete the campaign «$1»? This can't be undone."],
   [/^Campaña en juego: (.*)$/, "Now playing: $1"],
   [/^Color de la sala (.+)$/, "Colour of room $1"],

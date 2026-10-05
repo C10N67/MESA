@@ -119,6 +119,12 @@ const http = {
     if (!res.ok) throw new Error(data.error || "No se pudieron leer las campañas");
     return data.campaigns || [];
   },
+  async parties(token) {
+    const res = await fetch("api/parties?token=" + encodeURIComponent(token), { cache: "no-store" });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || "No se pudieron leer las parties");
+    return data.parties || [];
+  },
   async rtc(token, to, data) {
     const res = await fetch("api/rtc", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, to, data }) });
     return res.ok;
@@ -143,10 +149,13 @@ export async function ping(token) {
   return (await transport()).ping(token);
 }
 
-/* Campañas: la lista que puede cargar el DM, y empezar o cargar una. La
-   operación se espera (para pasar a la mesa ya con la campaña elegida). */
+/* Campañas y parties: las listas que puede cargar el DM, y una operación que
+   se espera (para pasar a la mesa ya con la campaña elegida). */
 export async function campaignList() {
   return (await transport()).campaigns(store.session.token);
+}
+export async function partyList() {
+  return (await transport()).parties(store.session.token);
 }
 export async function campaignOp(o) {
   const { status, data } = await (await transport()).ops(store.session.token, [o]);

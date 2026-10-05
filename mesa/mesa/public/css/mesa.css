@@ -11,7 +11,7 @@
    lejos) y la del sistema para el resto de la interfaz. */
 
 :root {
-  --mesa-version: "2.36.0";   /* igual que js/version.js y sw.js */
+  --mesa-version: "2.37.0";   /* igual que js/version.js y sw.js */
   --pitch: #0a0c11;
   --stone: #141821;
   --stone-2: #1b202b;
@@ -2553,3 +2553,18 @@ body.library-shown .layout:not(.map-mode) > main { padding-bottom: 160px; }
 .camp-wait { text-align: center; }
 .camp-host .camp-q { display: none; }
 .camp-host { min-width: min(440px, 80vw); }
+
+/* ---------- Parties guardadas ---------- */
+.band-end { margin-left: auto; }
+.empty-acts { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+.parties .field-label { margin-top: 4px; }
+.party-save { margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--edge); }
+.party-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
+.party-chips .chip { cursor: default; }
+.party-row { display: flex; gap: 8px; }
+.party-row input { flex: 1; min-width: 0; }
+.party-note { font-size: 12.5px; margin: 8px 0 0; }
+.camp-load.static { cursor: default; }
+.camp-load.static:hover { border-color: var(--edge); }
+.camp-load .btn { flex: none; }
+@media (max-width: 560px) { .camp-load .btn .lbl { display: none; } .party-row { flex-direction: column; } }
