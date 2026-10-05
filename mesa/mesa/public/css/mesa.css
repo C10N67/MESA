@@ -11,7 +11,7 @@
    lejos) y la del sistema para el resto de la interfaz. */
 
 :root {
-  --mesa-version: "2.32.0";   /* igual que js/version.js y sw.js */
+  --mesa-version: "2.33.0";   /* igual que js/version.js y sw.js */
   --pitch: #0a0c11;
   --stone: #141821;
   --stone-2: #1b202b;

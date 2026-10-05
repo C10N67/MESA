@@ -230,6 +230,17 @@ herramientas del mapa, la voz…) y una tarjeta cuenta para qué sirve. Se
 avanza con «Siguiente» o las flechas, se vuelve con «Anterior» y se sale con
 la × o con Escape. El DM tiene su recorrido y los jugadores el suyo.
 
+El recorrido del DM incluye una sección **Útiles**, con una parada por cada
+herramienta del mapa y un **ejemplo de partida** para cada una: el mapa
+activo, fichas, regla, muro, pincel, puerta, borrar, nota, acceso, sonido,
+dibujar, niebla/oscuridad/luz, terreno difícil, sala, revelar, ocultar, las
+plantillas de área, encajar y zoom, y los ajustes del mapa (por ejemplo: «la
+puerta de la cripta sigue cerrada hasta que el clérigo dice "la abro"»,
+«escombros tras el derrumbe: el guerrero solo avanza tres casillas»). Si las
+herramientas están guardadas en el marcapáginas, Chispa las saca. Esa sección
+también se abre sola desde el menú **···** → **Útiles del mapa, con
+ejemplos**.
+
 Cuando ya lo has visto, el botón deja de brillar en la barra y pasa al menú
 **···** (los jugadores también tienen ese menú, con el idioma y salir de la
 partida). Si en **7 minutos** de uso nadie lo pulsa, se guarda solo en ese
@@ -1088,7 +1099,7 @@ enseñaría por dónde ha venido.
 ## Qué versión tengo
 
 La versión de Mesa sale en la pantalla de entrada y al final del menú **···**
-del DM («Mesa 2.32.0»). Si el navegador trae una versión distinta de la del
+del DM («Mesa 2.33.0»). Si el navegador trae una versión distinta de la del
 servidor, Mesa vacía sus copias guardadas y recarga sola; si no lo consigue,
 lo dice en la pantalla de entrada.
 

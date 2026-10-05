@@ -24,6 +24,12 @@ export const tutorialInMenu = role => !!(read(role, "seen") || read(role, "stowe
 
 /* ---------- Los recorridos ---------- */
 const clickIf = sel => () => { const b = document.querySelector(sel); if (b && b.getAttribute("aria-selected") !== "true") b.click(); };
+/* A la pestaña del mapa, con las herramientas a la vista */
+const toTools = () => {
+  clickIf('[data-tab="mapa"]')();
+  const wrap = document.querySelector("#mapPane .map-wrap");
+  if (wrap && wrap.classList.contains("tools-stowed")) { const b = wrap.querySelector('[data-map="unstowTools"]'); if (b) b.click(); }
+};
 
 export const DM_STEPS = [
   { title: "¡Hola! Soy Chispa", text: "Te enseño Mesa en un par de minutos. Usa «Siguiente» o las flechas del teclado; puedes salir cuando quieras con Escape." },
@@ -38,8 +44,47 @@ export const DM_STEPS = [
   { sel: "#undoBtn", title: "Deshacer", text: "¿Te has equivocado? Deshace el último cambio (también con Ctrl+Z)." },
   { sel: ".dock", title: "Dados y charla", text: "Tira cualquier dado o fórmula, en secreto si quieres, y habla con la mesa. El panel se guarda en un marcapáginas con un d20." },
   { sel: ".library", title: "La librería", text: "Tus libros de consulta: el manual de la 5.5, el bestiario para invocar criaturas y los PDF que quieras añadir. Se guarda con el tirador de latón." },
-  { sel: "#mapPane .map-bar", before: clickIf('[data-tab="mapa"]'), title: "Herramientas del mapa",
-    text: "Fichas, regla, muros, puertas, pincel, notas, accesos y sonidos; abajo, niebla, oscuridad, luz, terreno difícil y salas que se revelan al entrar." },
+  /* ---- Útiles: cada herramienta del mapa, con un ejemplo ---- */
+  { section: "utiles", sel: "#mapPane .map-bar", before: toTools, title: "Útiles: las herramientas del mapa",
+    text: "Vamos una por una, con un ejemplo de partida para cada una. Si las tenías guardadas en el marcapáginas, te las saco." },
+  { sel: "#mapPick", before: toTools, title: "Mapa activo",
+    text: "El mapa en el que está jugando la party. Ejemplo: cuando bajen de la taberna a las catacumbas, cambias aquí de «Taberna» a «Catacumbas» y la tele cambia con ellos." },
+  { sel: '[data-tool="token"]', before: toTools, title: "Fichas",
+    text: "Mueve y selecciona fichas. Al arrastrar una se pinta hasta dónde llega con su velocidad, rodeando muros, y un contador suma los pies. Ejemplo: arrastras al pícaro (30 pies) y ves que llega justo a la puerta. Un recuadro elige a varios; Mayús + clic añade o quita." },
+  { sel: '[data-tool="measure"]', before: toTools, title: "Regla",
+    text: "Mide entre dos casillas, en pies y en casillas. Ejemplo: ¿llega la bola de fuego a 150 pies? Arrastra del mago al ogro y te dice a cuántos pies y casillas está." },
+  { sel: '[data-tool="wall"]', before: toTools, title: "Muro",
+    text: "Junto al borde de una casilla pinta una pared recta (arrastra para hacer un tramo); empezando en el centro, un muro en diagonal. Corta la vista y el paso. Ejemplo: cierras el pasillo de la izquierda y nadie ve la sala del tesoro hasta que doblen la esquina." },
+  { sel: '[data-tool="wallBrush"]', before: toTools, title: "Pincel",
+    text: "Muros a mano alzada, curvos o torcidos, que también cortan la vista y el paso. Ejemplo: repasas el contorno de una cueva redonda; si acabas el trazo donde lo empezaste, se cierra solo." },
+  { sel: '[data-tool="door"]', before: toTools, title: "Puerta",
+    text: "Pulsa junto a un borde (o en el centro de una casilla, para una en diagonal). Cada pulsación la abre o la cierra: cerrada es pared, abierta deja ver y pasar. Ejemplo: la puerta de la cripta sigue cerrada hasta que el clérigo dice «la abro», y entonces la pulsas." },
+  { sel: '[data-tool="erase"]', before: toTools, title: "Borrar",
+    text: "Quita muros, diagonales y puertas. Ejemplo: el bárbaro derriba el tabique de madera; un clic sobre él y las dos salas quedan unidas." },
+  { sel: '[data-tool="pin"]', before: toTools, title: "Nota",
+    text: "Clava una nota en una casilla: secreta (solo tú) o para la party. Cuando un personaje la pisa, te salta el aviso. Ejemplo: «Trampa de foso, CD 13» en mitad del pasillo; al pisarla te lo recuerda y decides si enseñarla." },
+  { sel: '[data-tool="portal"]', before: toTools, title: "Acceso",
+    text: "Una escalera, una trampilla o un pasadizo, a otro mapa o a otro punto de este. Al pisarlo puede preguntar quién cruza. Ejemplo: la escalera del sótano lleva al mapa «Bodega»; la pisa el guerrero y elige quién baja con él." },
+  { sel: '[data-tool="sound"]', before: toTools, title: "Sonido",
+    text: "Fuentes de sonido que oye la tele: más fuerte cuanto más cerca y apagadas tras los muros. Hay sonidos de serie o los tuyos. Ejemplo: una hoguera en el campamento y, tras la puerta del jefe, tambores de guerra que suben al acercarse." },
+  { sel: '[data-tool="draw"]', before: toTools, title: "Dibujar",
+    text: "Dibujo a mano alzada en cinco colores, para la party o solo para ti. Ejemplo: una flecha roja por donde huyó el kobold, o tus apuntes de dónde está la emboscada, solo para ti." },
+  { sel: "#terrain", before: toTools, title: "Niebla, oscuridad y luz",
+    text: "Pinceles de casilla. Niebla: cerca se ve todo y lejos solo retazos (un pantano al amanecer). Oscuridad: solo las casillas de al lado (un conjuro de oscuridad, humo denso). Luz: alumbra aunque el mapa esté a oscuras (una hoguera, un brasero). La goma del final los quita." },
+  { sel: '[data-layer="rough"]', before: toTools, title: "Terreno difícil",
+    text: "Entrar en esas casillas cuesta el doble de movimiento, y el alcance de las fichas ya lo descuenta. Ejemplo: escombros tras el derrumbe; el guerrero, con 30 pies, solo avanza tres casillas por ellos." },
+  { sel: '[data-layer="rooms"]', before: toTools, title: "Sala",
+    text: "Pinta una sala: cuando alguien entra, la party la ve entera y la cámara la encuadra. Cada trozo suelto o separado por un muro es otra sala, y en Ajustes del mapa les pones nombre y color. Ejemplo: «Salón del trono», que se descubre de golpe al abrir las puertas." },
+  { sel: '[data-layer="vis"][data-value="show"]', before: toTools, title: "Revelar",
+    text: "La party ve esas casillas siempre, esté donde esté. Ejemplo: el patio de la fortaleza a pleno sol, que se ve desde todas las ventanas." },
+  { sel: '[data-layer="vis"][data-value="hide"]', before: toTools, title: "Ocultar",
+    text: "La party no ve esas casillas nunca, aunque las tenga delante, ni lo que haya dentro. La goma de al lado quita salas y zonas. Ejemplo: el pasadizo secreto tras la estantería, hasta que alguien lo encuentre." },
+  { sel: "#shapes", before: toTools, title: "Plantillas de área",
+    text: "Esfera, cono, línea y cubo, con su tamaño en pies. Va pegada al cursor; un clic la fija y arrastrar la gira. La ✕ las quita todas. Ejemplo: bola de fuego, esfera de 20 pies: ves al instante a quién pilla." },
+  { sel: '[data-map="fit"]', before: toTools, title: "Encajar y zoom",
+    text: "«Encajar» centra el mapa entero; − y + acercan o alejan (también Ctrl + rueda). Ejemplo: te acercas para colocar la emboscada casilla a casilla y luego encajas para verlo todo." },
+  { sel: '[data-map="settings"]', before: toTools, title: "Ajustes del mapa",
+    text: "Imagen de fondo, tamaño, cuadrícula, muros y puertas del plano (Mesa los detecta solos), nombre y color de las salas, mapa a oscuras y qué ve la party. Ejemplo: subes el plano de tu módulo, Mesa encaja la cuadrícula y te propone los muros." },
   { sel: "#mapPane .map-stow", title: "Mapa despejado", text: "Guarda las herramientas en un marcapáginas y deja el mapa limpio mientras juegas." },
   { sel: "#board", title: "El tablero", text: "Pulsa una casilla para colocar fichas y arrástralas para moverlas. Rueda o + y − para acercar; botón derecho para mover la vista." },
   { sel: ".gnome", title: "Yo, de explorador", text: "Arrástrame al mapa y lo recorreré como uno más de la party: verás la niebla y las salas como las verán ellos. Lo que descubra no se queda." },
@@ -63,7 +108,7 @@ export const PLAYER_STEPS = [
 /* ---------- La visita ---------- */
 let tour = null;
 
-export function startTutorial(role) {
+export function startTutorial(role, { section = "" } = {}) {
   if (tour) return;
   const steps = (role === "dm" ? DM_STEPS : PLAYER_STEPS);
   const back = document.createElement("div");
@@ -148,7 +193,7 @@ export function startTutorial(role) {
   addEventListener("resize", place);
   addEventListener("keydown", onKey, true);
   tour = { close };
-  show(0);
+  show(Math.max(0, section ? steps.findIndex(x => x.section === section) : 0));
   card.querySelector('[data-tut="next"]').focus({ preventScroll: true });
 }
 
