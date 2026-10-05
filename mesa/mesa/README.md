@@ -220,6 +220,22 @@ eso y no solo adaptada:
   haga zoom solo al escribir, y se respeta la franja inferior del iPhone.
 - La barra de herramientas del mapa rueda de lado en vez de comerse el tablero.
 
+## Tutorial
+
+La primera vez, en la barra de arriba brilla un botón **Tutorial**, tanto en
+la vista del DM como en la de cada jugador. Pulsarlo empieza una **visita
+guiada que narra Chispa**: la pantalla se oscurece salvo la parte que se
+explica (las pestañas, las fichas, el combate, los dados, la librería, las
+herramientas del mapa, la voz…) y una tarjeta cuenta para qué sirve. Se
+avanza con «Siguiente» o las flechas, se vuelve con «Anterior» y se sale con
+la × o con Escape. El DM tiene su recorrido y los jugadores el suyo.
+
+Cuando ya lo has visto, el botón deja de brillar en la barra y pasa al menú
+**···** (los jugadores también tienen ese menú, con el idioma y salir de la
+partida). Si en **7 minutos** de uso nadie lo pulsa, se guarda solo en ese
+menú; los minutos se cuentan aunque recargues la página. Cada aparato lo
+recuerda por su cuenta, para el DM y para el jugador por separado.
+
 ## Las tres vistas
 
 | | DM | Jugador | Pantalla |
@@ -1072,7 +1088,7 @@ enseñaría por dónde ha venido.
 ## Qué versión tengo
 
 La versión de Mesa sale en la pantalla de entrada y al final del menú **···**
-del DM («Mesa 2.31.0»). Si el navegador trae una versión distinta de la del
+del DM («Mesa 2.32.0»). Si el navegador trae una versión distinta de la del
 servidor, Mesa vacía sus copias guardadas y recarga sola; si no lo consigue,
 lo dice en la pantalla de entrada.
 
@@ -1220,6 +1236,7 @@ public/
     gnome.js           Chispa, el gnomo ingeniero de la vista del DM
     library.js         la librería del DM: los libros de consulta de lomo y los PDF
     cutout.js          el taller del retrato: quitar el fondo de una ilustración
+    tutorial.js        la visita guiada para el DM y los jugadores
     manual-data.js     el texto del manual: la chuleta de la 5.5 y las otras ediciones
     soundscape.js      hacer sonar el mapa en la pantalla de la party
     attacks.js         leer y lanzar ataques

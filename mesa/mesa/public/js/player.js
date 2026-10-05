@@ -11,6 +11,7 @@ import { openAttacks, areaAttacks, slotsLeft, shapeLabel } from "./attacks.js";
 import { openCharEditor, openConditions } from "./char-editor.js";
 import { openBuilder } from "./builder.js";
 import { MapView } from "./map.js";
+import { tutorialButton, startTutorial } from "./tutorial.js";
 import { openSpellbook } from "./spellbook.js";
 import { langPicker } from "./i18n.js";
 import { playSoundscape } from "./soundscape.js";
@@ -63,6 +64,7 @@ export function mountPlayer(root) {
         <div class="who"><span class="dot" id="dot"></span><span class="pill" id="whoami"></span></div>
         <span id="voiceSlot"></span>
         <span id="plang"></span>
+        <button class="icon-btn" id="pmoreBtn" title="Más opciones" aria-label="Más opciones">${icon("more")}</button>
         <button class="icon-btn" id="leaveBtn" title="Salir de la partida" aria-label="Salir de la partida">${icon("exit")}</button>
       </header>
       <div class="turn-flash hidden" id="turnFlash"></div>
@@ -84,6 +86,20 @@ export function mountPlayer(root) {
   $("#plang", root).appendChild(langPicker());
   $("#voiceSlot", root).replaceWith(voiceWidget());
   $("#leaveBtn", root).addEventListener("click", () => leave());
+  /* El menú ···: aquí se queda el tutorial cuando deja de brillar */
+  $("#pmoreBtn", root).addEventListener("click", () => {
+    const body = el(`<div class="menu-list">
+      <button class="menu-item" data-pm="tutorial"><span class="menu-ico">${icon("info", 20)}</span>
+        <span class="menu-text"><b>Tutorial</b><small>Un paseo rápido por Mesa, con Chispa</small></span></button>
+      <div class="menu-item static"><span class="menu-ico">${icon("lang", 20)}</span><span class="menu-text"><b>Idioma</b><small>Solo cambia en este aparato</small></span><span class="pm-lang"></span></div>
+      <button class="menu-item danger" data-pm="leave"><span class="menu-ico">${icon("exit", 20)}</span>
+        <span class="menu-text"><b>Salir de la partida</b><small>Vuelves a la pantalla de entrada</small></span></button>
+    </div>`);
+    body.querySelector(".pm-lang").appendChild(langPicker());
+    const m = modal({ title: "Partida", body, actions: [{ label: "Cerrar" }] });
+    on(body, "click", "[data-pm]", (e, b) => { m.close(); b.dataset.pm === "tutorial" ? startTutorial("player") : leave(); });
+  });
+  tutorialButton($(".player-top", root), "player", { before: $("#plang", root), menuButton: () => $("#pmoreBtn") });
   onStatus(ok => {
     $("#offline", root).classList.toggle("hidden", ok);
     $("#dot", root).classList.toggle("off", !ok);

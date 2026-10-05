@@ -11,7 +11,7 @@
    lejos) y la del sistema para el resto de la interfaz. */
 
 :root {
-  --mesa-version: "2.31.0";   /* igual que js/version.js y sw.js */
+  --mesa-version: "2.32.0";   /* igual que js/version.js y sw.js */
   --pitch: #0a0c11;
   --stone: #141821;
   --stone-2: #1b202b;
@@ -2464,4 +2464,62 @@ body.library-shown .layout:not(.map-mode) > main { padding-bottom: 160px; }
   .tome-summon { margin: auto -16px 0; padding: 10px 16px max(12px, env(safe-area-inset-bottom)); }
   .tome-abil { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .necro-mist { display: none; }
+}
+
+/* ============================================================
+   El tutorial: el botón que brilla en la barra y la visita guiada
+   (la pantalla se oscurece salvo lo que se explica, con la tarjeta
+   de Chispa al lado).
+   ============================================================ */
+.tut-btn {
+  position: relative; flex: none; overflow: hidden; padding: 7px 14px; border: 0; border-radius: 999px; cursor: pointer;
+  font: 700 13px/1 var(--sans); letter-spacing: .04em; color: #2a1a06;
+  background: linear-gradient(135deg, #f7dc8f, #e8a93a 55%, #f3c96a);
+  box-shadow: 0 0 0 1px rgba(255, 230, 160, .6), 0 0 14px rgba(232, 169, 58, .6);
+  animation: tutGlow 2.2s ease-in-out infinite;
+}
+.tut-btn span { position: relative; z-index: 1; }
+.tut-btn::after {
+  content: ""; position: absolute; top: 0; bottom: 0; left: -60%; width: 40%; transform: skewX(-20deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .75), transparent);
+  animation: tutShine 3s ease-in-out infinite;
+}
+.tut-btn:hover, .tut-btn:focus-visible { outline: none; filter: brightness(1.08); box-shadow: 0 0 0 2px #fff3cf, 0 0 22px rgba(232, 169, 58, .9); }
+@keyframes tutGlow { 50% { box-shadow: 0 0 0 1px rgba(255, 230, 160, .9), 0 0 26px rgba(232, 169, 58, .95); } }
+@keyframes tutShine { 0%, 55% { left: -60%; } 85%, 100% { left: 130%; } }
+
+.tut { position: fixed; inset: 0; z-index: 95; }
+.tut-hole {
+  position: fixed; border-radius: 12px; pointer-events: none;
+  box-shadow: 0 0 0 9999px rgba(4, 5, 8, .72), 0 0 0 2px #e8a93a, 0 0 24px rgba(232, 169, 58, .55);
+  transition: left .3s ease, top .3s ease, width .3s ease, height .3s ease;
+}
+.tut.free .tut-hole { left: 50% !important; top: 50% !important; width: 0 !important; height: 0 !important; box-shadow: 0 0 0 9999px rgba(4, 5, 8, .72); }
+.tut-card {
+  position: fixed; width: min(360px, calc(100vw - 24px)); padding: 14px 16px 12px; border-radius: 14px;
+  background: linear-gradient(180deg, #1c2130, #141824); border: 1px solid rgba(232, 169, 58, .5);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .6); color: var(--vellum);
+  transition: left .3s ease, top .3s ease;
+}
+.tut-card.tut-in { animation: tutIn .28s cubic-bezier(.2, 1.3, .4, 1) both; }
+.tut-card header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.tut-card header img { width: 42px; height: 42px; border-radius: 50%; background: #2b3142; box-shadow: 0 0 0 2px #e8a93a; flex: none; }
+.tut-card header div { flex: 1; min-width: 0; }
+.tut-count { font-size: 11px; color: #e8a93a; letter-spacing: .06em; }
+.tut-title { margin: 1px 0 0; font-family: var(--serif); font-size: 17px; }
+.tut-x { align-self: flex-start; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--edge); background: none; color: var(--dim); font-size: 18px; line-height: 1; cursor: pointer; }
+.tut-x:hover { color: var(--vellum); }
+.tut-text { margin: 0 0 12px; font-size: 14px; line-height: 1.5; color: #d9d4c4; }
+.tut-card footer { display: flex; align-items: center; gap: 8px; }
+.tut.out { animation: tutOut .2s ease both; }
+@keyframes tutIn { from { opacity: 0; transform: translateY(8px) scale(.97); } }
+@keyframes tutOut { to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .tut-btn, .tut-btn::after, .tut-card.tut-in, .tut.out { animation: none; }
+  .tut-hole, .tut-card { transition: none; }
+}
+@media (max-width: 700px) {
+  /* En el móvil, salir está en el menú ···: la barra cabe en una línea */
+  .player-top #leaveBtn, .player-top #plang { display: none; }
+  .tut-btn { padding: 6px 10px; font-size: 12px; }
 }

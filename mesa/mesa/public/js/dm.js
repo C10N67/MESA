@@ -21,6 +21,7 @@ import { VERSION } from "./version.js";
 import { mountGnome, gnomeEnabled, setGnomeEnabled } from "./gnome.js";
 import { mountLibrary } from "./library.js";
 import { editPortrait } from "./cutout.js";
+import { tutorialButton, tutorialInMenu, startTutorial } from "./tutorial.js";
 import { rollHitPoints } from "./dice.js";
 import { TYPE_NAMES, typeOf, crValue, CATALOG_BY_ID } from "./catalog.js";
 
@@ -137,6 +138,8 @@ export function mountDM(root) {
   $("#moreBtn", root).addEventListener("click", openMenu);
   /* Chispa: arrastrado al tablero, explora el mapa como uno más de la party */
   gnome = mountGnome($("#gnomeSlot", root), { onDrop: dropProbe, onRecall: () => op("probe.recall", {}) });
+  /* El tutorial: brilla en la barra hasta que se ve (o pasan 7 minutos) */
+  tutorialButton($(".top-actions", root), "dm", { before: $("#combatBtn", root), menuButton: () => $("#moreBtn") });
   $("#presence", root).addEventListener("click", openPresence);
   $("#voiceSlot", root).replaceWith(voiceWidget());
 
@@ -2288,6 +2291,7 @@ function openMenu() {
     ${item("import", "upload", "Cargar una copia", "Sustituye la partida por la de un archivo")}
     <div class="menu-item static"><span class="menu-ico">${icon("lang", 20)}</span><span class="menu-text"><b>Idioma</b><small>Solo cambia en este aparato</small></span><span id="menuLang"></span></div>
     ${item("gnome", "wand", gnomeEnabled() ? "Despedir a Chispa" : "Llamar a Chispa", gnomeEnabled() ? "El gnomo ingeniero se vuelve a su taller" : "El gnomo ingeniero vuelve a vigilar la mesa")}
+    ${tutorialInMenu("dm") ? item("tutorial", "info", "Tutorial", "Un paseo rápido por Mesa, con Chispa") : ""}
     ${item("leave", "exit", "Salir de la sesión", "Vuelves a la pantalla de entrada", "danger")}
     <p class="menu-version">Mesa ${VERSION}</p>
     <input type="file" id="handoutFile" accept="image/*" hidden>
@@ -2330,6 +2334,7 @@ function openMenu() {
       URL.revokeObjectURL(a.href);
     }
     if (what === "import") file.click();
+    if (what === "tutorial") { m.close(); return startTutorial("dm"); }
     if (what === "gnome") {
       const on = !gnomeEnabled();
       setGnomeEnabled(on);

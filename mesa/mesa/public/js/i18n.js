@@ -784,7 +784,56 @@ const EN = {
   "Buscar en el manual": "Search the manual",
   "Manual de D&D: todas las ediciones y reglas rápidas": "D&D manual: every edition and quick rules",
   "Bestiario: el libro de invocaciones (Ctrl+B)": "Bestiary: the book of summonings (Ctrl+B)",
-  /* Salas con nombre y color, y Chispa explorando */
+  /* El tutorial */
+  "Tutorial": "Tutorial", "Un paseo rápido por Mesa": "A quick tour of Mesa", "Un paseo rápido por Mesa, con Chispa": "A quick tour of Mesa, with Sparky",
+  "Salir del tutorial": "Leave the tutorial", "Terminar": "Finish",
+  "El tutorial queda en el menú ···": "The tutorial is now in the ··· menu",
+  "¡Hola! Soy Chispa": "Hi! I'm Sparky", "¡Listo!": "All set!",
+  "Te enseño Mesa en un par de minutos. Usa «Siguiente» o las flechas del teclado; puedes salir cuando quieras con Escape.":
+    "I'll show you Mesa in a couple of minutes. Use «Next» or the arrow keys; leave any time with Escape.",
+  "La mesa y el mapa": "The table and the map",
+  "Dos pestañas: «La mesa», con las fichas de todos, y «Mapa», con el tablero que ve la party.":
+    "Two tabs: «Table», with everyone's sheets, and «Map», with the board the party sees.",
+  "Personajes": "Characters",
+  "Crea fichas tú, o deja que cada jugador entre desde su móvil y se haga la suya.": "Make sheets yourself, or let each player join from their phone and build their own.",
+  "El menú ···": "The ··· menu",
+  "Aquí está cómo entran tus jugadores (dirección y código), la pantalla de la tele, pedir tiradas, guardar o cargar la partida, el idioma y este tutorial.":
+    "Here you'll find how your players join (address and code), the TV screen, asking for rolls, saving or loading the game, the language and this tutorial.",
+  "Quién está": "Who's here", "Cuántos aparatos hay conectados. Púlsalo para ver quién lleva cada personaje.": "How many devices are connected. Click it to see who plays each character.",
+  "Las fichas": "The sheets",
+  "Cada tarjeta lleva la vida, la CA y los estados. Con − y + aplicas daño y curas; ataques, conjuros y tiradas salen de cada tarjeta. Los enemigos de una misma sala del mapa van agrupados.":
+    "Each card shows hit points, AC and conditions. − and + deal damage and heal; attacks, spells and rolls come from each card. Enemies in the same map room are grouped.",
+  "Combate": "Combat", "Tira la iniciativa de todos y lleva los turnos. La barra de espacio pasa al siguiente.": "Rolls everyone's initiative and runs the turns. The space bar moves to the next one.",
+  "Descansos": "Rests", "Descanso corto o largo: devuelve vida, espacios de conjuro y recursos a quien toque.": "Short or long rest: gives back hit points, spell slots and resources to whoever needs them.",
+  "¿Te has equivocado? Deshace el último cambio (también con Ctrl+Z).": "Made a mistake? Undo the last change (Ctrl+Z works too).",
+  "Tira cualquier dado o fórmula, en secreto si quieres, y habla con la mesa. El panel se guarda en un marcapáginas con un d20.":
+    "Roll any die or formula, secretly if you like, and chat with the table. The panel tucks away into a d20 bookmark.",
+  "La librería": "The library",
+  "Tus libros de consulta: el manual de la 5.5, el bestiario para invocar criaturas y los PDF que quieras añadir. Se guarda con el tirador de latón.":
+    "Your reference books: the 5.5 manual, the bestiary to summon creatures and any PDFs you add. The brass knob puts it away.",
+  "Herramientas del mapa": "Map tools",
+  "Fichas, regla, muros, puertas, pincel, notas, accesos y sonidos; abajo, niebla, oscuridad, luz, terreno difícil y salas que se revelan al entrar.":
+    "Tokens, ruler, walls, doors, brush, notes, passages and sounds; below, fog, darkness, light, difficult terrain and rooms that reveal themselves on entry.",
+  "Mapa despejado": "A clear map", "Guarda las herramientas en un marcapáginas y deja el mapa limpio mientras juegas.": "Tuck the tools into a bookmark and keep the map clean while you play.",
+  "El tablero": "The board",
+  "Pulsa una casilla para colocar fichas y arrástralas para moverlas. Rueda o + y − para acercar; botón derecho para mover la vista.":
+    "Click a square to place tokens and drag them to move. Wheel or + and − to zoom; right button to pan.",
+  "Yo, de explorador": "Me, the scout",
+  "Arrástrame al mapa y lo recorreré como uno más de la party: verás la niebla y las salas como las verán ellos. Lo que descubra no se queda.":
+    "Drag me onto the map and I'll walk it as one of the party: you'll see the fog and rooms as they will. Whatever I uncover isn't kept.",
+  "Habla con tus jugadores sin salir de Mesa, si jugáis a distancia.": "Talk to your players without leaving Mesa, if you play remotely.",
+  "Eso es lo básico. El tutorial se queda en el menú ··· para cuando lo necesites. ¡Buena partida!": "That's the basics. The tutorial stays in the ··· menu whenever you need it. Have a great game!",
+  "Te enseño Mesa en un minuto. Usa «Siguiente» o las flechas; puedes salir cuando quieras.": "I'll show you Mesa in a minute. Use «Next» or the arrows; leave whenever you like.",
+  "Tú": "You", "Tu nombre en la partida. El punto verde dice que estás conectado.": "Your name in the game. The green dot means you're connected.",
+  "Tu ficha": "Your sheet", "Tu vida, tus estados, tus ataques y conjuros. Pulsa una característica o una habilidad para tirarla.": "Your hit points, conditions, attacks and spells. Tap an ability or a skill to roll it.",
+  "Cómo van tus compañeros y, en combate, el orden de los turnos.": "How your companions are doing and, in combat, the turn order.",
+  "Lo que ve la party. Si el DM lo permite, mueves tu ficha y dibujas encima.": "What the party sees. If the DM allows it, you move your token and draw on it.",
+  "Tira dados, habla con la mesa o susurra a alguien. El número rojo avisa de mensajes nuevos.": "Roll dice, chat with the table or whisper to someone. The red number flags new messages.",
+  "Habla con la mesa sin salir de Mesa, si jugáis a distancia.": "Talk to the table without leaving Mesa, if you play remotely.",
+  "Cambia el idioma solo en este aparato. En el móvil está dentro del menú ···.": "Changes the language on this device only. On phones it's inside the ··· menu.",
+  "Aquí se queda este tutorial para cuando lo necesites, y desde aquí sales de la partida.": "This tutorial stays here for when you need it, and you leave the game from here.",
+  "Eso es todo. Cuando sea tu turno, Mesa te avisará. ¡Buena partida!": "That's all. When it's your turn, Mesa will let you know. Have a great game!",
+    /* Salas con nombre y color, y Chispa explorando */
   "Cambiar el nombre y el color de la sala": "Change the room's name and colour", "Salas": "Rooms", "Otro color": "Another colour",
   "Ponles nombre y color a tu gusto. Solo los ves tú: en el mapa y en los grupos de enemigos de la mesa.":
     "Give them any name and colour you like. Only you see them: on the map and in the enemy groups on the table.",
