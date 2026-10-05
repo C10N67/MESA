@@ -442,7 +442,7 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
     if (pcs.length) { doc.session.focusId = pcs[0].id; doc.session.listenerId = pcs[0].id; }
     const names = gone.map(c => c.name);
     const list2 = names.length > 1 ? names.slice(0, -1).join(", ") + " y " + names[names.length - 1] : names[0];
-    doc.log.push({ id: rid(6), ts: Date.now(), actor: "Mesa", kind: "event",
+    if (!dest.demo) doc.log.push({ id: rid(6), ts: Date.now(), actor: "Mesa", kind: "event",
       text: `${list2} ${gone.length > 1 ? "cruzan" : "cruza"} por ${portal.label}` });
     return gone.length;
   }
@@ -1287,7 +1287,10 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
      hay que repartirlas igual: por eso se devuelve cuántas entraron. */
   async function run(client, ops) {
     const worthRemembering = ops.some(o => o && !["ping", "chat", "log.add", "request.done", "undo", "voice.set"].includes(o.type));
-    if (worthRemembering) remember();
+    /* El taller del tutorial no se apunta en el historial: «deshacer» al
+       acabar vuelve a lo último que hizo el DM, no al mapa de prácticas */
+    const demoing = doc.maps.some(m => m.demo) || ops.some(o => o && o.type === "map.add" && o.map && o.map.demo);
+    if (worthRemembering && !demoing) remember();
     let applied = 0;
     for (const op of ops) {
       const err = await apply(client, op);

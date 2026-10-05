@@ -349,6 +349,10 @@ export function normalizeMap(raw = {}) {
   m.vis = layer(m.vis);
   /* Lo explorado antes de que Chispa llegara: se recupera cuando vuelve */
   m.probeExplored = Array.isArray(m.probeExplored) ? m.probeExplored.filter(k => typeof k === "string") : null;
+  /* El taller de Chispa (el mapa de prácticas del tutorial) y adónde volver */
+  m.demo = !!m.demo;
+  m.demoFrom = String(m.demoFrom || "");
+  m.demoShow = !!m.demoShow;
   /* Nombre y color que el DM le pone a cada sala (solo lo ve el DM) */
   m.roomInfo = Object.fromEntries(Object.entries(layer(m.roomInfo)).map(([id, v]) => [id, {
     name: String((v && v.name) || "").trim().slice(0, 40),

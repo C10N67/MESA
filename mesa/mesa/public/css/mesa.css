@@ -11,7 +11,7 @@
    lejos) y la del sistema para el resto de la interfaz. */
 
 :root {
-  --mesa-version: "2.34.0";   /* igual que js/version.js y sw.js */
+  --mesa-version: "2.35.0";   /* igual que js/version.js y sw.js */
   --pitch: #0a0c11;
   --stone: #141821;
   --stone-2: #1b202b;
@@ -2494,6 +2494,13 @@ body.library-shown .layout:not(.map-mode) > main { padding-bottom: 160px; }
   box-shadow: 0 0 0 9999px rgba(4, 5, 8, .72), 0 0 0 2px #e8a93a, 0 0 24px rgba(232, 169, 58, .55);
   transition: left .3s ease, top .3s ease, width .3s ease, height .3s ease;
 }
+.tut-ring {
+  position: fixed; border-radius: 10px; pointer-events: none; border: 2px solid #e8a93a;
+  box-shadow: 0 0 0 3px rgba(232, 169, 58, .35), 0 0 22px rgba(232, 169, 58, .8);
+  animation: tutRing 1.4s ease-in-out infinite;
+}
+.tut-ring[hidden] { display: none; }
+@keyframes tutRing { 50% { box-shadow: 0 0 0 6px rgba(232, 169, 58, .15), 0 0 30px rgba(232, 169, 58, 1); } }
 .tut.free .tut-hole { left: 50% !important; top: 50% !important; width: 0 !important; height: 0 !important; box-shadow: 0 0 0 9999px rgba(4, 5, 8, .72); }
 .tut-card {
   position: fixed; width: min(360px, calc(100vw - 24px)); padding: 14px 16px 12px; border-radius: 14px;

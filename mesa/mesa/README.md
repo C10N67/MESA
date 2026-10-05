@@ -241,6 +241,23 @@ herramientas están guardadas en el marcapáginas, Chispa las saca. Esa sección
 también se abre sola desde el menú **···** → **Útiles del mapa, con
 ejemplos**.
 
+Mientras dura, **Chispa baja al tablero y lo enseña en vivo**. Se monta un
+mapa de prácticas, el **Taller de Chispa**, oculto a la tele, y en cada
+parada hace la demostración mientras el anillo dorado señala el botón de la
+herramienta: camina tres casillas, marca las puntas de la regla, levanta una
+sala de piedra, repasa una cueva a mano alzada, pone una puerta, la abre y
+entra, derriba dos tramos de muro, pisa una trampa (y salta el aviso), cruza
+una trampilla, enciende una hoguera, dibuja una flecha, pinta niebla,
+oscuridad y un brasero, cruza escombros despacio, pinta el «Salón del trono»
+y entra, marca un patio siempre visible y un pasadizo oculto, suelta una
+esfera de 15 pies y acerca y encaja el zoom. Se puede saltar o volver atrás
+a cualquier parada: el tablero se pone como estaría en ese punto. Al acabar
+la sección (o al salir del tutorial, o al volver antes de ella) el taller se
+borra, Chispa vuelve a su mesa y la mesa regresa al mapa y a lo que veía la
+tele. Nada de esto entra en «deshacer» ni en el registro de la mesa, la
+librería se aparta mientras tanto y, si el navegador se cerrara a medias, el
+DM recoge el taller la próxima vez que entra.
+
 Después, Chispa **abre la ventana de Ajustes del mapa** y la recorre opción
 por opción, desplazándola hasta cada una: nombre, visión y tamaño, el plano
 (imagen, cuadrícula, muros detectados), las salas (si el mapa tiene),
@@ -1108,7 +1125,7 @@ enseñaría por dónde ha venido.
 ## Qué versión tengo
 
 La versión de Mesa sale en la pantalla de entrada y al final del menú **···**
-del DM («Mesa 2.34.0»). Si el navegador trae una versión distinta de la del
+del DM («Mesa 2.35.0»). Si el navegador trae una versión distinta de la del
 servidor, Mesa vacía sus copias guardadas y recarga sola; si no lo consigue,
 lo dice en la pantalla de entrada.
 
@@ -1257,6 +1274,7 @@ public/
     library.js         la librería del DM: los libros de consulta de lomo y los PDF
     cutout.js          el taller del retrato: quitar el fondo de una ilustración
     tutorial.js        la visita guiada para el DM y los jugadores
+    tutorial-demo.js   el Taller de Chispa: las demostraciones de los útiles en el tablero
     manual-data.js     el texto del manual: la chuleta de la 5.5 y las otras ediciones
     soundscape.js      hacer sonar el mapa en la pantalla de la party
     attacks.js         leer y lanzar ataques

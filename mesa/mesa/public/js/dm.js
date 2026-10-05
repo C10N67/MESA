@@ -22,6 +22,7 @@ import { mountGnome, gnomeEnabled, setGnomeEnabled } from "./gnome.js";
 import { mountLibrary } from "./library.js";
 import { editPortrait } from "./cutout.js";
 import { tutorialButton, tutorialInMenu, startTutorial } from "./tutorial.js";
+import { cleanupStaleDemo } from "./tutorial-demo.js";
 import { rollHitPoints } from "./dice.js";
 import { TYPE_NAMES, typeOf, crValue, CATALOG_BY_ID } from "./catalog.js";
 
@@ -30,6 +31,7 @@ let shownTab = null;
 let openCards = new Set();
 const foldedGroups = new Set();   // grupos de enemigos plegados en la mesa
 let gnome = null;                 // Chispa, en la barra de arriba
+let staleChecked = false;
 let mapView = null;
 let mapTool = "token";
 let beastQuery = "";
@@ -243,6 +245,9 @@ function noticeStep() {
 /* ---------- Pintado ---------- */
 function render() {
   if (!doc()) return;
+  /* Un taller de Chispa que se quedó a medias (se cerró el navegador en
+     mitad del tutorial) se recoge al entrar */
+  if (!staleChecked) { staleChecked = true; cleanupStaleDemo(); }
   const campaign = $("#campaign");
   if (campaign && document.activeElement !== campaign) {
     const t = session().title;
