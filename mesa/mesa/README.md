@@ -329,6 +329,13 @@ las salas o sin poner en el mapa siguen sueltos debajo, en «Fuera de las
 salas». Los grupos se rehacen solos al mover las fichas. Si hay varios mapas,
 el grupo dice también de cuál es la sala.
 
+**Una sala es un trozo continuo.** Si al pintar con «Sala» dejas dos trozos
+que no se tocan, son dos salas distintas; y un **muro** (de la cuadrícula, a
+mano alzada o una puerta) entre dos partes también las separa. Cada trozo
+estrena su número, su color y su nombre; el más grande conserva los que
+tuviera. Un trazo pintado de una vez es siempre una sola sala, aunque vayas
+deprisa: las casillas que se salte el ratón se rellenan solas.
+
 Cada sala se puede **renombrar y recolorear**: pulsa el nombre del grupo en la
 mesa, o ve a **Ajustes del mapa → Salas**, donde salen todas. El mapa del DM
 pinta cada sala de su color con el nombre en el centro («Cripta del
@@ -1065,7 +1072,7 @@ enseñaría por dónde ha venido.
 ## Qué versión tengo
 
 La versión de Mesa sale en la pantalla de entrada y al final del menú **···**
-del DM («Mesa 2.30.0»). Si el navegador trae una versión distinta de la del
+del DM («Mesa 2.31.0»). Si el navegador trae una versión distinta de la del
 servidor, Mesa vacía sus copias guardadas y recarga sola; si no lo consigue,
 lo dice en la pantalla de entrada.
 

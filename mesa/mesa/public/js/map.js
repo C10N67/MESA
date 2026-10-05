@@ -723,9 +723,25 @@ export class MapView {
     if (!map || p.x < 0 || p.y < 0 || p.x >= map.cols || p.y >= map.rows) return;
     const key = p.x + "," + p.y;
     if (this.lastPaint === key) return;
+    /* Las capas (salas, terreno, zonas) se pintan sin huecos aunque el ratón
+       vaya deprisa: se rellenan las casillas de en medio con pasos rectos,
+       para que una sala pintada de un trazo quede de una pieza */
+    const prev = this.painting === "layer" && this.lastPaint ? this.lastPaint.split(",").map(Number) : null;
+    if (prev && Math.max(Math.abs(prev[0] - p.x), Math.abs(prev[1] - p.y)) > 1 || prev && prev[0] !== p.x && prev[1] !== p.y) {
+      let [x, y] = prev;
+      while (x !== p.x || y !== p.y) {
+        const ex = p.x - x, ey = p.y - y;
+        if (Math.abs(ex) >= Math.abs(ey)) x += Math.sign(ex); else y += Math.sign(ey);
+        if (x === p.x && y === p.y) break;
+        const from = this.lastPaint;
+        this.lastPaint = x + "," + y;
+        this.opts.onPaintLayer && this.opts.onPaintLayer(x, y, this.layer, this.layer === "rooms" && this.layerValue ? this.roomId : this.layerValue, from);
+      }
+    }
+    const from = this.painting === "layer" ? this.lastPaint : null;
     this.lastPaint = key;
     if (this.painting === "cell") this.opts.onPaintCell && this.opts.onPaintCell(p.x, p.y, this.brush);
-    else if (this.painting === "layer") this.opts.onPaintLayer && this.opts.onPaintLayer(p.x, p.y, this.layer, this.layer === "rooms" && this.layerValue ? this.roomId : this.layerValue);
+    else if (this.painting === "layer") this.opts.onPaintLayer && this.opts.onPaintLayer(p.x, p.y, this.layer, this.layer === "rooms" && this.layerValue ? this.roomId : this.layerValue, from);
     else if (this.painting === "diag") this.opts.onEdge && this.opts.onEdge(edgeKey(p.x, p.y, this.diagDir), "wall");
   }
 

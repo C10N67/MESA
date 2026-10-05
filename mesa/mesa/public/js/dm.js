@@ -1442,12 +1442,12 @@ function renderMap() {
         op("map.cells", { mapId, patch: { [k]: brush === "none" ? null : brush } });
         if (brush === "none") op("map.layer", { mapId, layer: "rough", patch: { [k]: null } });
       },
-      onPaintLayer: (x, y, layer, value) => {
+      onPaintLayer: (x, y, layer, value, from) => {
         const k = x + "," + y, mapId = activeMap().id;
         if (layer === "zones") {
           op("map.layer", { mapId, layer: "rooms", patch: { [k]: null } });
           op("map.layer", { mapId, layer: "vis", patch: { [k]: null } });
-        } else op("map.layer", { mapId, layer, patch: { [k]: value || null } });
+        } else op("map.layer", { mapId, layer, patch: { [k]: value || null }, from: from || null });
       },
       onDrawing: points => op("drawing.add", { mapId: activeMap().id, drawing: { points, color: mapView.drawColor, width: mapView.drawWidth, party: $("#drawParty") ? $("#drawParty").checked : true } }),
       onDrawingErase: id => op("drawing.remove", { mapId: activeMap().id, id }),

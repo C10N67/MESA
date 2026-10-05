@@ -12,7 +12,7 @@
      onPresence()    avisa de que ha cambiado quién está conectado */
 
 import { emptyDoc, migrate, cellKey, normalizeChar, normalizeBeast, normalizeMap, normalizeShape, normalizePin, normalizePortal, normalizeSound, MAX_SOUNDS, normalizeAttack, normalizeDrawing, normalizeWall, MAX_WALLS, modOf, addDice, scaleDice, cantripTier } from "./schema.js";
-import { visibleCells, fringeCells, edgesNear, wallsNear, gridDistance, pathCost, occupied, fits, reachableCells, roomsOf } from "./los.js";
+import { visibleCells, fringeCells, edgesNear, wallsNear, gridDistance, pathCost, occupied, fits, reachableCells, roomsOf, splitRooms } from "./los.js";
 import { roll, detail } from "./dice.js";
 import { partyHearing, mixFor } from "./hearing.js";
 import { critDamage } from "./attacks-core.js";
@@ -1013,6 +1013,17 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
           /* Las salas llevan su número: así dos pegadas no se revelan juntas */
           else if (op.layer === "rooms" && Number.isInteger(v) && v > 0 && v < 100000) layer[k] = v;
         }
+        /* Un trazo sigue siendo la misma sala aunque su primera casilla se
+           haya separado ya como sala nueva: cada casilla toma el número que
+           tiene ahora la casilla de la que viene */
+        if (op.layer === "rooms" && typeof op.from === "string" && layer[op.from]) {
+          const [fx, fy] = op.from.split(",").map(Number);
+          for (const [k, v] of Object.entries(op.patch || {})) {
+            if (!v || !(k in layer)) continue;
+            const [x, y] = k.split(",").map(Number);
+            if (Math.abs(x - fx) + Math.abs(y - fy) === 1) layer[k] = layer[op.from];
+          }
+        }
         mp[op.layer] = layer;
         break;
       }
@@ -1281,11 +1292,24 @@ export function createEngine({ rid, absorbImages = async d => d, onPresence = ()
     for (const op of ops) {
       const err = await apply(client, op);
       if (err === "SKIP_HISTORY") { applied++; continue; }
-      if (err) { if (checkProbe()) applied++; return { error: err, applied }; }
+      if (err) { if (checkProbe()) applied++; if (tidyRooms()) applied++; return { error: err, applied }; }
       applied++;
     }
     if (checkProbe()) applied++;
+    if (tidyRooms()) applied++;
     return { error: null, applied };
+  }
+
+  /* Salas: cada trozo que no toca a los demás, o que separa un muro, es una
+     sala distinta (con su número, su nombre y su color) */
+  function tidyRooms() {
+    let changed = false;
+    for (const m of doc.maps) {
+      const next = splitRooms(m);
+      if (next) { m.rooms = next; changed = true; }
+    }
+    if (changed) partyCache = null;
+    return changed;
   }
 
   /* ---------- Chispa explorando ---------- */

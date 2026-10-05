@@ -463,7 +463,7 @@ function cellParts(map, x, y) {
 export function roomsOf(map) {
   const painted = map.rooms || {};
   let hit = roomCache.get(painted);
-  if (hit && hit.edges === map.edges) return hit.rooms;
+  if (hit && hit.edges === map.edges && hit.walls === map.walls) return hit.rooms;
   const of = new Map();      // casilla -> salas que la tocan
   const rooms = [];
   const seen = new Set();    // "x,y#trozo"
@@ -483,6 +483,7 @@ export function roomsOf(map) {
           const nk = cellKey(nx, ny);
           if (!painted[nk] || String(painted[nk]) !== id) continue;     // otra sala, u otra cosa
           if (edgeBetween(map, x, y, nx, ny)) continue;                   // un muro o una puerta la parte
+          if (crossesDiagonal(map, x, y, nx, ny)) continue;               // y un muro a mano alzada también
           const np = partFacing(map, nx, ny, (dir + 2) % 4);
           if (seen.has(nk + "#" + np)) continue;
           seen.add(nk + "#" + np);
@@ -493,7 +494,7 @@ export function roomsOf(map) {
       rooms.push([...cells]);
     }
   }
-  hit = { edges: map.edges, rooms: { of, list: rooms } };
+  hit = { edges: map.edges, walls: map.walls, rooms: { of, list: rooms } };
   roomCache.set(painted, hit);
   return hit.rooms;
 }
@@ -503,6 +504,34 @@ function edgeBetween(map, x1, y1, x2, y2) {
   if (y1 === y2) key = edgeKey(Math.max(x1, x2), y1, "v");
   else key = edgeKey(x1, Math.max(y1, y2), "h");
   return !!(map.edges || {})[key];
+}
+
+/* Una sala es un trozo continuo: si el mismo número ha quedado en trozos que
+   no se tocan, o que separa un muro, cada trozo pasa a ser una sala propia.
+   El más grande se queda el número (y con él el nombre y el color que le
+   haya puesto el DM); los demás estrenan uno. Devuelve las salas nuevas, o
+   null si no había nada que separar. */
+export function splitRooms(map) {
+  const painted = map.rooms || {};
+  if (!Object.keys(painted).length) return null;
+  const rooms = roomsOf(map);
+  const byId = new Map();
+  rooms.list.forEach((cells, idx) => {
+    const id = String(painted[cells[0]]);
+    (byId.get(id) || byId.set(id, []).get(id)).push(idx);
+  });
+  let next = null, fresh = nextRoomId(map);
+  for (const [, parts] of byId) {
+    if (parts.length < 2) continue;
+    parts.sort((a, b) => rooms.list[b].length - rooms.list[a].length);
+    const keep = new Set(rooms.list[parts[0]]);
+    for (const idx of parts.slice(1)) {
+      next = next || { ...painted };
+      const id = fresh++;
+      for (const k of rooms.list[idx]) if (!keep.has(k)) next[k] = id;
+    }
+  }
+  return next;
 }
 
 /* Número para una sala nueva: uno más que el mayor que haya */
