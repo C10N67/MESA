@@ -24,6 +24,22 @@ export const tutorialInMenu = role => !!(read(role, "seen") || read(role, "stowe
 
 /* ---------- Los recorridos ---------- */
 const clickIf = sel => () => { const b = document.querySelector(sel); if (b && b.getAttribute("aria-selected") !== "true") b.click(); };
+/* La ventana de Ajustes del mapa: el tutorial la abre para recorrerla y la
+   cierra sin guardar al pasar de largo o al salir */
+const settingsOpen = () => document.querySelector('.modal [name="radius"]');
+let openedSettings = false;
+const openSettings = () => {
+  if (settingsOpen()) return;
+  toTools();
+  const b = document.querySelector('[data-map="settings"]');
+  if (b) { b.click(); openedSettings = true; }
+};
+const closeSettings = () => {
+  const box = settingsOpen();
+  if (box && openedSettings) { const x = box.closest(".modal").querySelector("[data-close]"); if (x) x.click(); }
+  openedSettings = false;
+};
+
 /* A la pestaña del mapa, con las herramientas a la vista */
 const toTools = () => {
   clickIf('[data-tab="mapa"]')();
@@ -83,9 +99,54 @@ export const DM_STEPS = [
     text: "Esfera, cono, línea y cubo, con su tamaño en pies. Va pegada al cursor; un clic la fija y arrastrar la gira. La ✕ las quita todas. Ejemplo: bola de fuego, esfera de 20 pies: ves al instante a quién pilla." },
   { sel: '[data-map="fit"]', before: toTools, title: "Encajar y zoom",
     text: "«Encajar» centra el mapa entero; − y + acercan o alejan (también Ctrl + rueda). Ejemplo: te acercas para colocar la emboscada casilla a casilla y luego encajas para verlo todo." },
-  { sel: '[data-map="settings"]', before: toTools, title: "Ajustes del mapa",
-    text: "Imagen de fondo, tamaño, cuadrícula, muros y puertas del plano (Mesa los detecta solos), nombre y color de las salas, mapa a oscuras y qué ve la party. Ejemplo: subes el plano de tu módulo, Mesa encaja la cuadrícula y te propone los muros." },
-  { sel: "#mapPane .map-stow", title: "Mapa despejado", text: "Guarda las herramientas en un marcapáginas y deja el mapa limpio mientras juegas." },
+  { sel: '[data-map="settings"]', before: () => { closeSettings(); toTools(); }, title: "Ajustes del mapa",
+    text: "Imagen de fondo, tamaño, cuadrícula, muros y puertas del plano (Mesa los detecta solos), nombre y color de las salas, mapa a oscuras y qué ve la party. Ahora te la abro y la vemos por dentro." },
+  /* ---- Ajustes del mapa, por dentro ---- */
+  { section: "ajustes", sel: '.modal [name="name"]', up: ".cols2", before: openSettings, title: "Nombre, visión y tamaño",
+    text: "El nombre del mapa, cuántas casillas ve cada personaje a su alrededor y el tamaño en columnas y filas. Ejemplo: «Cripta de Ulthar», visión 6 casillas (30 pies) y un plano de 30 × 20." },
+  { sel: "#imgBtn", up: ".row", before: openSettings, title: "El plano",
+    text: "«Imagen de fondo» sube tu plano; «Encajar cuadrícula» ajusta la del tablero a la que trae dibujada; «Muros y puertas del plano» los detecta solos (con varita mágica para planos con mucho detalle). Ejemplo: subes la página del módulo y en un minuto tienes muros y puertas." },
+  { sel: ".modal .room-list", optional: true, before: openSettings, title: "Salas",
+    text: "Cada sala pintada con nombre y color, a tu gusto. Solo los ves tú, en el mapa y en los grupos de enemigos. Ejemplo: la sala 2 pasa a ser «Armería», en rojo." },
+  { sel: '.modal [name="show"]', up: "label", before: openSettings, title: "Enseñar este mapa",
+    text: "Si la tele muestra este mapa. Ejemplo: lo desmarcas mientras preparas el siguiente en secreto, y lo marcas cuando bajan." },
+  { sel: '.modal [name="reveal"]', up: "label", before: openSettings, title: "Revelar el mapa entero",
+    text: "Sin niebla: la party lo ve todo. Ejemplo: el mapa del pueblo, que ya conocen de sobra." },
+  { sel: '.modal [name="remember"]', up: "label", before: openSettings, title: "Recordar lo explorado",
+    text: "Lo que han visto se queda dibujado, con un velo. Ejemplo: activado en una mazmorra; desactivado en un laberinto mágico que cambia a sus espaldas." },
+  { sel: '.modal [name="roomCam"]', up: "label", before: openSettings, title: "Encuadrar la sala",
+    text: "Al entrar en una sala pintada, la cámara de la tele la encuadra entera. Ejemplo: entran en el salón del trono y la tele lo muestra completo de golpe." },
+  { sel: '.modal [name="grid"]', up: "label", before: openSettings, title: "Dibujar la cuadrícula",
+    text: "Las líneas de las casillas sobre el plano. Ejemplo: quítalas si tu plano ya trae su cuadrícula dibujada." },
+  { sel: '.modal [name="move"]', up: "label", before: openSettings, title: "Que muevan su ficha",
+    text: "Cada jugador mueve la suya desde el móvil. Ejemplo: actívalo si jugáis a distancia; desactívalo si prefieres moverlas tú en la mesa." },
+  { sel: '.modal [name="draw"]', up: "label", before: openSettings, title: "Que dibujen en el mapa",
+    text: "Los jugadores pueden dibujar encima. Ejemplo: que tracen el plan de ataque antes de entrar en el fuerte." },
+  { sel: '.modal [name="walls"]', up: "label", before: openSettings, title: "Enseñar muros y puertas",
+    text: "Si la party ve el dibujo de muros y puertas. Siguen cortando la vista igual. Ejemplo: desmárcalo con un plano de cueva muy bonito para que no tape la roca." },
+  { sel: '.modal [name="dark"]', up: "label", before: openSettings, title: "Mapa a oscuras",
+    text: "Solo se ve con visión en la oscuridad o con luz (antorchas, la herramienta Luz). Ejemplo: las minas abandonadas; el enano ve, el humano necesita antorcha." },
+  { sel: '.modal [name="playerZoom"]', up: "label", before: openSettings, title: "Zoom de los jugadores",
+    text: "Si pueden acercarse y alejarse en su móvil. Ejemplo: actívalo en mapas grandes para que encuentren su ficha." },
+  { sel: '.modal [name="range"]', up: "label", before: openSettings, title: "Pintar el alcance",
+    text: "Al arrastrar una ficha se pinta hasta dónde llega. Ejemplo: muy útil en combate; quítalo si prefieres contar casillas." },
+  { sel: '.modal [name="foehp"]', up: "label", before: openSettings, title: "Vida de los enemigos",
+    text: "Si la party ve cuánta vida les queda a los enemigos. Ejemplo: actívalo para partidas con niños o para que se note cuándo un jefe está a punto de caer." },
+  { sel: '.modal [name="camera"]', up: ".field", before: openSettings, title: "Cámara de la tele",
+    text: "«Todo el mapa» o «Centrada en el personaje», con cuántas casillas a lo ancho al seguir. Ejemplo: una mazmorra enorme se ve mejor siguiendo a la party con 14 casillas de ancho." },
+  { sel: '.modal [name="feet"]', up: ".cols2", before: openSettings, title: "Pies y diagonales",
+    text: "Cuántos pies vale una casilla y cómo cuentan las diagonales: 5 pies cada una o la variante 5-10-5. Ejemplo: un mapa de viaje con casillas de 100 pies." },
+  { sel: '.modal [name="wallFade"]', up: ".field", before: openSettings, title: "Vista tras los muros",
+    text: "A la izquierda la vista se corta en seco en el muro; a la derecha se difumina y asoma un poco lo de detrás. Ejemplo: en seco para una mazmorra de terror, difuminado para un bosque." },
+  { sel: '.modal [name="soundVolume"]', up: "fieldset", before: openSettings, title: "Sonido",
+    text: "El volumen general, silenciarlo todo, que suene también en los móviles y la lista de sonidos del mapa para encenderlos y apagarlos. Ejemplo: apagas la lluvia cuando escampa sin quitar la fuente." },
+  { sel: "#resetFog", up: ".row", before: openSettings, title: "Limpiezas rápidas",
+    text: "Funcionan al momento: «Restablecer niebla» olvida lo explorado, «Vaciar muros» los quita todos, «Quitar niebla y oscuridad» borra ese terreno pintado y «Cerrar contorno» pone muro por todo el borde. Ejemplo: restableces la niebla para volver a explorar el mapa con otro grupo." },
+  { sel: "#newMap", up: ".row", before: openSettings, title: "Mapas",
+    text: "Crea un mapa nuevo o borra este (te lo pregunta antes). Ejemplo: un mapa por piso de la torre del mago." },
+  { sel: ".modal footer", before: openSettings, title: "Guardar o cerrar",
+    text: "«Guardar» aplica lo que hayas cambiado arriba; «Cerrar» lo deja como estaba. Ahora la cierro yo sin tocar nada." },
+  { sel: "#mapPane .map-stow", before: () => { closeSettings(); toTools(); }, title: "Mapa despejado", text: "Guarda las herramientas en un marcapáginas y deja el mapa limpio mientras juegas." },
   { sel: "#board", title: "El tablero", text: "Pulsa una casilla para colocar fichas y arrástralas para moverlas. Rueda o + y − para acercar; botón derecho para mover la vista." },
   { sel: ".gnome", title: "Yo, de explorador", text: "Arrástrame al mapa y lo recorreré como uno más de la party: verás la niebla y las salas como las verán ellos. Lo que descubra no se queda." },
   { sel: ".shell > .topbar .voice", title: "Voz", text: "Habla con tus jugadores sin salir de Mesa, si jugáis a distancia." },
@@ -127,8 +188,10 @@ export function startTutorial(role, { section = "" } = {}) {
 
   const target = s => {
     if (!s.sel) return null;
-    const node = document.querySelector(s.sel);
+    let node = document.querySelector(s.sel);
+    if (node && s.up) node = node.closest(s.up) || node;
     if (!node) return null;
+    if (node.closest(".modal-body")) node.scrollIntoView({ block: "nearest" });
     const r = node.getBoundingClientRect();
     return r.width > 2 && r.height > 2 && r.bottom > 0 && r.top < innerHeight ? r : null;
   };
@@ -156,9 +219,15 @@ export function startTutorial(role, { section = "" } = {}) {
     card.style.top = Math.max(m, Math.min(innerHeight - ch - m, top)) + "px";
   }
   function show(n) {
+    const dir = n < i ? -1 : 1;
     i = Math.max(0, Math.min(steps.length - 1, n));
-    const s = steps[i];
+    let s = steps[i];
     if (s.before) { try { s.before(); } catch {} }
+    /* Un paso opcional sin nada que enseñar (un mapa sin salas) se salta */
+    while (s.optional && !document.querySelector(s.sel) && i + dir >= 0 && i + dir < steps.length) {
+      i += dir; s = steps[i];
+      if (s.before) { try { s.before(); } catch {} }
+    }
     card.querySelector(".tut-count").textContent = `${i + 1} / ${steps.length}`;
     card.querySelector(".tut-title").textContent = t(s.title);
     card.querySelector(".tut-text").textContent = t(s.text);
@@ -169,6 +238,7 @@ export function startTutorial(role, { section = "" } = {}) {
     requestAnimationFrame(() => requestAnimationFrame(place));
   }
   function close(done) {
+    closeSettings();
     removeEventListener("resize", place);
     removeEventListener("keydown", onKey, true);
     back.classList.add("out");

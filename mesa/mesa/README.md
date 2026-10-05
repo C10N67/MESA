@@ -241,6 +241,15 @@ herramientas están guardadas en el marcapáginas, Chispa las saca. Esa sección
 también se abre sola desde el menú **···** → **Útiles del mapa, con
 ejemplos**.
 
+Después, Chispa **abre la ventana de Ajustes del mapa** y la recorre opción
+por opción, desplazándola hasta cada una: nombre, visión y tamaño, el plano
+(imagen, cuadrícula, muros detectados), las salas (si el mapa tiene),
+todo lo de «Qué ve la party», la cámara, pies y diagonales, la vista tras los
+muros, el sonido, las limpiezas rápidas, los mapas y Guardar/Cerrar, cada
+cosa con su ejemplo. No cambia nada: al seguir o al salir, cierra la ventana
+sin guardar. Se abre directa desde **···** → **Ajustes del mapa, con
+ejemplos**.
+
 Cuando ya lo has visto, el botón deja de brillar en la barra y pasa al menú
 **···** (los jugadores también tienen ese menú, con el idioma y salir de la
 partida). Si en **7 minutos** de uso nadie lo pulsa, se guarda solo en ese
@@ -1099,7 +1108,7 @@ enseñaría por dónde ha venido.
 ## Qué versión tengo
 
 La versión de Mesa sale en la pantalla de entrada y al final del menú **···**
-del DM («Mesa 2.33.0»). Si el navegador trae una versión distinta de la del
+del DM («Mesa 2.34.0»). Si el navegador trae una versión distinta de la del
 servidor, Mesa vacía sus copias guardadas y recarga sola; si no lo consigue,
 lo dice en la pantalla de entrada.
 

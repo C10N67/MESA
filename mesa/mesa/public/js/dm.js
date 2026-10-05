@@ -2293,6 +2293,7 @@ function openMenu() {
     ${item("gnome", "wand", gnomeEnabled() ? "Despedir a Chispa" : "Llamar a Chispa", gnomeEnabled() ? "El gnomo ingeniero se vuelve a su taller" : "El gnomo ingeniero vuelve a vigilar la mesa")}
     ${tutorialInMenu("dm") ? item("tutorial", "info", "Tutorial", "Un paseo rápido por Mesa, con Chispa") : ""}
     ${item("tutorialTools", "wand", "Útiles del mapa, con ejemplos", "Cada herramienta del mapa explicada por Chispa")}
+    ${item("tutorialSettings", "gear", "Ajustes del mapa, con ejemplos", "Cada opción de la ventana de ajustes, paso a paso")}
     ${item("leave", "exit", "Salir de la sesión", "Vuelves a la pantalla de entrada", "danger")}
     <p class="menu-version">Mesa ${VERSION}</p>
     <input type="file" id="handoutFile" accept="image/*" hidden>
@@ -2337,6 +2338,7 @@ function openMenu() {
     if (what === "import") file.click();
     if (what === "tutorial") { m.close(); return startTutorial("dm"); }
     if (what === "tutorialTools") { m.close(); return startTutorial("dm", { section: "utiles" }); }
+    if (what === "tutorialSettings") { m.close(); return startTutorial("dm", { section: "ajustes" }); }
     if (what === "gnome") {
       const on = !gnomeEnabled();
       setGnomeEnabled(on);
