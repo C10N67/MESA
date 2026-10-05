@@ -19,6 +19,7 @@ import { langPicker } from "./i18n.js";
 import { icon, withIcon, conditionIcon, conditionTone } from "./icons.js";
 import { VERSION } from "./version.js";
 import { mountGnome, gnomeEnabled, setGnomeEnabled } from "./gnome.js";
+import { mountLibrary } from "./library.js";
 import { rollHitPoints } from "./dice.js";
 import { TYPE_NAMES, typeOf, crValue, CATALOG_BY_ID } from "./catalog.js";
 
@@ -86,12 +87,6 @@ export function mountDM(root) {
         <span class="spacer"></span>
         <span id="voiceSlot"></span>
         <button class="presence" id="presence" type="button" title="Quién está conectado"></button>
-        <div class="top-marks">
-          <button type="button" class="top-mark mark-manual" id="manualBtn" aria-pressed="false" title="Manual de D&D: todas las ediciones y reglas rápidas">
-            <span class="top-mark-ribbon">${icon("scroll", 20)}<span class="top-mark-label">Manual</span></span></button>
-          <button type="button" class="top-mark mark-bestiary" id="bestiaryBtn" aria-pressed="false" title="Bestiario: el libro de invocaciones (Ctrl+B)">
-            <span class="top-mark-ribbon">${icon("skull", 20)}<span class="top-mark-label">Bestiario</span></span></button>
-        </div>
         <div class="top-actions">
           <button class="btn sm" id="combatBtn" title="Combate">${withIcon("swords", "Iniciar combate")}</button>
           <button class="btn sm" id="restBtn" title="Descansar">${withIcon("moon", "Descansar")}</button>
@@ -122,14 +117,15 @@ export function mountDM(root) {
     render();
   });
   $("#addBtn", root).addEventListener("click", () => newCharacter());
-  $("#bestiaryBtn", root).addEventListener("click", () => toggleDrawer());
-  $("#manualBtn", root).addEventListener("click", () => toggleManual());
-  /* Las cintas se quedan «tiradas» mientras su libro está abierto */
-  document.addEventListener("mesa:book", e => {
-    const id = { "mesa.grimoire": "#manualBtn", "mesa.bestiario": "#bestiaryBtn" }[e.detail.key];
-    const mark = id && $(id, root);
-    if (mark) mark.setAttribute("aria-pressed", String(e.detail.open));
-  });
+  /* La librería de abajo: los libros de consulta, de lomo en su estante */
+  mountLibrary($(".shell", root), [
+    { id: "manual", key: "mesa.grimoire", title: "Manual de D&D 5.5: reglas, conjuros, criaturas y equipo", short: "el manual",
+      label: "Manual", cls: "book-manual", top: '<i class="lib-gilt"></i>', bottom: icon("scroll", 15),
+      toggle: () => toggleManual() },
+    { id: "bestiary", key: "mesa.bestiario", title: "Bestiario: el libro de invocaciones (Ctrl+B)", short: "el bestiario",
+      label: "Bestiario", cls: "book-bestiary", top: '<i class="lib-eye"></i>', bottom: icon("skull", 15),
+      toggle: () => toggleDrawer() }
+  ]);
   $("#combatBtn", root).addEventListener("click", toggleCombat);
   $("#restBtn", root).addEventListener("click", openRest);
   $("#undoBtn", root).addEventListener("click", () => { op("undo"); toast("Deshecho"); });

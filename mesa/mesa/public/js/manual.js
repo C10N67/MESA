@@ -447,10 +447,13 @@ export function floatingBook(content, opts) {
     return { w, h, x: Math.min(Math.max(8 - w + 120, b.x), innerWidth - 120), y: Math.min(Math.max(8, b.y), innerHeight - 60) };
   };
   if (!box || !box.w) {
-    /* Por debajo de las cintas de la barra, para que se pueda volver a tirar de ellas */
-    const top = Math.min(104, Math.round(innerHeight * 0.12));
-    const w = Math.min(1080, innerWidth - 48), h = Math.min(Math.round(innerHeight * 0.86), 820, innerHeight - top - 16);
-    box = { w, h, x: Math.round((innerWidth - w) / 2), y: Math.max(top, Math.round((innerHeight - h) / 2)) };
+    /* Entre la barra de arriba y la librería de abajo, para que su lomo siga a mano */
+    const bar = document.querySelector(".topbar"), shelf = document.querySelector(".library:not(.is-stowed) .lib-case");
+    const top = (bar ? bar.getBoundingClientRect().bottom : 0) + 12;
+    const bottom = shelf ? innerHeight - shelf.getBoundingClientRect().top + 12 : 16;
+    const room = innerHeight - top - bottom;
+    const w = Math.min(1080, innerWidth - 48), h = Math.max(MIN_H, Math.min(820, room));
+    box = { w, h, x: Math.round((innerWidth - w) / 2), y: Math.round(top + Math.max(0, (room - h) / 2)) };
   }
   const place = () => {
     if (small()) { node.removeAttribute("style"); return; }

@@ -316,14 +316,21 @@ jugador, el nombre y lo que hace, resumido. Las subclases se escriben a mano
 
 ## Manual del DM
 
-Arriba, en la barra del DM, cuelgan dos **marcapáginas** desde el borde de
-la ventana, como las cintas de un libro: el granate del **Manual** y el morado
-de la calavera del **Bestiario**. Cada uno abre su libro y, si ya está
-abierto, lo cierra; mientras el libro está abierto, su cinta se queda
-estirada y encendida. Los libros se abren por debajo de las cintas para poder
-volver a tirar de ellas.
+Abajo a la izquierda de la vista del DM hay una **librería**: una estantería
+de madera con los libros de consulta puestos de lomo, el **Manual** (cuero
+granate y dorado) y el **Bestiario** (morado, con un ojo verde y una
+calavera), entre otros libros de adorno y una vela encendida. Al pasar por
+encima, el lomo asoma; al pulsarlo, se saca el libro y se abre. Mientras está
+abierto, en el estante queda su hueco, y pulsar el hueco lo devuelve (lo
+cierra). Los libros se abren entre la barra de arriba y la librería, para que
+sus lomos sigan a mano.
 
-La cinta del **Manual** abre el manual de la **5.5** (D&D
+La librería se guarda con el **tirador de latón** de su esquina y queda una
+pestaña de madera, «Librería», para volver a sacarla; cada navegador recuerda
+cómo la dejaste. En el teléfono empieza guardada. En «La mesa» deja sitio
+debajo para no tapar las últimas fichas.
+
+El **Manual** abre el manual de la **5.5** (D&D
 2024) como un **grimorio**: un libro de tapas de cuero que se abre sobre la
 partida, con el índice y el buscador en la página de la izquierda y lo que se
 lee en la de la derecha, en pergamino. No bloquea nada: se puede seguir
@@ -436,7 +443,7 @@ plantas, celestiales y aberraciones), con fichas completas: características,
 sentidos, idiomas, resistencias, rasgos y acciones, y sus ataques listos para
 tirar de un clic, alientos y conjuros con salvación incluidos.
 
-La cinta de la calavera abre el bestiario como un **libro de invocaciones**: un tomo de cuero
+El lomo morado de la librería abre el bestiario como un **libro de invocaciones**: un tomo de cuero
 morado casi negro con herrajes de hueso, un ojo verde por cierre que
 parpadea, páginas viejas y tostadas en los bordes con manchas de tinta roja,
 un círculo de invocación al fondo de cada ficha y niebla que se escapa por
@@ -1012,7 +1019,7 @@ enseñaría por dónde ha venido.
 ## Qué versión tengo
 
 La versión de Mesa sale en la pantalla de entrada y al final del menú **···**
-del DM («Mesa 2.25.0»). Si el navegador trae una versión distinta de la del
+del DM («Mesa 2.26.0»). Si el navegador trae una versión distinta de la del
 servidor, Mesa vacía sus copias guardadas y recarga sola; si no lo consigue,
 lo dice en la pantalla de entrada.
 
@@ -1142,6 +1149,7 @@ public/
     builder.js         el creador de personajes paso a paso
     manual.js          la ventana del manual del DM
     gnome.js           Chispa, el gnomo ingeniero de la vista del DM
+    library.js         la librería del DM: los libros de consulta de lomo
     manual-data.js     el texto del manual: la chuleta de la 5.5 y las otras ediciones
     soundscape.js      hacer sonar el mapa en la pantalla de la party
     attacks.js         leer y lanzar ataques

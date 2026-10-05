@@ -11,7 +11,7 @@
    lejos) y la del sistema para el resto de la interfaz. */
 
 :root {
-  --mesa-version: "2.25.0";   /* igual que js/version.js y sw.js */
+  --mesa-version: "2.26.0";   /* igual que js/version.js y sw.js */
   --pitch: #0a0c11;
   --stone: #141821;
   --stone-2: #1b202b;
@@ -1064,55 +1064,6 @@ body.screen { background: #05060a; overflow: hidden; }
 .topbar { min-height: 60px; }
 .brand h1 { font-size: 21px; }
 .top-actions { display: flex; align-items: center; gap: 6px; }
-
-/* Manual y bestiario: dos cintas que cuelgan del borde de arriba de la
-   ventana, como los marcapáginas de un libro. La punta asoma un poco por
-   debajo de la barra; al pasar por encima se estiran, y mientras su libro
-   está abierto se quedan estiradas y encendidas. */
-.top-marks { position: relative; flex: none; align-self: stretch; width: 118px; margin: -12px 0; }
-.top-mark {
-  position: absolute; top: 0; z-index: 2; padding: 0; border: 0; background: none; cursor: pointer;
-  filter: drop-shadow(0 5px 8px rgba(0, 0, 0, .55));
-}
-.top-mark.mark-bestiary { left: 64px; }
-.top-mark-ribbon {
-  display: grid; justify-items: center; align-content: end; gap: 3px;
-  width: 54px; min-height: 80px; padding-bottom: 20px;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 84%, 0 100%);
-  transition: min-height .18s ease, filter .18s ease;
-}
-.top-mark-label { font: 700 7.5px/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; }
-.top-mark:hover .top-mark-ribbon, .top-mark:focus-visible .top-mark-ribbon { min-height: 88px; }
-.top-mark[aria-pressed="true"] .top-mark-ribbon { min-height: 94px; }
-.top-mark:focus-visible { outline: none; }
-.mark-manual .top-mark-ribbon {
-  color: #f2d48c;
-  background:
-    linear-gradient(90deg, transparent 4px, rgba(242, 212, 140, .55) 4px 5.5px, transparent 5.5px calc(100% - 5.5px), rgba(242, 212, 140, .55) calc(100% - 5.5px) calc(100% - 4px), transparent calc(100% - 4px)),
-    linear-gradient(180deg, #2c0e0a, #6b2219 55%, #5a1c15);
-}
-.mark-manual[aria-pressed="true"] .top-mark-ribbon { filter: brightness(1.18) drop-shadow(0 0 6px rgba(242, 212, 140, .45)); }
-.mark-bestiary .top-mark-ribbon {
-  color: #ddd6be;
-  background:
-    linear-gradient(90deg, transparent 4px, rgba(184, 179, 156, .5) 4px 5.5px, transparent 5.5px calc(100% - 5.5px), rgba(184, 179, 156, .5) calc(100% - 5.5px) calc(100% - 4px), transparent calc(100% - 4px)),
-    linear-gradient(180deg, #0b0710, #2e1d3d 55%, #241731);
-}
-.mark-bestiary .ico { color: #9ef0bd; filter: drop-shadow(0 0 4px rgba(123, 224, 164, .7)); }
-.mark-bestiary[aria-pressed="true"] .top-mark-ribbon { filter: brightness(1.2) drop-shadow(0 0 7px rgba(123, 224, 164, .55)); }
-@media (max-width: 1220px) and (min-width: 701px) {
-  .top-marks { width: 86px; }
-  .top-mark.mark-bestiary { left: 46px; }
-  .top-mark-ribbon { width: 40px; padding-bottom: 22px; }
-  .top-mark-label { display: none; }
-}
-@media (max-width: 1000px) and (min-width: 701px) {
-  .top-marks { width: 74px; }
-  .top-mark.mark-bestiary { left: 40px; }
-  .top-mark-ribbon { width: 34px; }
-  .top-mark-ribbon .ico { width: 17px; height: 17px; }
-}
-@media (prefers-reduced-motion: reduce) { .top-mark-ribbon { transition: none; } }
 .tabs button { gap: 6px; }
 .presence {
   height: 32px; padding: 0 11px; border-radius: 999px; border: 1px solid var(--edge);
@@ -1285,7 +1236,7 @@ body.screen { background: #05060a; overflow: hidden; }
   .top-actions .btn:not(.primary) .lbl { display: none; }
   .top-actions .btn:not(.primary) { padding: 7px 9px; }
 }
-@media (min-width: 701px) and (max-width: 1220px) {
+@media (min-width: 701px) and (max-width: 1000px) {
   .voice [data-voice="join"] .lbl { display: none; }
 }
 @media (max-width: 1080px) {
@@ -1299,13 +1250,7 @@ body.screen { background: #05060a; overflow: hidden; }
 /* ---------- Teléfono ---------- */
 @media (max-width: 700px) {
   .topbar { padding: 8px 12px; gap: 8px; min-height: 0; }
-  .shell > .topbar:not(.player-top) { display: grid; grid-template-columns: 1fr auto auto; grid-template-areas: "brand marks presence" "tabs tabs tabs" "actions actions actions"; }
-  .shell > .topbar:not(.player-top) .top-marks { grid-area: marks; align-self: start; width: 84px; height: 40px; margin: -8px 0 0; }
-  .top-mark.mark-bestiary { left: 44px; }
-  .top-mark-ribbon { width: 38px; min-height: 54px; padding-bottom: 14px; }
-  .top-mark:hover .top-mark-ribbon, .top-mark:focus-visible .top-mark-ribbon { min-height: 58px; }
-  .top-mark[aria-pressed="true"] .top-mark-ribbon { min-height: 60px; }
-  .top-mark-label { display: none; }
+  .shell > .topbar:not(.player-top) { display: grid; grid-template-columns: 1fr auto; grid-template-areas: "brand presence" "tabs tabs" "actions actions"; }
   .shell > .topbar:not(.player-top) .brand { grid-area: brand; min-width: 0; }
   .shell > .topbar:not(.player-top) .brand .campaign { width: 100%; min-width: 0; }
   .shell > .topbar:not(.player-top) .tabs { grid-area: tabs; }
@@ -2089,6 +2034,134 @@ details.srd > summary b { color: var(--vellum); font-family: var(--serif); font-
   .grimoire .man { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
   .grimoire .man-nav { padding: 10px; background: #ecdfbf; border-bottom: 1px solid rgba(98, 66, 30, .3); }
   .grimoire .man-page { padding: 14px 16px 24px; }
+}
+
+/* ============================================================
+   La librería: una estantería de madera abajo a la izquierda con
+   los libros de consulta de lomo. El lomo sube un poco al pasar
+   por encima; con el libro abierto queda su hueco en el estante.
+   Se guarda con el tirador de latón y deja una pestaña.
+   ============================================================ */
+.library { --lib-bottom: 0px; position: fixed; left: 16px; bottom: var(--lib-bottom); z-index: 29; pointer-events: none; }
+.library > * { pointer-events: auto; }
+@media (max-width: 1080px) { .library { --lib-bottom: 46px; } .layout.dock-stowed ~ .library { --lib-bottom: 0px; } }
+.lib-case {
+  position: relative; padding: 14px 16px 0; border-radius: 10px 10px 0 0;
+  background:
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, .18) 0 1px, transparent 1px 46px),
+    radial-gradient(120% 90% at 50% 100%, rgba(255, 170, 80, .1), transparent 60%),
+    linear-gradient(180deg, #1c120b, #2a1b10 70%, #23160c);
+  box-shadow: inset 0 0 0 1px rgba(201, 162, 90, .22), inset 0 10px 18px rgba(0, 0, 0, .55), 0 -6px 24px rgba(0, 0, 0, .45);
+  transition: transform .32s cubic-bezier(.3, .7, .2, 1), opacity .2s;
+}
+.lib-case::before, .lib-case::after { content: ""; position: absolute; top: 0; bottom: 0; width: 9px; background: linear-gradient(90deg, #5a3a1e, #3a2412); }
+.lib-case::before { left: 0; border-radius: 10px 0 0 0; }
+.lib-case::after { right: 0; border-radius: 0 10px 0 0; }
+.lib-row { display: flex; align-items: flex-end; gap: 4px; min-height: 138px; padding: 0 4px; }
+.lib-plank {
+  position: relative; height: 16px; margin: 0 -16px; border-radius: 3px 3px 0 0;
+  background: linear-gradient(180deg, #8a5c32, #6b4524 30%, #4a2e16);
+  box-shadow: 0 -1px 0 rgba(255, 220, 160, .25) inset, 0 3px 8px rgba(0, 0, 0, .5);
+  display: grid; place-items: center;
+}
+.lib-plate {
+  padding: 1px 8px; border-radius: 2px; font: 700 7.5px/1.4 var(--sans); letter-spacing: .18em; text-transform: uppercase;
+  color: #3a240f; background: linear-gradient(180deg, #e9c983, #b48a3e); box-shadow: 0 1px 0 rgba(0, 0, 0, .4);
+}
+
+/* Los lomos */
+.lib-book {
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 6px;
+  padding: 8px 0 7px; border: 0; border-radius: 3px 3px 1px 1px; cursor: pointer;
+  box-shadow: 2px 0 3px rgba(0, 0, 0, .45), inset 0 0 0 1px rgba(0, 0, 0, .35);
+  transition: transform .2s ease, filter .2s ease;
+}
+.lib-book:hover, .lib-book:focus-visible { transform: translateY(-9px); outline: none; filter: brightness(1.12); }
+.lib-book:focus-visible { box-shadow: 0 0 0 2px var(--gold-soft, #d8b56a), 2px 0 3px rgba(0, 0, 0, .45); }
+.lib-title {
+  flex: 1; min-height: 0; overflow: hidden; display: flex; align-items: center; justify-content: center;
+  writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap;
+  font-family: var(--title); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase;
+}
+.lib-title .amp { font-family: Georgia, serif; font-style: italic; text-transform: none; letter-spacing: 0; }
+.lib-cap { display: grid; place-items: center; min-height: 14px; }
+.book-manual {
+  width: 42px; height: 134px; color: #f0cf85;
+  background:
+    linear-gradient(180deg, transparent 13px, #c9a25a 13px 14px, transparent 14px 16px, #c9a25a 16px 17px, transparent 17px calc(100% - 24px), #c9a25a calc(100% - 24px) calc(100% - 23px), transparent calc(100% - 23px) calc(100% - 21px), #c9a25a calc(100% - 21px) calc(100% - 20px), transparent calc(100% - 20px)),
+    linear-gradient(90deg, #3a110c, #74261b 28%, #8d3424 50%, #6b2219 72%, #36100b);
+}
+.book-manual .lib-title { text-shadow: 0 1px 0 rgba(0, 0, 0, .6); }
+.lib-gilt { display: block; width: 9px; height: 9px; transform: rotate(45deg); background: linear-gradient(135deg, #f3d99a, #a87c33); }
+.book-bestiary {
+  width: 38px; height: 126px; color: #ddd6be;
+  background:
+    linear-gradient(180deg, transparent 22px, rgba(184, 179, 156, .7) 22px 23px, transparent 23px calc(100% - 24px), rgba(184, 179, 156, .7) calc(100% - 24px) calc(100% - 23px), transparent calc(100% - 23px)),
+    linear-gradient(90deg, #0d0712, #2b1b38 30%, #3a2649 50%, #251731 72%, #0b0610);
+  animation: libHaunt 4.5s ease-in-out infinite;
+}
+.book-bestiary .lib-title { text-shadow: 0 0 6px rgba(123, 224, 164, .45); }
+.book-bestiary .lib-cap .ico { color: #9ef0bd; filter: drop-shadow(0 0 4px rgba(123, 224, 164, .8)); }
+.lib-eye {
+  position: relative; display: block; width: 12px; height: 12px; border-radius: 50%;
+  background: radial-gradient(circle, #c8ffd9, #7be0a4 40%, #1d5a3a 75%); box-shadow: 0 0 8px rgba(123, 224, 164, .8);
+  animation: necroEye 6s ease-in-out infinite;
+}
+.lib-eye::after { content: ""; position: absolute; left: 50%; top: 2px; bottom: 2px; width: 2px; margin-left: -1px; border-radius: 2px; background: #050307; }
+/* Libro fuera: en el estante queda su hueco */
+.lib-book.out { background: rgba(0, 0, 0, .35); box-shadow: inset 0 0 0 1px rgba(201, 162, 90, .35), inset 0 6px 10px rgba(0, 0, 0, .6); animation: none; }
+.lib-book.out > * { opacity: 0; }
+.lib-book.out:hover, .lib-book.out:focus-visible { transform: none; background: rgba(201, 162, 90, .1); }
+
+/* Lo que adorna el estante */
+.lib-deco { pointer-events: none; }
+.lib-stack { display: grid; justify-items: center; gap: 1px; margin-right: 4px; }
+.lib-stack i { display: block; height: 11px; border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .35), 0 1px 1px rgba(0, 0, 0, .4); }
+.lib-stack i:nth-child(1) { width: 52px; background: linear-gradient(180deg, #2f4a3a, #1d3024); transform: translateX(3px); }
+.lib-stack i:nth-child(2) { width: 60px; background: linear-gradient(180deg, #6a5532, #4a3a20); }
+.lib-stack i:nth-child(3) { width: 64px; background: linear-gradient(180deg, #3a2a4a, #241a30); transform: translateX(-2px); }
+.lib-lean {
+  width: 22px; height: 104px; margin-left: 10px; border-radius: 3px 3px 1px 1px; transform-origin: bottom left; transform: rotate(-11deg);
+  background:
+    linear-gradient(180deg, transparent 10px, rgba(201, 162, 90, .6) 10px 11px, transparent 11px calc(100% - 12px), rgba(201, 162, 90, .6) calc(100% - 12px) calc(100% - 11px), transparent calc(100% - 11px)),
+    linear-gradient(90deg, #14271f, #24443a 50%, #13231c);
+  box-shadow: 2px 0 3px rgba(0, 0, 0, .45);
+}
+.lib-candle { position: relative; width: 12px; height: 30px; margin: 0 2px 0 6px; border-radius: 3px 3px 1px 1px; background: linear-gradient(90deg, #cbbd9a, #efe4c6 50%, #b9aa86); }
+.lib-candle::before { content: ""; position: absolute; left: 50%; bottom: 100%; width: 1.5px; height: 5px; margin-left: -.75px; background: #2a1d10; }
+.lib-candle i {
+  position: absolute; left: 50%; bottom: calc(100% + 3px); width: 8px; height: 14px; margin-left: -4px; border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%;
+  background: radial-gradient(circle at 50% 70%, #fff6d0, #ffc34d 45%, rgba(255, 120, 30, .6) 70%, transparent 72%);
+  box-shadow: 0 0 18px 6px rgba(255, 170, 70, .28); transform-origin: 50% 100%; animation: libFlame 1.6s ease-in-out infinite;
+}
+
+/* Guardarla y sacarla */
+.lib-hide {
+  position: absolute; z-index: 1; top: 5px; right: 13px; width: 22px; height: 22px; display: grid; place-items: center; padding: 0;
+  border-radius: 50%; border: 0; cursor: pointer; color: #3a240f;
+  background: radial-gradient(circle at 35% 35%, #f3d99a, #b28537 60%, #6e4d1c); box-shadow: 0 1px 2px rgba(0, 0, 0, .6);
+}
+.lib-hide:hover, .lib-hide:focus-visible { filter: brightness(1.15); outline: none; }
+.lib-tab {
+  position: absolute; left: 0; bottom: 0; display: none; align-items: center; gap: 6px; padding: 7px 12px 8px;
+  border: 0; border-radius: 9px 9px 0 0; cursor: pointer; color: #f0cf85; font: 700 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase;
+  background: linear-gradient(180deg, #8a5c32, #5a3a1e); box-shadow: inset 0 1px 0 rgba(255, 220, 160, .3), 0 -3px 10px rgba(0, 0, 0, .45);
+}
+.lib-tab:hover, .lib-tab:focus-visible { filter: brightness(1.12); outline: none; padding-bottom: 11px; }
+.library.is-stowed .lib-case { transform: translateY(calc(100% + 24px)); opacity: 0; }
+.library.is-stowed .lib-tab { display: inline-flex; animation: libTab .3s .15s cubic-bezier(.22, 1.3, .36, 1) both; }
+/* En «La mesa» deja sitio debajo para que la estantería no tape las últimas fichas */
+body.library-shown .layout:not(.map-mode) > main { padding-bottom: 160px; }
+
+@keyframes libHaunt { 50% { box-shadow: 2px 0 3px rgba(0, 0, 0, .45), inset 0 0 0 1px rgba(0, 0, 0, .35), 0 0 12px rgba(123, 224, 164, .3); } }
+@keyframes libFlame { 0%, 100% { transform: scale(1) rotate(-2deg); } 40% { transform: scale(.92, 1.08) rotate(3deg); } 70% { transform: scale(1.04, .95) rotate(-1deg); } }
+@keyframes libTab { from { transform: translateY(100%); } }
+@media (prefers-reduced-motion: reduce) {
+  .lib-case, .lib-book { transition: none; }
+  .book-bestiary, .lib-eye, .lib-candle i, .library.is-stowed .lib-tab { animation: none; }
+}
+@media (max-width: 700px) {
+  .library { left: 8px; transform: scale(.8); transform-origin: bottom left; }
 }
 
 /* ============================================================
